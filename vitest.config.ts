@@ -19,7 +19,15 @@ export default defineConfig({
         test: {
           name: 'research:unit',
           root: '.',
-          include: ['research/**/tests/**/*.test.mjs'],
+          include: ['research/**/tests/unit/**/*.test.mjs'],
+          environment: 'node',
+        },
+      },
+      {
+        test: {
+          name: 'research:integration',
+          root: '.',
+          include: ['research/**/tests/integration/**/*.test.mjs'],
           environment: 'node',
         },
       },
@@ -60,7 +68,13 @@ export default defineConfig({
     ],
     coverage: {
       provider: 'v8',
-      include: ['apps/*/src/**', 'packages/*/src/**', 'scripts/lib/**'],
+      // Research drivers that need a live browser stay outside; their pure boundary modules are in.
+      include: [
+        'apps/*/src/**',
+        'packages/*/src/**',
+        'scripts/lib/**',
+        'research/excalidraw/lib/{guard,metrics,sanitise,server}.mjs',
+      ],
       // Process entry points only wire dependencies together; behaviour lives in tested modules.
       exclude: ['apps/collab/src/main.ts', 'apps/web/src/main.tsx'],
       reporter: ['text', 'json-summary', 'lcov'],

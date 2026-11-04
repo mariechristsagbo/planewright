@@ -1,6 +1,7 @@
 // Bounded reads of state created by the research session itself: storage key inventory,
-// a structural summary of the locally persisted scene, clipboard text shape, and the
-// computed style of the document root. Values are reduced to shapes, counts and geometry.
+// a structural summary of the locally persisted scene, clipboard text shape, the URL shape and
+// the computed style of the document root. Values are reduced to shapes, counts and geometry.
+import { redactSecrets, urlShapeOf } from './sanitise.mjs';
 
 function summariseStorage() {
   const describe = (raw) => {
@@ -128,37 +129,24 @@ function rootStyle() {
   };
 }
 
-// URL shape only: origin, path, and for the fragment each key with the length of each
-// comma-separated value part. Room identifiers and keys are never recorded.
-function urlShape() {
-  const url = new URL(location.href);
-  const fragment = url.hash.slice(1);
-  const parts = fragment
-    ? fragment.split('&').map((pair) => {
-        const [key, value = ''] = pair.split('=');
-        return { key, valueLengths: value.split(',').map((v) => v.length) };
-      })
-    : [];
-  return {
-    origin: url.origin,
-    path: url.pathname,
-    queryKeys: [...url.searchParams.keys()],
-    fragment: parts,
-  };
+// The href stays in memory: only its shape (key names and value lengths) is returned.
+async function urlProbe(ctx) {
+  return urlShapeOf(await ctx.page.evaluate(() => location.href));
+}
+
+async function clipboardProbe(ctx) {
+  const shape = await ctx.page.evaluate(clipboardShape);
+  return shape.startsWith === undefined
+    ? shape
+    : { ...shape, startsWith: redactSecrets(shape.startsWith) };
 }
 
 export const probes = {
-  url: async (ctx) => ctx.page.evaluate(urlShape),
+  url: urlProbe,
   storage: async (ctx) => ctx.page.evaluate(summariseStorage),
   scene: async (ctx, step) => ctx.page.evaluate(summariseScene, step.key ?? 'excalidraw'),
   appState: async (ctx, step) =>
     ctx.page.evaluate(summariseAppState, step.key ?? 'excalidraw-state'),
-  clipboard: async (ctx) => ctx.page.evaluate(clipboardShape),
+  clipboard: clipboardProbe,
   rootStyle: async (ctx) => ctx.page.evaluate(rootStyle),
-  grantClipboard: async (ctx, step) => {
-    await ctx.page.context().grantPermissions(['clipboard-read', 'clipboard-write'], {
-      origin: step.origin,
-    });
-    return { granted: true };
-  },
 };

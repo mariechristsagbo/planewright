@@ -9,6 +9,8 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
+import { stripQuery } from './lib/sanitise.mjs';
+
 const INTERACTIVE = new Set([
   'button',
   'link',
@@ -31,15 +33,6 @@ const INTERACTIVE = new Set([
   'listbox',
   'option',
 ]);
-
-function stripQuery(url) {
-  try {
-    const parsed = new URL(url);
-    return `${parsed.origin}${parsed.pathname}`;
-  } catch {
-    return null;
-  }
-}
 
 function screenshot(evidence, input) {
   const { artifact, viewport, captured_at: capturedAt } = evidence.normalized_result;

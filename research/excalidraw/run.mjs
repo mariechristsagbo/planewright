@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { parseArgs } from 'node:util';
 
-import { TOKEN_HEADER } from './lib/guard.mjs';
+import { TOKEN_HEADER, parsePort } from './lib/guard.mjs';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
@@ -19,8 +19,7 @@ const { values, positionals } = parseArgs({
     quit: { type: 'boolean', default: false },
   },
 });
-const port = Number(values.port);
-if (!Number.isInteger(port) || port < 1024 || port > 65535) throw new Error('Invalid --port.');
+const port = parsePort(values.port, '--port');
 if (!values.out) throw new Error('--out <driver output directory> is required for the token.');
 const token = readFileSync(join(values.out, 'driver.token'), 'utf8').trim();
 

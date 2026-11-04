@@ -3,20 +3,7 @@
 import { appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-export function sanitiseUrl(raw) {
-  try {
-    const url = new URL(raw);
-    if (url.protocol === 'data:' || url.protocol === 'blob:') return { scheme: url.protocol };
-    return {
-      origin: url.origin,
-      path: url.pathname,
-      queryKeys: [...new Set(url.searchParams.keys())].sort(),
-      hasFragment: url.hash.length > 0,
-    };
-  } catch {
-    return { unparseable: true };
-  }
-}
+import { sanitiseUrl } from './sanitise.mjs';
 
 function watchSocket(write, socket) {
   const counts = { sent: 0, received: 0, sentBytes: 0, receivedBytes: 0 };
