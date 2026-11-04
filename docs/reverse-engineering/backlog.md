@@ -28,8 +28,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      delta / zoom in one sample each [O]; as general rules they are [H] (R-48).
 2. **Shape creation tools.** Ref: B-01, B-02, B-05, B-06.
    - Rectangle, ellipse, diamond and line created by drag have exactly the drag extent [O].
-   - The new element is selected and the tool reverts to selection [O]. Keeping the tool with a
-     tool lock is **open** (R-02).
+   - After a rectangle drag the new element was selected and the tool was back to Selection
+     [O, rectangle only]. Whether the other creation tools revert is **open** (R-02): the freedraw
+     tool stayed active across clicks after Escape (B-29) [O]. Keeping the tool with a tool lock
+     is **open** (R-02).
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
 3. **Selection model.** Ref: B-10 to B-14.
@@ -87,7 +89,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
     - Copy produces a typed JSON payload, and paste centres the copies on the pointer and
       selects them [O].
 12. **Eraser.** Ref: B-29.
-    - A drag removes a touched freedraw stroke [O].
+    - After an eraser drag across a freshly drawn freedraw stroke, the scene held no freedraw
+      element [O]. That the stroke existed just before is [I] from B-05, because no probe ran in
+      between (R-44).
     - After Escape the reference returned to the tool used before the eraser, once [O]; as a
       rule this is [H] (R-44).
 
@@ -106,7 +110,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       was seen, so view mode is probably not saved [I]. Whether any mode survives a reload is
       **open** (R-19).
 15. **Responsive mobile layout.** Ref: feature inventory §6.
-    - Bottom toolbar, compact property bar, touch handles and pinch/pan [O].
+    - Bottom toolbar, compact property bar, touch handles and pinch/pan [O, one phone
+      viewport]. Breakpoints, tablet widths and orientation are **open** (R-23).
 16. **Image insertion.** Ref: B-09.
     - A dropped image is inserted at native size, centred on the drop point [O].
 17. **Import/export.** Pending R-46 and R-18.
