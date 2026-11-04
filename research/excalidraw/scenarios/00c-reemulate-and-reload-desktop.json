@@ -1,5 +1,5 @@
 {
-  "description": "Desktop 1280x720: restore emulation after the driver's CDP session was replaced (for example after a driver restart, which removes that session's overrides). Re-applies the override without trusting its immediate read-back, reloads, then asserts the metrics; the assertion after the reload is the authoritative check. Used once in s6.",
+  "description": "Desktop 1280x720: restore emulation after the driver's CDP session was replaced (for example after a driver restart, which removes that session's overrides). Re-applies the override without trusting its immediate read-back, reloads, then asserts the metrics; the assertion after the reload is the authoritative check. Used twice in s6, each time after the driver's CDP session had been replaced.",
   "continueOnError": true,
   "steps": [
     {

@@ -1,5 +1,5 @@
 {
-  "description": "Mobile 390x844, DPR 3, touch: reload the page and assert the emulated metrics, for use if an assertMetrics step aborts after a tool reset the emulated metrics; a navigation restores the override that 09 applied before its first navigation. Not needed in s7. The scene and scroll persist across the reload; selection and open dialogs do not.",
+  "description": "Mobile 390x844, DPR 3, touch: reload the page and assert the emulated metrics, for use if an assertMetrics step aborts after a tool reset the emulated metrics; a navigation restores the override that 09 applied before its first navigation. It never ran: s3, s4 and s7 record no reload. What a mobile reload keeps is not observed (R-54).",
   "continueOnError": true,
   "steps": [
     {
