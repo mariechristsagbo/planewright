@@ -1,0 +1,4 @@
+# False positive: a synthetic, made-up room-key-shaped test value added in 77ad658 and replaced
+# by a run-time-built value later. History is not rewritten, so the finding is ignored by its
+# exact fingerprint (commit:file:rule:line).
+77ad658e29e52f473f6ea33bde2122f146cb4033:research/excalidraw/tests/unit/sanitise.test.mjs:generic-api-key:13

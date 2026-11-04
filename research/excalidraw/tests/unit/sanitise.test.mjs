@@ -8,9 +8,10 @@ import {
   urlShapeOf,
 } from '../../lib/sanitise.mjs';
 
-// Synthetic values with the same shape as a collaboration room id (20) and key (22).
-const ROOM = 'a1B2c3D4e5F6g7H8i9J0';
-const KEY = 'k_L-m1N2o3P4q5R6s7T8u9';
+// Synthetic, low-entropy values with the shape of a collaboration room id (20) and key (22),
+// built at run time so that secret scanners do not mistake them for credentials.
+const ROOM = 'a1B2'.repeat(5);
+const KEY = `${'k_L-'.repeat(5)}m1`;
 const ROOM_URL = `https://excalidraw.com/#room=${ROOM},${KEY}`;
 
 describe('sanitiseUrl', () => {
