@@ -5,7 +5,7 @@
 //
 // Usage: node research/excalidraw/secret-scan.mjs <dir...>
 //        git log -p --all | node research/excalidraw/secret-scan.mjs --stdin
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { closeSync, fstatSync, openSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { countSecretShapes } from './lib/sanitise.mjs';
@@ -34,13 +34,24 @@ if (args.length === 0) throw new Error('Pass directories to scan, or --stdin.');
 const totals = {};
 const tokens = [];
 
+// Size check and read use one descriptor, so the file cannot change between them.
+function readBounded(file) {
+  const fd = openSync(file, 'r');
+  try {
+    return fstatSync(fd).size > MAX_BYTES ? null : readFileSync(fd, 'latin1');
+  } finally {
+    closeSync(fd);
+  }
+}
+
 function scanTrees(roots) {
   let count = 0;
   for (const file of roots.flatMap((root) => [...walk(root)])) {
     if (file.endsWith('/driver.token')) tokens.push(file);
-    if (statSync(file).size > MAX_BYTES) continue;
+    const text = readBounded(file);
+    if (text === null) continue;
     count += 1;
-    report(file, countSecretShapes(readFileSync(file, 'latin1')), totals);
+    report(file, countSecretShapes(text), totals);
   }
   return count;
 }
