@@ -63,10 +63,18 @@ async function runNested(ctx, steps) {
   for (const nested of steps) await ctx.run(nested);
 }
 
-async function download(ctx, step) {
-  const pending = ctx.page.waitForEvent('download', { timeout: step.timeout ?? 15000 });
+// Waits for a page event that the step's trigger causes. The waiter starts first so the event
+// cannot be missed, and it always has a handler: when the trigger fails, the waiter's later
+// timeout must not become an unhandled rejection, which would stop the driver process.
+async function eventAfterTrigger(ctx, step, event, timeout) {
+  const pending = ctx.page.waitForEvent(event, { timeout: step.timeout ?? timeout });
+  pending.catch(() => undefined);
   await runNested(ctx, step.trigger);
-  const item = await pending;
+  return pending;
+}
+
+async function download(ctx, step) {
+  const item = await eventAfterTrigger(ctx, step, 'download', 15000);
   const file = outputPath(
     ctx.outDir,
     'downloads',
@@ -85,9 +93,7 @@ async function download(ctx, step) {
 }
 
 async function fileChooser(ctx, step) {
-  const pending = ctx.page.waitForEvent('filechooser', { timeout: step.timeout ?? 8000 });
-  await runNested(ctx, step.trigger);
-  const chooser = await pending;
+  const chooser = await eventAfterTrigger(ctx, step, 'filechooser', 8000);
   // Only fixture names are accepted; they resolve inside <out>/../fixtures.
   const files = step.files.map((name) => fixturePath(ctx.outDir, name));
   await chooser.setFiles(files);
@@ -118,9 +124,7 @@ async function dropFile(ctx, step) {
 
 // Accepts the next native dialog (alert/confirm/prompt) and records its type and message.
 async function acceptDialog(ctx, step) {
-  const pending = ctx.page.waitForEvent('dialog', { timeout: step.timeout ?? 5000 });
-  await runNested(ctx, step.trigger);
-  const dialog = await pending;
+  const dialog = await eventAfterTrigger(ctx, step, 'dialog', 5000);
   const seen = { type: dialog.type(), message: redactSecrets(dialog.message()) };
   await dialog.accept();
   return seen;

@@ -65,6 +65,43 @@ describe('download', () => {
   });
 });
 
+describe('event waiters when the trigger fails', () => {
+  it.each([
+    ['download', { name: 'dl-fail', trigger: [{}] }],
+    ['fileChooser', { files: [], trigger: [{}] }],
+    ['acceptDialog', { trigger: [{}] }],
+  ])('%s rejects with the trigger error and leaves no unhandled rejection', async (name, step) => {
+    const unhandled = [];
+    const onUnhandled = (reason) => unhandled.push(reason);
+    process.on('unhandledRejection', onUnhandled);
+    try {
+      const timedOut = () =>
+        new Promise((_resolve, reject) => setTimeout(() => reject(new Error('Timeout')), 10));
+      const ctx = {
+        outDir,
+        page: { waitForEvent: timedOut },
+        run: async () => {
+          throw new Error('trigger failed');
+        },
+      };
+      await expect(handlers[name](ctx, step)).rejects.toThrow('trigger failed');
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(unhandled).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', onUnhandled);
+    }
+  });
+
+  it('still reports a waiter timeout when the trigger succeeds', async () => {
+    const ctx = {
+      outDir,
+      page: { waitForEvent: async () => Promise.reject(new Error('Timeout 5ms exceeded')) },
+      run: async () => undefined,
+    };
+    await expect(handlers.acceptDialog(ctx, { trigger: [] })).rejects.toThrow(/Timeout/u);
+  });
+});
+
 describe('aria', () => {
   const ctx = {
     outDir,
