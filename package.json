@@ -1,0 +1,89 @@
+{
+  "name": "planewright",
+  "version": "0.0.0",
+  "private": true,
+  "description": "An independently engineered open-source infinite canvas for drawing and diagrams.",
+  "license": "MIT",
+  "author": "Marie-Christ Sagbo",
+  "homepage": "https://github.com/mariechristsagbo/planewright#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariechristsagbo/planewright.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mariechristsagbo/planewright/issues"
+  },
+  "type": "module",
+  "workspaces": [
+    "packages/protocol",
+    "apps/collab",
+    "apps/web"
+  ],
+  "packageManager": "npm@11.19.1",
+  "engines": {
+    "node": "24.22.1",
+    "npm": "11.19.1"
+  },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.22.1",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": "11.19.1",
+      "onFail": "error"
+    }
+  },
+  "scripts": {
+    "dev:web": "npm run dev --workspace @planewright/web",
+    "dev:collab": "npm run dev --workspace @planewright/collab",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint --max-warnings=0 .",
+    "lint:fix": "eslint --fix .",
+    "typecheck": "tsc -p tsconfig.json && npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:unit": "vitest run --project '*:unit'",
+    "test:integration": "vitest run --project '*:integration'",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "test:e2e": "npm run test:e2e --workspace @planewright/web",
+    "build": "npm run build --workspaces --if-present",
+    "audit:deps": "npm audit --audit-level=moderate && npm audit signatures",
+    "check:file-size": "node scripts/check-file-size.ts",
+    "check:deps-policy": "node scripts/check-dependency-policy.ts",
+    "check:branch": "node scripts/validate-branch-name.ts",
+    "guardrails": "npm run check:file-size && npm run check:deps-policy",
+    "secrets:scan": "secretlint --maskSecrets \"**/*\"",
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run guardrails && npm run secrets:scan && npm run test:coverage && npm run build",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@eslint/js": "10.0.1",
+    "@secretlint/secretlint-rule-preset-recommend": "13.1.0",
+    "@types/node": "24.19.2",
+    "@vitest/coverage-v8": "5.1.0",
+    "eslint": "10.14.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.7",
+    "globals": "17.14.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.10",
+    "secretlint": "13.1.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.72.1",
+    "vitest": "5.1.0"
+  },
+  "overrides": {
+    "minimatch": "11.0.4"
+  },
+  "allowScripts": {
+    "esbuild": false
+  }
+}

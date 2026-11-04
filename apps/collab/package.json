@@ -1,0 +1,22 @@
+{
+  "name": "@planewright/collab",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Autonomous Node.js WebSocket collaboration service for Planewright (foundation only).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file-if-exists=../../.env --watch src/main.ts",
+    "start": "node --env-file-if-exists=../../.env dist/main.js",
+    "build": "node scripts/build.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@planewright/protocol": "0.0.0",
+    "ws": "8.22.1"
+  },
+  "devDependencies": {
+    "@types/ws": "8.18.2",
+    "esbuild": "0.28.2"
+  }
+}
