@@ -21,6 +21,7 @@ afterAll(() => rmSync(root, { recursive: true, force: true }));
 const rows = Array.from({ length: 4 }, () => Buffer.alloc(12, 128));
 const SHOT = encodePng({ width: 4, height: 4, bpp: 3, rows }).toString('base64');
 const BOX = { x: 0, y: 0, width: 2, height: 2 };
+const VIEW = { cssWidth: 4, cssHeight: 4 };
 
 function stubCtx({ hrefs = [CLEAN_HREF], boxes = {}, present = {} } = {}) {
   let reads = 0;
@@ -32,7 +33,7 @@ function stubCtx({ hrefs = [CLEAN_HREF], boxes = {}, present = {} } = {}) {
     }),
     evaluate: async () => {
       reads += 1;
-      return { href: hrefs[Math.min(reads, hrefs.length) - 1], cssWidth: 4 };
+      return { href: hrefs[Math.min(reads, hrefs.length) - 1], cssWidth: 4, cssHeight: 4 };
     },
   };
   const cdp = {
@@ -91,6 +92,8 @@ describe('screenshot masks fail closed', () => {
     ['matches only hidden elements', [null], /mask 0 has no usable box/u],
     ['matches only empty boxes', [{ ...BOX, width: 0 }], /mask 0 has no usable box/u],
     ['matches only non-finite boxes', [{ ...BOX, x: Number.NaN }], /mask 0 has no usable box/u],
+    ['matches only boxes left of the viewport', [{ ...BOX, x: -50 }], /mask 0 has no usable box/u],
+    ['matches only boxes below the viewport', [{ ...BOX, y: 4 }], /mask 0 has no usable box/u],
   ])('refuses when a mask %s', async (_label, found, message) => {
     const { ctx, captures } = stubCtx({ boxes: { '.m': found } });
     await expect(screenshot(ctx, { name: 'bad-mask', mask: ['.m'] })).rejects.toThrow(message);
@@ -123,9 +126,28 @@ describe('screenshot masks fail closed', () => {
   });
 
   it('accepts only finite boxes with a positive size', () => {
-    expect(isUsableBox(BOX)).toBe(true);
-    expect(isUsableBox({ ...BOX, height: -1 })).toBe(false);
-    expect(isUsableBox({ ...BOX, width: Number.POSITIVE_INFINITY })).toBe(false);
-    expect(isUsableBox(undefined)).toBe(false);
+    expect(isUsableBox(BOX, VIEW)).toBe(true);
+    expect(isUsableBox({ ...BOX, height: -1 }, VIEW)).toBe(false);
+    expect(isUsableBox({ ...BOX, width: Number.POSITIVE_INFINITY }, VIEW)).toBe(false);
+    expect(isUsableBox(undefined, VIEW)).toBe(false);
+  });
+
+  it('accepts a box only when part of it lies inside the viewport', () => {
+    expect(isUsableBox({ x: -1, y: -1, width: 2, height: 2 }, VIEW)).toBe(true);
+    expect(isUsableBox({ x: 3, y: 3, width: 9, height: 9 }, VIEW)).toBe(true);
+    expect(isUsableBox({ x: -5000, y: -5000, width: 100, height: 40 }, VIEW)).toBe(false);
+    expect(isUsableBox({ x: 4, y: 0, width: 2, height: 2 }, VIEW)).toBe(false);
+    expect(isUsableBox({ x: 0, y: -2, width: 2, height: 2 }, VIEW)).toBe(false);
+    expect(isUsableBox(BOX, undefined)).toBe(false);
+  });
+
+  it('does not let an off-screen mask unlock a capture of a room view', async () => {
+    const offscreen = { x: 0, y: 900, width: 2, height: 2 };
+    const { ctx, captures } = stubCtx({ hrefs: [ROOM_HREF], boxes: { '.link': [offscreen] } });
+    await expect(screenshot(ctx, { name: 'room-offscreen', mask: ['.link'] })).rejects.toThrow(
+      /mask 0 has no usable box/u,
+    );
+    expect(captures).toEqual([]);
+    expect(existsSync(shotFile('room-offscreen'))).toBe(false);
   });
 });

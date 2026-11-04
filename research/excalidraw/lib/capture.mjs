@@ -8,8 +8,8 @@
 //
 // Nothing is written when
 //   - a `refuseIf` selector matches,
-//   - any requested mask yields no usable box (it matched nothing, or only hidden or empty
-//     elements),
+//   - any requested mask yields no usable box (it matched nothing, or only hidden, empty or
+//     wholly off-screen elements),
 //   - the live URL fragment holds a room or `json` link value, before or after the capture, and
 //     no mask produced a box,
 //   - the file name is already used.
@@ -21,31 +21,48 @@ import { outputPath } from './guard.mjs';
 import { decodePng, encodePng, paintBoxes } from './png.mjs';
 import { hasSecretFragment } from './sanitise.mjs';
 
-const readView = () => ({ href: location.href, cssWidth: window.innerWidth });
+const readView = () => ({
+  href: location.href,
+  cssWidth: window.innerWidth,
+  cssHeight: window.innerHeight,
+});
 
-/** A box is usable when its position is finite and its size is positive and finite. */
-export function isUsableBox(box) {
+/**
+ * A box is usable when its position is finite, its size is positive and finite, and part of it
+ * lies inside the viewport (CSS px). An off-screen box would paint nothing on the capture, so it
+ * cannot count as a mask.
+ */
+export function isUsableBox(box, view) {
+  return hasFiniteSize(box) && overlapsView(box, view);
+}
+
+function hasFiniteSize(box) {
   if (box === null || typeof box !== 'object') return false;
   const values = [box.x, box.y, box.width, box.height];
   return values.every(Number.isFinite) && box.width > 0 && box.height > 0;
 }
 
-async function usableBoxes(page, selector) {
+function overlapsView(box, view) {
+  const inside = box.x < view?.cssWidth && box.y < view?.cssHeight;
+  return inside && box.x + box.width > 0 && box.y + box.height > 0;
+}
+
+async function usableBoxes(page, selector, view) {
   const matches = await page.locator(selector).all();
   const boxes = [];
   for (const match of matches) {
     const box = await match.boundingBox();
-    if (isUsableBox(box)) boxes.push(box);
+    if (isUsableBox(box, view)) boxes.push(box);
   }
   return { matched: matches.length, boxes };
 }
 
-// Every requested mask must contribute at least one usable box, or the capture is refused.
-async function maskBoxesFor(page, selectors) {
+// Every requested mask must contribute at least one on-screen box, or the capture is refused.
+async function maskBoxesFor(page, selectors, view) {
   if (!Array.isArray(selectors)) throw new Error('mask must be an array of selectors.');
   const all = [];
   for (const [index, selector] of selectors.entries()) {
-    const { matched, boxes } = await usableBoxes(page, selector);
+    const { matched, boxes } = await usableBoxes(page, selector, view);
     if (boxes.length === 0) {
       const why = matched === 0 ? 'matched nothing' : 'has no usable box';
       throw new Error(`Screenshot refused: mask ${String(index)} ${why}.`);
@@ -74,8 +91,8 @@ async function refuseIfPresent(page, selectors) {
 export async function screenshot(ctx, step) {
   const file = outputPath(ctx.outDir, 'screenshots', step.name, '.png');
   await refuseIfPresent(ctx.page, step.refuseIf ?? []);
-  const boxes = await maskBoxesFor(ctx.page, step.mask ?? []);
   const view = await ctx.page.evaluate(readView);
+  const boxes = await maskBoxesFor(ctx.page, step.mask ?? [], view);
   refuseSecretView(view.href, boxes);
   const { data } = await ctx.cdp.send('Page.captureScreenshot', { format: 'png' });
   // The fragment can change while the capture runs, so it is read again before writing.
