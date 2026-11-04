@@ -73,7 +73,7 @@ export default defineConfig({
         'apps/*/src/**',
         'packages/*/src/**',
         'scripts/lib/**',
-        'research/excalidraw/lib/{guard,metrics,sanitise,server}.mjs',
+        'research/excalidraw/lib/{guard,metrics,png,sanitise,server}.mjs',
       ],
       // Process entry points only wire dependencies together; behaviour lives in tested modules.
       exclude: ['apps/collab/src/main.ts', 'apps/web/src/main.tsx'],
