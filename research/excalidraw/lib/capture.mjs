@@ -111,7 +111,7 @@ async function surfaceBoxes(page, view) {
 
 // A room or link value in the URL may be on screen (share dialog, link fields, QR code), so a
 // capture then needs masks, and they must cover every element that may show the value.
-async function refuseSecretView(page, view, masks) {
+async function refuseSecretView(page, view, masks, when = '') {
   if (masks.length === 0) {
     throw new Error('Screenshot refused: the URL fragment holds a collaboration value.');
   }
@@ -119,7 +119,7 @@ async function refuseSecretView(page, view, masks) {
   if (open.length > 0) {
     const count = String(open.length);
     throw new Error(
-      `Screenshot refused: ${count} element(s) that may show the collaboration value are not masked.`,
+      `Screenshot refused: ${count} element(s) that may show the collaboration value are not masked${when}.`,
     );
   }
 }
@@ -145,6 +145,9 @@ export async function screenshot(ctx, step) {
   if (!secret && hasSecretFragment((await ctx.page.evaluate(readView)).href)) {
     throw new Error('Screenshot refused: the URL gained a collaboration value during the capture.');
   }
+  // Content can also appear while the capture runs (a QR code rendered late), so a room view's
+  // surfaces are measured again against the same masks before anything is written.
+  if (secret) await refuseSecretView(ctx.page, view, boxes, ' after the capture');
   let bytes = Buffer.from(data, 'base64');
   const scale = bytes.readUInt32BE(16) / view.cssWidth;
   if (boxes.length > 0) bytes = encodePng(paintBoxes(decodePng(bytes), boxes, scale));

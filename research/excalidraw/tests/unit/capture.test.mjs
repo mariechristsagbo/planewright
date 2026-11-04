@@ -28,9 +28,11 @@ const matchesOf = (list) => (list ?? []).map((box) => ({ boundingBox: async () =
 function stubCtx({ hrefs = [CLEAN_HREF], boxes = {}, present = {}, text = [] } = {}) {
   let reads = 0;
   const captures = [];
+  // A box list may be a function of the number of captures taken, for content that appears late.
+  const listOf = (value) => (typeof value === 'function' ? value(captures.length) : value);
   const page = {
     locator: (selector) => ({
-      all: async () => matchesOf(boxes[selector]),
+      all: async () => matchesOf(listOf(boxes[selector])),
       count: async () => present[selector] ?? 0,
     }),
     getByText: (pattern) => ({
@@ -183,6 +185,19 @@ describe('masks must cover what may show the room value', () => {
     );
     expect(captures).toEqual([]);
     expect(existsSync(shotFile('uncovered'))).toBe(false);
+  });
+
+  it.each([
+    ['a dialog image (a QR code)', '[role=dialog] img'],
+    ['a dialog input', '[role=dialog] input'],
+  ])('refuses, and writes nothing, when %s appears during the capture', async (_l, selector) => {
+    const late = (shots) => (shots > 0 ? [{ x: 2, y: 2, width: 2, height: 2 }] : []);
+    const { ctx, captures } = room({ boxes: { '.masks': [BOX], [selector]: late } });
+    await expect(screenshot(ctx, { name: 'late-surface', mask: ['.masks'] })).rejects.toThrow(
+      /1 element\(s\) that may show the collaboration value are not masked after the capture/u,
+    );
+    expect(captures).toEqual(['Page.captureScreenshot']);
+    expect(existsSync(shotFile('late-surface'))).toBe(false);
   });
 
   it('ignores off-screen elements, which the capture cannot show', async () => {
