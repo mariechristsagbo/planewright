@@ -43,17 +43,62 @@ const matrixRows = () =>
     );
 
 const ids = (text, prefix) => new Set(text.match(new RegExp(`\\b${prefix}-\\d\\d\\b`, 'gu')));
+// The entry IDs a text names, with runs such as "B-10 to B-12" expanded.
+function entriesNamed(text) {
+  const named = new Set(text.match(/\bB-\d\da?\b/gu));
+  for (const [, from, to] of text.matchAll(/\bB-(\d\d) to B-(\d\d)\b/gu)) {
+    for (let n = Number(from); n <= Number(to); n += 1)
+      named.add(`B-${String(n).padStart(2, '0')}`);
+  }
+  return named;
+}
+// Top-level field bullets of an entry, each with its text up to the next field bullet.
+const fieldsOf = (entry) =>
+  entry
+    .split(/\n- \*\*/u)
+    .slice(1)
+    .map((chunk) => {
+      const at = chunk.indexOf(':**');
+      return { name: chunk.slice(0, at), content: chunk.slice(at + 3).trim() };
+    })
+    .filter((field) => FIELDS.includes(field.name));
 const section = (text, heading) => text.split(heading)[1].split(/^## /mu)[0];
 
 describe('behaviour entries', () => {
-  it('give every entry the eleven issue #1 fields, each with content', () => {
+  it('give every entry the eleven issue #1 fields once each, in order, each with content', () => {
     const entries = behaviourEntries();
     expect(entries.length).toBeGreaterThanOrEqual(37);
     for (const entry of entries) {
-      for (const field of FIELDS) {
-        expect(entry, `${entry.slice(0, 5)} ${field}`).toMatch(
-          new RegExp(`^- \\*\\*${field.replace('/', '\\/')}:\\*\\*\\s+\\S`, 'mu'),
-        );
+      const fields = fieldsOf(entry);
+      expect(
+        fields.map((f) => f.name),
+        entry.slice(0, 5),
+      ).toEqual(FIELDS);
+      for (const { name, content } of fields) {
+        expect(content.length, `${entry.slice(0, 5)} ${name}`).toBeGreaterThan(3);
+      }
+    }
+  });
+
+  it('give a reason for every "not applicable" dimension', () => {
+    for (const entry of behaviourEntries()) {
+      for (const { name, content } of fieldsOf(entry)) {
+        if (!/not applicable/iu.test(content)) continue;
+        expect(content, `${entry.slice(0, 5)} ${name}`).toMatch(/not applicable \([^)]{8,}\)/iu);
+      }
+    }
+  });
+
+  it('cite, for every unobserved undo dimension, rows that plan undo and are listed in R-52', () => {
+    const rows = new Map(matrixRows().map((row) => [row[0], row]));
+    const listed = entriesNamed(rows.get('R-52').join(' '));
+    for (const entry of behaviourEntries()) {
+      const id = entry.match(/^B-\d\da?/u)[0];
+      const undo = fieldsOf(entry).find((f) => f.name === 'Undo/redo').content;
+      if (!undo.includes('Not observed')) continue;
+      expect(listed.has(id), `R-52 lists ${id}`).toBe(true);
+      for (const ref of ids(undo, 'R')) {
+        expect(`${rows.get(ref)[6]} ${rows.get(ref)[7]}`, `${id} cites ${ref}`).toMatch(/undo/iu);
       }
     }
   });
@@ -211,7 +256,9 @@ describe('cited geometry matches the committed evidence', () => {
     }
     expect(flat(doc('behavior-analysis.md'))).toContain('Pointer anchoring is not established');
   });
+});
 
+describe('cited network counts match the committed evidence', () => {
   it('service-worker and source-map counts', () => {
     const count = (session, test) =>
       evidence('sessions.json')
@@ -220,11 +267,20 @@ describe('cited geometry matches the committed evidence', () => {
         .reduce((sum, e) => sum + e.count, 0);
     const origin = (sw) => (e) =>
       e.origin === 'https://excalidraw.com' && e.fromServiceWorker === sw;
-    for (const s of ['s2-desktop-fresh', 's3-mobile', 's6-desktop-fresh', 's7-mobile-fresh']) {
-      expect(count(s, origin(false)), s).toBe(9);
-    }
-    expect(count('s6-desktop-fresh', origin(true))).toBe(79);
-    expect(count('s1-desktop', origin(true))).toBe(26);
+    const fresh = evidence('sessions.json')
+      .sessions.map((s) => s.session)
+      .filter((s) => !s.startsWith('s1'));
+    expect(fresh).toHaveLength(6);
+    const network = new Set(fresh.map((s) => count(s, origin(false))));
+    expect(network.size, 'one count for each of s2–s7').toBe(1);
+    const sw = count('s6-desktop-fresh', origin(true));
+    const s1 = count('s1-desktop', origin(true));
+    expect(count('s1-desktop', origin(false))).toBe(0);
+    const text = flat(doc('network-analysis.md'));
+    expect(text).toContain(
+      `${[...network][0]} requests with fromServiceWorker: false in each of s2–s7`,
+    );
+    expect(text).toContain(`${sw} true in s6; all ${s1} of s1's requests to this origin`);
     for (const s of evidence('sessions.json').sessions) {
       expect(count(s.session, (e) => (e.path ?? '').endsWith('.map'))).toBe(0);
     }
