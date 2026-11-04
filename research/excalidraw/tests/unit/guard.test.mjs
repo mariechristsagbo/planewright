@@ -127,6 +127,14 @@ describe('names and paths', () => {
     expect(() => safeDownloadName('../x', 'a.png')).toThrow(/Invalid/u);
   });
 
+  it('redacts room values and token shapes before they reach a file name', () => {
+    const id = 'a1B2'.repeat(5);
+    expect(safeDownloadName('dl', `room=${id},${'k'.repeat(22)}.json`)).toBe('dl-room_redacted_');
+    expect(safeDownloadName('dl', `scene-room%253D${id}.png`)).not.toContain(id.slice(0, 8));
+    const token = `ghp_${'A'.repeat(36)}`;
+    expect(safeDownloadName('dl', `${token}.txt`)).toBe('dl-redacted_github-token_.txt');
+  });
+
   it.each([
     ['a long name', 'x'.repeat(200)],
     ['dot runs', 'scene..excalidraw'],

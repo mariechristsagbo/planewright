@@ -45,12 +45,13 @@ export function outputPath(outDir, sub, name, extension) {
 
 /**
  * Builds a safe download file name from our own prefix and a server-suggested name. The result
- * always passes safeName: no traversal, no leading dot, at most 80 characters.
+ * always passes safeName: no traversal, no leading dot, at most 80 characters. Room and link
+ * values and other secret shapes are redacted first, so they never reach a file name on disk.
  */
 export function safeDownloadName(prefix, suggested) {
   const head = safeName(prefix, 'download name');
   const room = SAFE_NAME_MAX - head.length - 1;
-  const cleaned = String(suggested)
+  const cleaned = redactSecrets(String(suggested))
     .replace(/[^A-Za-z0-9._-]+/gu, '_')
     .replace(/\.{2,}/gu, '.')
     .replace(/^[._-]+/u, '')

@@ -1,7 +1,7 @@
 // Exercises step handlers and probes at their file and navigation boundaries with stub pages:
 // no browser is started and no website is contacted.
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
@@ -42,10 +42,13 @@ describe('download', () => {
     expect(readFileSync(file, 'utf8')).toBe('first');
   });
 
-  it('redacts a room value in the suggested name', async () => {
+  it('redacts a room value in the suggested name and in the name on disk', async () => {
     const ctx = downloadCtx('x', `room=${ROOM}.json`);
     const result = await handlers.download(ctx, { name: 'dl2', trigger: [] });
     expect(result.suggestedFilename).toBe('room=<redacted>');
+    const names = readdirSync(join(outDir, 'downloads'));
+    expect(names).toContain('dl2-room_redacted_');
+    expect(names.join(' ')).not.toContain(ROOM);
   });
 
   it('removes a partial file when the stream fails, and only a file it created', async () => {
