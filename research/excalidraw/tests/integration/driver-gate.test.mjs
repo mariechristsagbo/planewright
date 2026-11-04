@@ -8,6 +8,7 @@ import { afterAll, describe, expect, it } from 'vitest';
 
 import { TOKEN_HEADER } from '../../lib/guard.mjs';
 import { createDriverServer, createGate, createRunner, listenLoopback } from '../../lib/server.mjs';
+import { openSessionState } from '../../lib/session-state.mjs';
 
 const dir = mkdtempSync(join(tmpdir(), 'pw-gate-test-'));
 const servers = [];
@@ -28,7 +29,7 @@ const scenarios = new Map([
   scenarioFile('final-b', { runLast: true, steps: ECHO }),
 ]);
 
-async function startDriver() {
+async function startDriver(state) {
   let release = () => undefined;
   const gateOpen = new Promise((resolve) => {
     release = resolve;
@@ -45,6 +46,7 @@ async function startDriver() {
     port: () => port,
     scenarios,
     onQuit: () => undefined,
+    state,
   });
   servers.push(server);
   port = await listenLoopback(server, 0);
@@ -81,6 +83,17 @@ describe('runLast lock', () => {
     expect((await post({ steps: ECHO })).status).toBe(409);
     expect((await post({ scenario: 'final-a' })).body.error).toMatch(/at most once/u);
     expect((await post({ scenario: 'final-b' })).status).toBe(200);
+  });
+
+  it('keeps the lock across a driver restart on the same session directory', async () => {
+    const file = join(dir, 'driver-state.json');
+    const before = await startDriver(openSessionState(file));
+    expect((await before.post({ scenario: 'final-a' })).status).toBe(200);
+    const after = await startDriver(openSessionState(file));
+    expect((await after.post({ scenario: 'plain' })).body.error).toMatch(/only runLast follow/u);
+    expect((await after.post({ steps: ECHO })).status).toBe(409);
+    expect((await after.post({ scenario: 'final-a' })).body.error).toMatch(/at most once/u);
+    expect((await after.post({ scenario: 'final-b' })).status).toBe(200);
   });
 
   it('ignores runLast on inline batches, which can neither lock nor pass the lock', () => {

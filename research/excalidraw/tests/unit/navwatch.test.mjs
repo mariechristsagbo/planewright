@@ -4,6 +4,7 @@ import { EventEmitter } from 'node:events';
 import { describe, expect, it, vi } from 'vitest';
 
 import { watchNavigation } from '../../lib/navwatch.mjs';
+import { memoryState } from '../../lib/session-state.mjs';
 
 function stubPage() {
   const page = new EventEmitter();
@@ -48,6 +49,27 @@ describe('watchNavigation', () => {
       expect(halted()).not.toBeNull();
     },
   );
+
+  it('halts at once when attached to a page already off the allowlist', () => {
+    const { page, asMain } = stubPage();
+    asMain('https://elsewhere.example/landing');
+    const record = vi.fn();
+    const halted = watchNavigation(page, record);
+    expect(halted()).toBe('the page was off the allowlist when attached.');
+    expect(record).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'navigation-halt', origin: 'https://elsewhere.example' }),
+    );
+  });
+
+  it('keeps the halt in the session state, so a restarted watcher stays halted', () => {
+    const state = memoryState();
+    const first = stubPage();
+    watchNavigation(first.page, undefined, state);
+    first.page.emit('popup', { url: () => 'about:blank', close: async () => undefined });
+    const restarted = stubPage();
+    const halted = watchNavigation(restarted.page, undefined, state);
+    expect(halted()).toBe('the page opened a popup.');
+  });
 
   it('halts on any popup, closes it, and keeps the first reason', async () => {
     const { page, asMain } = stubPage();

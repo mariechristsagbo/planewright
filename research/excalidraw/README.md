@@ -5,34 +5,35 @@ unauthenticated guest. It never logs in, fetches source maps, or installs refere
 it never writes raw third-party content into this repository. See
 [the methodology](../../docs/reverse-engineering/methodology.md) for the evidence rules.
 
-| File                   | Purpose                                                                                                                                                                                                     |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `browser.sh`           | Starts/stops a disposable Chromium in a non-root container on a per-run network; DevTools published on `127.0.0.1` only. A failed start removes only what it created; stop removes only labelled resources. |
-| `isolation-check.sh`   | Proves the DevTools isolation on `about:blank`: host access works, other containers cannot connect. A probe that cannot run is a FAIL.                                                                      |
-| `driver.mjs`           | Loopback-only interaction driver (Playwright over CDP); appends every step, including failures, to `timeline.jsonl`.                                                                                        |
-| `run.mjs`              | Sends a scenario name or an inline step batch; `--quit` stops the driver.                                                                                                                                   |
-| `selftest.sh`          | End-to-end driver self-test on `about:blank` and `fixtures/selftest.html`; contacts no website.                                                                                                             |
-| `lib/server.mjs`       | HTTP wiring, request checks, body cap, batch admission (one at a time, `runLast` lock), step runner and token file.                                                                                         |
-| `lib/guard.mjs`        | Request, name, path, port and navigation rules.                                                                                                                                                             |
-| `lib/steps.mjs`        | Emulation with read-back assertions, navigation, fixtures, downloads, dialogs, ARIA.                                                                                                                        |
-| `lib/capture.mjs`      | CDP screenshots with masks, and the refusal rules for captures.                                                                                                                                             |
-| `lib/files.mjs`        | Exclusive-create writes: an output name is never overwritten.                                                                                                                                               |
-| `lib/navwatch.mjs`     | Halts the session when the page itself navigates off the allowlist or opens a popup.                                                                                                                        |
-| `lib/probe-outcome.sh` | Classifies isolation probe runs; a probe error never counts as isolation.                                                                                                                                   |
-| `lib/input.mjs`        | Pointer, keyboard, wheel and touch input.                                                                                                                                                                   |
-| `lib/metrics.mjs`      | Layout metric read-back and the fail-fast comparison.                                                                                                                                                       |
-| `lib/sanitise.mjs`     | URL shapes, query stripping, secret-shape counting and redaction.                                                                                                                                           |
-| `lib/png.mjs`          | Minimal PNG codec used to paint masks and to verify them.                                                                                                                                                   |
-| `lib/probes.mjs`       | Reads of session-created state: storage key inventory, scene and appState shape, clipboard shape, URL fragment shape.                                                                                       |
-| `lib/netlog.mjs`       | Metadata-only network log (no headers, cookies, bodies or query values).                                                                                                                                    |
-| `scenarios/*.json`     | Replayable step batches; coordinates assume the stated viewport and default zoom.                                                                                                                           |
-| `check-masks.mjs`      | Verifies, without displaying images, that every masked region of every masked capture is painted.                                                                                                           |
-| `secret-scan.mjs`      | Scans trees or stdin for secret-shaped values and prints only file names, shape names and counts.                                                                                                           |
-| `timeline-summary.mjs` | Reduces labelled probes to geometry/selection/zoom rows.                                                                                                                                                    |
-| `rea-extract.mjs`      | Verifies saved REA screenshot Evidence (digest, bytes, PNG size) or reduces page inspections to names and keys.                                                                                             |
-| `api-surface.mjs`      | Counts standard web-platform identifiers in REA-exported shipped scripts; prints counts only.                                                                                                               |
-| `build-evidence.mjs`   | Builds the committed, sanitized evidence index from external session directories.                                                                                                                           |
-| `rea-windows.mjs`      | Summarises each saved REA observation window (bounds, what the tool retains, event counts) against the driver steps that started inside it; pure logic in `lib/windows.mjs`.                                |
+| File                    | Purpose                                                                                                                                                                                                     |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `browser.sh`            | Starts/stops a disposable Chromium in a non-root container on a per-run network; DevTools published on `127.0.0.1` only. A failed start removes only what it created; stop removes only labelled resources. |
+| `isolation-check.sh`    | Proves the DevTools isolation on `about:blank`: host access works, other containers cannot connect. A probe that cannot run is a FAIL.                                                                      |
+| `driver.mjs`            | Loopback-only interaction driver (Playwright over CDP); appends every step, including failures, to `timeline.jsonl`.                                                                                        |
+| `run.mjs`               | Sends a scenario name or an inline step batch; `--quit` stops the driver.                                                                                                                                   |
+| `selftest.sh`           | End-to-end driver self-test on `about:blank` and `fixtures/selftest.html`; contacts no website.                                                                                                             |
+| `lib/server.mjs`        | HTTP wiring, request checks, body cap, batch admission (one at a time, `runLast` lock), step runner and token file.                                                                                         |
+| `lib/guard.mjs`         | Request, name, path, port and navigation rules.                                                                                                                                                             |
+| `lib/steps.mjs`         | Emulation with read-back assertions, navigation, fixtures, downloads, dialogs, ARIA.                                                                                                                        |
+| `lib/capture.mjs`       | CDP screenshots with masks, and the refusal rules for captures.                                                                                                                                             |
+| `lib/files.mjs`         | Exclusive-create writes: an output name is never overwritten.                                                                                                                                               |
+| `lib/session-state.mjs` | Keeps the `runLast` lock and the halt reason in `$OUT/driver-state.json`, so a driver restart keeps both.                                                                                                   |
+| `lib/navwatch.mjs`      | Halts the session when the page itself navigates off the allowlist or opens a popup.                                                                                                                        |
+| `lib/probe-outcome.sh`  | Classifies isolation probe runs; a probe error never counts as isolation.                                                                                                                                   |
+| `lib/input.mjs`         | Pointer, keyboard, wheel and touch input.                                                                                                                                                                   |
+| `lib/metrics.mjs`       | Layout metric read-back and the fail-fast comparison.                                                                                                                                                       |
+| `lib/sanitise.mjs`      | URL shapes, query stripping, secret-shape counting and redaction.                                                                                                                                           |
+| `lib/png.mjs`           | Minimal PNG codec used to paint masks and to verify them.                                                                                                                                                   |
+| `lib/probes.mjs`        | Reads of session-created state: storage key inventory, scene and appState shape, clipboard shape, URL fragment shape.                                                                                       |
+| `lib/netlog.mjs`        | Metadata-only network log (no headers, cookies, bodies or query values).                                                                                                                                    |
+| `scenarios/*.json`      | Replayable step batches; coordinates assume the stated viewport and default zoom.                                                                                                                           |
+| `check-masks.mjs`       | Verifies, without displaying images, that every masked region of every masked capture is painted.                                                                                                           |
+| `secret-scan.mjs`       | Scans trees or stdin for secret-shaped values and prints only file names, shape names and counts.                                                                                                           |
+| `timeline-summary.mjs`  | Reduces labelled probes to geometry/selection/zoom rows.                                                                                                                                                    |
+| `rea-extract.mjs`       | Verifies saved REA screenshot Evidence (digest, bytes, PNG size) or reduces page inspections to names and keys.                                                                                             |
+| `api-surface.mjs`       | Counts standard web-platform identifiers in REA-exported shipped scripts; prints counts only.                                                                                                               |
+| `build-evidence.mjs`    | Builds the committed, sanitized evidence index from external session directories.                                                                                                                           |
+| `rea-windows.mjs`       | Summarises each saved REA observation window (bounds, what the tool retains, event counts) against the driver steps that started inside it; pure logic in `lib/windows.mjs`.                                |
 
 ## Checks that contact no website
 
@@ -78,12 +79,15 @@ the background just before a driver batch.
   `scenarios/` listing it read at start-up, or an inline batch. One batch runs at a time; a batch
   sent while another runs gets `409` and runs nothing. Scenario files marked `runLast` (`08`,
   `08b`) lock the session: once one starts, only the other unrun `runLast` scenario and `--quit`
-  are accepted, and each runs at most once. Inline batches cannot set or pass the lock.
+  are accepted, and each runs at most once. Inline batches cannot set or pass the lock. The lock
+  and any halt reason are kept in `$OUT/driver-state.json`, so a driver restarted on the same
+  `--out` keeps both; a malformed state file stops the driver.
 - **Navigation.** `goto` accepts only `about:blank` and `https:` URLs on `https://excalidraw.com`
   without credentials; `blob:` URLs are refused even though they report that origin. A `goto`
   that lands off the allowlist after redirects is fatal. Navigations the page starts itself are
   watched: when the main frame leaves the allowlist or a popup opens, the popup is closed and every
-  later step fails fatally (`Session halted: …`). Such a request has already been sent by then;
+  later step fails fatally (`Session halted: …`). A driver that attaches to a page already off
+  the allowlist starts halted. Such a request has already been sent by then;
   see [limitations](../../docs/reverse-engineering/limitations.md#tooling-limits). Self-authored
   pages load through the `fixture` step from `$OUT/../fixtures`.
 - **Names.** Output names (`screenshot.name`, `aria.save`, `download.name`) and fixture names

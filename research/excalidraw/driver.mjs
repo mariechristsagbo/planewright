@@ -5,6 +5,7 @@
 // batches over a loopback-only HTTP endpoint and appends every step, including failed ones, to
 // a timeline. A request body is an inline batch ({ steps: [...] }) or { scenario: "<name>" }.
 // One batch runs at a time, and scenarios marked `runLast` lock the session (lib/server.mjs).
+// The lock and any halt reason are kept in <out>/driver-state.json, so a restart keeps both.
 // Every request must be a POST to 127.0.0.1:<port> carrying the per-run token from
 // <out>/driver.token in the x-research-token header; see lib/guard.mjs for the full policy.
 //
@@ -21,6 +22,7 @@ import { attachNetlog } from './lib/netlog.mjs';
 import { watchNavigation } from './lib/navwatch.mjs';
 import { probes } from './lib/probes.mjs';
 import { createDriverServer, createRunner, listenLoopback, writeToken } from './lib/server.mjs';
+import { openSessionState } from './lib/session-state.mjs';
 import { handlers } from './lib/steps.mjs';
 
 // A Map lookup keeps step names from reaching inherited object properties.
@@ -66,10 +68,12 @@ const opts = options();
 for (const sub of ['screenshots', 'downloads', 'aria']) {
   mkdirSync(join(opts.out, sub), { recursive: true });
 }
+// The runLast lock and the halt reason survive a driver restart; see lib/session-state.mjs.
+const state = openSessionState(join(opts.out, 'driver-state.json'));
 const session = await connect(opts.cdp);
 const netlog = attachNetlog(session.page, opts.out);
 // Navigations the page starts itself halt the session; see lib/navwatch.mjs.
-const halted = watchNavigation(session.page, netlog);
+const halted = watchNavigation(session.page, netlog, state);
 const ctx = createRunner({
   steps: STEPS,
   timelineFile: join(opts.out, 'timeline.jsonl'),
@@ -81,6 +85,7 @@ const server = createDriverServer({
   token,
   port: () => opts.port,
   scenarios: SCENARIOS,
+  state,
   onQuit: () => {
     server.close();
     // Disconnect only; the browser belongs to the disposable container and is stopped separately.

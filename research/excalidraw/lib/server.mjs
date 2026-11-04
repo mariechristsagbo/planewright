@@ -7,6 +7,7 @@ import { createServer } from 'node:http';
 
 import { MAX_BODY_BYTES, checkRequest, sanitiseError } from './guard.mjs';
 import { FatalStepError } from './metrics.mjs';
+import { memoryState } from './session-state.mjs';
 
 const LOOPBACK = '127.0.0.1';
 
@@ -98,18 +99,21 @@ export function toBatch(body, scenarios) {
  * refused, so two batches never interleave on the page. A named scenario whose file sets
  * `runLast` (the collaboration scenarios 08 and 08b) closes the session to everything else: once
  * one has started, only other `runLast` scenarios that have not run yet are admitted. The flag is
- * read from scenario files only, never from inline batches. Returns a refusal reason or null.
+ * read from scenario files only, never from inline batches. The started names live in `state`
+ * (see session-state.mjs), so a restarted driver keeps the lock. Returns a refusal reason or null.
  */
-export function createGate() {
+export function createGate(state = memoryState()) {
   let busy = false;
-  const finished = new Set();
   return {
     admit(name, batch) {
       if (busy) return 'Another batch is running.';
+      const started = state.runLastStarted();
       const last = name !== null && batch?.runLast === true;
-      if (finished.size > 0 && !last) return 'A runLast scenario has started; only runLast follow.';
-      if (last && finished.has(name)) return 'A runLast scenario runs at most once per session.';
-      if (last) finished.add(name);
+      if (started.length > 0 && !last)
+        return 'A runLast scenario has started; only runLast follow.';
+      if (last && started.includes(name))
+        return 'A runLast scenario runs at most once per session.';
+      if (last) state.startRunLast(name);
       busy = true;
       return null;
     },
@@ -132,11 +136,11 @@ async function handleRun(request, { ctx, scenarios, gate }) {
 
 /**
  * Creates the loopback HTTP server. Requests are checked before any body byte is read; /quit
- * calls `onQuit` once. Batches pass the admission gate (409 when refused). The caller chooses
- * when to listen.
+ * calls `onQuit` once. Batches pass the admission gate (409 when refused), which keeps its
+ * runLast record in `state`. The caller chooses when to listen.
  */
-export function createDriverServer({ ctx, token, port, scenarios, onQuit }) {
-  const gate = createGate();
+export function createDriverServer({ ctx, token, port, scenarios, onQuit, state }) {
+  const gate = createGate(state);
   return createServer(async (request, response) => {
     const reply = (status, body) => {
       response.writeHead(status, { 'content-type': 'application/json' });
