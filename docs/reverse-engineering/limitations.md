@@ -51,6 +51,16 @@
   a validated Evidence bundle.
 - The driver's state probes read localStorage, which lags live state by a few hundred
   milliseconds (B-30). Every probe waits 700–800 ms after the action unless it measures timing.
+- **Page-started navigation is detected, not blocked.** The driver does not intercept requests,
+  because interception changes caching and service-worker behaviour. A navigation the page starts
+  itself (link, redirect, script, popup) has already been requested when the navigation watcher
+  halts the session. A failed navigation that leaves Chromium on its error page halts it too.
+- **Masks are measured just before the capture.** Content that moves between the box
+  measurement and `Page.captureScreenshot` can leave the painted boxes. `check-masks.mjs` verifies
+  the recorded boxes only, not where the content went.
+- **Changed scripts not rerun live.** `browser.sh`, `isolation-check.sh` and the driver changed in
+  the third-review remediation. Stub-based tests cover the changed boundaries, but `selftest.sh`
+  and `isolation-check.sh` have not been run against a real container since.
 - **Re-attaching the driver drops emulation.** Restarting the driver replaces its CDP session,
   which removes that session's emulation override (seen in s6). Scenario `00c` restores it.
 - **Native dialogs.** Native-dialog handling through Playwright over CDP was unreliable in the s1

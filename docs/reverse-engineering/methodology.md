@@ -115,6 +115,21 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
   - Screenshots of the share dialog paint every dialog input and image before writing, and
     `check-masks.mjs` verifies the painted pixels.
   - A screenshot is refused while a dialog that may show the link is open.
+- **Controls added after s7** (remediation of the third review; no live session has run with
+  them yet, and they are covered by stub-based unit and integration tests):
+  - Any screenshot is refused while the live URL fragment holds a room or `json` link value,
+    raw or percent-encoded, checked before and after the capture, unless every requested mask
+    produced a visible box. A mask with no usable box always refuses the capture, and
+    `check-masks.mjs` fails a masked capture without boxes.
+  - Redaction covers `room%3D` and `json=` forms, the clipboard text is redacted before its
+    preview is cut, and non-identifier URL keys are never stored.
+  - One batch runs at a time, and the `runLast` collaboration scenarios lock the session.
+  - `blob:` navigation is refused, and page-started navigation off the allowlist halts the
+    session.
+  - Outputs are created with `O_EXCL`; downloads can no longer overwrite.
+  - The s6 timeline was rechecked by step name and count only: both masked collaboration
+    captures recorded 2 masks and 7 boxes, the in-session capture was refused, and no capture
+    followed. The new rules would not have changed which s6 captures were written.
   - No REA call runs during a collaboration window.
   - `secret-scan.mjs` scans trees by shape and prints only counts.
 
