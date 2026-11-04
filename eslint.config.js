@@ -60,6 +60,13 @@ export default defineConfig(
     languageOptions: { globals: globals.node },
   },
   {
+    // Research drivers run in Node but pass functions to page.evaluate, which execute in the
+    // observed browser page.
+    name: 'planewright/research',
+    files: ['research/**/*.mjs'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+  },
+  {
     name: 'planewright/web',
     files: ['apps/web/src/**/*.{ts,tsx}', 'apps/web/tests/unit/**/*.{ts,tsx}'],
     extends: [reactHooks.configs.flat['recommended-latest'], reactRefresh.configs.vite],
