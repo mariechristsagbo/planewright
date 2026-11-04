@@ -6,6 +6,7 @@ import { appendFileSync, chmodSync, readFileSync, rmSync, writeFileSync } from '
 import { createServer } from 'node:http';
 
 import { MAX_BODY_BYTES, checkRequest, sanitiseError } from './guard.mjs';
+import { FatalStepError } from './metrics.mjs';
 
 const LOOPBACK = '127.0.0.1';
 
@@ -15,7 +16,8 @@ const stepName = (step) =>
 /**
  * Creates the step runner. Every step, successful or not, is appended to the timeline; failures
  * keep only a sanitised one-line message. `steps` is a Map so names never reach inherited
- * object properties.
+ * object properties. When `base.halted()` returns a reason (see navwatch.mjs), every step fails
+ * fatally before its handler runs.
  */
 export function createRunner({ steps, timelineFile, base }) {
   const ctx = { ...base };
@@ -23,6 +25,8 @@ export function createRunner({ steps, timelineFile, base }) {
     const started = new Date().toISOString();
     const record = step !== null && typeof step === 'object' ? step : { invalid: typeof step };
     try {
+      const halted = ctx.halted?.();
+      if (halted) throw new FatalStepError(`Session halted: ${halted}`);
       const handler = steps.get(stepName(step) ?? '');
       if (typeof handler !== 'function') throw new Error('Unknown step name.');
       const result = await handler(ctx, step);

@@ -6,6 +6,7 @@ import {
   checkNavigation,
   checkRequest,
   fixturePath,
+  isAllowedNavigation,
   outputPath,
   parsePort,
   safeDownloadName,
@@ -169,10 +170,24 @@ describe('checkNavigation', () => {
     'file:///etc/passwd',
     'javascript:alert(1)',
     'data:text/html,x',
+    // A blob: URL reports the origin that created it, so the scheme must be checked as well.
+    'blob:https://excalidraw.com/0f8fad5b-d9cb-469f-a165-70867728950e',
+    'blob:null/0f8fad5b-d9cb-469f-a165-70867728950e',
+    'about:blank#room=x',
     'not a url',
     42,
   ])('refuses %s', (url) => {
     expect(() => checkNavigation(url)).toThrow(/Navigation refused/u);
+  });
+});
+
+describe('isAllowedNavigation', () => {
+  it('applies the same allowlist without throwing', () => {
+    expect(isAllowedNavigation('https://excalidraw.com/#x')).toBe(true);
+    expect(isAllowedNavigation('about:blank')).toBe(true);
+    expect(isAllowedNavigation('blob:https://excalidraw.com/0f8fad5b')).toBe(false);
+    expect(isAllowedNavigation('chrome-error://chromewebdata/')).toBe(false);
+    expect(isAllowedNavigation(undefined)).toBe(false);
   });
 });
 

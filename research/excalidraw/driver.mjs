@@ -17,6 +17,7 @@ import { chromium } from 'playwright-core';
 
 import { parsePort } from './lib/guard.mjs';
 import { attachNetlog } from './lib/netlog.mjs';
+import { watchNavigation } from './lib/navwatch.mjs';
 import { probes } from './lib/probes.mjs';
 import { createDriverServer, createRunner, listenLoopback, writeToken } from './lib/server.mjs';
 import { handlers } from './lib/steps.mjs';
@@ -65,12 +66,14 @@ for (const sub of ['screenshots', 'downloads', 'aria']) {
   mkdirSync(join(opts.out, sub), { recursive: true });
 }
 const session = await connect(opts.cdp);
+const netlog = attachNetlog(session.page, opts.out);
+// Navigations the page starts itself halt the session; see lib/navwatch.mjs.
+const halted = watchNavigation(session.page, netlog);
 const ctx = createRunner({
   steps: STEPS,
   timelineFile: join(opts.out, 'timeline.jsonl'),
-  base: { ...session, outDir: opts.out },
+  base: { ...session, outDir: opts.out, halted },
 });
-attachNetlog(session.page, opts.out);
 const token = writeToken(join(opts.out, 'driver.token'));
 const server = createDriverServer({
   ctx,

@@ -22,6 +22,7 @@ function watchSocket(write, socket) {
   );
 }
 
+/** Attaches the log to a page and returns its writer for other metadata-only events. */
 export function attachNetlog(page, outDir) {
   const file = join(outDir, 'netlog.jsonl');
   const write = (entry) =>
@@ -51,4 +52,5 @@ export function attachNetlog(page, outDir) {
   page.on('framenavigated', (frame) => {
     if (frame === page.mainFrame()) write({ event: 'navigated', ...sanitiseUrl(frame.url()) });
   });
+  return write;
 }

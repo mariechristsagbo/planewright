@@ -9,11 +9,12 @@ import {
   REFERENCE_ORIGIN,
   checkNavigation,
   fixturePath,
+  isAllowedNavigation,
   outputPath,
   safeDownloadName,
 } from './guard.mjs';
 import { inputHandlers, point, sleep } from './input.mjs';
-import { assertMetrics, expectedFromEmulation, readMetrics } from './metrics.mjs';
+import { FatalStepError, assertMetrics, expectedFromEmulation, readMetrics } from './metrics.mjs';
 import { decodePng, encodePng, paintBoxes } from './png.mjs';
 import { redactSecrets } from './sanitise.mjs';
 
@@ -197,6 +198,10 @@ export const handlers = {
   goto: async (ctx, step) => {
     const url = checkNavigation(step.url);
     const response = await ctx.page.goto(url, { waitUntil: step.waitUntil ?? 'load' });
+    // A redirect can end anywhere; landing off the allowlist stops the batch.
+    if (!isAllowedNavigation(ctx.page.url())) {
+      throw new FatalStepError('Navigation left the allowlist after goto.');
+    }
     return { status: response?.status() ?? null };
   },
   fixture,

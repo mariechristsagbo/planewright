@@ -69,6 +69,7 @@ export function parsePort(value, label = 'port') {
 /**
  * Navigation allowlist: about:blank, or an https URL on the reference origin without
  * credentials. Self-authored fixtures are loaded with the separate `fixture` step instead.
+ * The scheme is checked as well as the origin: a `blob:` URL reports the origin that created it.
  */
 export function checkNavigation(raw) {
   if (raw === 'about:blank') return raw;
@@ -78,10 +79,21 @@ export function checkNavigation(raw) {
   } catch {
     throw new Error('Navigation refused: not a URL.');
   }
-  if (url.origin !== REFERENCE_ORIGIN || url.username || url.password) {
+  const allowed = url.protocol === 'https:' && url.origin === REFERENCE_ORIGIN;
+  if (!allowed || url.username || url.password) {
     throw new Error('Navigation refused: only the reference origin and about:blank are allowed.');
   }
   return url.href;
+}
+
+/** The same allowlist as checkNavigation, as a boolean, for navigations the page starts itself. */
+export function isAllowedNavigation(raw) {
+  try {
+    checkNavigation(raw);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 /** Error text for clients and the timeline: first line only, no local paths, bounded length. */
