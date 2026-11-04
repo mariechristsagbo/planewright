@@ -1,4 +1,5 @@
-// Runs browser.sh, isolation-check.sh, lib/probe-outcome.sh and check-masks.mjs against stub
+// Runs browser.sh, isolation-check.sh, lib/probe-outcome.sh, lib/resource-state.sh,
+// lib/selftest-checks.sh and check-masks.mjs against stub
 // `docker`, `curl` and `sleep` commands placed first on PATH. No container or browser is started
 // and no website is contacted; the stubs only print canned answers and log their arguments.
 import { spawnSync } from 'node:child_process';
@@ -41,8 +42,13 @@ exit 0
 `;
 mkdirSync(bin);
 writeFileSync(join(bin, 'docker'), DOCKER, { mode: 0o755 });
-const curl =
-  '#!/usr/bin/env bash\n[[ "${FAKE_CURL:-ok}" == ok ]] || exit 7\necho \'{"Browser": "Stub/1"}\'\n';
+const curl = [
+  '#!/usr/bin/env bash',
+  '[[ -z "${FAKE_CURL_EXIT:-}" ]] || exit "$FAKE_CURL_EXIT"',
+  '[[ "${FAKE_CURL:-ok}" == ok ]] || exit 7',
+  'echo \'{"Browser": "Stub/1"}\'',
+  '',
+].join('\n');
 writeFileSync(join(bin, 'curl'), curl, { mode: 0o755 });
 writeFileSync(join(bin, 'sleep'), '#!/usr/bin/env bash\nexit 0\n', { mode: 0o755 });
 beforeEach(() => writeFileSync(log, ''));
@@ -201,12 +207,73 @@ describe('resource_state', () => {
     );
     expect(run.stdout.trim()).toBe('UNKNOWN');
   });
+});
 
-  it('is what selftest.sh uses for its removal checks', () => {
+describe('selftest.sh checks', () => {
+  // Runs one function of lib/selftest-checks.sh and returns its exit status.
+  const status = (fn, args, env = {}, path = `${bin}:${process.env.PATH}`) =>
+    spawnSync(
+      '/bin/bash',
+      ['-c', `. "${join(HERE, 'lib/selftest-checks.sh')}"; ${fn} "$@"`, '_', ...args],
+      { encoding: 'utf8', env: { PATH: path, FAKE_LOG: log, ...env } },
+    ).status;
+
+  it.each([
+    ['the connection is refused (curl exit 7)', { FAKE_CURL_EXIT: '7' }, 0],
+    ['the driver still answers (curl exit 0)', {}, 1],
+    ['the request times out (curl exit 28)', { FAKE_CURL_EXIT: '28' }, 1],
+    ['curl cannot run (exit 127)', { FAKE_CURL_EXIT: '127' }, 1],
+  ])('driver_stopped passes only when %s', (_label, env, expected) => {
+    expect(status('driver_stopped', ['9353'], env)).toBe(expected);
+  });
+
+  it('driver_stopped fails when there is no curl command at all', () => {
+    const empty = mkdtempSync(join(dir, 'no-curl-'));
+    for (const tool of ['dirname', 'grep']) {
+      writeFileSync(join(empty, tool), `#!/bin/sh\nexec /usr/bin/${tool} "$@"\n`, { mode: 0o755 });
+    }
+    expect(status('driver_stopped', ['9353'], {}, empty)).toBe(1);
+  });
+
+  const aria = (name, text) => {
+    const file = join(dir, `${name}.yml`);
+    if (text !== null) writeFileSync(file, text);
+    return file;
+  };
+  const ROOM_SHAPED = `- textbox: https://x.invalid/#room=${'Z'.repeat(20)},${'Y'.repeat(22)}\n`;
+
+  it.each([
+    ['a redacted file', aria('redacted', '- textbox: https://x.invalid/#room=<redacted>\n'), 0, 0],
+    ['a file with a room value', aria('leaky', ROOM_SHAPED), 1, 1],
+    ['an empty file', aria('empty', ''), 1, 1],
+    ['a missing file', aria('missing', null), 1, 1],
+    ['a file without any room text', aria('plain', '- button "Copy link"\n'), 1, 0],
+  ])('judges %s', (_label, file, redacted, withoutValue) => {
+    expect(status('aria_redacted', [file])).toBe(redacted);
+    expect(status('aria_without_room_value', [file])).toBe(withoutValue);
+  });
+
+  it.each([
+    ['absent from a successful listing', { FAKE_NAMES: 'pw-other' }, 0],
+    ['still listed', { FAKE_NAMES: 'pw-selftest' }, 1],
+    ['unknown because the listing failed', { FAKE_LIST: 'fail' }, 1],
+  ])('resource_removed passes only for a container %s', (_label, env, expected) => {
+    expect(status('resource_removed', ['container', 'pw-selftest'], env)).toBe(expected);
+  });
+
+  it('are the functions selftest.sh uses, with no inline shell checks left', () => {
     const selftest = readFileSync(join(HERE, 'selftest.sh'), 'utf8');
-    expect(selftest).toContain('test "$(resource_state container "$NAME")" = ABSENT');
-    expect(selftest).toContain('test "$(resource_state network "$NAME-net")" = ABSENT');
-    expect(selftest).not.toMatch(/! docker/u);
+    expect(selftest).toContain('. "$HERE/lib/selftest-checks.sh"');
+    for (const call of [
+      'driver_stopped "$DRIVER_PORT"',
+      'aria_redacted "$OUT/aria/selftest-dialog.yml"',
+      'aria_without_room_value "$OUT/aria/selftest-dialog.yml"',
+      'resource_removed container "$NAME"',
+      'resource_removed network "$NAME-net"',
+    ]) {
+      expect(selftest).toContain(call);
+    }
+    expect(selftest).not.toMatch(/bash -c|! docker/u);
   });
 });
 

@@ -11,8 +11,8 @@
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=lib/resource-state.sh
-. "$HERE/lib/resource-state.sh"
+# shellcheck source=lib/selftest-checks.sh
+. "$HERE/lib/selftest-checks.sh"
 CDP_PORT="${1:-9252}"
 DRIVER_PORT="${2:-9353}"
 NAME="pw-selftest"
@@ -69,9 +69,9 @@ check "mobile fixture reads 390x844 at DPR 3 with a matching canvas backing stor
 check "navigation outside the reference origin is refused" \
   test "$(jq -r '[.[4].error, .[5].error] | map(startswith("Navigation refused")) | all' <<<"$mobile")" = true
 check "ARIA snapshot is redacted before it is written" \
-  grep -q 'room=<redacted>' "$OUT/aria/selftest-dialog.yml"
+  aria_redacted "$OUT/aria/selftest-dialog.yml"
 check "no room-shaped value reaches the ARIA file" \
-  bash -c "test -s '$OUT/aria/selftest-dialog.yml' && ! grep -Eq 'room=[A-Za-z0-9_-]{20},' '$OUT/aria/selftest-dialog.yml'"
+  aria_without_room_value "$OUT/aria/selftest-dialog.yml"
 check "masked screenshot is written with 2 masks at device-pixel size (1170 px wide)" \
   test "$(jq -r '[.[7].result.masks, .[7].result.width] | join(",")' <<<"$mobile")" = "2,1170"
 check "a capture leaves DPR 3 and the emulated screen intact" \
@@ -95,14 +95,13 @@ quit="$(curl -s -o /dev/null -w '%{http_code}' -X POST "http://127.0.0.1:${DRIVE
 check "unauthenticated POST /quit is refused (401)" test "$quit" = 401
 run --quit >/dev/null
 sleep 1
-# curl exit 7 means the connection was refused; any other failure (such as no curl) proves nothing.
-check "authenticated quit stops the driver" \
-  bash -c "curl -s -o /dev/null 'http://127.0.0.1:${DRIVER_PORT}/'; test \$? -eq 7"
+# Only a refused connection (curl exit 7) passes; see lib/selftest-checks.sh.
+check "authenticated quit stops the driver" driver_stopped "$DRIVER_PORT"
 
 cleanup
 trap - EXIT
 # A failed docker listing is UNKNOWN, which fails: it can never pass as "removed".
-check "browser container removed" test "$(resource_state container "$NAME")" = ABSENT
-check "browser network removed" test "$(resource_state network "$NAME-net")" = ABSENT
+check "browser container removed" resource_removed container "$NAME"
+check "browser network removed" resource_removed network "$NAME-net"
 echo "failures: ${failures}"
 exit $((failures > 0))
