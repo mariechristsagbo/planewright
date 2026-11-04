@@ -34,6 +34,19 @@ const INTERACTIVE = new Set([
   'option',
 ]);
 
+// The PNG goes next to the input as <name>.png. The input must end in .json, so the PNG can never
+// be the input itself, and an existing PNG is kept: a rerun with the same bytes is accepted, any
+// other content is refused.
+function writePngBeside(input, bytes) {
+  if (!input.endsWith('.json')) throw new Error('The REA result file name must end in .json.');
+  const png = `${input.slice(0, -'.json'.length)}.png`;
+  try {
+    writeFileSync(png, bytes, { flag: 'wx' });
+  } catch (error) {
+    if (error?.code !== 'EEXIST' || !readFileSync(png).equals(bytes)) throw error;
+  }
+}
+
 function screenshot(evidence, input) {
   const { artifact, viewport, captured_at: capturedAt } = evidence.normalized_result;
   const bytes = Buffer.from(artifact.data_base64, 'base64');
@@ -41,8 +54,7 @@ function screenshot(evidence, input) {
   if (sha256 !== artifact.sha256 || bytes.length !== artifact.bytes) {
     throw new Error('Decoded PNG does not match the Evidence digest or byte count.');
   }
-  const png = input.replace(/\.json$/u, '.png');
-  writeFileSync(png, bytes);
+  writePngBeside(input, bytes);
   return {
     kind: 'rea-screenshot',
     evidence_id: evidence.evidence_id,
