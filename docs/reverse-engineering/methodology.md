@@ -31,8 +31,9 @@ Every claim in this directory carries one label:
 Confidence follows one rule:
 
 - **high**: observed with identical results in at least two sessions, at least one of them from
-  a fresh profile, or doubly sourced (for example REA and the driver);
-- **medium**: observed in one session only;
+  a fresh profile. Two tools reading the same session (for example REA and the driver) count as
+  one session;
+- **medium**: observed in one session only, or in sessions whose results differ;
 - **low**: indirect.
 
 ## Environment

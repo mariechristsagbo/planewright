@@ -13,8 +13,11 @@ filled in by analogy with another entry.
 Labels follow the [methodology](methodology.md#evidence-labels): **[O]** observed behaviour,
 **[S]** static artefact finding (shipped bundle), **[I]** engineering inference with no
 plausible alternative reading, **[H]** unverified hypothesis, **[U]** not observed. Confidence
-**high** means identical in at least two sessions, at least one from a fresh profile;
-**medium** means one session; **low** means indirect.
+follows the [methodology rule](methodology.md#evidence-labels): **high** means identical results
+in at least two sessions, at least one from a fresh profile; **medium** means one session, or
+two sessions that disagree; **low** means indirect. Two tools reading the same session count as
+one session. A fact read only from raw records outside Git says so (see
+[limitations](limitations.md#tooling-limits)).
 
 Geometry is in scene units, zoom 1, scroll (0,0), desktop 1280×720 and light theme unless the
 entry says otherwise. Boxes are `[x, y, width, height]` as stored; for arrows and lines `x, y`
