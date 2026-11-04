@@ -20,6 +20,8 @@ set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=lib/probe-outcome.sh
 . "$HERE/lib/probe-outcome.sh"
+# shellcheck source=lib/resource-state.sh
+. "$HERE/lib/resource-state.sh"
 PORT="${1:-9242}"
 NAME="pw-isocheck"
 NET="${NAME}-net"
@@ -105,16 +107,13 @@ echo "INFO forwarder refusals logged: ${refused}"
 
 cleanup
 trap - EXIT
-if docker ps -a --format '{{.Names}}' | grep -qx "$NAME"; then
-  result FAIL "container ${NAME} still exists after stop"
-else
-  result PASS "container ${NAME} removed"
-fi
-if docker network ls --format '{{.Name}}' | grep -qx "$NET"; then
-  result FAIL "network ${NET} still exists after stop"
-else
-  result PASS "network ${NET} removed"
-fi
+# A failed docker listing is UNKNOWN, which fails: it can never pass as "removed".
+for spec in "container ${NAME}" "network ${NET}"; do
+  read -r kind item <<<"$spec"
+  state="$(resource_state "$kind" "$item")"
+  [[ "$state" == ABSENT ]] && result PASS "${kind} ${item} removed" ||
+    result FAIL "${kind} ${item} after stop: ${state}"
+done
 
 echo "failures: ${failures}"
 exit $((failures > 0))

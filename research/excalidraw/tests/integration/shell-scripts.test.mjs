@@ -33,6 +33,7 @@ case "$1 $2" in
   "container inspect") [[ -n "\${FAKE_CONTAINER_LABEL:-}" ]] || exit 1; echo "$FAKE_CONTAINER_LABEL" ;;
   "run -d") [[ "\${FAKE_RUN:-ok}" == ok ]] || exit 125; echo "$FAKE_CONTAINER_ID" ;;
   "run --rm") printf '%s' "\${FAKE_PROBE_OUT:-}"; exit "\${FAKE_PROBE_EXIT:-0}" ;;
+  "ps -a" | "network ls") [[ "\${FAKE_LIST:-ok}" == ok ]] || exit 1; printf '%s\\n' \${FAKE_NAMES:-} ;;
   inspect\\ *) echo "\${FAKE_BROWSER_IP-172.30.0.2}" ;;
   port\\ *) echo "127.0.0.1:9242" ;;
 esac
@@ -106,6 +107,26 @@ describe('isolation-check.sh probe failures', () => {
     for (const line of probeLines) expect(line).toMatch(new RegExp(`^FAIL .*${marker}`, 'u'));
   });
 
+  it.each([
+    ['the docker listing fails', { FAKE_LIST: 'fail' }, 'UNKNOWN'],
+    ['the resources are still listed', { FAKE_NAMES: 'pw-isocheck pw-isocheck-net' }, 'PRESENT'],
+  ])('fails the removal checks when %s', (_label, env, state) => {
+    const { status, stdout } = sh('isolation-check.sh', ['9242'], { ...labelled, ...env });
+    expect(status).not.toBe(0);
+    expect(stdout).toContain(`FAIL container pw-isocheck after stop: ${state}`);
+    expect(stdout).toContain(`FAIL network pw-isocheck-net after stop: ${state}`);
+    expect(stdout).not.toMatch(/PASS .* removed/u);
+  });
+
+  it('passes the removal checks only when a successful listing omits both names', () => {
+    const { stdout } = sh('isolation-check.sh', ['9242'], {
+      ...labelled,
+      FAKE_NAMES: 'pw-isocheck-other unrelated-net',
+    });
+    expect(stdout).toContain('PASS container pw-isocheck removed');
+    expect(stdout).toContain('PASS network pw-isocheck-net removed');
+  });
+
   it('stops before probing when the browser address cannot be read', () => {
     const { status, stdout } = sh('isolation-check.sh', ['9242'], {
       ...labelled,
@@ -142,6 +163,50 @@ describe('probe_outcome', () => {
     ['1', 'UNREACHABLE:timeout', 'PROBE-ERROR:exit-1'],
   ])('classifies exit %s with output %j as %s', (code, output, expected) => {
     expect(classify(code, output)).toBe(expected);
+  });
+});
+
+describe('resource_state', () => {
+  const state = (kind, name, env = {}) =>
+    spawnSync(
+      'bash',
+      [
+        '-c',
+        `. "${join(HERE, 'lib/resource-state.sh')}"; resource_state "$1" "$2"`,
+        '_',
+        kind,
+        name,
+      ],
+      { encoding: 'utf8', env: { PATH: `${bin}:${process.env.PATH}`, FAKE_LOG: log, ...env } },
+    ).stdout.trim();
+
+  it.each([
+    ['container', 'pw-x', { FAKE_NAMES: 'pw-x' }, 'PRESENT'],
+    ['network', 'pw-x-net', { FAKE_NAMES: 'pw-x pw-x-net' }, 'PRESENT'],
+    ['container', 'pw-x', { FAKE_NAMES: 'pw-x-net pw-xy' }, 'ABSENT'],
+    ['network', 'pw-x-net', {}, 'ABSENT'],
+    ['container', 'pw-x', { FAKE_LIST: 'fail' }, 'UNKNOWN'],
+    ['network', 'pw-x-net', { FAKE_LIST: 'fail' }, 'UNKNOWN'],
+    ['volume', 'pw-x', {}, 'UNKNOWN'],
+  ])('reports a %s named %s as %s', (kind, name, env, expected) => {
+    expect(state(kind, name, env)).toBe(expected);
+  });
+
+  it('reports UNKNOWN when there is no docker command at all', () => {
+    const empty = mkdtempSync(join(dir, 'no-docker-'));
+    const run = spawnSync(
+      '/bin/bash',
+      ['-c', `. "${join(HERE, 'lib/resource-state.sh')}"; resource_state container pw-x`],
+      { encoding: 'utf8', env: { PATH: empty } },
+    );
+    expect(run.stdout.trim()).toBe('UNKNOWN');
+  });
+
+  it('is what selftest.sh uses for its removal checks', () => {
+    const selftest = readFileSync(join(HERE, 'selftest.sh'), 'utf8');
+    expect(selftest).toContain('test "$(resource_state container "$NAME")" = ABSENT');
+    expect(selftest).toContain('test "$(resource_state network "$NAME-net")" = ABSENT');
+    expect(selftest).not.toMatch(/! docker/u);
   });
 });
 
