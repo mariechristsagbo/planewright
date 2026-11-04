@@ -6,9 +6,16 @@
 // closed as soon as they are seen. The halt reason is kept in the session state, so a restarted
 // driver stays halted, and a driver that attaches to a page already off the allowlist halts at
 // once.
+//
+// A room or `json` link value in the URL is allowed only once a `runLast` scenario has started
+// (see createGate in server.mjs). Otherwise a driver restarted on a new `--out`, with an empty
+// state, against a page still in a room, or an inline batch that opens one, would run ordinary
+// scenarios in a view that may show the room link. Both halt the session.
 import { isAllowedNavigation } from './guard.mjs';
-import { sanitiseUrl } from './sanitise.mjs';
+import { hasSecretFragment, sanitiseUrl } from './sanitise.mjs';
 import { memoryState } from './session-state.mjs';
+
+const unlockedRoom = (url, state) => hasSecretFragment(url) && state.runLastStarted().length === 0;
 
 /**
  * Attaches the watcher to a Playwright page. `record` receives a metadata-only event for each
@@ -22,9 +29,15 @@ export function watchNavigation(page, record = () => undefined, state = memorySt
   };
   const current = page.mainFrame().url();
   if (!isAllowedNavigation(current)) halt('the page was off the allowlist when attached.', current);
+  else if (unlockedRoom(current, state)) {
+    halt('the page held a collaboration value when attached, with no runLast scenario.', current);
+  }
   page.on('framenavigated', (frame) => {
-    if (frame === page.mainFrame() && !isAllowedNavigation(frame.url())) {
+    if (frame !== page.mainFrame()) return;
+    if (!isAllowedNavigation(frame.url())) {
       halt('the page navigated off the allowlist.', frame.url());
+    } else if (unlockedRoom(frame.url(), state)) {
+      halt('the page reached a collaboration value without a runLast scenario.', frame.url());
     }
   });
   page.on('popup', (popup) => {

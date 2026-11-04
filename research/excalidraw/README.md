@@ -89,7 +89,10 @@ the background just before a driver batch.
   that lands off the allowlist after redirects is fatal. Navigations the page starts itself are
   watched: when the main frame leaves the allowlist or a popup opens, the popup is closed and every
   later step fails fatally (`Session halted: …`). A driver that attaches to a page already off
-  the allowlist starts halted. Such a request has already been sent by then;
+  the allowlist starts halted. A room or `json` link value in the URL, at attach or after a
+  navigation, also halts the session unless a `runLast` scenario has started, so a driver
+  restarted on a new `--out` against a page still in a room cannot run other scenarios there.
+  Such a request has already been sent by then;
   see [limitations](../../docs/reverse-engineering/limitations.md#tooling-limits). Self-authored
   pages load through the `fixture` step from `$OUT/../fixtures`.
 - **Names.** Output names (`screenshot.name`, `aria.save`, `download.name`) and fixture names
