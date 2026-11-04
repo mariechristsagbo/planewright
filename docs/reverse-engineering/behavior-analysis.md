@@ -1,416 +1,798 @@
 # Behaviour analysis
 
-Each entry gives: **Initial** state → **Action** → **Result**, then state effects, persistence
-and undo, edge cases, desktop/mobile differences, evidence, and label/confidence. Geometry is in
-scene units at zoom 1 with no scroll unless stated otherwise.
+Every entry records the eleven fields that issue #1 asks for, in this order:
 
-Evidence names refer to:
+1. **Initial state**, 2. **Action**, 3. **Immediate result**, 4. **State and related effects**,
+2. **Persistence**, 6. **Undo/redo**, 7. **Edge cases**, 8. **Desktop/mobile**,
+3. **Reproduction**, 10. **Confidence**, 11. **Limitations**.
 
-- probe labels in `evidence/probes-<session>.json`;
-- screenshot or ARIA names in `evidence/sessions.json`;
-- scenarios in `research/excalidraw/scenarios/`.
+A field that this baseline did not observe says **Not observed** and names the residual row
+(`R-xx`) in the [residual matrix](residual-matrix.md) that tracks it. Nothing in a field is
+filled in by analogy with another entry.
 
-**Fresh-profile replay.** s6 (desktop) and s7 (mobile) replayed every scenario below from a fresh
-profile. All 47 desktop probe labels that s6 shares with s1 or s2 gave identical geometry,
-angles, groups, bindings, locks, style values, selection counts, tools, zoom, scroll and theme.
-Confidence follows the [methodology](methodology.md#evidence-labels): **high** means identical in
-at least two sessions, at least one of them from a fresh profile.
+Labels follow the [methodology](methodology.md#evidence-labels): **[O]** observed behaviour,
+**[S]** static artefact finding (shipped bundle), **[I]** engineering inference with no
+plausible alternative reading, **[H]** unverified hypothesis, **[U]** not observed. Confidence
+**high** means identical in at least two sessions, at least one from a fresh profile;
+**medium** means one session; **low** means indirect.
+
+Geometry is in scene units, zoom 1, scroll (0,0), desktop 1280×720 and light theme unless the
+entry says otherwise. Boxes are `[x, y, width, height]` as stored; for arrows and lines `x, y`
+is the first point. Reproduction handles name:
+
+- the scenario in `research/excalidraw/scenarios/`;
+- the sessions that ran it (s1, s2 and s3 first pass; s6 desktop and s7 mobile fresh reruns);
+- probe labels in `evidence/probes-<session>.json`, or screenshot and ARIA names in
+  `evidence/sessions.json`.
+
+**What the committed probes hold.** Each probe keeps type, box, angle, group count, bound
+element types, start and end binding flags, container flag, lock flag and eight style values,
+plus selection count, tool, zoom, scroll and theme. Point counts, font fields and text length
+were read from the raw timelines and are **not** in the committed summary. Scene and appState
+probes read `localStorage["excalidraw"]` and `localStorage["excalidraw-state"]`, so every probe
+value is a value the page had saved locally.
+
+**Cross-session replay** (computed from the committed probe files):
+
+- s6 shares 45 probe labels with s1, and 45 of 45 are identical.
+- s6 shares 31 labels with s2, and 23 of 31 are identical. The 8 that differ are the scenario 05
+  labels from `05-shift-1-fit` on, because s2 ran 05 straight after 03 (see B-36).
+- In all, 47 of the 80 s6 labels also occur in s1 or s2, and each matches at least one earlier
+  occurrence.
+- s7 shares 6 labels with s3, and 2 of 6 are identical. The other 4 differ only in scrollX
+  after the pinch (−135 in s3 at DPR 1, −132 in s7 at DPR 3), which carries into later labels.
 
 ## Creation
 
 ### B-01 Create a shape by drag
 
-- **Initial:** empty canvas, selection tool active, desktop.
-- **Action:** press R, drag from (300,180) to (420,280).
-- **Result:** a rectangle at x=300, y=180, 120×100. Dimensions equal the drag delta exactly, with
-  no snapping at default settings. Ellipse (O), diamond (D) and line (L) behave the same; the line
-  stores 2 points.
-- **State:**
-  - The new element is selected and the active tool returns to Selection.
-  - Defaults: stroke `#1e1e1e`, background transparent, fill style `solid`, stroke width 2,
-    stroke style solid, roughness 1, opacity 100.
-  - Rounded corners are on by default. The stored roundness type is **3 for rectangles** (from
-    creation, in every session) and **2 for ellipse, diamond, line, arrow and sticky note**.
-    Freedraw, text and image have none.
-- **Persistence:** written to `localStorage["excalidraw"]` (see B-30).
-- **Mobile:** a one-finger touch drag with the rectangle tool gives an exact 140×100 rectangle
-  (`m-rect-touch`, identical in s3 and in s7 at a verified DPR 3) [O, high].
-- **Evidence:** `02-all-shapes` (s2, s6), `12-after-canvas-drag` (s6), scenarios 02, 10 and 12.
-- **Label:** [O], high.
+- **Initial state:** canvas without the new shape; Selection tool active.
+- **Action:** press R and drag (300,180)→(420,280). Likewise O (520,180)→(660,280),
+  D (820,170)→(940,290) and L (300,420)→(420,420).
+- **Immediate result:** rectangle `[300,180,120,100]`, ellipse `[520,180,140,100]`, diamond
+  `[820,170,120,120]`, line `[300,420,120,0]`. Each box equals the drag extent; no snapping at
+  default settings [O].
+- **State and related effects:** after the rectangle drag, 1 element is selected and the tool is
+  Selection (`02-tool-probe`) [O]. Stored defaults: stroke `#1e1e1e`, background `transparent`,
+  fill `solid`, stroke width 2, stroke style `solid`, roughness 1, opacity 100. Roundness type 3
+  for the rectangle; 2 for ellipse, diamond, line, arrow and sticky note; none for freedraw,
+  text and image [O].
+- **Persistence:** the values were read from local storage, so each shape was saved [O]. Save
+  timing is in B-30.
+- **Undo/redo:** Not observed for drag creation (R-29).
+- **Edge cases:** a drag that starts on the properties panel creates nothing (B-02).
+  Shift/Alt modifiers, drags towards the top-left and very small drags: Not observed (R-31).
+- **Desktop/mobile:** a one-finger touch drag (120,250)→(260,350) with the Rectangle tool gives
+  `[120,250,140,100]` (`m-rect-touch`, s3 and s7) [O]. Ellipse, diamond and line on mobile: Not
+  observed (R-24).
+- **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`, `02-tool-probe`), 12 (s6:
+  `12-after-canvas-drag`), 10 (s3, s7: `m-rect-touch`).
+- **Confidence:** [O] high (s2 and s6 identical; s3 and s7 identical).
+- **Limitations:** one size per shape; dark theme only for a rectangle and an arrow
+  (scenario 15); the line's point count (2) is from the raw timeline (R-29).
 
 ### B-02 Properties panel occupies the canvas while a tool is active
 
-- **Initial:** a drawing tool chosen by keyboard.
-- **Result:** the properties panel opens immediately on the left (x≈16–211 at 1280×720) and the
-  welcome screen disappears.
-- **Edge case:** a pointer drag that starts on the panel does not create a shape. In s6 (scenario
-  12), a rectangle drag and a line drag starting at x=200 created nothing
-  (`12-after-panel-drag`, `12-after-panel-line-drag`). The same rectangle drag starting at x=300
-  created a 120×100 rectangle (`12-after-canvas-drag`). s1 had shown the same effect by accident.
-- **Label:** [O], high.
+- **Initial state:** empty canvas; a drawing tool chosen by keyboard (R, then L).
+- **Action:** drag from x=200 (on the panel) and, separately, the same drag from x=300.
+- **Immediate result:** the panel opens on the left (x≈16–211 at 1280×720, from screenshots)
+  and the welcome screen disappears. The rectangle drag from x=200 created nothing
+  (`12-after-panel-drag`: 0 elements, tool still Rectangle); the line drag from x=200 added
+  nothing (`12-after-panel-line-drag`). The drag from x=300 created `[300,180,120,100]` [O].
+- **State and related effects:** after the panel drag the tool stays Rectangle and nothing is
+  selected [O].
+- **Persistence:** the stored scene did not change [O].
+- **Undo/redo:** Not observed (R-29).
+- **Edge cases:** a drag that starts on the canvas and ends over the panel: Not observed (R-29).
+- **Desktop/mobile:** mobile has no side panel (feature inventory F-33); a drag across its
+  compact bar: Not observed (R-11).
+- **Reproduction:** scenario 12 (s6). s1's earlier scenario 02 hit the same effect by accident.
+- **Confidence:** [O] medium (one committed scenario run; s1 corroborates only qualitatively).
+- **Limitations:** the panel extent was read from screenshots, not probed (R-29).
 
 ### B-03 Contextual hint line
 
-The line under the toolbar changes with context:
-
-- empty canvas: how to pan;
-- Draw tool: "Click and drag, release when you're finished";
-- shape selected: "Enter to add text, Ctrl+↑↓ to create a flowchart";
-- text selected: "Double-click or press Enter to edit text" (`dark-11-panel-text`, s6).
-
-**Label:** [O], high.
+- **Initial state:** empty canvas; then the Draw tool; then a selected shape; then selected
+  text.
+- **Action:** none beyond reaching each state.
+- **Immediate result:** the line under the toolbar reads, in turn: how to pan; "Click and drag,
+  release when you're finished"; "Enter to add text, Ctrl+↑↓ to create a flowchart"; "Double-click
+  or press Enter to edit text" [O].
+- **State and related effects:** display only; no stored state was read.
+- **Persistence:** not applicable (no stored state).
+- **Undo/redo:** not applicable.
+- **Edge cases:** the hint for the other tools and states: Not observed (R-01).
+- **Desktop/mobile:** the mobile hint line: Not observed (R-23).
+- **Reproduction:** ARIA snapshots of scenarios 01, 02 and 15 (s1, s6), for example
+  `dark-11-panel-text`.
+- **Confidence:** [O] high for the first three (s1 and s6); medium for the text hint (s6 only).
+- **Limitations:** the text comes from ARIA snapshots outside Git; only their names and line
+  counts are committed.
 
 ### B-04 Arrow and binding
 
-- **Action:** press A, drag from (425,230), 5 units right of a rectangle's edge, to (515,230), on
-  the edge of an ellipse at x=520.
-- **Result:**
-  - The arrow ends at x=514, so its end snapped to the ellipse outline rather than the pointer.
-  - `endBinding` is set, and the ellipse's `boundElements` gains `arrow`.
-  - **Start binding:** a start 5 units from the rectangle's edge **was bound**
-    (`02-all-shapes`, s2 and s6). In scenario 04, a start 15 units from a rectangle's edge was
-    **not** bound (`04-arrow-bound`, s1 and s6).
-- **Label:** [O], high, for end binding and for each start-binding case.
-- **Inference [I], low:** at zoom 1, the start-binding distance limit lies somewhere between 5
-  and 15 units. Not measured further.
+- **Initial state:** (a) scenario 02: rectangle `[300,180,120,100]` and ellipse
+  `[520,180,140,100]`, default settings ("Arrow binding" checked in the canvas context menu).
+  (b) scenario 04: rectangle `[340,240,180,150]` with a label, ellipse `[640,240,120,100]`,
+  red stroke and "architect" sloppiness as defaults (B-20).
+- **Action:** (a) press A and drag (425,230)→(515,230): the start is 5 units right of the
+  rectangle's right edge (x=420), the end 5 units left of the ellipse's leftmost point (520,230).
+  (b) press A and drag (535,300)→(645,290): the start is 15 units right of the rectangle's
+  right edge (x=520), the end 5 units inside the ellipse outline (x=640 at y=290).
+- **Immediate result:** (a) arrow `[426,230,88,0]`: its ends are at x=426 and x=514, 1 unit
+  from the pointer positions and 6 units from each target's outline; start and end are bound.
+  (b) arrow `[535,300,110,10]`: its end is at x=645, the pointer position; the end is bound and
+  the start is not [O].
+- **State and related effects:** each bound target's `boundElements` gains an `arrow` entry:
+  (a) rectangle and ellipse; (b) the ellipse only. Arrow (b) has the defaults set in B-20 [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed for arrows (R-42).
 - **Edge cases:**
-  - Ctrl while drawing should prevent binding (Help) [U].
-  - Moving the bound target was not exercised for a bound arrow end [U].
-- **Evidence:** `04-arrow-bound`, `02-all-shapes`.
+  - **Endpoint placement is not established.** The bound end of (a) lies 6 units outside the
+    ellipse and that of (b) 5 units inside it. An earlier version of this entry said the end
+    "snapped to the outline"; the probes do not support that.
+  - Start binding happened at 5 units (a) and not at 15 units (b) [O]. That a distance limit
+    between 5 and 15 units decides this is [H]: the two cases also differ in target size, style
+    and scene.
+  - Ctrl while drawing to prevent binding (listed in Help), moving a bound target, unbinding,
+    the "Arrow binding" toggle and midpoint snapping: Not observed (R-42). Scenario 04 moved
+    the rectangle, which was not bound to the arrow; the arrow did not change
+    (`04-move-bound-rect`).
+- **Desktop/mobile:** arrows on mobile: Not observed (R-42).
+- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`); scenario 04 (s1, s6:
+  `04-arrow-bound`).
+- **Confidence:** [O] high for the stored geometry and the binding flags of both cases.
+- **Limitations:** the probe keeps the arrow's origin and extent, not its points, so end
+  positions are derived [I]; binding gap and focus values were not recorded (R-42).
 
 ### B-05 Freedraw
 
-- **Action:** press P and drag a 6-vertex polyline.
-- **Result:** a `freedraw` element with 22 stored points from 6 input vertices, because the driver
-  interpolates moves. The bounding box equals the extent of the input, and the default stroke
-  width is 1, not 2.
-- **Edge case:** a single click with the Draw tool creates a 0×0 freedraw element, a "dot"
-  (`diag-after-eraser`, s1 and s6).
-- **Label:** [O], high.
+- **Initial state:** scenario 02's scene; Selection tool.
+- **Action:** press P and drag a 6-vertex path (520,400)…(620,440).
+- **Immediate result:** a `freedraw` element `[520,400,100,40]`, the extent of the input, with
+  stroke width 1 (other shapes default to 2) and no roundness [O].
+- **State and related effects:** the raw timelines show 22 stored points for 6 input vertices,
+  because the driver interpolates moves; not in the committed summary.
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** two Ctrl+Z at the start of scenario 05 removed the two dots made after the
+  eraser: the next scene probe (`06-paste`) has no freedraw element [O].
+- **Edge cases:** one click with the Draw tool creates a 0×0 freedraw "dot"
+  (`diag-after-eraser`: `[1000,600,0,0]` and `[340,400,0,0]`) [O]. Pressure: Not observed
+  (R-43).
+- **Desktop/mobile:** Draw on mobile: Not observed (R-43).
+- **Reproduction:** scenarios 02 (s2, s6), 04b (s1, s6), 05.
+- **Confidence:** [O] high (geometry s2 and s6; dots s1 and s6).
+- **Limitations:** point count and smoothing not in the committed summary (R-43).
 
 ### B-06 Text
 
+- **Initial state:** scenario 02's scene; Selection tool.
 - **Action:** press T, click (820,420), type "Hello", press Escape.
-- **Result:** a `text` element: font size 20, font family id 5, left aligned, height 25. It is
-  anchored with its vertical centre at the click (y=407.5 for a 25-high line). The width depends
-  on the glyphs (43.2 for 5 characters).
-- **Label:** [O], high (s1, s2 and s6 identical).
+- **Immediate result:** a `text` element `[820,407.5,43.2,25]`: its left edge is at the click
+  and its vertical centre on it [O].
+- **State and related effects:** font size 20, font family id 5 and left alignment were read
+  from the raw timelines; not in the committed summary.
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-40).
+- **Edge cases:** re-edit by double-click, multiline, wrapping, an empty text on Escape and the
+  font picker: Not observed (R-40).
+- **Desktop/mobile:** dark desktop text: `15-text` `[910,572.5,40,25]` (s6) [O, medium]. Text on
+  mobile: Not observed (R-40).
+- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`), scenario 15 (s6).
+- **Confidence:** [O] high for the geometry (s2 and s6 identical).
+- **Limitations:** the width depends on the loaded font (R-40).
 
 ### B-07 Container label
 
-- **Action:** select a rectangle and press Enter, type "Box", press Escape.
-- **Result:** a `text` element with a `containerId`, centred in the rectangle and horizontally
-  centre-aligned. The rectangle's `boundElements` lists `text`.
-- **Effect:** moving the rectangle moves its label by the same delta (`04-move-bound-rect`:
-  +60 in y for both).
-- **Label:** [O], high (s1 and s6).
+- **Initial state:** rectangle `[340,240,180,150]` selected (scenario 04).
+- **Action:** press Enter, type "Box", press Escape.
+- **Immediate result:** a `text` element `[410.7,302.5,38.6,25]` with a container, centred on
+  the rectangle's centre (430,315) [O].
+- **State and related effects:** the rectangle's `boundElements` lists `text`. Dragging the
+  rectangle by +60 in y moved the label by +60 too (`04-move-bound-rect`) [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-40).
+- **Edge cases:** long labels, wrapping and resizing the container: Not observed (R-40).
+- **Desktop/mobile:** mobile: Not observed (R-40).
+- **Reproduction:** scenario 04 (s1, s6: `04-container-label`, `04-move-bound-rect`).
+- **Confidence:** [O] high.
+- **Limitations:** the centre alignment value is from the raw timelines (R-40).
 
 ### B-08 Sticky note
 
-- **Action:** press N, click a point, type "Note", press Escape.
-- **Result:**
-  - A 250×250 `stickynote` **centred on the click point**, with background `#ffdf6b`.
-  - A bound centred `text` holds the typed content.
-  - A small date stamp ("4 Nov") is drawn in the note's bottom-right corner (screenshot
-    `shape-02-all-tools`).
-  - Typing goes straight into the note's label.
-- **Label:** [O], high (s2 and s6). Whether the date stamp is stored in the scene or only
-  rendered is [U].
+- **Initial state:** scenario 02's scene.
+- **Action:** press N, click (1000,520), type "Note", press Escape.
+- **Immediate result:** a `stickynote` `[875,395,250,250]`, centred on the click, with background
+  `#ffdf6b`, and a bound `text` `[976.8,507.5,46.4,25]` centred in it [O].
+- **State and related effects:** the note's `boundElements` lists `text`; typing goes straight
+  into the label. A date stamp ("4 Nov") is drawn in the bottom-right corner (screenshot
+  `shape-02-all-tools`) [O]; whether it is stored is [U] (R-41).
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-41).
+- **Edge cases:** resizing and long text: Not observed (R-41).
+- **Desktop/mobile:** on mobile the Sticky note is in More tools; creating one: Not observed
+  (R-41).
+- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`).
+- **Confidence:** [O] high.
+- **Limitations:** one note; the screenshot is outside Git, with its digest committed (R-41).
 
 ### B-09 Image by file drop
 
-- **Action:** at scroll (90,45), drop a self-generated 64×48 PNG at viewport point (1000,200),
-  which is scene point (910,155).
-- **Result:** an `image` element of 64×48 (native size), **centred on the drop point**. Its
-  top-left corner is (878,131) in scene units. It is selected.
-- **Persistence:** the scene in `localStorage` grows only slightly, so the bytes are not inline.
-  The `files-db` IndexedDB database exists [O]; that it holds the image bytes is [I] (medium).
-- **Label:** [O], high for geometry (`06b-image-drop`, s1 and s6).
-- **Not observed:** inserting through the "Insert image" picker produced no Playwright
-  file-chooser event (N-06) [U].
+- **Initial state:** scenario 06's end state, scroll (90,45).
+- **Action:** drop a self-generated 64×48 PNG at viewport point (1000,200), which is scene point
+  (910,155).
+- **Immediate result:** an `image` element `[878,131,64,48]`: native size, centred on the drop
+  point, and selected [O].
+- **State and related effects:** no other element changed [O].
+- **Persistence:** the image element is in local storage [O]. The stored scene grew only
+  slightly, so the bytes are not inline (raw sizes, not committed). The `files-db` IndexedDB
+  database exists [O]; that it holds the bytes is [H], medium (R-45).
+- **Undo/redo:** Not observed (R-45).
+- **Edge cases:** "Insert image" from More tools produced no Playwright file-chooser event [O];
+  large images, crop and resize: Not observed (R-45).
+- **Desktop/mobile:** mobile: Not observed (R-45).
+- **Reproduction:** scenario 06b (s1, s6: `06b-image-drop`).
+- **Confidence:** [O] high for the geometry.
+- **Limitations:** one image size (R-45).
 
 ## Selection
 
 ### B-10 Click selection
 
-- **Click inside an unfilled (transparent) rectangle:** selects nothing.
-- **Click on its stroke:** selects it.
-- **Label:** [O], high (s1, s2 and s6). Hit-testing inside a filled shape was not tested [U].
+- **Initial state:** transparent rectangle `[300,200,120,100]` and ellipse `[600,200,120,100]`,
+  nothing selected (`two-shapes`).
+- **Action:** click inside the rectangle, then on its stroke.
+- **Immediate result:** inside: 0 selected; on the stroke: 1 selected [O].
+- **State and related effects:** selection is part of the saved app state
+  (`selectedElementIds`) [O].
+- **Persistence:** whether a selection survives a reload: Not observed (R-54).
+- **Undo/redo:** not applicable.
+- **Edge cases:** filled shapes and hit tolerance: Not observed (R-34).
+- **Desktop/mobile:** a tap on the stroke of the rectangle selects it (`m-tap-select-stroke`,
+  s3 and s7) [O]; a tap inside: Not observed (R-33).
+- **Reproduction:** scenario 03 (s1, s2, s6: `click-inside-transparent-rect`,
+  `click-rect-stroke`); scenario 10 (s3, s7).
+- **Confidence:** [O] high.
+- **Limitations:** one shape type and one stroke width (R-34).
 
 ### B-11 Add to selection
 
-Shift+click a second element: both are selected (2). **Label:** [O], high.
+- **Initial state:** the rectangle of B-10 selected.
+- **Action:** Shift+click the ellipse's stroke.
+- **Immediate result:** 2 selected (`shift-click-ellipse`) [O].
+- **State and related effects:** none on the elements [O].
+- **Persistence:** not applicable.
+- **Undo/redo:** not applicable.
+- **Edge cases:** Shift+click on a selected element and Ctrl deep select: Not observed (R-33).
+- **Desktop/mobile:** mobile multi-select: Not observed (R-33).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high.
+- **Limitations:** two elements only (R-33).
 
 ### B-12 Box selection
 
-Drag on empty canvas around two whole elements: 2 selected. Partial overlap was not tested [U].
-**Label:** [O], high.
+- **Initial state:** the two shapes after ungrouping (scenario 03).
+- **Action:** drag on empty canvas around both whole elements.
+- **Immediate result:** 2 selected (`box-select`) [O].
+- **State and related effects:** none on the elements [O].
+- **Persistence:** not applicable.
+- **Undo/redo:** not applicable.
+- **Edge cases:** partial overlap and Ctrl box select: Not observed (R-33).
+- **Desktop/mobile:** mobile: Not observed (R-33).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high.
+- **Limitations:** the probe stores a count, not which elements (R-33).
 
 ### B-13 Select all ignores locked elements
 
-Ctrl+A with one locked ellipse selected the other three elements only. The clipboard then
-contained rectangle, text and arrow (scenario 06, s1 and s6). **Label:** [O], high.
+- **Initial state:** scenario 04's end scene with a locked ellipse (B-19).
+- **Action:** Ctrl+A, Ctrl+C, then paste (B-26).
+- **Immediate result:** the paste inserted a rectangle, its label and the arrow, not the ellipse
+  (`06-paste`) [O].
+- **State and related effects:** the pasted arrow is not bound, because its target was not
+  copied [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** see B-26.
+- **Edge cases:** unlocking and selecting a locked element by box: Not observed (R-38).
+- **Desktop/mobile:** mobile: Not observed (R-33).
+- **Reproduction:** scenario 06 (s1, s6).
+- **Confidence:** [O] high.
+- **Limitations:** the selection itself was inferred from the clipboard contents [I] (R-33).
 
 ### B-14 Selection chrome
 
-- **Desktop:** a rectangle 180×150 at zoom 1 shows a box padded about 4 px, 4 corner handles,
-  and a round rotation handle 16 px above the top centre (`sel-02-rect-handles`, s1 and s6).
-- **Mobile:** a 140×100 rectangle in the 390×844 touch emulation shows 8 handles (corners and
-  edge midpoints) plus the rotation handle (`m04-rect-selected`). This was seen at DPR 1 in s3
-  and at a verified DPR 3 in s7.
-- **Label:** [O], high. Whether the handle count depends on element size or on input device is
-  [U].
+- **Initial state:** one selected rectangle.
+- **Action:** select it.
+- **Immediate result:** desktop: a 180×150 rectangle shows a box padded by about 4 px, 4 corner
+  handles and a round rotation handle 16 px above the top centre (`sel-02-rect-handles`).
+  Mobile: a 140×100 rectangle shows 8 handles (corners and edge midpoints) plus the rotation
+  handle (`m04-rect-selected`) [O].
+- **State and related effects:** none [O].
+- **Persistence:** not applicable.
+- **Undo/redo:** not applicable.
+- **Edge cases:** whether the handle count depends on element size or input device: [U] (R-35).
+- **Desktop/mobile:** as above.
+- **Reproduction:** scenario 03b (s1, s6); scenario 10 (s3 at DPR 1, s7 at DPR 3).
+- **Confidence:** [O] high.
+- **Limitations:** read from screenshots; pixel offsets are approximate (R-35).
 
 ## Transform
 
 ### B-15 Move
 
-Drag a grouped selection from (300,250) to (340,290): both elements move by exactly +40/+40, with
-no snapping. **Label:** [O], high (s1, s2 and s6).
+- **Initial state:** grouped rectangle `[300,200,120,100]` and ellipse `[600,200,120,100]`.
+- **Action:** drag from (300,250) to (340,290).
+- **Immediate result:** both move by exactly +40/+40 (`drag-group-by-40`), with no snapping [O].
+- **State and related effects:** both keep their group [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Ctrl+Z restores the old positions (`undo-move`) and Ctrl+Shift+Z re-applies them
+  (`redo-move`) [O].
+- **Edge cases:** snapping to objects while moving, Shift-constrained moves: Not observed
+  (R-36).
+- **Desktop/mobile:** mobile: Not observed (R-36).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high.
+- **Limitations:** one delta (R-36).
 
 ### B-16 Resize
 
-Drag the south-east handle by (+60,+50): width 120→180 and height 100→150. The top-left corner
-stays fixed and the aspect ratio is free. Shift (aspect lock) and Alt (resize from centre) were
-not tested [U]. **Label:** [O], high (s1, s2 and s6).
+- **Initial state:** rectangle `[340,240,120,100]` selected.
+- **Action:** drag the south-east handle by (+60,+50).
+- **Immediate result:** `[340,240,180,150]`: the top-left corner stays fixed and the aspect ratio
+  is free (`resize-se-handle`) [O].
+- **State and related effects:** none on other elements [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-36).
+- **Edge cases:** other handles, Shift (aspect lock), Alt (from the centre), multi-element
+  resize: Not observed (R-36).
+- **Desktop/mobile:** mobile: Not observed (R-36).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high.
+- **Limitations:** one handle (R-36).
 
 ### B-17 Rotate
 
-- **Action:** drag the rotation handle (430,220) through 90° around the centre (430,315) to
-  (530,315).
-- **Result:** angle = 1.6 in the probe, which rounds to one decimal. That is consistent with
-  π/2 ≈ 1.571; the exact stored value was not captured. The size is unchanged, and undo restores 0.
-- **Edge cases:** Shift snapping was not tested [U]. A miss of the handle deselects instead
-  (`rotate-handle`).
-- **Label:** [O], high (s1, s2 and s6).
+- **Initial state:** rectangle `[340,240,180,150]` selected.
+- **Action:** drag the rotation handle (430,220) round the centre to (530,315).
+- **Immediate result:** angle 1.6 in the probe, which rounds to one decimal; consistent with
+  π/2 ≈ 1.571. Size unchanged (`04-rotate-90`) [O].
+- **State and related effects:** none on other elements [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Ctrl+Z restored angle 0 (`04-styles-applied`) [O].
+- **Edge cases:** missing the handle deselects instead (`rotate-handle`) [O]. Shift snapping: Not
+  observed (R-36).
+- **Desktop/mobile:** mobile: Not observed (R-36).
+- **Reproduction:** scenarios 03 and 04 (s1, s2 for 03, s6).
+- **Confidence:** [O] high.
+- **Limitations:** the exact stored angle was not captured (R-36).
 
 ### B-18 Duplicate
 
-Ctrl+D with 2 selected: copies at +10/+10, and the **copies** become the selection. Undo removes
-them. **Label:** [O], high.
+- **Initial state:** rectangle and ellipse selected.
+- **Action:** Ctrl+D.
+- **Immediate result:** copies at +10/+10 (`duplicate`: 4 elements) and 2 selected [O].
+- **State and related effects:** the committed probe stores the selection count only, so the
+  earlier statement that the copies are the selected pair cannot be checked from Git [U]
+  (R-38).
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Ctrl+Z removed the copies (next probe has 2 elements) [O].
+- **Edge cases:** Alt+drag duplicate: Not observed (R-38).
+- **Desktop/mobile:** the mobile Actions popover lists Duplicate; its effect: Not observed
+  (R-11).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high for offset and count.
+- **Limitations:** which elements are selected (R-38).
 
 ### B-19 Lock
 
-- **Action:** Ctrl+Shift+L on the selected ellipse.
-- **Result:** `locked: true` and the selection is cleared. A later click on the ellipse does not
-  select it, and a drag starting on it does not move it.
-- **Label:** [O], high (s1 and s6). Unlocking was not exercised [U].
+- **Initial state:** ellipse `[640,240,120,100]` selected.
+- **Action:** Ctrl+Shift+L, then click the ellipse, then drag from it.
+- **Immediate result:** `locked: true` and nothing selected (`04-lock-ellipse`); the click
+  selects nothing and the drag does not move it (`04-drag-locked`) [O].
+- **State and related effects:** its arrow binding is kept [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-38).
+- **Edge cases:** unlocking: Not observed (R-38). Select all skips it (B-13).
+- **Desktop/mobile:** mobile: Not observed (R-38).
+- **Reproduction:** scenario 04 (s1, s6).
+- **Confidence:** [O] high.
+- **Limitations:** one element type (R-38).
 
 ## Style
 
 ### B-20 Style changes apply to the selection and become defaults
 
-- **Action:** with a rectangle selected, set stroke red (`#e03131`), background light red
-  (`#ffc9c9`), then sloppiness "architect".
-- **Result:** the rectangle updates (roughness 0). Elements created afterwards (an arrow and a
-  container label) inherit stroke `#e03131`, background `#ffc9c9` and roughness 0
-  (`04-arrow-bound`).
-- **Label:** [O], high (s1 and s6).
+- **Initial state:** rectangle selected after B-17's undo.
+- **Action:** choose stroke red (`#e03131`), background light red (`#ffc9c9`) and sloppiness
+  "architect" by coordinate clicks in the panel.
+- **Immediate result:** the rectangle updates; later probes show roughness 0 [O].
+- **State and related effects:** elements created afterwards inherit stroke `#e03131`,
+  background `#ffc9c9` and roughness 0 (the arrow of `04-arrow-bound`) [O].
+- **Persistence:** read from local storage [O]; the `currentItem…` defaults are in the saved app
+  state [O].
+- **Undo/redo:** Not observed (R-52).
+- **Edge cases:** see B-21 for clicks that missed after the panel reflowed.
+- **Desktop/mobile:** mobile Stroke and Background popovers: Not observed (R-11).
+- **Reproduction:** scenario 04 (s1, s6).
+- **Confidence:** [O] high.
+- **Limitations:** coordinate clicks, not named controls (R-39).
 
 ### B-21 Panel layout is dynamic
 
-- **Fill row:** choosing a non-transparent background inserts a Fill row, which shifts every row
-  below it down. Coordinate clicks intended for stroke width, stroke style, edges and layers
-  therefore landed elsewhere. The results of those clicks are **not** used as findings.
-- **Roundness:** the rectangle's roundness stayed 3 throughout. That was its value from creation
-  (B-01), not an effect of these clicks.
-- **Sections by element type** (s6 ARIA in dark theme, `dark-08`, `dark-10`, `dark-11`):
-  - **rectangle:** stroke, background, fill, stroke width, stroke style, sloppiness, edges,
-    opacity, layers, actions;
-  - **arrow:** edges are replaced by "Arrow type" (3 options) and "Arrowheads" (start and end
-    buttons), and "Edit arrow" joins the actions;
-  - **text:** "Font family" (three presets plus a font picker), "Font size" (4 options) and
-    "Text align" (3 options); there is no stroke width, stroke style, sloppiness or edges.
-- **Scrolling:** at 1280×720 the panel is cut off at "Actions"; a wheel over the panel scrolls it
-  (`dark-09-panel-rect-scrolled`).
-- **Label:** [O], high for the Fill row insertion (s1 and s6); [O], medium for the per-type
-  sections (s6 only).
+- **Initial state:** rectangle selected, transparent background.
+- **Action:** choose a background colour; then clicks at fixed coordinates.
+- **Immediate result:** a Fill row appears and shifts every row below it down, so clicks meant
+  for stroke width, stroke style, edges and layers landed elsewhere. Their results are not used
+  as findings [O].
+- **State and related effects:** the rectangle's roundness stayed 3 throughout, its value from
+  creation (B-01), not an effect of these clicks [O]. Sections by element type (s6 dark ARIA,
+  `dark-08`, `dark-10`, `dark-11`):
+  - rectangle: stroke, background, fill, stroke width, stroke style, sloppiness, edges, opacity,
+    layers, actions;
+  - arrow: "Arrow type" (3 options) and "Arrowheads" replace edges, and "Edit arrow" joins the
+    actions;
+  - text: "Font family", "Font size" (4) and "Text align" (3); no stroke width, stroke style,
+    sloppiness or edges.
+- **Persistence:** not applicable (layout).
+- **Undo/redo:** not applicable.
+- **Edge cases:** at 1280×720 the panel is cut off at "Actions"; a wheel over it scrolls it
+  (`dark-09-panel-rect-scrolled`) [O].
+- **Desktop/mobile:** mobile uses a compact bar instead (summary table below, R-11).
+- **Reproduction:** scenarios 04 (s1, s6) and 15 (s6).
+- **Confidence:** [O] high for the Fill row (s1, s6); medium for the per-type sections (s6).
+- **Limitations:** light-theme per-type sections not captured (R-10).
 
 ## Grouping, layers, alignment
 
 ### B-22 Group and ungroup
 
-- **Group:** Ctrl+G gives both elements one shared group id. A click on one member then moves the
-  group as a unit (B-15).
-- **Ungroup:** Ctrl+Shift+G clears the group ids; the selection stays at 2.
-- **Undo:** restores positions but keeps the grouping step separate.
-- **Label:** [O], high.
+- **Initial state:** rectangle and ellipse selected (B-11).
+- **Action:** Ctrl+G; later Ctrl+Shift+G.
+- **Immediate result:** both get one shared group id (`group`); after ungrouping both have none
+  and 2 stay selected (`ungroup`) [O].
+- **State and related effects:** a click on one member then moves the group as a unit (B-15)
+  [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** undoing the move keeps the group (`undo-move`); undoing the grouping itself:
+  Not observed (R-49).
+- **Edge cases:** nested groups and selecting inside a group: Not observed (R-49).
+- **Desktop/mobile:** mobile: Not observed (R-49).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high.
+- **Limitations:** two elements (R-49).
 
 ### B-23 Align top
 
-Ctrl+Shift+Up with two elements already sharing a top edge: no change. This **does not** test the
-alignment itself [U]. **Label:** [O], low value.
+- **Initial state:** two elements whose top edges are both at y=240.
+- **Action:** Ctrl+Shift+Up.
+- **Immediate result:** no change (`align-top`) [O]. This does not test alignment.
+- **State and related effects:** Not observed (R-51).
+- **Persistence:** Not observed (R-51).
+- **Undo/redo:** Not observed (R-51).
+- **Edge cases:** Not observed (R-51).
+- **Desktop/mobile:** Not observed (R-51).
+- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Confidence:** [O] high for "no change"; the alignment behaviour is [U].
+- **Limitations:** the shapes were already aligned (R-51).
 
 ### B-24 Layer order
 
-The four layer commands appear in the panel and in the element context menu (s6), but their
-effect was not established, because the coordinate click missed after the panel reflow (B-21)
-[U].
+- **Initial state:** rectangle selected (scenario 04).
+- **Action:** a coordinate click meant for "Bring to front".
+- **Immediate result:** element order unchanged (`04-bring-to-front`); the click missed after
+  the panel reflow (B-21).
+- **State and related effects:** Not observed (R-50).
+- **Persistence:** Not observed (R-50).
+- **Undo/redo:** Not observed (R-50).
+- **Edge cases:** Not observed (R-50).
+- **Desktop/mobile:** Not observed (R-50).
+- **Reproduction:** scenario 04 (s1, s6). The four layer commands are listed in the panel and
+  the element context menu (B-34).
+- **Confidence:** [U] for the behaviour.
+- **Limitations:** no layer command took effect (R-50).
 
 ## History
 
 ### B-25 Undo and redo
 
-- Ctrl+Z after a move restores the previous positions, and Ctrl+Shift+Z re-applies them (s1, s2
-  and s6).
-- Undo also reverses rotation, duplication, paste and dot creation.
-- Undo and Redo buttons start disabled; Undo becomes enabled after the first change.
-- **Label:** [O], high. Ctrl+Y and undo across a reload were not tested [U].
+- **Initial state:** a fresh page; then scenes with changes.
+- **Action:** Ctrl+Z and Ctrl+Shift+Z after various operations.
+- **Immediate result:** undo reverses a move (B-15), a rotation (B-17), a duplicate (B-18), a
+  paste (B-26) and dot creation (B-05); redo re-applies a move [O].
+- **State and related effects:** Undo and Redo buttons start disabled; Undo becomes enabled after
+  the first change (ARIA) [O].
+- **Persistence:** history across a reload: Not observed (R-52).
+- **Undo/redo:** as above.
+- **Edge cases:** undo of style, delete, group and resize; Ctrl+Y: Not observed (R-52).
+- **Desktop/mobile:** the mobile Undo and Redo buttons: Not observed (R-52).
+- **Reproduction:** scenarios 03, 04, 05, 06 (s1, s2, s6).
+- **Confidence:** [O] high.
+- **Limitations:** the undo stack depth was not probed (R-52).
 
 ## Clipboard
 
 ### B-26 Copy and paste
 
-- **Copy:** Ctrl+C writes JSON text to the system clipboard with top-level keys `type`
-  (`"excalidraw/clipboard"`), `elements` and `files`.
-- **Paste:** Ctrl+V with the pointer at a canvas point inserts copies **centred on the pointer**
-  and selects them.
-- **Undo:** removes the paste.
-- **Label:** [O], high (s1 and s6; clipboard shape read through the permission-granted Clipboard
-  API).
+- **Initial state:** scenario 05's end scene, scroll (90,45).
+- **Action:** Ctrl+A, Ctrl+C, move the pointer to viewport (900,600), Ctrl+V.
+- **Immediate result:** copies of the rectangle, its label and the arrow, whose bounding box is
+  centred on the pointer's scene point (810,555); 2 selected (`06-paste`) [O].
+- **State and related effects:** Ctrl+C wrote JSON text with top-level keys `type`
+  (`"excalidraw/clipboard"`), `elements` and `files` (Clipboard API read, permission granted)
+  [O]. The copied arrow lost its binding (B-13).
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Ctrl+Z removed the paste (`06-undo-paste`) [O].
+- **Edge cases:** cut, paste of external text or images, and paste with the pointer outside the
+  canvas: Not observed (R-53).
+- **Desktop/mobile:** mobile: Not observed (R-53).
+- **Reproduction:** scenario 06 (s1, s6).
+- **Confidence:** [O] high.
+- **Limitations:** the clipboard shape came from the driver, values redacted (R-53).
 
 ### B-27 Other clipboard formats
 
-The element context menu offers "Copy to clipboard as PNG", "Copy to clipboard as SVG", "Copy
-styles" and "Paste styles" (s6). Their effects, and pasting plain text, were not tested [U].
+- **Initial state:** a selected rectangle.
+- **Action:** open the element context menu (B-34).
+- **Immediate result:** it offers "Copy to clipboard as PNG", "as SVG", "Copy styles" and "Paste
+  styles" [O].
+- **State and related effects:** Not observed (R-53).
+- **Persistence:** Not observed (R-53).
+- **Undo/redo:** Not observed (R-53).
+- **Edge cases:** Not observed (R-53).
+- **Desktop/mobile:** Not observed (R-53).
+- **Reproduction:** scenario 15 (s6: `dark-07-element-context-menu`).
+- **Confidence:** [O] medium for the listing; effects [U].
+- **Limitations:** none of the items was clicked (R-53).
 
-## Pan and zoom
+## View
 
-The desktop rows are [O], high: identical in s1, s2 and s6, except fit-to-content, which depends
-on the scene. The mobile rows are [O], high: identical in s3 and s7, except the note on the pinch
-row.
+### B-36 Pan and zoom
 
-| Input                                   | Effect                                                                                                                                                                                                                                                                                                                                                                       |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wheel, dy=+200                          | scrollY −200 (1:1 at zoom 1)                                                                                                                                                                                                                                                                                                                                                 |
-| Shift+wheel, dy=+200                    | scrollX −200 (horizontal pan)                                                                                                                                                                                                                                                                                                                                                |
-| Ctrl+wheel, dy=−100 at (640,360)        | zoom 1 → 1.1; scroll adjusted so the pointer's scene point stays fixed                                                                                                                                                                                                                                                                                                       |
-| Ctrl+0                                  | zoom 1, keeping the viewport centre                                                                                                                                                                                                                                                                                                                                          |
-| Ctrl+= / Ctrl+- (×2)                    | zoom 1.1 / 0.9: steps of 0.1 around the viewport centre                                                                                                                                                                                                                                                                                                                      |
-| Shift+1                                 | Zoom stayed **1.0** for the small test scenes (no zoom-in beyond 100% was observed). In s1 and s6 the horizontal scroll (90) matches centring the content's bounding box; the vertical scroll (45) does not match simple centring (15 expected), so the vertical placement rule is [U]. In s2 the result (90,100) differs because 05's leading undos reverted 03 steps there |
-| Space + drag (−100,−50)                 | scroll changes by exactly the drag delta; the tool is unchanged                                                                                                                                                                                                                                                                                                              |
-| Hand tool drag (+50,+50)                | scroll changes by exactly the drag delta                                                                                                                                                                                                                                                                                                                                     |
-| Mobile pinch, fingers 90 → 190 px apart | zoom 2.1111 = 190/90: zoom follows the finger-distance ratio. The resulting scrollX differed by 3 scene units between s3 (−135, DPR 1) and s7 (−132, DPR 3), so the exact pinch anchor is [U]                                                                                                                                                                                |
-| Mobile two-finger pan, 80 px up         | scrollY changes by −80/zoom (−38)                                                                                                                                                                                                                                                                                                                                            |
+- **Initial state:** scenario 05 after two undos: zoom 1, scroll (0,0).
+- **Action:** the inputs in the table, each starting from the previous row's state.
+- **Immediate result:**
 
-## View modes
+  | Input                                   | Probe                  | Zoom, scroll          | Observation [O]                                                                |
+  | --------------------------------------- | ---------------------- | --------------------- | ------------------------------------------------------------------------------ |
+  | Wheel dy=+200 at (640,360)              | `05-wheel-down-200`    | 1, (0,−200)           | 1:1 vertical pan at zoom 1                                                     |
+  | Shift+wheel dy=+200                     | `05-shift-wheel-200`   | 1, (−200,−200)        | horizontal pan                                                                 |
+  | Ctrl+wheel dy=−100 at (640,360)         | `05-ctrl-wheel-up-100` | 1.1, (−258,−233)      | the scene point under (640,360), (840,560), stays put within rounding          |
+  | Ctrl+0                                  | `05-ctrl-0`            | 1, (−200,−200)        | back to 1, same centre point                                                   |
+  | Ctrl+=                                  | `05-ctrl-plus`         | 1.1, (−258,−233)      | +0.1, same centre point                                                        |
+  | Ctrl+− twice                            | `05-ctrl-minus-x2`     | 0.9, (−129,−160)      | −0.1 per press, same centre point                                              |
+  | Shift+1                                 | `05-shift-1-fit`       | 1, (90,45)            | content x 340–760 centred (scroll 90); y not centred (would be 15); no zoom-in |
+  | Space+drag (−100,−50)                   | `05-space-drag`        | 1, (−10,−5)           | scroll moves by the drag delta; tool unchanged                                 |
+  | Hand tool drag (+50,+50)                | `05-hand-drag`         | 1, (40,45)            | scroll moves by the drag delta                                                 |
+  | Mobile pinch, fingers 90 → 190 px apart | `m-pinch-out`          | 2.111111, (−132,−263) | zoom equals 190/90 in this one sample                                          |
+  | Mobile two-finger pan 80 px up          | `m-two-finger-pan`     | 2.111111, (−132,−301) | scrollY −38 = −80/zoom, rounded, in this one sample                            |
 
-All rows are [O], high (s1 and s6).
+- **State and related effects:** zoom and scroll are saved in the app state [O]. No element
+  changes [O].
+- **Persistence:** scroll (90,45) survived a reload (B-30) [O]. Zoom across a reload: Not
+  observed, because zoom was 1 before the reload (R-54).
+- **Undo/redo:** viewport changes are not elements; whether undo touches them: Not observed
+  (R-52).
+- **Edge cases:**
+  - **Pointer anchoring is not established.** The Ctrl+wheel probe had the pointer at
+    (640,360), the viewport centre, so pointer-anchored and centre-anchored zoom give the same
+    numbers. An earlier version of this entry and of the backlog said Ctrl+wheel zooms around
+    the pointer; that is [U] (R-48).
+  - Shift+1's vertical rule and whether it ever zooms above 100%: [U]; one scene only (R-48).
+  - That pinch zoom always follows the finger-distance ratio, and that two-finger pan always
+    moves by delta / zoom, is [H] from one sample each (R-48).
+  - Zoom limits, step sizes outside 0.9–1.1, PgUp/PgDn, the zoom buttons and the exact pinch
+    anchor (scrollX −135 in s3 vs −132 in s7): Not observed (R-48).
+- **Desktop/mobile:** as in the table; mobile has no zoom buttons (F-28).
+- **Reproduction:** scenario 05 (s1, s2, s6) and scenario 10 (s3, s7).
+- **Confidence:** desktop rows [O] high (s1 and s6 identical; s2 differs from Shift+1 on because
+  05 ran straight after 03 there, see the [research README](../../research/excalidraw/README.md#scenario-order-and-dependencies)).
+  Mobile rows [O] high for zoom and the pan delta (s3 and s7); scrollX after the pinch differs.
+- **Limitations:** the "scene point stays put" reading uses the convention
+  scene = viewport / zoom − scroll, which also makes the wheel rows consistent [I] (R-48).
 
-| Toggle        | Visible effect                                                                                    | Persisted in `excalidraw-state`?     |
-| ------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------ |
-| Zen (Alt+Z)   | Hides the menu, share, library, undo/redo, zoom in/out and help; keeps the toolbar and zoom reset | yes (`zenModeEnabled`)               |
-| View (Alt+R)  | Hides the toolbar and editing UI; keeps zoom, share, help and the promotion link                  | **no** key observed                  |
-| Grid (Ctrl+') | Draws a grid (`view-03-grid`)                                                                     | yes (`gridModeEnabled`)              |
-| Snap (Alt+S)  | Flag toggles                                                                                      | yes (`objectsSnapModeEnabled`)       |
-| Theme         | Alt+Shift+D or the menu radio switches light/dark                                                 | yes (`theme` and `excalidraw-theme`) |
+### B-37 View modes and toggles
+
+- **Initial state:** scenario 05's scene, zoom 1, scroll (40,45).
+- **Action:** Alt+Z, Alt+R, Ctrl+' and Alt+S, each toggled on and off again; theme by Alt+Shift+D
+  or the menu radio.
+- **Immediate result:**
+
+  | Toggle        | Visible effect                                                                                    | Saved in `excalidraw-state`?         |
+  | ------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------ |
+  | Zen (Alt+Z)   | Hides the menu, share, library, undo/redo, zoom in/out and help; keeps the toolbar and zoom reset | yes (`zenModeEnabled`)               |
+  | View (Alt+R)  | Hides the toolbar and editing UI; keeps zoom, share, help and the promotion link                  | **no** key observed                  |
+  | Grid (Ctrl+') | Draws a grid (`view-03-grid`)                                                                     | yes (`gridModeEnabled`)              |
+  | Snap (Alt+S)  | Flag toggles                                                                                      | yes (`objectsSnapModeEnabled`)       |
+  | Theme         | Switches light/dark                                                                               | yes (`theme` and `excalidraw-theme`) |
+
+- **State and related effects:** zoom and scroll unchanged by each toggle (`05-zen-on` …
+  `05-snap-toggled`) [O].
+- **Persistence:** keys as in the table [O]; the theme survived reloads in s6 (`07-dark` onward
+  after `00b`) [O]. Zen, grid and snap across a reload: Not observed (R-19).
+- **Undo/redo:** Not observed (R-19).
+- **Edge cases:** snap's effect on dragging, Keep tool active, Arrow binding and Snap to
+  midpoints: Not observed (R-19).
+- **Desktop/mobile:** mobile theme in B-28; mobile zen/view/grid: Not observed (R-19).
+- **Reproduction:** scenarios 05 and 07 (s1, s6).
+- **Confidence:** [O] high.
+- **Limitations:** visible effects from screenshots and ARIA outside Git (R-19).
 
 ### B-28 System colour scheme
 
-With the default settings, emulating `prefers-color-scheme: dark` did **not** switch the theme
-(mobile, `m-dark-scheme-emulated`, s3 and s7); choosing Dark in the menu did. A "System" radio
-exists; its behaviour was not exercised [U]. **Label:** [O], high.
+- **Initial state:** mobile, light theme, default settings.
+- **Action:** emulate `prefers-color-scheme: dark`; then choose Dark in the main menu.
+- **Immediate result:** emulation did **not** switch the theme (`m-dark-scheme-emulated`);
+  choosing Dark did (`m-dark-via-menu`) [O].
+- **State and related effects:** `theme` in the saved app state follows the menu choice [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** not applicable.
+- **Edge cases:** the "System" radio: Not observed (R-26).
+- **Desktop/mobile:** desktop dark by shortcut and menu (B-37); desktop emulation: Not observed
+  (R-26).
+- **Reproduction:** scenario 10 (s3, s7).
+- **Confidence:** [O] high.
+- **Limitations:** default settings only (R-26).
 
 ### B-28a Export defaults follow the theme
 
-In dark theme, the Export image dialog opens with "Dark mode" already checked (desktop
-`dark-05-export` in s1 and s6; mobile `m12-dark-export` in s7). **Label:** [O], high.
+- **Initial state:** dark theme.
+- **Action:** open the Export image dialog.
+- **Immediate result:** "Dark mode" is already checked (desktop `dark-05-export` in s1 and s6;
+  mobile `m12-dark-export` in s7) [O].
+- **State and related effects:** Not observed (R-16).
+- **Persistence:** Not observed (R-16).
+- **Undo/redo:** not applicable.
+- **Edge cases:** unchecking it and exporting: Not observed (R-16).
+- **Desktop/mobile:** same on both [O].
+- **Reproduction:** scenarios 07 (s1, s6) and 14 (s7).
+- **Confidence:** [O] high.
+- **Limitations:** the export itself could not complete headless (B-32, R-16).
 
 ## Eraser
 
 ### B-29 Eraser
 
-- **Action:** press E and drag across a freedraw stroke.
-- **Result:** the stroke is removed from the scene.
-- **Edge case:** after Escape, the active tool was **freedraw**, the tool used before the eraser,
-  rather than selection. Clicks then created dots (B-05). Seen in s1 and s6.
-- **Label:** [O], high for the removal and for the tool after Escape; [I], medium for the reading
-  "Escape returns to the previous tool".
+- **Initial state:** scenario 04's scene; a freedraw path drawn just before.
+- **Action:** press P and draw (400,550)…(550,580); press E and drag (470,520)→(480,620);
+  press Escape; click twice on the canvas.
+- **Immediate result:** the scene after the eraser drag has no freedraw element (`04-eraser`)
+  [O]. That the path had first created one is [I] from B-05; no probe ran in between.
+- **State and related effects:** after Escape the tool was **freedraw**, the tool before the
+  eraser, and the clicks made dots (`diag-after-eraser`) [O]. That Escape returns to the
+  previous tool in general is [H] (R-44).
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed for erasing (R-44).
+- **Edge cases:** erasing bound or locked elements: Not observed (R-44).
+- **Desktop/mobile:** mobile eraser: Not observed (R-44).
+- **Reproduction:** scenarios 04 and 04b (s1, s6).
+- **Confidence:** [O] high for the removal and the tool after Escape.
+- **Limitations:** no probe before the eraser (R-44).
 
 ## Persistence
 
 ### B-30 Local save and reload
 
-- **Save:** after each change, the scene is written to `localStorage["excalidraw"]` as an array
-  of elements, and the UI state to `localStorage["excalidraw-state"]` (60 keys).
-- **Timing** (scenario 13, s6, three independent shapes; offsets from the first read after
-  pointer-up): each new shape was **absent** at 0, about 115 and about 230 ms, and **present** at
-  about 340–375 ms and later. s1 measured the same once (absent at about 100 ms, present at about
-  300 ms) [O, high]. That this is a debounce of roughly 300 ms is [H].
-- **Reload:** restores the identical scene and scroll (`06-after-reload`, s1 and s6; also every
-  `00b` reload in s6).
-- **Deleted elements:** removed from the stored array; Ctrl+A then Delete leaves `[]`
-  (`12-end`, `13-end`).
-- **Label:** [O], high.
+- **Initial state:** empty canvas (scenario 13) or scenario 06's scene.
+- **Action:** draw a shape and read local storage at fixed delays; reload the page.
+- **Immediate result:** the scene is written to `localStorage["excalidraw"]` as an array of
+  elements and the UI state to `localStorage["excalidraw-state"]` [O]. Save timing (scenario 13,
+  s6, three shapes; offsets from the first scene read after the drag step returned): each new
+  shape was absent at 0, 114–120 and 224–236 ms and present at 338–376 ms and later, in 3 of 3
+  trials [O]. The pointer-up time was not recorded, so the save came at least about 224 ms after
+  pointer-up; the upper bound is not known. A debounce of about 300 ms is [H].
+- **State and related effects:** a reload restored the identical element list and scroll
+  (`06-image-inserted` → `06-after-reload`, s1 and s6; also every `00b` reload in s6) [O].
+- **Persistence:** after Ctrl+A and Delete the stored array is empty (`12-end`, `13-end`): the
+  probe counts every stored element, including flagged ones, so deleted elements are dropped
+  from storage [O].
+- **Undo/redo:** history across a reload: Not observed (R-52).
+- **Edge cases:** zoom across a reload (zoom was 1), selection across a reload, several tabs,
+  storage quota and mobile reload: Not observed (R-54).
+- **Desktop/mobile:** mobile reload (`09b`) asserted layout only; the scene was not compared
+  (R-54).
+- **Reproduction:** scenario 13 (s6: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1, s6).
+- **Confidence:** [O] high for reload and deletion (s1 and s6); [O] medium for the timing (one
+  session; an s1 timing reading is not in the committed index).
+- **Limitations:** `excalidraw-state` keeps 60 keys (raw count); the read cadence bounds the save
+  time only to the 100–150 ms gaps between reads (R-54).
 
 ### B-31 Storage keys
 
-- `localStorage`: `excalidraw`, `excalidraw-state`, `excalidraw-theme`, `i18nextLng`,
-  `version-dataState`, `version-files`.
-- `sessionStorage`: empty.
-- IndexedDB: `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`, plus
-  `workbox-expiration` in s6 (REA `ev_13a4756f`), which the s1 inventory did not list.
-- Cache Storage: one Workbox precache.
-- **Label:** [O], high (REA, values redacted, and the driver).
+- **Initial state:** after the first load (s1) and during scenario 13 (s6).
+- **Action:** REA page inspection and driver storage probes, values redacted.
+- **Immediate result:** `localStorage`: `excalidraw`, `excalidraw-state`, `excalidraw-theme`,
+  `i18nextLng`, `version-dataState`, `version-files`. `sessionStorage`: empty. IndexedDB:
+  `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`, plus `workbox-expiration` in
+  s6 (`ev_13a4756f`). Cache Storage: 1 cache at s1's first load, 3 at s1's later inspection, 2
+  in s6 (the precache and `fonts`) [O].
+- **State and related effects:** key names only.
+- **Persistence:** these are the persistent stores.
+- **Undo/redo:** not applicable.
+- **Edge cases:** contents of `files-db` and the library database: Not observed (R-45, R-15).
+- **Desktop/mobile:** mobile storage inventory: Not observed (R-61).
+- **Reproduction:** `evidence/rea-inspect-initial.summary.json`; `evidence/rea-windows.json`.
+- **Confidence:** [O] high (REA and the driver).
+- **Limitations:** values are redacted by design (R-61).
 
 ## Import, export and collaboration
 
 ### B-32 Export and save
 
-- Export to PNG or SVG from the dialog, Ctrl+S, and Save to… produced no download event and no
-  in-page UI in headless Chromium (s1 and s6) [O].
-- File System Access identifiers are present in the bundle [S]. A native save picker (invisible
-  in headless mode) is therefore [H], medium.
-- The exported file formats are [U].
+- **Initial state:** a scene; headless Chromium.
+- **Action:** Export to PNG and to SVG from the dialog, Ctrl+S, and Save to….
+- **Immediate result:** no download event and no in-page UI (s1 and s6) [O].
+- **State and related effects:** Not observed (R-46).
+- **Persistence:** Not observed (R-46).
+- **Undo/redo:** not applicable.
+- **Edge cases:** File System Access identifiers are in the bundle [S]; a native save picker,
+  invisible headless, is [H], medium. The file formats: [U] (R-46).
+- **Desktop/mobile:** mobile export: dialog only (B-28a); exporting: Not observed (R-46).
+- **Reproduction:** scenario 06 (s1, s6: failed `download` and `fileChooser` steps in
+  `evidence/sessions.json`).
+- **Confidence:** [O] high for the absence of events.
+- **Limitations:** headless only (R-18).
 
 ### B-33 Guest collaboration lifecycle
 
-- **Start session:** within about 5 s the URL gains `#room=<20 chars>,<22 chars>` (s1 and s6)
-  [O, high].
-- **Dialog:** shows an editable "Your name" textbox with a random two-word name, the link, Copy
-  link, a QR code and Stop session [O, high].
-- **Share button:** its accessible name becomes the participant count ("1"); a Laser pointer
-  button joins the toolbar, and an avatar initial appears. In s6 this was also seen with the
-  dialog closed (`collab-03-after-stop` ARIA) [O, high].
-- **Escape:** pressing Escape did not dismiss the dialog in either session. In s6 the in-session
-  screenshot was therefore refused by the driver's privacy check.
-- **Stop session:** this is [U].
-  - A role click on "Stop session" right after closing the dialog timed out in both sessions.
-  - Reopening the dialog through the "1" button and clicking Stop session (scenario 08b)
-    reported success in s6, but 2.5 s later the URL fragment and the dialog with its Stop session
-    button were still present (`collab-04-stopped`).
-  - In s1 a later native-dialog attempt left the page unresponsive to CDP evaluation.
-- **Captures:** s1's dialog screenshots were retired for privacy. s6's dialog screenshots have
-  every input and image masked (pixel-checked).
+- **Initial state:** a scene, no session.
+- **Action:** Live collaboration → Start session; Escape; Stop session.
+- **Immediate result:** within about 5 s the URL gains `#room=<20 chars>,<22 chars>` (s1, s6)
+  [O, high]. The dialog shows an editable "Your name" with a random two-word name, the link,
+  Copy link, a QR code and Stop session [O, high].
+- **State and related effects:** the share button's accessible name becomes the participant
+  count ("1"); a Laser pointer button joins the toolbar and an avatar initial appears, also with
+  the dialog closed in s6 [O, high]. One WebSocket and Firebase requests start (network
+  analysis) [O].
+- **Persistence:** Not observed (R-55).
+- **Undo/redo:** not applicable.
+- **Edge cases:** Escape did not dismiss the dialog in either session [O]. Stop session is [U]:
+  an early role click timed out in both sessions; in s6 the reopened dialog's Stop session click
+  reported success, but 2.5 s later the fragment and the dialog were still present
+  (`collab-04-stopped`); in s1 a native-dialog attempt left the page unresponsive to the driver
+  (R-55).
+- **Desktop/mobile:** mobile: pre-session dialog only (s7); a session: Not observed (R-14).
+- **Reproduction:** scenarios 08 and 08b (s1, s6), run last.
+- **Confidence:** as marked.
+- **Limitations:** one client per room; s1 captures retired; s6 captures masked (R-55).
 
 ## Element context menu and confirmations
 
 ### B-34 Element context menu
 
-- **Action:** right-click on the stroke of a selected rectangle (s6, dark theme,
-  `dark-07-element-context-menu`).
-- **Result:** a list of buttons (no `menu` role), separated into groups:
-  - Cut, Copy, Paste;
-  - Wrap selection in frame;
-  - Copy to clipboard as PNG, Copy to clipboard as SVG;
-  - Copy styles, Paste styles;
-  - Add to library;
-  - the four layer commands;
-  - Flip horizontal (Shift+H), Flip vertical (Shift+V);
-  - Add link (Ctrl+K), Copy link to object;
-  - Duplicate (Ctrl+D), Lock (Ctrl+Shift+L);
-  - Delete.
-- **Label:** [O], medium (s6 only). The effects of the items other than Duplicate, Lock and Delete
-  (B-18, B-19) are [U].
+- **Initial state:** a selected rectangle, dark theme (s6).
+- **Action:** right-click on its stroke.
+- **Immediate result:** a list of buttons (no `menu` role), in groups: Cut, Copy, Paste / Wrap
+  selection in frame / Copy to clipboard as PNG, as SVG / Copy styles, Paste styles / Add to
+  library / four layer commands / Flip horizontal, Flip vertical / Add link, Copy link to object
+  / Duplicate, Lock / Delete (`dark-07-element-context-menu`) [O].
+- **State and related effects:** Not observed for the menu items (R-09).
+- **Persistence:** Not observed (R-09).
+- **Undo/redo:** Not observed (R-09).
+- **Edge cases:** menu on multi-selection or groups: Not observed (R-09).
+- **Desktop/mobile:** light desktop and mobile: Not observed (R-09).
+- **Reproduction:** scenario 15 (s6).
+- **Confidence:** [O] medium (s6 only). Effects of Duplicate and Lock are known only through
+  their shortcuts (B-18, B-19).
+- **Limitations:** no item was clicked (R-09).
 
 ### B-35 Clear canvas confirmation
 
-- **Action:** main menu → "Reset the canvas" (mobile dark, s7, `m15-dark-reset-confirm`).
-- **Result:** a "Clear canvas" dialog with Cancel and Confirm. Escape dismissed it and the scene
-  kept its element (`14-selected`).
-- **Label:** [O], medium (s7 only). Confirming was not tested [U].
+- **Initial state:** mobile dark, one rectangle.
+- **Action:** main menu → "Reset the canvas", then Escape.
+- **Immediate result:** a "Clear canvas" dialog with Cancel and Confirm (`m15-dark-reset-confirm`);
+  Escape dismissed it [O].
+- **State and related effects:** the scene kept its element (`14-end`) [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-13).
+- **Edge cases:** Confirm: Not observed (R-13).
+- **Desktop/mobile:** desktop: Not observed (R-13).
+- **Reproduction:** scenario 14 (s7).
+- **Confidence:** [O] medium (s7 only).
+- **Limitations:** one session (R-13).
 
 ## Desktop and mobile differences (summary)
+
+All rows are [O] high (s1/s6 desktop, s3/s7 mobile) except where marked.
 
 | Aspect               | Desktop                 | Mobile                                                      |
 | -------------------- | ----------------------- | ----------------------------------------------------------- |
@@ -420,4 +802,4 @@ In dark theme, the Export image dialog opens with "Dark mode" already checked (d
 | Properties           | left side panel         | compact bar of 4 buttons above the toolbar                  |
 | Handles              | 4 corners plus rotation | 8 handles plus rotation                                     |
 | Lasso in More        | yes                     | no                                                          |
-| Diamond/Ellipse/Line | toolbar                 | access path [U]                                             |
+| Diamond/Ellipse/Line | toolbar                 | access path [U] (R-24)                                      |
