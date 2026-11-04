@@ -446,8 +446,9 @@ value is a value the page had saved locally.
     actions;
   - text: "Font family", "Font size" (4) and "Text align" (3); no stroke width, stroke style,
     sloppiness or edges.
-- **Persistence:** not applicable (a panel layout change, not an element or setting).
-- **Undo/redo:** not applicable (layout only; no element changes).
+- **Persistence:** the layout itself is not stored; the background colour that triggers it is
+  saved with the element (B-20) [O].
+- **Undo/redo:** undo of the background change: Not observed (R-52).
 - **Edge cases:** at 1280×720 the panel is cut off at "Actions"; a wheel over it scrolls it
   (`dark-09-panel-rect-scrolled`) [O].
 - **Desktop/mobile:** mobile uses a compact bar instead (summary table below, R-11).

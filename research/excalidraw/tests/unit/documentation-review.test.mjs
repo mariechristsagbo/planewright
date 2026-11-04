@@ -220,3 +220,28 @@ describe('retained copies of the room-bearing records', () => {
     expect(doc('rea-findings.md')).toContain('deleted with the capture transcript');
   });
 });
+
+describe('cross-references', () => {
+  it('plan undo of delete in R-52, which B-25 cites for it', () => {
+    expect(field(entry('B-25'), 'Edge cases')).toMatch(/delete[^.]*\(R-52\)/u);
+    const r52 = row('R-52');
+    expect(r52).toMatch(/delete \(B-25, B-30/u);
+    expect(r52).toContain('Ctrl+Z after Delete');
+  });
+
+  it('treat the background change of B-21 as an element change', () => {
+    const b21 = entry('B-21');
+    expect(field(b21, 'Action')).toContain('choose a background colour');
+    expect(field(b21, 'Undo/redo')).not.toContain('no element changes');
+    expect(field(b21, 'Undo/redo')).toContain('Not observed (R-52)');
+    expect(field(b21, 'Persistence')).toContain('saved with the element');
+    expect(row('R-52')).toContain('B-21 (the background change');
+  });
+
+  it('keep the undo button rule within what B-25 observed', () => {
+    const backlog = doc('backlog.md');
+    expect(backlog).not.toContain('disabled when there is nothing to undo or redo [O]');
+    expect(backlog).toContain('Undo became enabled after the first change [O]');
+    expect(field(entry('B-25'), 'State and related effects')).toContain('start disabled');
+  });
+});

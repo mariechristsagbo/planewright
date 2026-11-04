@@ -50,8 +50,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
    - Duplicate offsets the copies by +10/+10 [O]; which elements end up selected is open (R-38).
    - Move, rotation and duplicate are each one undo step [O]; resize is open (R-36).
 5. **Undo/redo.** Ref: B-25.
-   - Each observed operation is one undo step, and the undo/redo buttons are disabled when there
-     is nothing to undo or redo [O]. History across a reload is open (R-52).
+   - Each observed operation is one undo step [O]. On a fresh page both buttons were disabled,
+     and Undo became enabled after the first change [O]; the buttons' state after everything is
+     undone, and when Redo enables, are **open** (R-04, R-52). History across a reload is open
+     (R-52).
 6. **Local persistence.** Ref: B-30, B-31.
    - The scene and the scroll position survive a reload [O, scenario 06 in s1 and s6]. Zoom and
      selection across a reload, and a mobile reload, are **open** (R-54).
