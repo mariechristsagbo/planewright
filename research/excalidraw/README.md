@@ -20,6 +20,7 @@ it never writes raw third-party content into this repository. See
 | `lib/session-state.mjs` | Keeps the `runLast` lock and the halt reason in `$OUT/driver-state.json`, so a driver restart keeps both.                                                                                                   |
 | `lib/navwatch.mjs`      | Halts the session when the page itself navigates off the allowlist or opens a popup.                                                                                                                        |
 | `lib/probe-outcome.sh`  | Classifies isolation probe runs; a probe error never counts as isolation.                                                                                                                                   |
+| `lib/resource-state.sh` | Reports a container or network as PRESENT, ABSENT or UNKNOWN; a failed docker listing never counts as removed.                                                                                              |
 | `lib/input.mjs`         | Pointer, keyboard, wheel and touch input.                                                                                                                                                                   |
 | `lib/metrics.mjs`       | Layout metric read-back and the fail-fast comparison.                                                                                                                                                       |
 | `lib/sanitise.mjs`      | URL shapes, query stripping, secret-shape counting and redaction.                                                                                                                                           |
@@ -39,7 +40,7 @@ it never writes raw third-party content into this repository. See
 
 ```sh
 research/excalidraw/isolation-check.sh        # DevTools isolation, 11 checks
-research/excalidraw/selftest.sh               # driver end to end on a self-authored fixture
+research/excalidraw/selftest.sh               # driver end to end on a self-authored fixture, 19 checks
 npx vitest run --project 'research:*'         # unit and integration tests
 ```
 
@@ -99,16 +100,25 @@ the background just before a driver batch.
 - **Screenshots** use CDP `Page.captureScreenshot` on the driver's own session. Playwright's
   `page.screenshot()` was found to reset emulated DPR and screen until the next navigation.
   `mask` selectors are painted onto the decoded image before writing. Every requested mask must
-  yield at least one visible, non-empty box, or nothing is captured. While the live URL fragment
-  holds a `room` or `json` link value (also percent-encoded), checked before and after the
+  yield at least one non-empty box that lies at least partly inside the viewport, or nothing is
+  captured; an off-screen box paints nothing, so it does not count. While the live URL fragment
+  holds a `room` or `json` link value (in any case, percent-encoded to any depth), checked before
+  and after the
   capture, a screenshot is refused unless its masks produced boxes. `refuseIf` refuses the capture
   while a selector matches. `check-masks.mjs` fails a masked capture that recorded no box.
-- **Privacy.** ARIA text, dialog messages, download names and clipboard previews are redacted,
-  including percent-encoded `room%3D` values and `json=` link values. The clipboard text is
+- **Privacy.** ARIA text, dialog messages, error text, download names (reported and on disk) and
+  clipboard previews are redacted, including `room` and `json` link values in any case and at
+  any depth of percent-encoding (`room%3D`, `room%253D`, ...). The clipboard text is
   redacted in full before its preview is cut. URL probes and the netlog return key names and value
   lengths only; a key that is not a plain identifier is replaced by `<non-identifier>`.
 - **Failures.** Every step is appended to `timeline.jsonl`; failures keep a sanitised one-line
-  message.
+  message, redacted before it is cut to length, because these messages reach the committed
+  `sessions.json`. A failed trigger in `download`, `fileChooser` or `acceptDialog` fails its step
+  and leaves no pending waiter that could stop the driver.
+- **Cleanup checks.** `isolation-check.sh` and `selftest.sh` pass a removal check only when a
+  successful docker listing omits the name; a failed listing is a FAIL.
+- **REA extraction.** `rea-extract.mjs` needs an input ending in `.json` and never replaces an
+  existing PNG with different bytes.
 
 ## Scenario order and dependencies
 
