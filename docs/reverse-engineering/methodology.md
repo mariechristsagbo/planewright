@@ -126,8 +126,9 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
   them yet, and they are covered by stub-based unit and integration tests):
   - Any screenshot is refused while the live URL fragment holds a room or `json` link value,
     raw or percent-encoded, checked before and after the capture, unless every requested mask
-    produced a visible box. A mask with no usable box always refuses the capture, and
-    `check-masks.mjs` fails a masked capture without boxes.
+    produced a visible box (tightened after the review of `cb11dff`, below). A mask with no
+    usable box always refuses the capture, and `check-masks.mjs` fails a masked capture without
+    boxes.
   - Redaction covers `room%3D` and `json=` forms, the clipboard text is redacted before its
     preview is cut, and non-identifier URL keys are never stored.
   - One batch runs at a time, and the `runLast` collaboration scenarios lock the session.
@@ -139,6 +140,21 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
     followed. The new rules would not have changed which s6 captures were written.
   - No REA call runs during a collaboration window.
   - `secret-scan.mjs` scans trees by shape and prints only counts.
+- **Controls added after the review of cb11dff** (also untested in a live session; covered by
+  stub-based tests, the local self-test and the isolation check):
+  - In a room view the masks must also cover every on-screen input, textarea, image and canvas
+    in a dialog and every element whose text names a room or link key, and a capture whose URL
+    gains a value while it runs is refused. Whether this rule would have accepted the two s6
+    masked captures is not established: the surfaces it checks were not recorded in s6.
+  - Redaction and the secret-shape count match the room and `json` key names and their `=` and
+    `,` separators in any mix of literal and percent-encoded characters, and the count also
+    reads the ASCII-decoded text.
+  - A session halts when the URL holds a room or link value while no `runLast` scenario has
+    started, at attach or after a navigation.
+  - The driver state file rejects an empty halt reason and is narrowed to mode 0600 on every
+    write.
+  - `rea-extract.mjs` redacts copied accessible names and REA text and never replaces an
+    existing summary; `build-evidence.mjs` redacts failure text again.
 
 ## Validation of the evidence
 

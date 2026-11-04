@@ -245,3 +245,13 @@ describe('cross-references', () => {
     expect(field(entry('B-25'), 'State and related effects')).toContain('start disabled');
   });
 });
+
+describe('driver controls in the methodology', () => {
+  it('state the current capture rule and what it leaves unknown about s6', () => {
+    const text = doc('methodology.md');
+    expect(text).not.toMatch(/unless every requested mask produced a visible box\./u);
+    expect(text).toContain('every element whose text names a room or link key');
+    expect(text).toContain('would have accepted the two s6 masked captures is not established');
+    expect(text).toContain('Controls added after the review of cb11dff');
+  });
+});
