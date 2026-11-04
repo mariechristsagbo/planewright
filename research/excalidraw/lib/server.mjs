@@ -80,21 +80,63 @@ export function readCappedBody(request, limit = MAX_BODY_BYTES) {
   });
 }
 
-/** Turns a request body into a batch: a named scenario from the driver's listing, or inline. */
+/**
+ * Turns a request body into { name, batch }: a named scenario from the driver's listing, or an
+ * inline batch with a null name.
+ */
 export function toBatch(body, scenarios) {
   const parsed = JSON.parse(body);
   if (parsed === null || typeof parsed !== 'object') throw new Error('A batch must be an object.');
-  if (typeof parsed.scenario !== 'string') return parsed;
+  if (typeof parsed.scenario !== 'string') return { name: null, batch: parsed };
   const file = scenarios.get(parsed.scenario);
   if (!file) throw new Error('Unknown scenario name.');
-  return JSON.parse(readFileSync(file, 'utf8'));
+  return { name: parsed.scenario, batch: JSON.parse(readFileSync(file, 'utf8')) };
+}
+
+/**
+ * Admission control. One batch runs at a time: a batch that arrives while another runs is
+ * refused, so two batches never interleave on the page. A named scenario whose file sets
+ * `runLast` (the collaboration scenarios 08 and 08b) closes the session to everything else: once
+ * one has started, only other `runLast` scenarios that have not run yet are admitted. The flag is
+ * read from scenario files only, never from inline batches. Returns a refusal reason or null.
+ */
+export function createGate() {
+  let busy = false;
+  const finished = new Set();
+  return {
+    admit(name, batch) {
+      if (busy) return 'Another batch is running.';
+      const last = name !== null && batch?.runLast === true;
+      if (finished.size > 0 && !last) return 'A runLast scenario has started; only runLast follow.';
+      if (last && finished.has(name)) return 'A runLast scenario runs at most once per session.';
+      if (last) finished.add(name);
+      busy = true;
+      return null;
+    },
+    release() {
+      busy = false;
+    },
+  };
+}
+
+async function handleRun(request, { ctx, scenarios, gate }) {
+  const { name, batch } = toBatch(await readCappedBody(request), scenarios);
+  const refused = gate.admit(name, batch);
+  if (refused) return { status: 409, body: { error: refused } };
+  try {
+    return { status: 200, body: await runBatch(ctx, batch) };
+  } finally {
+    gate.release();
+  }
 }
 
 /**
  * Creates the loopback HTTP server. Requests are checked before any body byte is read; /quit
- * calls `onQuit` once. The caller chooses when to listen.
+ * calls `onQuit` once. Batches pass the admission gate (409 when refused). The caller chooses
+ * when to listen.
  */
 export function createDriverServer({ ctx, token, port, scenarios, onQuit }) {
+  const gate = createGate();
   return createServer(async (request, response) => {
     const reply = (status, body) => {
       response.writeHead(status, { 'content-type': 'application/json' });
@@ -113,8 +155,8 @@ export function createDriverServer({ ctx, token, port, scenarios, onQuit }) {
       return;
     }
     try {
-      const batch = toBatch(await readCappedBody(request), scenarios);
-      reply(200, await runBatch(ctx, batch));
+      const { status, body } = await handleRun(request, { ctx, scenarios, gate });
+      reply(status, body);
     } catch (error) {
       reply(error?.status === 413 ? 413 : 400, { error: sanitiseError(error) });
     }

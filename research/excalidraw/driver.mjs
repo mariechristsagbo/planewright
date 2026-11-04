@@ -4,6 +4,7 @@
 // so that REA can observe the same page passively while interaction batches run. Accepts step
 // batches over a loopback-only HTTP endpoint and appends every step, including failed ones, to
 // a timeline. A request body is an inline batch ({ steps: [...] }) or { scenario: "<name>" }.
+// One batch runs at a time, and scenarios marked `runLast` lock the session (lib/server.mjs).
 // Every request must be a POST to 127.0.0.1:<port> carrying the per-run token from
 // <out>/driver.token in the x-research-token header; see lib/guard.mjs for the full policy.
 //
