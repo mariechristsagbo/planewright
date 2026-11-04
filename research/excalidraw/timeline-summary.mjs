@@ -1,5 +1,8 @@
 // Summarises labelled scene/appState probes from a driver timeline into compact rows:
 // label, selected count, active tool, and per-element type/geometry/style facts.
+// One scene and one appState read may share a label. When one label is read more than once by
+// the same probe, the row keeps the first read's time and the last read's values, so a warning
+// naming the label goes to stderr; the summary itself is unchanged.
 //
 // Usage: node research/excalidraw/timeline-summary.mjs <timeline.jsonl> [--since ISO] [--json]
 import { readFileSync } from 'node:fs';
@@ -42,7 +45,10 @@ const element = (e) => ({
 });
 
 const summary = new Map();
+const reads = new Map();
 for (const row of rows) {
+  const read = `${row.step.do}\u0000${row.step.label}`;
+  reads.set(read, (reads.get(read) ?? 0) + 1);
   const entry = summary.get(row.step.label) ?? { label: row.step.label, at: row.started };
   if (row.step.do === 'scene') entry.elements = (row.result.elements ?? []).map(element);
   if (row.step.do === 'appState') {
@@ -56,6 +62,15 @@ for (const row of rows) {
     entry.theme = selected.theme;
   }
   summary.set(row.step.label, entry);
+}
+
+for (const [read, count] of reads) {
+  if (count < 2) continue;
+  const [kind, label] = read.split('\u0000');
+  process.stderr.write(
+    `warning: label "${label}" was read ${String(count)} times by ${kind}; the summary keeps ` +
+      "the first read's time and the last read's values.\n",
+  );
 }
 
 if (values.json) {
