@@ -7,12 +7,27 @@ import { createServer } from 'node:http';
 
 import { MAX_BODY_BYTES, checkRequest, sanitiseError } from './guard.mjs';
 import { FatalStepError } from './metrics.mjs';
+import { redactSecrets } from './sanitise.mjs';
 import { memoryState } from './session-state.mjs';
 
 const LOOPBACK = '127.0.0.1';
 
 const stepName = (step) =>
   step !== null && typeof step === 'object' && typeof step.do === 'string' ? step.do : null;
+
+/**
+ * A copy of a step for the raw timeline, with room and link values and other secret shapes
+ * redacted in every string, keys included. A `goto` URL or typed text could otherwise keep the
+ * value on disk. Handlers still receive the step as sent.
+ */
+function redactedRecord(value) {
+  if (typeof value === 'string') return redactSecrets(value);
+  if (Array.isArray(value)) return value.map(redactedRecord);
+  if (value === null || typeof value !== 'object') return value;
+  return Object.fromEntries(
+    Object.entries(value).map(([key, item]) => [redactSecrets(key), redactedRecord(item)]),
+  );
+}
 
 /**
  * Creates the step runner. Every step, successful or not, is appended to the timeline; failures
@@ -24,7 +39,8 @@ export function createRunner({ steps, timelineFile, base }) {
   const ctx = { ...base };
   ctx.run = async (step) => {
     const started = new Date().toISOString();
-    const record = step !== null && typeof step === 'object' ? step : { invalid: typeof step };
+    const record =
+      step !== null && typeof step === 'object' ? redactedRecord(step) : { invalid: typeof step };
     try {
       // Any string is a halt, an empty one included; only null or undefined means clear.
       const halted = ctx.halted?.();

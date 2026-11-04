@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import { TOKEN_HEADER } from '../../lib/guard.mjs';
+import { countSecretShapes } from '../../lib/sanitise.mjs';
 import { createDriverServer, createGate, createRunner, listenLoopback } from '../../lib/server.mjs';
 import { openSessionState } from '../../lib/session-state.mjs';
 
@@ -122,6 +123,24 @@ describe('halted runner', () => {
     });
     expect(calls).toBe(0);
     expect(JSON.parse(readFileSync(timelineFile, 'utf8'))).toMatchObject({ fatal: true });
+  });
+
+  it('redacts room and link values in step records before they reach the timeline', async () => {
+    // Synthetic, low-entropy value built at run time (see sanitise.test.mjs).
+    const url = `https://excalidraw.com/#room=${'a1B2'.repeat(5)},${'k_L-'.repeat(5)}m1`;
+    const seen = [];
+    const steps = new Map([['echo', async (_ctx, step) => seen.push(step.url)]]);
+    const timelineFile = join(dir, 'redacted.jsonl');
+    const ctx = createRunner({ steps, timelineFile, base: {} });
+    const step = { do: 'echo', url, nested: [{ text: url }] };
+    await ctx.run(step);
+    await ctx.run({ do: 'missing', url }).catch(() => undefined);
+    const text = readFileSync(timelineFile, 'utf8');
+    expect(countSecretShapes(text)).toEqual({});
+    expect(text.match(/#room=<redacted>/gu)).toHaveLength(3);
+    // The handler still gets the step as sent, and the caller's object is left unchanged.
+    expect(seen).toEqual([url]);
+    expect(step.nested[0].text).toBe(url);
   });
 
   it('treats an empty halt reason as halted, never as clear', async () => {
