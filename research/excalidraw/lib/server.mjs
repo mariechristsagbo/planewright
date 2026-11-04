@@ -26,8 +26,9 @@ export function createRunner({ steps, timelineFile, base }) {
     const started = new Date().toISOString();
     const record = step !== null && typeof step === 'object' ? step : { invalid: typeof step };
     try {
+      // Any string is a halt, an empty one included; only null or undefined means clear.
       const halted = ctx.halted?.();
-      if (halted) throw new FatalStepError(`Session halted: ${halted}`);
+      if (typeof halted === 'string') throw new FatalStepError(`Session halted: ${halted}`);
       const handler = steps.get(stepName(step) ?? '');
       if (typeof handler !== 'function') throw new Error('Unknown step name.');
       const result = await handler(ctx, step);

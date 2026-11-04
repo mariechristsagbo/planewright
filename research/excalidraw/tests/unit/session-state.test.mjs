@@ -1,5 +1,5 @@
 // Exercises the driver state that must survive a restart, in a temporary session directory.
-import { mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -36,11 +36,23 @@ describe('openSessionState', () => {
     ['a list', '[]'],
     ['a bad runLast', '{"runLast":"08","halted":null}'],
     ['a bad halt reason', '{"runLast":[],"halted":1}'],
+    ['an empty halt reason', '{"runLast":[],"halted":""}'],
   ])('refuses to start from a state file that is %s', (_label, text) => {
     const file = join(dir, 'bad.json');
     writeFileSync(file, text);
     expect(() => openSessionState(file)).toThrow(/malformed/u);
     expect(readFileSync(file, 'utf8')).toBe(text);
+  });
+
+  it('makes an existing state file private again when it is rewritten', () => {
+    const file = join(dir, 'wide.json');
+    writeFileSync(file, '{"runLast":[],"halted":null}\n', { mode: 0o644 });
+    chmodSync(file, 0o644);
+    const state = openSessionState(file);
+    expect(statSync(file).mode & 0o777).toBe(0o600);
+    chmodSync(file, 0o644);
+    state.startRunLast('08-collaboration-desktop');
+    expect(statSync(file).mode & 0o777).toBe(0o600);
   });
 });
 
@@ -53,4 +65,15 @@ describe('memoryState', () => {
     expect(state.halted()).toBe('first');
     expect(state.runLastStarted()).toEqual(['a']);
   });
+
+  it.each([[''], [undefined], [42]])(
+    'records a halt given the reason %j, never staying clear',
+    (r) => {
+      const state = memoryState();
+      state.halt(r);
+      expect(state.halted()).toEqual(expect.stringMatching(/./u));
+      state.halt('a later reason');
+      expect(state.halted()).not.toBe('a later reason');
+    },
+  );
 });

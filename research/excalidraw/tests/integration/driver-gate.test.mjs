@@ -123,4 +123,13 @@ describe('halted runner', () => {
     expect(calls).toBe(0);
     expect(JSON.parse(readFileSync(timelineFile, 'utf8'))).toMatchObject({ fatal: true });
   });
+
+  it('treats an empty halt reason as halted, never as clear', async () => {
+    let calls = 0;
+    const steps = new Map([['echo', async () => (calls += 1)]]);
+    const timelineFile = join(dir, 'halted-empty.jsonl');
+    const ctx = createRunner({ steps, timelineFile, base: { halted: () => '' } });
+    await expect(ctx.run({ do: 'echo' })).rejects.toMatchObject({ fatal: true });
+    expect(calls).toBe(0);
+  });
 });
