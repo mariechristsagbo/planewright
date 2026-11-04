@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  clipboardShapeOf,
   countSecretShapes,
+  hasSecretFragment,
   redactSecrets,
   sanitiseUrl,
   stripQuery,
@@ -96,5 +98,93 @@ describe('countSecretShapes', () => {
   it('ignores our own redaction placeholders', () => {
     expect(countSecretShapes('room=REDACTED_ROOM_ID____,REDACTED_ROOM_KEY_____')).toEqual({});
     expect(countSecretShapes('room=<redacted>')).toEqual({});
+  });
+});
+
+// Encoded and `json` link forms of the same synthetic values.
+const ENCODED = `room%3D${ROOM}%2C${KEY}`;
+const JSON_LINK = `https://excalidraw.com/#json=${ROOM},${KEY}`;
+const leaks = (text) => [ROOM, KEY].some((part) => String(text).includes(part));
+
+describe('encoded room and json link forms', () => {
+  it.each([
+    ['percent-encoded room', `https://x.example/?u=https%3A%2F%2Fexcalidraw.com%2F%23${ENCODED}`],
+    ['upper-case encoded room', `#ROOM%3d${ROOM}`],
+    ['json link', JSON_LINK],
+    ['encoded json link', `json%3D${ROOM}%2C${KEY}`],
+  ])('redacts a %s', (_label, text) => {
+    const out = redactSecrets(text);
+    expect(leaks(out)).toBe(false);
+    expect(out).toContain('<redacted>');
+  });
+
+  it('counts the encoded room and json link shapes without returning values', () => {
+    expect(countSecretShapes(`${ENCODED} ${JSON_LINK}`)).toEqual({
+      'room-fragment-encoded': 1,
+      'json-link': 1,
+    });
+    expect(countSecretShapes(redactSecrets(`${ENCODED} ${JSON_LINK}`))).toEqual({});
+  });
+
+  it('replaces a key name that is not an identifier, so an encoded value is never a key', () => {
+    const shape = urlShapeOf(`https://excalidraw.com/?${ENCODED}=1#${ENCODED}`);
+    expect(leaks(JSON.stringify(shape))).toBe(false);
+    expect(shape.fragment[0].key).toBe('<non-identifier>');
+    expect(shape.queryKeys).toEqual(['<non-identifier>']);
+    expect(leaks(JSON.stringify(sanitiseUrl(`https://x.example/?${ENCODED}=1`)))).toBe(false);
+  });
+});
+
+describe('hasSecretFragment', () => {
+  it.each([
+    ROOM_URL,
+    JSON_LINK,
+    `https://excalidraw.com/#${ENCODED}`,
+    `https://excalidraw.com/#x=1&Room=${ROOM}`,
+    `about:blank#%72oom=${ROOM}`,
+    `https://excalidraw.com/#room=${ROOM}%E0%A4%A`,
+  ])('detects a collaboration value in %s', (href) => {
+    expect(hasSecretFragment(href)).toBe(true);
+  });
+
+  it.each([
+    'https://excalidraw.com/',
+    'https://excalidraw.com/?room=query-not-fragment',
+    'https://excalidraw.com/#room=',
+    'https://excalidraw.com/#room=&x=1',
+    'https://excalidraw.com/#library=abc',
+  ])('finds no value in %s', (href) => {
+    expect(hasSecretFragment(href)).toBe(false);
+  });
+});
+
+describe('clipboardShapeOf', () => {
+  // A token-shaped value that a 24-character cut would split below the pattern's minimum length.
+  const TOKEN = ['gh', 'p_', 'Q7'.repeat(18)].join('');
+
+  it('redacts the whole text before cutting the preview', () => {
+    const shape = clipboardShapeOf(`see ${TOKEN} and ${ROOM_URL}`);
+    expect(shape.json).toBe(false);
+    expect(shape.startsWith).toHaveLength(24);
+    expect(shape.startsWith).not.toContain('Q7Q7');
+    expect(shape.startsWith).toBe('see <redacted:github-tok');
+  });
+
+  it('never previews a room value cut at the boundary', () => {
+    const shape = clipboardShapeOf(`https://excalidraw.com/#room=${ROOM},${KEY}`);
+    expect(leaks(shape.startsWith)).toBe(false);
+    expect(shape.chars).toBe(ROOM_URL.length);
+  });
+
+  it('reduces a JSON object to redacted key names and types', () => {
+    const shape = clipboardShapeOf(
+      JSON.stringify({ type: 'scene', elements: [{ type: 'rectangle' }, null], [TOKEN]: 1 }),
+    );
+    expect(shape).toMatchObject({ json: true, type: 'scene', elements: ['rectangle', undefined] });
+    expect(shape.keys).toEqual(['type', 'elements', '<redacted:github-token>']);
+  });
+
+  it.each(['null', '42', '[1,2]'])('treats non-object JSON %s as text', (text) => {
+    expect(clipboardShapeOf(text)).toEqual({ chars: text.length, json: false, startsWith: text });
   });
 });

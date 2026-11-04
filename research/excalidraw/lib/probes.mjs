@@ -1,7 +1,7 @@
 // Bounded reads of state created by the research session itself: storage key inventory,
 // a structural summary of the locally persisted scene, clipboard text shape, the URL shape and
 // the computed style of the document root. Values are reduced to shapes, counts and geometry.
-import { redactSecrets, urlShapeOf } from './sanitise.mjs';
+import { clipboardShapeOf, urlShapeOf } from './sanitise.mjs';
 
 function summariseStorage() {
   const describe = (raw) => {
@@ -94,22 +94,6 @@ function summariseAppState(key) {
   };
 }
 
-async function clipboardShape() {
-  const text = await navigator.clipboard.readText();
-  try {
-    const parsed = JSON.parse(text);
-    return {
-      chars: text.length,
-      json: true,
-      keys: Object.keys(parsed),
-      type: parsed.type,
-      elements: Array.isArray(parsed.elements) ? parsed.elements.map((e) => e.type) : undefined,
-    };
-  } catch {
-    return { chars: text.length, json: false, startsWith: text.slice(0, 24) };
-  }
-}
-
 function rootStyle() {
   const root = document.documentElement;
   const body = getComputedStyle(document.body);
@@ -134,11 +118,10 @@ async function urlProbe(ctx) {
   return urlShapeOf(await ctx.page.evaluate(() => location.href));
 }
 
+// The clipboard text stays in this process: it is shaped and redacted here before anything is
+// returned, and the preview is cut only after redaction.
 async function clipboardProbe(ctx) {
-  const shape = await ctx.page.evaluate(clipboardShape);
-  return shape.startsWith === undefined
-    ? shape
-    : { ...shape, startsWith: redactSecrets(shape.startsWith) };
+  return clipboardShapeOf(await ctx.page.evaluate(() => navigator.clipboard.readText()));
 }
 
 export const probes = {
