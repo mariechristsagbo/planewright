@@ -19,7 +19,9 @@ scene units at zoom 1 with no scroll unless stated otherwise. Evidence names ref
   stores 2 points.
 - **State:** the new element is selected and the active tool returns to Selection. Defaults:
   stroke `#1e1e1e`, background transparent, fill style `solid`, stroke width 2, stroke style
-  solid, roughness 1, opacity 100, rounded corners (roundness type 2).
+  solid, roughness 1, opacity 100. Rounded corners are on by default; the stored roundness
+  type is **3 for rectangles** (in every session and from creation onwards) and **2 for
+  ellipse, diamond, line, arrow and sticky note**. Freedraw and text have none.
 - **Persistence:** written to `localStorage["excalidraw"]` (see B-30).
 - **Mobile:** a one-finger touch drag with the rectangle tool gives an exact 140×100 rectangle
   (`m-rect-touch`) [O, high].
@@ -53,9 +55,13 @@ The line under the toolbar changes with context:
 - **Result:**
   - The arrow ends at x=514, so its end snapped to the ellipse outline rather than the pointer.
   - `endBinding` is set, and the ellipse's `boundElements` gains `arrow`.
-  - In s2 the start was not bound to the rectangle 5 units away. In s1, a start 15 units from
-    the rectangle was also unbound.
-- **Label:** [O], high for end binding; [U] for the start-binding gap threshold.
+  - **Start binding:** in s2 (`02-all-shapes`), the start, 5 units right of the rectangle's
+    edge, **was bound** (`startBound: true`). In s1 (`04-arrow-bound`), a start 15 units from a
+    rectangle's edge was **not** bound.
+- **Label:** [O], high for end binding; [O], medium for each start-binding case (one
+  observation each, in different sessions and scenes).
+- **Inference [I], low:** at zoom 1, the start-binding distance limit lies somewhere between 5
+  and 15 units. Not measured further.
 - **Edge cases:** Ctrl while drawing should prevent binding (Help) [U]. Moving the bound target
   was not exercised for a bound arrow end [U].
 - **Evidence:** `04-arrow-bound`, `02-all-shapes`.
@@ -135,8 +141,11 @@ rectangle, text and arrow (scenario 06). **Label:** [O], medium.
 
 - **Desktop:** a rectangle 180×150 at zoom 1 shows a box padded about 4 px, 4 corner handles, and
   a round rotation handle 16 px above the top centre (`sel-02-rect-handles`).
-- **Mobile:** a 140×100 rectangle at DPR 3 shows 8 handles (corners and edge midpoints) plus the
-  rotation handle (`m04-rect-selected`).
+- **Mobile:** a 140×100 rectangle in the 390×844 touch emulation shows 8 handles (corners and
+  edge midpoints) plus the rotation handle (`m04-rect-selected`). This was captured in scenario
+  10, after the emulation was re-applied. At that point `devicePixelRatio` read **1**, not 3,
+  while the canvas backing store stayed 1170×2532 (see [limitations](limitations.md)). The
+  effective DPR for this capture is therefore uncertain.
 - **Label:** [O], medium. Whether the handle count depends on element size or on input device is
   [U].
 
@@ -156,7 +165,8 @@ not tested [U]. **Label:** [O], high (s1 and s2).
 ### B-17 Rotate
 
 Drag the rotation handle (430,220) through 90° around the centre (430,315) to (530,315): angle =
-π/2 (stored 1.5708, shown rounded as 1.6), size unchanged. Undo restores 0. Shift snapping was
+1.6 in the probe, which rounds to one decimal. That is consistent with π/2 ≈ 1.571; the exact
+stored value was not captured. Size unchanged. Undo restores 0. Shift snapping was
 not tested [U]. **Label:** [O], medium (once). A miss of the handle deselects instead
 (`rotate-handle` in s1 and s2).
 
@@ -187,8 +197,9 @@ them. **Label:** [O], high.
 
 Choosing a non-transparent background inserts a Fill row, which shifts every row below it
 down. In s1, coordinate clicks intended for stroke width, stroke style, edges and layers
-therefore landed elsewhere. The results of those clicks are **not** used as findings; the
-resulting `roundness` change (2→3) is unexplained [U]. **Label:** [O], high for the insertion.
+therefore landed elsewhere. The results of those clicks are **not** used as findings. The
+rectangle's roundness stayed 3 throughout; that was its value from creation (B-01), not an
+effect of these clicks. **Label:** [O], high for the insertion.
 
 ## Grouping, layers, alignment
 
@@ -238,18 +249,18 @@ Copy as PNG (Shift+Alt+C), paste as plain text and copy/paste styles were not te
 
 All rows are [O], high: identical in s1 and s2 except fit-to-content, which depends on the scene.
 
-| Input                                   | Effect                                                                                                                            |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Wheel, dy=+200                          | scrollY −200 (1:1 at zoom 1)                                                                                                      |
-| Shift+wheel, dy=+200                    | scrollX −200 (horizontal pan)                                                                                                     |
-| Ctrl+wheel, dy=−100 at (640,360)        | zoom 1 → 1.1; scroll adjusted so the pointer's scene point stays fixed                                                            |
-| Ctrl+0                                  | zoom 1, keeping the viewport centre                                                                                               |
-| Ctrl+= / Ctrl+- (×2)                    | zoom 1.1 / 0.9: steps of 0.1 around the viewport centre                                                                           |
-| Shift+1                                 | Fits all content. For the small test scene, zoom stayed **1.0** (no zoom-in beyond 100% was observed) and the content was centred |
-| Space + drag (−100,−50)                 | scroll changes by exactly the drag delta; the tool is unchanged                                                                   |
-| Hand tool drag (+50,+50)                | scroll changes by exactly the drag delta                                                                                          |
-| Mobile pinch, fingers 90 → 190 px apart | zoom 2.1111 = 190/90: zoom follows the finger-distance ratio                                                                      |
-| Mobile two-finger pan, 80 px up         | scrollY changes by −80/zoom (−38)                                                                                                 |
+| Input                                   | Effect                                                                                                                                                                                                                                                                                                                                                                |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wheel, dy=+200                          | scrollY −200 (1:1 at zoom 1)                                                                                                                                                                                                                                                                                                                                          |
+| Shift+wheel, dy=+200                    | scrollX −200 (horizontal pan)                                                                                                                                                                                                                                                                                                                                         |
+| Ctrl+wheel, dy=−100 at (640,360)        | zoom 1 → 1.1; scroll adjusted so the pointer's scene point stays fixed                                                                                                                                                                                                                                                                                                |
+| Ctrl+0                                  | zoom 1, keeping the viewport centre                                                                                                                                                                                                                                                                                                                                   |
+| Ctrl+= / Ctrl+- (×2)                    | zoom 1.1 / 0.9: steps of 0.1 around the viewport centre                                                                                                                                                                                                                                                                                                               |
+| Shift+1                                 | Zoom stayed **1.0** for the small test scenes (no zoom-in beyond 100% was observed). In s1 the horizontal scroll (90) matches centring the content's bounding box; the vertical scroll (45) does not match simple centring (15 expected), so the vertical placement rule is [U]. In s2 the result (90,100) differs because 05's leading undos reverted 03 steps there |
+| Space + drag (−100,−50)                 | scroll changes by exactly the drag delta; the tool is unchanged                                                                                                                                                                                                                                                                                                       |
+| Hand tool drag (+50,+50)                | scroll changes by exactly the drag delta                                                                                                                                                                                                                                                                                                                              |
+| Mobile pinch, fingers 90 → 190 px apart | zoom 2.1111 = 190/90: zoom follows the finger-distance ratio                                                                                                                                                                                                                                                                                                          |
+| Mobile two-finger pan, 80 px up         | scrollY changes by −80/zoom (−38)                                                                                                                                                                                                                                                                                                                                     |
 
 ## View modes
 
@@ -315,8 +326,16 @@ behaviour was not exercised [U]. **Label:** [O], medium.
 - **Start session:** within about 4 s the URL gains `#room=<20 chars>,<22 chars>` [O].
 - **Dialog:** shows a random two-word name, the link, Copy link, a QR code and Stop session [O].
 - **Share button:** its accessible name becomes the participant count ("1"); a Laser pointer
-  button joins the toolbar, and an avatar initial appears [O].
-- **Stop session:** clicking it through Playwright left the session active. A later attempt left
+  button joins the toolbar, and an avatar initial appears [O]. These facts come from the
+  in-session ARIA snapshots `collab-03-after-stop` and `collab-04-stopped`.
+- **Screenshot note:** `collab-02-in-session` is byte-identical to `collab-01-session-dialog`
+  (both `fc8b857549aa…`). Escape did not visibly dismiss the dialog before that capture, so
+  collab-02 shows the dialog, not the in-session canvas. `collab-04-stopped` (`4330a9bd4b9f…`)
+  differs from both, but its ARIA snapshot still contains the dialog and the room link. That
+  is consistent with the stop not having taken effect; it does not show what a stopped
+  session looks like.
+- **Stop session:** clicking it through Playwright (scenario `08b`) left the session active:
+  the URL fragment and dialog were unchanged. A later attempt to accept a native dialog left
   the page unresponsive to CDP evaluation. The stop flow is therefore [U]. The tab was closed
   to end the session.
 - **Label:** [O], high for start.

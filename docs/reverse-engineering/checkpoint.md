@@ -21,14 +21,14 @@ Last updated: 2026-11-04. Branch: `docs/1-excalidraw-research`.
 
 ## Testing requirements
 
-| Requirement                                             | Status  | Notes                                                                                                                                                                                                                                   |
-| ------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Re-run each documented interaction from a fresh profile | Partial | Scenarios 02, 03 and 05 were replayed in fresh profile s2 with identical results. Scenarios 04, 06, 07 and 08 ran only in s1; 09 and 10 ran in fresh profile s3 only                                                                    |
-| Screenshot dimensions validated                         | Done    | Every PNG header checked; REA viewport matched                                                                                                                                                                                          |
-| Generated JSON and REA bundles validated                | Done    | All 16 committed JSON files parse. `sessions.json` and the three probe summaries regenerate byte-identically from the external sessions. Both REA bundles re-validated with `rea evidence-export` (exit 0; 3 and 7 records, 0 unknowns) |
-| CDP and driver ports loopback-only                      | Done    | `127.0.0.1:9222` and `127.0.0.1:9333` checked with `ss -ltn`                                                                                                                                                                            |
-| Owned processes and profiles cleaned up                 | Done    | Rechecked after the interrupted runs: no `pw-*` containers, no driver, runner or Chromium process, ports 9222/9333 free, no `/tmp` REA or Playwright profiles; profiles were container tmpfs                                            |
-| Separate Claude Code review session                     | Open    | Not started                                                                                                                                                                                                                             |
+| Requirement                                             | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Re-run each documented interaction from a fresh profile | Partial | 02, 03 and 05 were replayed in fresh profile s2 with identical probe results (05's fit scroll differs, explained by its dependency on 04b). 04, 06, 07, 08 and every `b` scenario ran only in s1. 09 ran in fresh profiles s3 and s4; 10 and 10b ran only in s3                                                                                                                                              |
+| Screenshot dimensions validated                         | Done    | Every PNG header checked; REA viewport matched                                                                                                                                                                                                                                                                                                                                                               |
+| Generated JSON and REA bundles validated                | Done    | All 16 committed JSON files parse. `sessions.json` and the three probe summaries regenerate byte-identically from the external sessions. Both REA bundles re-validated with `rea evidence-export` (exit 0; 3 and 7 records, 0 unknowns)                                                                                                                                                                      |
+| CDP and driver ports loopback-only                      | Done    | `127.0.0.1:9222` and `127.0.0.1:9333` checked with `ss -ltn`                                                                                                                                                                                                                                                                                                                                                 |
+| Owned processes and profiles cleaned up                 | Done    | Rechecked after the interrupted runs: no `pw-*` containers, no driver, runner or Chromium process, ports 9222/9333 free, no `/tmp` REA or Playwright profiles; profiles were container tmpfs                                                                                                                                                                                                                 |
+| Separate Claude Code review session                     | Done    | An independent review of Draft PR #2 (2026-11-04) found 5 blocking issues: the arrow start-binding claim, the rectangle roundness default, the scenario 10 DPR claim, driver hardening, and ad-hoc evidence lacking scenarios. It also found non-blocking contradictions. All were addressed on this branch; the DPR question was re-verified live (session `s4-dpr-probe`). Residual scope stays open below |
 
 ## Interrupted runs
 
@@ -43,11 +43,17 @@ Last updated: 2026-11-04. Branch: `docs/1-excalidraw-research`.
 ## Resume instructions
 
 1. Pick the P1 rows from the [residual matrix](residual-matrix.md), and add one scenario file per
-   row under `research/excalidraw/scenarios/` (number 11 onwards).
-2. Use a new external session directory (for example `s4-desktop`). Rebuild
+   row under `research/excalidraw/scenarios/` (number 12 onwards; 11 is the DPR probe).
+2. Use a new external session directory (for example `s5-desktop`). Rebuild
    `evidence/sessions.json` with `build-evidence.mjs`, listing every session directory.
 3. When new REA bundles are exported, validate them with
    `node rea-build/scripts/rea.mjs evidence-export <bundle> <out>` (outside the repository).
-4. Run scenarios 04, 06, 07 and 08 in a fresh profile to close the fresh-rerun requirement.
-   Run 08 only once.
-5. Request the separate review session before marking the pull request ready.
+4. To close the fresh-rerun requirement, replay the whole desktop chain in one fresh profile.
+   Most scenarios depend on the previous end state, so they cannot run in isolation (see
+   [scenario order](../../research/excalidraw/README.md#scenario-order-and-dependencies)):
+   `00 → 01 → 02 → 02b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 08 → 08b`.
+   Run 08 and 08b only once. Start the driver with a fresh `--out` and pass the same directory
+   to `run.mjs --out` so it can read the per-run token.
+5. For mobile, avoid re-applying emulation after the page has loaded (scenario 10's first step).
+   Either restart the driver and reload, or drop that step, and check `devicePixelRatio` with a
+   `metrics` step before relying on DPR.

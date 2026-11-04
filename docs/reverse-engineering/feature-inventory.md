@@ -61,7 +61,11 @@ Alt+Shift+D, ?, Ctrl+/, Ctrl+Shift+E, and Enter (add label). Every other shortcu
 palette lists "Zoom to selection = Shift+3" and "Zoom to fit in viewport = Shift+2". Which is
 effective was not tested [U].
 
-## 6. Mobile shell (390×844, DPR 3, touch) [O, high; session `s3-mobile`]
+## 6. Mobile shell (390×844 touch emulation) [O, high; session `s3-mobile`]
+
+DPR 3 was verified only for scenario 09 (initial load). Scenario 10 re-applied the emulation;
+after that, `devicePixelRatio` read 1 (see [limitations](limitations.md)). The layout facts
+below do not depend on DPR.
 
 - **Top bar:** main menu (left) and Library (right) only. There is no share button, no promotion
   link, no zoom controls and no visible Help button.

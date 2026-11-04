@@ -19,6 +19,12 @@
 2. **Container `--no-sandbox`.** Chromium's sandbox is disabled inside the container, which is the
    isolation boundary instead. Rendering could differ slightly from a sandboxed desktop browser.
 3. **Emulated mobile.** Device metrics, touch and user agent were emulated on desktop Chromium.
+   DPR 3 was verified at load (scenario 09). Re-applying the same emulation after the page has
+   loaded (scenario 10, and again live in session `s4-dpr-probe`, scenario 11) makes
+   `window.devicePixelRatio` read **1**, while the canvas backing store stays 1170×2532 and
+   `about:blank` keeps DPR 3. Captures and probes from scenario 10 onward (mobile handles, the
+   mobile REA pair, pinch/pan) therefore have an uncertain effective DPR. The pinch and pan
+   arithmetic is in CSS pixels and is not affected; rendering-sensitive claims are narrowed.
    No real device, no iOS Safari, no virtual keyboard and no hardware pen.
 4. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried;
    right-to-left layouts were not observed.
@@ -37,6 +43,11 @@
   flow. The page stopped answering `Runtime.evaluate` while no dialog was showing. The cause is
   unknown and it is recorded as unverified, not as reference behaviour.
 - `analyze_web_bundle` did not finish the main chunk within the default deadline.
+- Failed steps were not written to the timeline before the driver hardening. All four recorded
+  sessions (s1–s4) ran on the earlier driver, so `failed: 0` in `evidence/sessions.json` means
+  "not recorded", not "none". Steps did fail in s1: download and file-chooser waits in 06, early
+  stop-session clicks, and one ambiguous ARIA selector. Sessions run with the hardened driver
+  record failures with sanitised messages.
 - One scenario client was killed with exit 137 mid-run. Results come from the driver's timeline,
   which is written per step, so client loss does not lose evidence. See
   [checkpoint](checkpoint.md#interrupted-runs).

@@ -23,11 +23,11 @@ in `evidence/sessions.json`.
 REA's passive screenshot and the Playwright screenshot of the same state were **byte-identical**
 in all three comparisons:
 
-| State                         | Size     | SHA-256 (prefix) |
-| ----------------------------- | -------- | ---------------- |
-| Desktop light, initial        | 1280×720 | `896394c9e875`   |
-| Desktop dark, idle with scene | 1280×720 | `f038f64dab0d`   |
-| Mobile, dark, DPR 3           | 390×844  | `e50d8838bab7`   |
+| State                                                                                            | Size     | SHA-256 (prefix) |
+| ------------------------------------------------------------------------------------------------ | -------- | ---------------- |
+| Desktop light, initial                                                                           | 1280×720 | `896394c9e875`   |
+| Desktop dark, idle with scene                                                                    | 1280×720 | `f038f64dab0d`   |
+| Mobile (390×844 touch emulation, after re-emulation; `devicePixelRatio` read 1, see limitations) | 390×844  | `e50d8838bab7`   |
 
 The viewports were matched first: REA reports the emulated CSS viewport (390×844), not device
 pixels. The smoke test found 972 differing pixels on a clicked button. That did not recur here,
