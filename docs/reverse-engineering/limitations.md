@@ -68,7 +68,9 @@
     when a label is read more than once by the same probe;
   - the clipboard shape after Ctrl+C in scenario 06: top-level keys `type`, `elements` and
     `files`, type `excalidraw/clipboard`, element types rectangle, text and arrow, the same in s1
-    and s6 (B-26, B-13). The committed index counts the `clipboard` step only.
+    and s6 (B-26, B-13). The committed index counts the `clipboard` step only;
+  - the s1 and s6 ARIA snapshot comparison behind the high rating of the secondary surfaces
+    (feature inventory §2); the committed index keeps line counts only.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
@@ -98,9 +100,10 @@
   it is recorded as unverified, not as reference behaviour.
 - `analyze_web_bundle` did not finish the main chunk within the default deadline.
 - **Failed steps in s1–s4.** They were not written to the timeline, so `failed: 0` for s1–s4 in
-  `evidence/sessions.json` means "not recorded", not "none". Steps did fail in s1: download and
-  file-chooser waits in 06, early stop-session clicks, and one ambiguous ARIA selector. From s5
-  on, every failure is recorded with a sanitised message.
+  `evidence/sessions.json` means "not recorded", not "none". The earlier documents report failed
+  s1 steps (download and file-chooser waits in 06, early stop-session clicks, one ambiguous ARIA
+  selector); neither the committed index nor the retained s1 timeline holds them, so they cannot
+  be re-checked. From s5 on, every failure is recorded with a sanitised message.
 - One s1 scenario client was killed with exit 137 mid-run. Results come from the driver's
   timeline, which is written per step (see [checkpoint](checkpoint.md#interrupted-and-aborted-runs)).
 

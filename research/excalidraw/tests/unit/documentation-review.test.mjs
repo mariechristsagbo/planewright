@@ -102,3 +102,49 @@ describe('raw-only labels', () => {
     }
   });
 });
+
+describe('confidence labels', () => {
+  const failures = (name, step) =>
+    session(name)
+      .steps.failures.filter((f) => f.step === step)
+      .reduce((n, f) => n + f.count, 0);
+
+  it('rate B-32 on s6 alone, because s1 recorded no failed steps', () => {
+    expect(session('s1-desktop').steps.failures).toEqual([]);
+    expect([
+      failures('s6-desktop-fresh', 'download'),
+      failures('s6-desktop-fresh', 'fileChooser'),
+    ]).toEqual([3, 1]);
+    const b32 = entry('B-32');
+    expect(field(b32, 'Confidence')).toContain('[O] medium');
+    expect(field(b32, 'Reproduction')).not.toMatch(/s1, s6: failed/u);
+    expect(field(b32, 'Reproduction')).toContain(
+      '3 failed download steps and 1 failed fileChooser step',
+    );
+    expect(doc('limitations.md')).not.toContain('Steps did fail in s1:');
+  });
+
+  it('do not rest the secondary-surface rating on the committed line counts', () => {
+    const lines = (name, file) => session(name).aria_snapshots.find((a) => a.name === file).lines;
+    expect([
+      lines('s1-desktop', 'ui-01-main-menu.yml'),
+      lines('s6-desktop-fresh', 'ui-01-main-menu.yml'),
+    ]).toEqual([97, 89]);
+    const inventory = doc('feature-inventory.md');
+    expect(inventory).not.toContain('[O, high unless noted; s1 and s6]');
+    expect(inventory).toContain('ui-01-main-menu has 97 lines in s1 and 89 in s6');
+    expect(inventory).toContain('rests on that raw comparison');
+    expect(rawOnly()).toContain('the s1 and s6 ARIA snapshot comparison');
+  });
+
+  it('keep the select-all reading of B-13 a hypothesis, because no probe ran before the copy', () => {
+    const steps = scenario('06-clipboard-io-persistence-desktop').steps.map((step) => step.do);
+    const [selectAll, copy] = [steps.indexOf('key'), steps.indexOf('key') + 1];
+    expect(steps.slice(selectAll, copy + 1)).toEqual(['key', 'key']);
+    const b13 = entry('B-13');
+    expect(b13.split('\n')[0]).not.toContain('Select all ignores locked elements');
+    expect(field(b13, 'Confidence')).toMatch(/high for the paste contents.*\[H\]/u);
+    expect(doc('backlog.md')).not.toContain('Select-all excludes locked elements [O]');
+    expect(doc('backlog.md')).toContain('whether select-all or copy excludes it is open (R-33)');
+  });
+});

@@ -294,12 +294,12 @@ value is a value the page had saved locally.
 - **Confidence:** [O] high.
 - **Limitations:** the probe stores a count, not which elements (R-33).
 
-### B-13 Select all ignores locked elements
+### B-13 A locked element is left out of select all and copy
 
 - **Initial state:** scenario 04's end scene with a locked ellipse (B-19).
 - **Action:** Ctrl+A, Ctrl+C, then paste (B-26).
 - **Immediate result:** the paste inserted a rectangle, its label and the arrow, not the ellipse
-  (`06-paste`) [O].
+  (`06-paste`) [O]. The clipboard held the same three element types (raw timelines only, B-26).
 - **State and related effects:** the pasted arrow is not bound, because its target was not
   copied [O].
 - **Persistence:** read from local storage [O].
@@ -307,8 +307,10 @@ value is a value the page had saved locally.
 - **Edge cases:** unlocking and selecting a locked element by box: Not observed (R-38).
 - **Desktop/mobile:** mobile: Not observed (R-33).
 - **Reproduction:** scenario 06 (s1, s6).
-- **Confidence:** [O] high.
-- **Limitations:** the selection itself was inferred from the clipboard contents [I] (R-33).
+- **Confidence:** [O] high for the paste contents (s1, s6). Whether Ctrl+A left the locked
+  ellipse unselected, or Ctrl+C skipped it, is not separated: no probe ran between them [H]
+  (R-33).
+- **Limitations:** no selection probe between Ctrl+A and Ctrl+C (R-33).
 
 ### B-14 Selection chrome
 
@@ -403,7 +405,7 @@ value is a value the page had saved locally.
 - **State and related effects:** its arrow binding is kept [O].
 - **Persistence:** read from local storage [O].
 - **Undo/redo:** Not observed (R-38).
-- **Edge cases:** unlocking: Not observed (R-38). Select all skips it (B-13).
+- **Edge cases:** unlocking: Not observed (R-38). Ctrl+A then Ctrl+C left it out of the copy (B-13).
 - **Desktop/mobile:** mobile: Not observed (R-38).
 - **Reproduction:** scenario 04 (s1, s6).
 - **Confidence:** [O] high.
@@ -748,16 +750,17 @@ value is a value the page had saved locally.
 
 - **Initial state:** a scene; headless Chromium.
 - **Action:** Export to PNG and to SVG from the dialog, Ctrl+S, and Save to….
-- **Immediate result:** no download event and no in-page UI (s1 and s6) [O].
+- **Immediate result:** no download event and no in-page UI [O]. Only s6 recorded failed steps;
+  s1 ran scenario 06 too, but its failures were not recorded (see limitations).
 - **State and related effects:** Not observed (R-46).
 - **Persistence:** Not observed (R-46).
 - **Undo/redo:** not applicable (no export or save completed).
 - **Edge cases:** File System Access identifiers are in the bundle [S]; a native save picker,
   invisible headless, is [H], medium. The file formats: [U] (R-46).
 - **Desktop/mobile:** mobile export: dialog only (B-28a); exporting: Not observed (R-46).
-- **Reproduction:** scenario 06 (s1, s6: failed `download` and `fileChooser` steps in
+- **Reproduction:** scenario 06 (s6: 3 failed `download` steps and 1 failed `fileChooser` step in
   `evidence/sessions.json`).
-- **Confidence:** [O] high for the absence of events.
+- **Confidence:** [O] medium for the absence of events: one session with recorded failures.
 - **Limitations:** headless only (R-18).
 
 ### B-33 Guest collaboration lifecycle
@@ -774,7 +777,8 @@ value is a value the page had saved locally.
 - **Persistence:** Not observed (R-55).
 - **Undo/redo:** undo during a session: Not observed (R-55).
 - **Edge cases:** Escape did not dismiss the dialog in either session [O]. Stop session is [U]:
-  an early role click timed out in both sessions; in s6 the reopened dialog's Stop session click
+  an early role click timed out in s6 (recorded) and, by the earlier documents, in s1 (not
+  recorded); in s6 the reopened dialog's Stop session click
   reported success, but 2.5 s later the fragment and the dialog were still present
   (`collab-04-stopped`); in s1 a native-dialog attempt left the page unresponsive to the driver
   (R-55).

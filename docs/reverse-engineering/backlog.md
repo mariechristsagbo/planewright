@@ -39,7 +39,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      shapes are **open** (R-34).
    - Shift+click adds to the selection, and a box selection selects fully enclosed elements [O];
      partial overlap is **open** (R-33).
-   - Select-all excludes locked elements [O].
+   - Ctrl+A then Ctrl+C left a locked element out of the copy [O]; whether select-all or copy
+     excludes it is **open** (R-33).
    - The desktop selection shows corner handles and a rotation handle above the top centre; the
      reference showed 8 handles on mobile [O]. What decides the count is open (R-35).
 4. **Transforms.** Ref: B-15 to B-18.
