@@ -74,11 +74,14 @@
 - **Masks are measured just before the capture.** Content that moves between the box
   measurement and `Page.captureScreenshot` can leave the painted boxes. `check-masks.mjs` verifies
   the recorded boxes only, not where the content went.
-- **Changed scripts not rerun live.** `browser.sh`, `isolation-check.sh` and the driver changed in
-  the third-review remediation. Stub-based tests cover the changed boundaries, but `selftest.sh`
-  and `isolation-check.sh` have not been run against a real container since.
+- **Live tooling checks.** With the fourth-review tooling fixes, `isolation-check.sh` (11 of 11)
+  and `selftest.sh` (19 of 19) passed against real local containers on 2026-11-04, at 20:02 and
+  20:03 UTC and again on `75f8eae` at 20:22 and 20:23 UTC, loading only `about:blank` and the
+  self-authored fixture. No reference session has run with the remediated driver.
 - **Re-attaching the driver drops emulation.** Restarting the driver replaces its CDP session,
-  which removes that session's emulation override (seen in s6). Scenario `00c` restores it.
+  which removes that session's emulation override (seen in s6). Scenario `00c` restores it. The
+  `runLast` lock and any halt reason now survive a restart (`$OUT/driver-state.json`). Neither
+  the lock nor the halt watcher existed when s6 and s7 ran; both were added afterwards.
 - **Native dialogs.** Native-dialog handling through Playwright over CDP was unreliable in the s1
   collaboration stop flow; the page stopped answering `Runtime.evaluate`. The cause is unknown and
   it is recorded as unverified, not as reference behaviour.
