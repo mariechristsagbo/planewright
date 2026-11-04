@@ -99,3 +99,7 @@
   Whether that reflects lazy chunks or a deploy during the run is unknown.
 
 All open questions are tracked in the [residual matrix](residual-matrix.md).
+
+- That the theme, zen, grid or snap state survives a reload, or that a mobile reload keeps the
+  scene. No session reloaded while dark or with a mode on, and scenario `09b` never ran (R-19,
+  R-54).

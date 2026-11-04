@@ -50,8 +50,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
    - Each observed operation is one undo step, and the undo/redo buttons are disabled when there
      is nothing to undo or redo [O]. History across a reload is open (R-52).
 6. **Local persistence.** Ref: B-30, B-31.
-   - The scene and the scroll position survive a reload [O]. Zoom and selection across a reload
-     are open (R-54).
+   - The scene and the scroll position survive a reload [O, scenario 06 in s1 and s6]. Zoom and
+     selection across a reload, and a mobile reload, are **open** (R-54).
    - Changes are saved automatically. The reference's save landed after the 224–236 ms read and
      by the 338–376 ms read, counted from the first read after the drag, in 3 of 3 trials
      [O, medium]. Its delay from pointer-up and any effect on input are not established; the
@@ -99,8 +99,12 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       discrepancy).
 14. **Themes and view modes.** Ref: [B-37](behavior-analysis.md#b-37-view-modes-and-toggles),
     B-28.
-    - Light/dark choice persisted [O]; the "System" option is **open** (R-26).
-    - Zen, grid and snap flags persisted; view mode not persisted [O].
+    - The light/dark choice is saved locally (`theme` in the saved app state and an
+      `excalidraw-theme` key) [O]. Whether it survives a reload is **open**: no session reloaded
+      while dark (R-19). The "System" option is **open** (R-26).
+    - Zen, grid and snap set keys in the saved app state [O, raw timelines only]; no view-mode key
+      was seen, so view mode is probably not saved [I]. Whether any mode survives a reload is
+      **open** (R-19).
 15. **Responsive mobile layout.** Ref: feature inventory §6.
     - Bottom toolbar, compact property bar, touch handles and pinch/pan [O].
 16. **Image insertion.** Ref: B-09.

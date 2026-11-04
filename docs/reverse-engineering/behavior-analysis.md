@@ -597,7 +597,7 @@ value is a value the page had saved locally.
   or the menu radio.
 - **Immediate result:**
 
-  | Toggle        | Visible effect                                                                                    | Saved in `excalidraw-state`?         |
+  | Toggle        | Visible effect                                                                                    | Key in the saved app state (raw)     |
   | ------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------ |
   | Zen (Alt+Z)   | Hides the menu, share, library, undo/redo, zoom in/out and help; keeps the toolbar and zoom reset | yes (`zenModeEnabled`)               |
   | View (Alt+R)  | Hides the toolbar and editing UI; keeps zoom, share, help and the promotion link                  | **no** key observed                  |
@@ -607,15 +607,20 @@ value is a value the page had saved locally.
 
 - **State and related effects:** zoom and scroll unchanged by each toggle (`05-zen-on` …
   `05-snap-toggled`) [O].
-- **Persistence:** keys as in the table [O]; the theme survived reloads in s6 (`07-dark` onward
-  after `00b`) [O]. Zen, grid and snap across a reload: Not observed (R-19).
-- **Undo/redo:** Not observed (R-19).
+- **Persistence:** the theme is saved locally: `theme` in the committed probes and an
+  `excalidraw-theme` key [O]. The zen, grid and snap keys in the table were read from the raw
+  timelines only [O, raw only]; no view-mode key was seen there, so view mode is probably not
+  saved [I, raw only]. No session reloaded while dark or with zen, grid or snap on: s1's last
+  reload and s6's scenario 06 reload both came before `07-dark`, and nothing after 07 reloads.
+  Whether the theme or any mode survives a reload: Not observed (R-19).
+- **Undo/redo:** whether a toggle or theme change is an undo step: Not observed (R-19).
 - **Edge cases:** snap's effect on dragging, Keep tool active, Arrow binding and Snap to
   midpoints: Not observed (R-19).
 - **Desktop/mobile:** mobile theme in B-28; mobile zen/view/grid: Not observed (R-19).
 - **Reproduction:** scenarios 05 and 07 (s1, s6).
-- **Confidence:** [O] high.
-- **Limitations:** visible effects from screenshots and ARIA outside Git (R-19).
+- **Confidence:** [O] high for the visible effects and the unchanged zoom and scroll (s1 and s6).
+- **Limitations:** visible effects from screenshots and ARIA outside Git; the zen, grid, snap
+  and view-mode keys come from raw timelines and are not in the committed probes (R-19).
 
 ### B-28 System colour scheme
 
@@ -624,8 +629,8 @@ value is a value the page had saved locally.
 - **Immediate result:** emulation did **not** switch the theme (`m-dark-scheme-emulated`);
   choosing Dark did (`m-dark-via-menu`) [O].
 - **State and related effects:** `theme` in the saved app state follows the menu choice [O].
-- **Persistence:** read from local storage [O].
-- **Undo/redo:** not applicable.
+- **Persistence:** read from local storage [O]; across a reload: Not observed (R-19).
+- **Undo/redo:** whether a theme change is an undo step: Not observed (R-19).
 - **Edge cases:** the "System" radio: Not observed (R-26).
 - **Desktop/mobile:** desktop dark by shortcut and menu (B-37); desktop emulation: Not observed
   (R-26).
@@ -680,19 +685,22 @@ value is a value the page had saved locally.
   shape was absent at 0, 114–120 and 224–236 ms and present at 338–376 ms and later, in 3 of 3
   trials [O]. The pointer-up time was not recorded, so the save came at least about 224 ms after
   pointer-up; the upper bound is not known. A debounce of about 300 ms is [H].
-- **State and related effects:** a reload restored the identical element list and scroll
-  (`06-image-inserted` → `06-after-reload`, s1 and s6; also every `00b` reload in s6) [O].
+- **State and related effects:** the reload in scenario 06 restored the identical element list
+  and scroll (90,45) (`06-image-inserted` → `06-after-reload`, s1 and s6) [O]. In s6 the
+  9-element scene of `02-all-shapes` was read again, identical, as `diag-rect-before` after the
+  `00b` and `00c` reloads that ran between them [O]; scroll was not read there. The later `00b`
+  reload, between scenarios 13 and 03, has no scene probe after it before 03 clears the canvas.
 - **Persistence:** after Ctrl+A and Delete the stored array is empty (`12-end`, `13-end`): the
   probe counts every stored element, including flagged ones, so deleted elements are dropped
   from storage [O].
 - **Undo/redo:** history across a reload: Not observed (R-52).
 - **Edge cases:** zoom across a reload (zoom was 1), selection across a reload, several tabs,
   storage quota and mobile reload: Not observed (R-54).
-- **Desktop/mobile:** mobile reload (`09b`) asserted layout only; the scene was not compared
-  (R-54).
+- **Desktop/mobile:** mobile reload: Not observed. Scenario `09b` exists but never ran: s3, s4
+  and s7 each record 0 reloads (R-54).
 - **Reproduction:** scenario 13 (s6: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1, s6).
-- **Confidence:** [O] high for reload and deletion (s1 and s6); [O] medium for the timing (one
-  session; an s1 timing reading is not in the committed index).
+- **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6); [O] medium
+  for the timing (one session; an s1 timing reading is not in the committed index).
 - **Limitations:** `excalidraw-state` keeps 60 keys (raw count); the read cadence bounds the save
   time only to the 100–150 ms gaps between reads (R-54).
 
