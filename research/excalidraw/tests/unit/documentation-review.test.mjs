@@ -255,3 +255,20 @@ describe('driver controls in the methodology', () => {
     expect(text).toContain('Controls added after the review of cb11dff');
   });
 });
+
+describe('backlog scope', () => {
+  it.each([
+    ['Libraries', 'R-15', 'S-30'],
+    ['Alignment and distribution', 'R-51', 'S-19'],
+    ['Offline start and reconnection', 'R-57', 'S-32'],
+    ['Keyboard accessibility', 'R-27', 'S-10'],
+  ])('has an item for %s whose criteria stay open until %s is observed', (title, ref, scope) => {
+    expect(row(ref)).toContain(scope);
+    const backlog = read('docs/reverse-engineering/backlog.md');
+    const item = backlog.split(/\n(?=\d+\. \*\*)/u).find((part) => part.includes(`**${title}.**`));
+    expect(item, title).toBeDefined();
+    expect(flat(item)).toMatch(new RegExp(`\\(${ref}[,)]`, 'u'));
+    expect(flat(item)).toMatch(/\bopen\b/u);
+    expect(flat(item)).not.toMatch(/[^[]\bmust\b/u);
+  });
+});

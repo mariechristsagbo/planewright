@@ -127,6 +127,28 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
     - Participant count and a random guest name [O]; a working stop-session flow is **open**
       (R-55).
 
+## Pending observation: scope items without observed behaviour
+
+These issue #1 scope items have no observed behaviour yet, so every criterion below is **open**
+until its residual row is observed. Their priority is set when the feature issue is written.
+
+19. **Libraries.** Ref: feature inventory §2 (Library sidebar), R-15.
+    - The sidebar, its four unnamed tabs, an empty state and a link to an external library site
+      were inventoried [O].
+    - Adding a selection, placing an item, and exporting or importing a library file are
+      **open** (R-15).
+20. **Alignment and distribution.** Ref: B-23, R-51.
+    - The Help dialog lists Ctrl+Shift+Arrow for alignment [O]. One press on two shapes that
+      were already aligned changed nothing [O], which does not test alignment.
+    - What each align and distribute command does, and its undo, are **open** (R-51).
+21. **Offline start and reconnection.** Ref: network analysis, R-57, R-55.
+    - Reloads in a profile that had loaded the page were served by a service worker [O].
+    - Starting offline, reconnecting a collaboration session and what the UI shows meanwhile
+      are **open** (R-57, R-55).
+22. **Keyboard accessibility.** Ref: R-27, R-28.
+    - The unnamed and raw-named controls are listed in the next section [O].
+    - Tab order, focus visibility and announcements are **open** (R-27).
+
 ## Accessibility requirements surfaced by the reference (do better)
 
 - Name the main menu trigger, sidebar tabs and every icon-only radio (stroke width, pressure,
