@@ -17,6 +17,19 @@ describe('goto', () => {
     expect(goto).not.toHaveBeenCalled();
   });
 
+  it('refuses a room or json link value before navigating, so no room is joined', async () => {
+    // Synthetic, low-entropy value built at run time (see sanitise.test.mjs).
+    const value = `${'a1B2'.repeat(5)},${'k_L-'.repeat(5)}m1`;
+    for (const url of [
+      `https://excalidraw.com/#room=${value}`,
+      `https://excalidraw.com/#json=${value}`,
+    ]) {
+      const { goto, ctx } = gotoCtx('about:blank');
+      await expect(handlers.goto(ctx, { url })).rejects.toThrow(/Navigation refused/u);
+      expect(goto).not.toHaveBeenCalled();
+    }
+  });
+
   it('stops the batch when a redirect lands off the allowlist', async () => {
     const { ctx } = gotoCtx('https://elsewhere.example/');
     const error = await handlers.goto(ctx, { url: 'https://excalidraw.com/' }).catch((e) => e);

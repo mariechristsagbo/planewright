@@ -8,9 +8,11 @@
 // once.
 //
 // A room or `json` link value in the URL is allowed only once a `runLast` scenario has started
-// (see createGate in server.mjs). Otherwise a driver restarted on a new `--out`, with an empty
-// state, against a page still in a room, or an inline batch that opens one, would run ordinary
-// scenarios in a view that may show the room link. Both halt the session.
+// (see createGate in server.mjs). A `goto` step never opens one: checkNavigation refuses such a
+// target before navigating. The page can still reach one itself, for example when a UI click
+// outside `runLast` starts a session, and a driver restarted on a new `--out`, with an empty
+// state, can attach to a page still in a room. Either would run ordinary scenarios in a view that
+// may show the room link, so both halt the session. That halt comes after the navigation.
 import { isAllowedNavigation } from './guard.mjs';
 import { hasSecretFragment, sanitiseUrl } from './sanitise.mjs';
 import { memoryState } from './session-state.mjs';

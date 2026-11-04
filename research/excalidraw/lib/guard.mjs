@@ -3,7 +3,7 @@
 import { timingSafeEqual } from 'node:crypto';
 import { join, resolve, sep } from 'node:path';
 
-import { redactSecrets } from './sanitise.mjs';
+import { hasSecretFragment, redactSecrets } from './sanitise.mjs';
 
 export const TOKEN_HEADER = 'x-research-token';
 /** Request bodies above this size are rejected before any JSON parsing. */
@@ -74,7 +74,7 @@ export function parsePort(value, label = 'port') {
  * credentials. Self-authored fixtures are loaded with the separate `fixture` step instead.
  * The scheme is checked as well as the origin: a `blob:` URL reports the origin that created it.
  */
-export function checkNavigation(raw) {
+function allowedHref(raw) {
   if (raw === 'about:blank') return raw;
   let url;
   try {
@@ -89,10 +89,26 @@ export function checkNavigation(raw) {
   return url.href;
 }
 
-/** The same allowlist as checkNavigation, as a boolean, for navigations the page starts itself. */
+/**
+ * Checks a `goto` target: the allowlist, and no room or `json` link value in the fragment, so a
+ * batch can never join a room or open a shared scene by URL. Scenario 08 creates its room
+ * through the UI, which the navigation watcher handles (see navwatch.mjs).
+ */
+export function checkNavigation(raw) {
+  const href = allowedHref(raw);
+  if (hasSecretFragment(href)) {
+    throw new Error('Navigation refused: a room or link value may be opened only through the UI.');
+  }
+  return href;
+}
+
+/**
+ * The allowlist alone, as a boolean, for navigations the page starts itself. A room value that
+ * the UI puts in the fragment stays allowed here; the watcher halts it outside `runLast`.
+ */
 export function isAllowedNavigation(raw) {
   try {
-    checkNavigation(raw);
+    allowedHref(raw);
     return true;
   } catch {
     return false;

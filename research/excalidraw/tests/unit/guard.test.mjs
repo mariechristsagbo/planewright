@@ -189,6 +189,33 @@ describe('checkNavigation', () => {
   });
 });
 
+describe('checkNavigation and room or link values', () => {
+  // Synthetic, low-entropy values built at run time (see sanitise.test.mjs).
+  const ID = 'a1B2'.repeat(5);
+  const KEY = `${'k_L-'.repeat(5)}m1`;
+
+  it.each([
+    `https://excalidraw.com/#room=${ID},${KEY}`,
+    `https://excalidraw.com/?x=1#json=${ID},${KEY}`,
+    `https://excalidraw.com/#ROOM=${ID},${KEY}`,
+    `https://excalidraw.com/#%72oom%3D${ID}%2C${KEY}`,
+    `https://excalidraw.com/#a=1&json%253D${ID}`,
+  ])('refuses a goto target that carries one, before any navigation: %#', (url) => {
+    expect(() => checkNavigation(url)).toThrow(/Navigation refused: .*through the UI/u);
+  });
+
+  it('keeps such a URL on the allowlist for navigations the page starts itself', () => {
+    // A room created through the UI changes the fragment in the page; the watcher decides what
+    // that means (see navwatch.mjs), so the allowlist itself must not halt the session.
+    expect(isAllowedNavigation(`https://excalidraw.com/#room=${ID},${KEY}`)).toBe(true);
+  });
+
+  it('still allows a fragment without a value', () => {
+    expect(checkNavigation('https://excalidraw.com/#room=')).toBe('https://excalidraw.com/#room=');
+    expect(() => checkNavigation('https://excalidraw.com/#x')).not.toThrow();
+  });
+});
+
 describe('isAllowedNavigation', () => {
   it('applies the same allowlist without throwing', () => {
     expect(isAllowedNavigation('https://excalidraw.com/#x')).toBe(true);
