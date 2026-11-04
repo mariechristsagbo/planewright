@@ -303,3 +303,11 @@ describe('checkpoint statuses', () => {
     expect(text).toMatch(/Not observed yet, but planned\.[^.]*\(R-55\)[^.]*\(R-57\)/u);
   });
 });
+
+describe('the open review row', () => {
+  it('names the review whose remediation is still unreviewed', () => {
+    const r75 = row('R-75');
+    expect(r75).toContain('`cb11dff`');
+    expect(r75).toContain('The remediation of the `cb11dff` review has not been reviewed');
+  });
+});
