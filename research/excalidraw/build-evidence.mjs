@@ -3,7 +3,7 @@
 // line counts; labelled scene/appState probe summaries (geometry and style facts); network
 // metadata (method, origin, path, query key names, type, status, service-worker flag, counts);
 // REA Evidence IDs (MCP records or CLI { ok, data } envelopes)
-// and operations; sanitised failure messages; and captures retired for privacy (name, digest
+// and operations; sanitised and redacted failure messages; and captures retired for privacy (name, digest
 // and size only, from <session>/retired-captures.json). Screenshots, ARIA text, bundles and
 // REA payloads stay outside Git.
 //
@@ -11,6 +11,8 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+
+import { redactSecrets } from './lib/sanitise.mjs';
 
 const readLines = (file) =>
   existsSync(file)
@@ -97,11 +99,14 @@ function retired(dir) {
   );
 }
 
-// Groups failed rows by step name, sanitised message and fatal flag.
+// Groups failed rows by step name, sanitised message and fatal flag. The message is redacted
+// again here: timelines written before the driver redacted its error text may still hold a room
+// or link value, and this index is committed.
 function failureCounts(rows) {
   const failures = new Map();
   for (const row of rows.filter((r) => r.result === undefined)) {
-    const key = JSON.stringify([row.step?.do ?? null, row.error ?? null, row.fatal === true]);
+    const error = typeof row.error === 'string' ? redactSecrets(row.error) : (row.error ?? null);
+    const key = JSON.stringify([row.step?.do ?? null, error, row.fatal === true]);
     failures.set(key, (failures.get(key) ?? 0) + 1);
   }
   return [...failures].map(([key, count]) => {
