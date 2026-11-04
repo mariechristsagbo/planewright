@@ -1,0 +1,48 @@
+# Residual coverage matrix
+
+Status:
+
+- ✅ observed with reproducible evidence;
+- 🟡 partially observed;
+- ❌ not observed;
+- ⛔ out of scope.
+
+Priority (P) is the order in which follow-up investigations should run.
+
+| Area                | Case                                                                       | Desktop light | Desktop dark | Mobile | Status | P   | Next step                                                                                            |
+| ------------------- | -------------------------------------------------------------------------- | ------------- | ------------ | ------ | ------ | --- | ---------------------------------------------------------------------------------------------------- |
+| Shell               | Toolbar, menus, dialogs, context menu, sidebar inventory                   | ✅            | ✅ (partial) | ✅     | 🟡     | 2   | Dark: context menu, command palette, library and sticky note not captured                            |
+| Shell               | Element context menu (right-click on a shape)                              | ❌            | ❌           | ❌     | ❌     | 1   | Right-click on a selected rectangle and inventory the items                                          |
+| Shell               | Properties panel "Actions" section                                         | ❌            | ❌           | ❌     | ❌     | 1   | Scroll the panel or use a taller viewport                                                            |
+| Shell               | Find on canvas, Reset the canvas confirmation, language switch             | ❌            | ❌           | ❌     | ❌     | 3   | One scenario each                                                                                    |
+| Accessibility       | Tab order and focus visibility; screen-reader announcements                | ❌            | ❌           | ❌     | ❌     | 1   | Keyboard-only traversal with focus probes                                                            |
+| Accessibility       | Unnamed controls (menu trigger, sidebar tabs, width/pressure/scale radios) | ✅            | —            | ✅     | ✅     | —   | Recorded as findings                                                                                 |
+| Shapes              | Rectangle, ellipse, diamond, line, arrow, freedraw, text, sticky note      | ✅            | ❌           | 🟡     | 🟡     | 2   | Mobile: diamond, ellipse and line access path; dark-mode rendering                                   |
+| Shapes              | Multi-point line/arrow (click-click), curved arrow, elbow arrows           | ❌            | ❌           | ❌     | ❌     | 1   | Click sequences with Enter/Escape                                                                    |
+| Shapes              | Shift-constrained drawing (square, 45°), Alt from centre                   | ❌            | ❌           | ❌     | ❌     | 1   | Modifier drags                                                                                       |
+| Shapes              | Frame, embed, laser, bucket fill, lasso, draw-to-shape                     | ❌            | ❌           | ❌     | ❌     | 2   | One scenario per tool                                                                                |
+| Shapes              | Tab / Shift+Tab shape-type toggle; Switch shape                            | ❌            | ❌           | ❌     | ❌     | 3   |                                                                                                      |
+| Selection           | Click, Shift+click, box (full enclosure), select all and locked            | ✅            | ❌           | 🟡     | 🟡     | 2   | Box partial overlap; Ctrl deep select; mobile multi-select                                           |
+| Selection           | Hit-testing inside filled shapes; tolerance                                | ❌            | ❌           | ❌     | ❌     | 1   |                                                                                                      |
+| Transform           | Move, resize (SE), rotate 90°                                              | ✅            | ❌           | ❌     | 🟡     | 1   | Other handles; Shift aspect lock; Alt centre; rotation snapping; multi-element resize; flip          |
+| Transform           | Arrow-key nudging                                                          | ❌            | ❌           | ❌     | ❌     | 1   |                                                                                                      |
+| Styles              | Stroke and background colour, sloppiness, defaults propagation             | ✅            | ❌           | ❌     | 🟡     | 1   | Role-name clicks for width, style, edges and opacity; fill styles; font family, size and alignment   |
+| Text                | Create, container label                                                    | ✅            | ❌           | ❌     | 🟡     | 1   | Re-edit by double-click, multiline, wrap in container, auto-resize, font picker                      |
+| Arrows/bindings     | End binding to ellipse                                                     | ✅            | ❌           | ❌     | 🟡     | 1   | Start binding gap, Ctrl to prevent binding, moving a bound target, unbinding, midpoint snapping      |
+| Freedraw/eraser     | Stroke, dot, eraser drag                                                   | ✅            | ❌           | ❌     | 🟡     | 2   | Pressure option; eraser on mobile; eraser on bound elements                                          |
+| Pan/zoom            | Wheel, Shift+wheel, Ctrl+wheel, keyboard zoom, fit, Space and hand pan     | ✅            | ❌           | ✅     | ✅     | 3   | Zoom limits (min/max), zoom-to-selection key discrepancy, PgUp/PgDn                                  |
+| Groups/layers/align | Group, ungroup, nested move                                                | ✅            | ❌           | ❌     | 🟡     | 1   | Layer order (4 commands), alignment and distribution with misaligned shapes, deep select in groups   |
+| History             | Undo/redo of move, rotation, duplicate, paste                              | ✅            | ❌           | ❌     | 🟡     | 2   | Undo of style, delete and group changes; history across reload; Ctrl+Y                               |
+| Clipboard           | Copy/paste JSON shape and placement                                        | ✅            | ❌           | ❌     | 🟡     | 2   | Copy as PNG/SVG, paste image or text from outside, paste styles, cut                                 |
+| Persistence         | localStorage save, reload restore, deleted-element omission                | ✅            | 🟡 (theme)   | ❌     | 🟡     | 1   | Multi-tab sync; storage-quota failures; mobile reload                                                |
+| Import/export       | Open, Save to…, Ctrl+S, PNG/SVG export                                     | ❌            | ❌           | ❌     | ❌     | 1   | Headed browser or a browser without File System Access; then validate file formats                   |
+| Import/export       | Drop `.excalidraw` or JSON file; drop image                                | 🟡 (image)    | ❌           | ❌     | 🟡     | 1   | Drop a self-made scene file                                                                          |
+| Images              | Drop, size and placement                                                   | ✅            | ❌           | ❌     | 🟡     | 2   | Crop, resize, large images, IndexedDB contents (keys only)                                           |
+| Libraries           | Sidebar inventory                                                          | ✅            | ❌           | 🟡     | 🟡     | 2   | Add selection to library, use an item, export/import a library file (no external browsing)           |
+| Collaboration       | Start session, URL shape, socket/Firebase metadata                         | ✅            | ❌           | ❌     | 🟡     | 2   | Stop session flow; a second guest client (two containers); name change; reconnection; Export to Link |
+| Offline             | Service-worker start offline; reconnection                                 | ❌            | ❌           | ❌     | ❌     | 2   | Network-offline emulation in a fresh profile                                                         |
+| REA                 | `capture_browser_scenario` for locator-based menu/dialog flows             | ❌            | ❌           | ❌     | ❌     | 2   | Connect-mode scenario with accessibility capture                                                     |
+| REA                 | `analyze_web_bundle` on the main chunk                                     | 🟡            | —            | —      | 🟡     | 3   | Rerun with `analysis_timeout_ms` ≥ 120000                                                            |
+| REA                 | `inspect_web_event_listeners` on the canvas                                | ❌            | —            | —      | ❌     | 3   | Interactive-canvas listener inventory                                                                |
+| Review              | Independent review session for unsupported claims and privacy              | ❌            | —            | —      | ❌     | 1   | Separate Claude Code session as required by the issue                                                |
+| Out of scope        | Sign-up, Excalidraw+, generation (AI) features                             | ⛔            | ⛔           | ⛔     | ⛔     | —   | —                                                                                                    |
