@@ -1,0 +1,10 @@
+{
+  "description": "Capture recorded in s3 right after 10: the Playwright half of the mobile REA cross-driver pair (m10-dark-for-rea). Requires the end state of 10. Note: after 10 re-applies emulation, window.devicePixelRatio reads 1 (see limitations).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "screenshot",
+      "name": "m10-dark-for-rea"
+    }
+  ]
+}

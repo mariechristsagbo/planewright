@@ -25,14 +25,51 @@ it never writes raw third-party content into this repository. See
 OUT=/absolute/path/outside/the/repo/s1-desktop
 research/excalidraw/browser.sh start pw-research 9222
 node research/excalidraw/driver.mjs --cdp http://127.0.0.1:9222 --port 9333 --out "$OUT" &
-node research/excalidraw/run.mjs 02-shapes-desktop
+node research/excalidraw/run.mjs --out "$OUT" 00-initial-load-desktop
+node research/excalidraw/run.mjs --out "$OUT" 02-shapes-desktop
 node research/excalidraw/timeline-summary.mjs "$OUT/timeline.jsonl"
-curl -s http://127.0.0.1:9333/quit
+node research/excalidraw/run.mjs --out "$OUT" --quit
 research/excalidraw/browser.sh stop pw-research
 ```
 
-Scenarios that use the `fileChooser` or `dropFile` steps resolve relative file names against
-`$OUT/../fixtures`. The only fixture used so far is a self-generated 64×48 solid-colour PNG.
+## Driver protocol and safety
+
+- The driver listens on `127.0.0.1` only. Every request must be a `POST` with
+  `Host: 127.0.0.1:<port>` and the per-run token in the `x-research-token` header. `/run`
+  also requires `Content-Type: application/json`. `/quit` is protected the same way.
+- The token is 32 random bytes, written to `$OUT/driver.token` with mode `0600` at start-up.
+  `run.mjs --out "$OUT"` reads it.
+- Clients send a scenario **name**, which the driver resolves against its own `scenarios/`
+  listing, or an inline batch. Scenario files are never forwarded over HTTP.
+- Output names (`screenshot.name`, `aria.save`, `download.name`) and fixture names (`dropFile`,
+  `fileChooser`) must be plain file names: letters, digits, `.`, `_` and `-`. Absolute paths and
+  traversal are rejected. Fixtures resolve inside `$OUT/../fixtures`. The only fixture so far
+  is a self-generated 64×48 solid-colour PNG.
+- Every step, including failed ones, is appended to `timeline.jsonl`. Failures are stored as a
+  sanitised one-line message with local paths replaced by `<path>`.
+- The guard logic is unit-tested in `tests/guard.test.mjs`
+  (`npx vitest run --project research:unit`).
+
+## Scenario order and dependencies
+
+Most scenarios continue from the previous one's end state. Coordinates assume that state.
+
+| Session            | Order                                                                          |
+| ------------------ | ------------------------------------------------------------------------------ |
+| Desktop (`s1`)     | 00 → 01 → 02 → 02b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 08 → 08b |
+| Fresh rerun (`s2`) | 02 (it loads the page itself) → 03 → 05                                        |
+| Mobile (`s3`)      | 09 → 10 → 10b                                                                  |
+| DPR probe (`s4`)   | 09 → 11                                                                        |
+
+- `03` clears the canvas first, so it does not depend on 02's content. `04` needs 03's end
+  state.
+- `05` starts by undoing twice, to remove 04b's dots. When it runs straight after 03 (as in
+  `s2`), those undos revert 03 steps instead, so its zoom-to-fit scroll differs.
+- `06` assumes 05's scroll of (90,45).
+- `s1` ran an earlier version of `02` whose drags started on the properties panel. The
+  committed `02` is the corrected version that `s2` ran.
+- The suffixed scenarios (`02b` … `10b`) are ad-hoc batches from the recorded sessions. They are
+  committed so that every committed screenshot or probe name has a scenario.
 
 Keep request volume human-scale: one scenario at a time, no loops against the live site, and run
-the collaboration scenario (`08`) once per session at most.
+the collaboration scenarios (`08`, `08b`) once per session at most.

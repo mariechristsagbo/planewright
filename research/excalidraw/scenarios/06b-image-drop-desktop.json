@@ -1,0 +1,36 @@
+{
+  "description": "Image insertion by file drop recorded in s1: drop the self-generated 64x48 fixture at viewport (1000,200) and read the scene (06b-image-drop, io-04-image-drop). Requires the end state of 06 (scroll 90,45) and fixtures/test-64x48.png.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "dropFile",
+      "file": "test-64x48.png",
+      "mime": "image/png",
+      "at": [1000, 200]
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "06b-image-drop"
+    },
+    {
+      "do": "appState",
+      "label": "06b-image-drop"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "screenshot",
+      "name": "io-04-image-drop"
+    }
+  ]
+}

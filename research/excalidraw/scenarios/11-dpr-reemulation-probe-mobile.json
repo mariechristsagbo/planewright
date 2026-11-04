@@ -1,0 +1,32 @@
+{
+  "description": "Bounded probe recorded in s4 (fresh profile, after 09): re-apply the scenario 10 emulation on the loaded page and read devicePixelRatio and the canvas backing store. Observed: DPR reads 1 while the canvas stays 1170x2532. Requires 09 first.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "rootStyle"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "metrics"
+    }
+  ]
+}

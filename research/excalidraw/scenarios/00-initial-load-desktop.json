@@ -1,0 +1,37 @@
+{
+  "description": "Fresh desktop profile, 1280x720 light: load the page and capture the initial state (d01-initial-light; the Playwright half of the REA cross-driver pair). Run first in a desktop session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720,
+      "deviceScaleFactor": 1
+    },
+    {
+      "do": "colorScheme",
+      "value": "light"
+    },
+    {
+      "do": "goto",
+      "url": "https://excalidraw.com/"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "rootStyle"
+    },
+    {
+      "do": "screenshot",
+      "name": "d01-initial-light"
+    }
+  ]
+}

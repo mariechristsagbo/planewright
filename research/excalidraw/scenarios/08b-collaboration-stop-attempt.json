@@ -1,0 +1,36 @@
+{
+  "description": "Stop-session attempt recorded in s1 while the 08 session was active: open the share dialog via its in-session name (the participant count) and click Stop session. In s1 the session stayed active afterwards (URL fragment unchanged, dialog still shown); see behaviour B-33. Requires an active session from 08. Do not loop.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "role",
+      "role": "button",
+      "name": "1",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stop session"
+    },
+    {
+      "do": "wait",
+      "ms": 2500
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "aria",
+      "save": "collab-04-stopped"
+    },
+    {
+      "do": "screenshot",
+      "name": "collab-04-stopped"
+    }
+  ]
+}

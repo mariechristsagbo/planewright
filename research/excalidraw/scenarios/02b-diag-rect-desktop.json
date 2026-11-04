@@ -1,0 +1,39 @@
+{
+  "description": "Diagnostic recorded in s1 after the original 02 run: persisted scene before, R key, drag outside the properties panel, scene after (shows that drags starting on the panel created nothing and that probes lag the live state). Requires the end state of 02.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "scene",
+      "label": "diag-rect-before"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "appState",
+      "label": "diag-rect-tool"
+    },
+    {
+      "do": "drag",
+      "from": [400, 500],
+      "to": [520, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "scene",
+      "label": "diag-rect"
+    },
+    {
+      "do": "appState",
+      "label": "diag-rect"
+    },
+    {
+      "do": "screenshot",
+      "name": "diag-rect"
+    }
+  ]
+}
