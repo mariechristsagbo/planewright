@@ -110,8 +110,10 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
   - Three s1 screenshots showed the link and a QR code encoding it.
 
   The REA files were already removed. The other text copies were overwritten in place with
-  placeholders, and the three screenshots were shredded. Details and the remaining copy outside
-  the workspace are in [checkpoint](checkpoint.md#privacy-remediation).
+  placeholders, and the three screenshots were shredded. Details are in
+  [checkpoint](checkpoint.md#privacy-remediation). No copy is known to remain: the capture
+  transcript and its cached tool results were later securely deleted, and a search for their
+  names finds none.
 
 - **Controls from s5 on:**
   - The driver redacts collaboration fragments and secret-shaped values from ARIA text, dialog

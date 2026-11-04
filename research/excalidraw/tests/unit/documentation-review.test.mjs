@@ -210,3 +210,13 @@ describe('factual statements', () => {
     }
   });
 });
+
+describe('retained copies of the room-bearing records', () => {
+  it('are described the same way in every document', () => {
+    expect(doc('checkpoint.md')).toMatch(/securely deleted[^.]*\./u);
+    expect(doc('methodology.md')).not.toContain('remaining copy outside the workspace');
+    expect(doc('methodology.md')).toContain('No copy is known to remain');
+    expect(doc('rea-findings.md')).not.toContain('cache copy outside the workspace remains');
+    expect(doc('rea-findings.md')).toContain('deleted with the capture transcript');
+  });
+});

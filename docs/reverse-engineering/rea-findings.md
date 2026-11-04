@@ -28,12 +28,12 @@ lifecycle offsets, the start time of scenario 13's Delete keypress, and the s6 s
 **Lost.** The capture transcript shows that these were returned, but no retained Evidence file
 holds them. Facts that rested only on them are narrowed in the other documents.
 
-| Evidence (prefix)            | Operation                | Why it is gone                                                                                                                                                                                                 |
-| ---------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `ev_70180ae1`                | `list_browser_targets`   | Returned in s1 and held only in MCP memory, which was lost when the server restarted                                                                                                                           |
-| `ev_28928b56`                | `capture_web_screenshot` | Mobile screenshot; it was in `bundle-02-collab-mobile.json`, which was removed because it also held the room id and key                                                                                        |
-| `ev_43b25e14`                | `inspect_web_page`       | Collaboration inspection (WebSocket frame shapes); its file `d03-inspect-collab.json` was removed for the same reason. Only a sanitised cache copy outside the workspace remains                               |
-| `ev_e77f6f38`, `ev_e89af49b` | `analyze_web_bundle`     | Both IDs came from one call. The first review identified `ev_e77f6f38` as the bundle-analysis record and `ev_e89af49b` as an `inspect_analysis_view` record; neither is retained, so this cannot be re-checked |
+| Evidence (prefix)            | Operation                | Why it is gone                                                                                                                                                                                                                   |
+| ---------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ev_70180ae1`                | `list_browser_targets`   | Returned in s1 and held only in MCP memory, which was lost when the server restarted                                                                                                                                             |
+| `ev_28928b56`                | `capture_web_screenshot` | Mobile screenshot; it was in `bundle-02-collab-mobile.json`, which was removed because it also held the room id and key                                                                                                          |
+| `ev_43b25e14`                | `inspect_web_page`       | Collaboration inspection (WebSocket frame shapes); its file `d03-inspect-collab.json` was removed for the same reason. Its sanitised cached copy was later deleted with the capture transcript (see checkpoint), so none remains |
+| `ev_e77f6f38`, `ev_e89af49b` | `analyze_web_bundle`     | Both IDs came from one call. The first review identified `ev_e77f6f38` as the bundle-analysis record and `ev_e89af49b` as an `inspect_analysis_view` record; neither is retained, so this cannot be re-checked                   |
 
 **New REA CLI records** (s5–s7; each file is one Evidence record in a `{ ok, data }` envelope).
 Times are UTC on 2026-11-04.
