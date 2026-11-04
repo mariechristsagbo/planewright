@@ -3,6 +3,7 @@
 // held secrets (for example a collaboration dialog) before keeping them.
 //
 // Usage: node research/excalidraw/check-masks.mjs <session-dir> [--scale 1]
+// The scale recorded by the screenshot step (image px per CSS px) wins over --scale.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -23,7 +24,9 @@ const rows = readFileSync(join(dir, 'timeline.jsonl'), 'utf8')
 let failed = 0;
 for (const row of rows) {
   const png = decodePng(readFileSync(join(dir, 'screenshots', row.result.file)));
-  const checks = row.result.maskBoxes.map((box) => unmaskedSamples(png, box, Number(values.scale)));
+  const checks = row.result.maskBoxes.map((box) =>
+    unmaskedSamples(png, box, row.result.scale ?? Number(values.scale)),
+  );
   const ok = checks.every((c) => c.samples > 0 && c.misses === 0);
   if (!ok) failed += 1;
   const summary = checks.map((c) => `${String(c.misses)}/${String(c.samples)}`).join(' ');

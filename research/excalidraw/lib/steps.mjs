@@ -14,6 +14,7 @@ import {
 } from './guard.mjs';
 import { inputHandlers, point, sleep } from './input.mjs';
 import { assertMetrics, expectedFromEmulation, readMetrics } from './metrics.mjs';
+import { decodePng, encodePng, paintBoxes } from './png.mjs';
 import { redactSecrets } from './sanitise.mjs';
 
 const metrics = (ctx) => ctx.page.evaluate(readMetrics);
@@ -55,9 +56,25 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
-// Masked regions are painted over before the PNG is written. When a mask matches nothing, or a
-// `refuseIf` selector matches something, nothing is written: a secret-bearing view such as a
-// collaboration dialog is never stored unmasked. Mask boxes are returned for offline checks.
+// Captures the viewport through the driver's own CDP session. Playwright's page.screenshot() was
+// found to reset emulated metrics (mobile DPR to 1, screen to 800x600) until the next navigation,
+// so it is not used. Masks are painted onto the decoded image in this process: the unmasked bytes
+// never reach disk and the page DOM is not touched. When a mask matches nothing, or a `refuseIf`
+// selector matches something, nothing is written. Mask boxes (CSS px) and the image/CSS scale
+// are returned for offline checks with check-masks.mjs.
+async function maskBoxesFor(ctx, selectors) {
+  const boxes = [];
+  for (const [index, selector] of selectors.entries()) {
+    const matches = await ctx.page.locator(selector).all();
+    if (matches.length === 0) throw new Error(`Mask ${String(index)} matched nothing.`);
+    for (const match of matches) {
+      const box = await match.boundingBox();
+      if (box) boxes.push(box);
+    }
+  }
+  return boxes;
+}
+
 async function screenshot(ctx, step) {
   const file = outputPath(ctx.outDir, 'screenshots', step.name, '.png');
   for (const selector of step.refuseIf ?? []) {
@@ -65,20 +82,17 @@ async function screenshot(ctx, step) {
       throw new Error('Screenshot refused: a refuseIf selector is present.');
     }
   }
-  const mask = (step.mask ?? []).map((selector) => ctx.page.locator(selector));
-  const maskBoxes = [];
-  for (const [index, locator] of mask.entries()) {
-    if ((await locator.count()) === 0) throw new Error(`Mask ${String(index)} matched nothing.`);
-    for (const match of await locator.all()) {
-      const box = await match.boundingBox();
-      if (box) maskBoxes.push(box);
-    }
-  }
-  const bytes = await ctx.page.screenshot({ mask, maskColor: '#ff00ff' });
+  const maskBoxes = await maskBoxesFor(ctx, step.mask ?? []);
+  const cssWidth = await ctx.page.evaluate(() => window.innerWidth);
+  const { data } = await ctx.cdp.send('Page.captureScreenshot', { format: 'png' });
+  let bytes = Buffer.from(data, 'base64');
+  const scale = bytes.readUInt32BE(16) / cssWidth;
+  if (maskBoxes.length > 0) bytes = encodePng(paintBoxes(decodePng(bytes), maskBoxes, scale));
   // 'wx': an existing capture is never overwritten, so every name maps to one capture.
   writeFileSync(file, bytes, { flag: 'wx' });
   const size = { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
-  return { file: basename(file), sha256: sha256(bytes), masks: mask.length, maskBoxes, ...size };
+  const masks = (step.mask ?? []).length;
+  return { file: basename(file), sha256: sha256(bytes), masks, maskBoxes, scale, ...size };
 }
 
 async function runNested(ctx, steps) {

@@ -55,6 +55,8 @@ mobile="$(run '{"continueOnError":true,"steps":[
   {"do":"goto","url":"file:///etc/passwd"},
   {"do":"aria","save":"selftest-dialog"},
   {"do":"screenshot","name":"selftest-masked","mask":["[role=dialog] input","[role=dialog] img"]},
+  {"do":"assertMetrics","expect":{"innerWidth":390,"devicePixelRatio":3,"screenWidth":390,
+    "screenHeight":844,"canvasBacking":true}},
   {"do":"screenshot","name":"selftest-unmasked","mask":["#does-not-exist"]},
   {"do":"emulate","width":390,"height":844,"deviceScaleFactor":3,"mobile":true,"hasTouch":true,
     "expect":{"devicePixelRatio":2}},
@@ -68,12 +70,14 @@ check "ARIA snapshot is redacted before it is written" \
   grep -q 'room=<redacted>' "$OUT/aria/selftest-dialog.yml"
 check "no room-shaped value reaches the ARIA file" \
   bash -c "! grep -Eq 'room=[A-Za-z0-9_-]{20},' '$OUT/aria/selftest-dialog.yml'"
-check "masked screenshot is written with 2 masks" \
-  test "$(jq -r '.[7].result.masks' <<<"$mobile")" = 2
+check "masked screenshot is written with 2 masks at device-pixel size (1170 px wide)" \
+  test "$(jq -r '[.[7].result.masks, .[7].result.width] | join(",")' <<<"$mobile")" = "2,1170"
+check "a capture leaves DPR 3 and the emulated screen intact" \
+  test "$(jq -r '.[8].error' <<<"$mobile")" = null
 check "a mask that matches nothing writes no file" \
   test ! -e "$OUT/screenshots/selftest-unmasked.png"
 check "a metrics mismatch is fatal and stops the batch" \
-  test "$(jq -r '(.[9].fatal == true) and (length == 10)' <<<"$mobile")" = true
+  test "$(jq -r '(.[10].fatal == true) and (length == 11)' <<<"$mobile")" = true
 check "masked regions are fully painted in the written PNG (pixel check)" \
   node "$HERE/check-masks.mjs" "$OUT"
 refused="$(run '{"steps":[{"do":"screenshot","name":"selftest-refused","refuseIf":["[role=dialog]"]}]}' || true)"

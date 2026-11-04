@@ -2,7 +2,7 @@ import { deflateSync } from 'node:zlib';
 
 import { describe, expect, it } from 'vitest';
 
-import { MASK, decodePng, unmaskedSamples } from '../../lib/png.mjs';
+import { MASK, decodePng, encodePng, paintBoxes, unmaskedSamples } from '../../lib/png.mjs';
 
 // Builds an RGB PNG whose left half is the mask colour; rows alternate filter types 0 and 1.
 function makePng(width, height) {
@@ -55,5 +55,22 @@ describe('decodePng and unmaskedSamples', () => {
     const bad = makePng(4, 4);
     bad[24] = 16;
     expect(() => decodePng(bad)).toThrow(/Only 8-bit/u);
+  });
+});
+
+describe('encodePng and paintBoxes', () => {
+  it('round-trips decoded rows and paints scaled boxes opaquely', () => {
+    const png = decodePng(makePng(40, 20));
+    paintBoxes(png, [{ x: 10, y: 2, width: 5, height: 3 }], 2);
+    const again = decodePng(encodePng(png));
+    expect(again.width).toBe(40);
+    expect(unmaskedSamples(again, { x: 20, y: 4, width: 10, height: 6 }).misses).toBe(0);
+    expect([...again.rows[0].subarray(117, 120)]).toEqual([10, 20, 30]);
+  });
+
+  it('clips boxes to the image', () => {
+    const png = decodePng(makePng(8, 8));
+    expect(() => paintBoxes(png, [{ x: -5, y: 6, width: 50, height: 50 }])).not.toThrow();
+    expect([...png.rows[7].subarray(21, 24)]).toEqual(MASK);
   });
 });

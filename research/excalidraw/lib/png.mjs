@@ -1,6 +1,6 @@
-// Minimal PNG reader for offline checks of our own screenshots: decodes 8-bit, non-interlaced
-// RGB/RGBA images and samples regions. Pure functions; no image is ever displayed.
-import { inflateSync } from 'node:zlib';
+// Minimal PNG codec for our own screenshots: decodes and re-encodes 8-bit, non-interlaced
+// RGB/RGBA images, paints mask boxes and samples regions. Pure functions; no image is displayed.
+import { deflateSync, inflateSync } from 'node:zlib';
 
 export const MASK = [255, 0, 255];
 
@@ -68,4 +68,56 @@ export function unmaskedSamples(png, box, scale = 1) {
     }
   }
   return { samples, misses };
+}
+
+const CRC_TABLE = Array.from({ length: 256 }, (_, n) => {
+  let c = n;
+  for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+  return c >>> 0;
+});
+
+function crc32(bytes) {
+  let c = 0xffffffff;
+  for (const byte of bytes) c = CRC_TABLE[(c ^ byte) & 0xff] ^ (c >>> 8);
+  return (c ^ 0xffffffff) >>> 0;
+}
+
+function chunk(type, data) {
+  const head = Buffer.alloc(8);
+  head.writeUInt32BE(data.length, 0);
+  head.write(type, 4, 'latin1');
+  const crc = Buffer.alloc(4);
+  crc.writeUInt32BE(crc32(Buffer.concat([head.subarray(4), data])), 0);
+  return Buffer.concat([head, data, crc]);
+}
+
+/** Encodes decoded rows back into a PNG (filter 0 on every row). */
+export function encodePng({ width, height, bpp, rows }) {
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
+  ihdr.set([8, bpp === 4 ? 6 : 2, 0, 0, 0], 8);
+  const raw = Buffer.concat(rows.map((row) => Buffer.concat([Buffer.from([0]), row])));
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    chunk('IHDR', ihdr),
+    chunk('IDAT', deflateSync(raw)),
+    chunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+
+/** Paints CSS-pixel boxes, scaled to image pixels, with the mask colour (opaque). */
+export function paintBoxes(png, boxes, scale = 1) {
+  for (const box of boxes) {
+    const x0 = Math.max(0, Math.floor(box.x * scale));
+    const y0 = Math.max(0, Math.floor(box.y * scale));
+    const x1 = Math.min(png.width, Math.ceil((box.x + box.width) * scale));
+    const y1 = Math.min(png.height, Math.ceil((box.y + box.height) * scale));
+    for (let y = y0; y < y1; y += 1) {
+      for (let x = x0; x < x1; x += 1) {
+        png.rows[y].set(png.bpp === 4 ? [...MASK, 255] : MASK, x * png.bpp);
+      }
+    }
+  }
+  return png;
 }
