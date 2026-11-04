@@ -58,6 +58,9 @@
 - **Facts read only from raw records outside Git.** These are cited with that caveat and cannot
   be re-checked from the committed evidence:
   - the zen, grid, snap and view-mode keys of the saved app state (B-37);
+  - the first two of the three `02-tool-probe` reads in scenario 02 (B-01): the committed entry
+    keeps the first read's time and the last read's values, and `timeline-summary.mjs` now warns
+    when a label is read more than once by the same probe;
   - the load lifecycle offsets of `ev_58bb47ed` (`rea-windows.json` keeps the event names only);
   - the start time of scenario 13's Delete keypress (16:11:07.053, from the s6 timeline);
   - the s6 storage inventory of `ev_13a4756f`, including `workbox-expiration` and the `fonts`

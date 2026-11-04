@@ -55,8 +55,14 @@ value is a value the page had saved locally.
 - **Immediate result:** rectangle `[300,180,120,100]`, ellipse `[520,180,140,100]`, diamond
   `[820,170,120,120]`, line `[300,420,120,0]`. Each box equals the drag extent; no snapping at
   default settings [O].
-- **State and related effects:** after the rectangle drag, 1 element is selected and the tool is
-  Selection (`02-tool-probe`) [O]. Stored defaults: stroke `#1e1e1e`, background `transparent`,
+- **State and related effects:** the tool and selection just after a drag: Not observed (R-02,
+  R-29). Scenario 02 reads the appState probe `02-tool-probe` three times: after pressing R and
+  straight after the rectangle drag, both without a wait, and at the end of 02 after an 800 ms
+  wait. The committed entry keeps the first read's time with the last read's values (tool
+  Selection, 1 selected), so it describes the end of 02, not the drag. The two early reads (raw
+  timelines only) read the saved state before it caught up, and they disagree: straight after the
+  drag the saved tool was Rectangle in s2 and Selection in s6, with 0 selected in both. Stored
+  defaults: stroke `#1e1e1e`, background `transparent`,
   fill `solid`, stroke width 2, stroke style `solid`, roughness 1, opacity 100. Roundness type 3
   for the rectangle; 2 for ellipse, diamond, line, arrow and sticky note; none for freedraw,
   text and image [O].
@@ -68,7 +74,7 @@ value is a value the page had saved locally.
 - **Desktop/mobile:** a one-finger touch drag (120,250)→(260,350) with the Rectangle tool gives
   `[120,250,140,100]` (`m-rect-touch`, s3 and s7) [O]. Ellipse, diamond and line on mobile: Not
   observed (R-24).
-- **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`, `02-tool-probe`), 12 (s6:
+- **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`), 12 (s6:
   `12-after-canvas-drag`), 10 (s3, s7: `m-rect-touch`).
 - **Confidence:** [O] high (s2 and s6 identical; s3 and s7 identical).
 - **Limitations:** one size per shape; dark theme only for a rectangle and an arrow

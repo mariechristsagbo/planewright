@@ -28,10 +28,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      delta / zoom in one sample each [O]; as general rules they are [H] (R-48).
 2. **Shape creation tools.** Ref: B-01, B-02, B-05, B-06.
    - Rectangle, ellipse, diamond and line created by drag have exactly the drag extent [O].
-   - After a rectangle drag the new element was selected and the tool was back to Selection
-     [O, rectangle only]. Whether the other creation tools revert is **open** (R-02): the freedraw
-     tool stayed active across clicks after Escape (B-29) [O]. Keeping the tool with a tool lock
-     is **open** (R-02).
+   - Whether a creation tool selects the new element and returns to Selection is open (R-02,
+     R-29): the reads straight after the reference's rectangle drag ran without a wait and read
+     the saved state before it caught up (B-01). The freedraw tool stayed active across clicks
+     after Escape (B-29) [O]. Keeping the tool with a tool lock is **open** (R-02).
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
 3. **Selection model.** Ref: B-10 to B-14.

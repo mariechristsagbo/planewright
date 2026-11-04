@@ -232,7 +232,7 @@ describe('confidence, scope and backlog labels', () => {
     }
     expect(flat(field(entry('B-29'), 'Immediate result'))).toContain('[I]');
     expect(backlog).toMatch(/existed just before is \[I\]/u);
-    expect(backlog).toContain('[O, rectangle only]');
+    expect(backlog).toMatch(/returns to Selection is open \(R-02, R-29\)/u);
     expect(backlog).not.toContain('the tool reverts to selection [O]');
   });
 });
