@@ -126,6 +126,18 @@ describe('encoded room and json link forms', () => {
     expect(countSecretShapes(redactSecrets(`${ENCODED} ${JSON_LINK}`))).toEqual({});
   });
 
+  it.each([
+    ['double-encoded room', `room%253D${ROOM}%252C${KEY}`],
+    ['triple-encoded room', `room%25253D${ROOM}%25252C${KEY}`],
+    ['upper-case literal room', `#ROOM=${ROOM},${KEY}`],
+    ['double-encoded json link', `json%253D${ROOM}%252C${KEY}`],
+  ])('redacts and counts a %s', (_label, text) => {
+    expect(Object.keys(countSecretShapes(text))).toHaveLength(1);
+    const out = redactSecrets(text);
+    expect(leaks(out)).toBe(false);
+    expect(countSecretShapes(out)).toEqual({});
+  });
+
   it('replaces a key name that is not an identifier, so an encoded value is never a key', () => {
     const shape = urlShapeOf(`https://excalidraw.com/?${ENCODED}=1#${ENCODED}`);
     expect(leaks(JSON.stringify(shape))).toBe(false);
@@ -143,6 +155,8 @@ describe('hasSecretFragment', () => {
     `https://excalidraw.com/#x=1&Room=${ROOM}`,
     `about:blank#%72oom=${ROOM}`,
     `https://excalidraw.com/#room=${ROOM}%E0%A4%A`,
+    `https://excalidraw.com/#room%253D${ROOM}`,
+    `https://excalidraw.com/#%2572oom%25253D${ROOM}`,
   ])('detects a collaboration value in %s', (href) => {
     expect(hasSecretFragment(href)).toBe(true);
   });

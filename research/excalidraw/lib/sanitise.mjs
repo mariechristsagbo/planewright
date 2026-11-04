@@ -39,19 +39,33 @@ export function urlShapeOf(href) {
   return { origin: url.origin, path: url.pathname, queryKeys: queryKeysOf(url), fragment: parts };
 }
 
+// `=` and `,` in any case, literal or percent-encoded any number of times (`%3D`, `%253D`, ...).
+const EQ = String.raw`(?:=|%(?:25)*3d)`;
+const COMMA = String.raw`(?:,|%(?:25)*2c)`;
 // A collaboration room or a shareable `#json=` link value, literal or percent-encoded.
-const SECRET_FRAGMENT = /(?:room|json)(?:=|%3d)[^&\s]/iu;
+const SECRET_FRAGMENT = new RegExp(String.raw`(?:room|json)${EQ}[^&\s]`, 'iu');
+const MAX_DECODES = 4;
+
+/** Every decoding of a text, from raw to fully decoded; a malformed escape ends the chain. */
+function decodings(text) {
+  const forms = [text];
+  for (let i = 0; i < MAX_DECODES; i += 1) {
+    let next;
+    try {
+      next = decodeURIComponent(forms.at(-1));
+    } catch {
+      break;
+    }
+    if (next === forms.at(-1)) break;
+    forms.push(next);
+  }
+  return forms;
+}
 
 /** True when a URL's fragment carries a room or `json` link value, in raw or encoded form. */
 export function hasSecretFragment(href) {
   const hash = String(href).split('#').slice(1).join('#');
-  let decoded = hash;
-  try {
-    decoded = decodeURIComponent(hash);
-  } catch {
-    // A malformed escape keeps the raw text, which is still tested.
-  }
-  return SECRET_FRAGMENT.test(hash) || SECRET_FRAGMENT.test(decoded);
+  return decodings(hash).some((form) => SECRET_FRAGMENT.test(form));
 }
 
 /** Origin and path only; drops userinfo, query and fragment. Null when unparseable. */
@@ -64,12 +78,15 @@ export function stripQuery(raw) {
   }
 }
 
-// Shapes of values that must never be stored or published. Placeholders written by our own
-// redaction (`<redacted>`, `REDACTED_…`) do not match.
+// Shapes of values that must never be stored or published. Key names match in any case and in
+// any depth of percent-encoding. Placeholders written by our own redaction (`<redacted>`,
+// `REDACTED_…`) do not match.
+const ID20 = '(?!REDACTED)[A-Za-z0-9_-]{20}';
+const KEY22 = '[A-Za-z0-9_-]{22}';
 export const SECRET_SHAPES = [
-  ['room-fragment', /room=(?!REDACTED)[A-Za-z0-9_-]{20},[A-Za-z0-9_-]{22}/gu],
-  ['room-fragment-encoded', /room%3D(?!REDACTED)[A-Za-z0-9_-]{20}%2C[A-Za-z0-9_-]{22}/giu],
-  ['json-link', /json(?:=|%3D)(?!REDACTED)[A-Za-z0-9_-]{16,}(?:,|%2C)[A-Za-z0-9_-]{22}/giu],
+  ['room-fragment', new RegExp(`room=${ID20},${KEY22}`, 'giu')],
+  ['room-fragment-encoded', new RegExp(`room%(?:25)*3D${ID20}%(?:25)*2C${KEY22}`, 'giu')],
+  ['json-link', new RegExp(`json${EQ}(?!REDACTED)[A-Za-z0-9_-]{16,}${COMMA}${KEY22}`, 'giu')],
   ['github-token', /\b(?:gh[opsur]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{40,})\b/gu],
   ['anthropic-key', /\bsk-ant-[A-Za-z0-9_-]{20,}/gu],
   ['openai-style-key', /\bsk-(?!ant-)(?:proj-)?[A-Za-z0-9_-]{32,}/gu],
@@ -92,6 +109,7 @@ export function countSecretShapes(text) {
 
 // Shapes already covered by the room/json value replacement in redactSecrets.
 const LINK_SHAPES = new Set(['room-fragment', 'room-fragment-encoded', 'json-link']);
+const LINK_VALUE = new RegExp(String.raw`((?:room|json)${EQ})[^\s"'<>&)\]]+`, 'giu');
 
 /**
  * Replaces collaboration room values, `json` link values (literal or percent-encoded) and
@@ -99,7 +117,7 @@ const LINK_SHAPES = new Set(['room-fragment', 'room-fragment-encoded', 'json-lin
  * (ARIA snapshots, dialog messages, clipboard previews, download names).
  */
 export function redactSecrets(text) {
-  let out = String(text).replace(/((?:room|json)(?:=|%3d))[^\s"'<>&)\]]+/giu, '$1<redacted>');
+  let out = String(text).replace(LINK_VALUE, '$1<redacted>');
   for (const [name, pattern] of SECRET_SHAPES) {
     if (!LINK_SHAPES.has(name)) out = out.replace(pattern, `<redacted:${name}>`);
   }
