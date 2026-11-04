@@ -10,8 +10,9 @@
 //   - a `refuseIf` selector matches,
 //   - any requested mask yields no usable box (it matched nothing, or only hidden, empty or
 //     wholly off-screen elements),
-//   - the live URL fragment holds a room or `json` link value, before or after the capture, and
-//     no mask produced a box,
+//   - the live URL fragment holds a room or `json` link value and no mask produced a box, or an
+//     on-screen element that may show the value (see SECRET_SURFACES) lies outside every mask box,
+//   - the URL gains such a value while the capture runs,
 //   - the file name is already used.
 import { createHash } from 'node:crypto';
 import { basename } from 'node:path';
@@ -19,7 +20,7 @@ import { basename } from 'node:path';
 import { writeExclusive } from './files.mjs';
 import { outputPath } from './guard.mjs';
 import { decodePng, encodePng, paintBoxes } from './png.mjs';
-import { hasSecretFragment } from './sanitise.mjs';
+import { LINK_KEY_TEXT, hasSecretFragment } from './sanitise.mjs';
 
 const readView = () => ({
   href: location.href,
@@ -47,8 +48,8 @@ function overlapsView(box, view) {
   return inside && box.x + box.width > 0 && box.y + box.height > 0;
 }
 
-async function usableBoxes(page, selector, view) {
-  const matches = await page.locator(selector).all();
+async function usableBoxes(locator, view) {
+  const matches = await locator.all();
   const boxes = [];
   for (const match of matches) {
     const box = await match.boundingBox();
@@ -62,7 +63,7 @@ async function maskBoxesFor(page, selectors, view) {
   if (!Array.isArray(selectors)) throw new Error('mask must be an array of selectors.');
   const all = [];
   for (const [index, selector] of selectors.entries()) {
-    const { matched, boxes } = await usableBoxes(page, selector, view);
+    const { matched, boxes } = await usableBoxes(page.locator(selector), view);
     if (boxes.length === 0) {
       const why = matched === 0 ? 'matched nothing' : 'has no usable box';
       throw new Error(`Screenshot refused: mask ${String(index)} ${why}.`);
@@ -72,11 +73,54 @@ async function maskBoxesFor(page, selectors, view) {
   return all;
 }
 
+// Elements that may show a room value while the URL holds one: link fields and QR code images or
+// canvases in a dialog, and any element whose text names a room or link key. Other renderings
+// (an SVG code, a value split across elements, a shadow root) are not detected here.
+export const SECRET_SURFACES = [
+  '[role=dialog] input',
+  '[role=dialog] textarea',
+  '[role=dialog] img',
+  '[role=dialog] canvas',
+];
+const TOLERANCE = 1;
+
+// The part of a box inside the viewport, as edges.
+const clip = (box, view) => ({
+  left: Math.max(box.x, 0),
+  top: Math.max(box.y, 0),
+  right: Math.min(box.x + box.width, view.cssWidth),
+  bottom: Math.min(box.y + box.height, view.cssHeight),
+});
+
+/** True when the on-screen part of a box lies inside one mask box (CSS px, 1 px tolerance). */
+export function isCovered(box, masks, view) {
+  const inner = clip(box, view);
+  return masks.some((mask) => {
+    const outer = clip(mask, view);
+    const fitsX = outer.left <= inner.left + TOLERANCE && outer.right >= inner.right - TOLERANCE;
+    return fitsX && outer.top <= inner.top + TOLERANCE && outer.bottom >= inner.bottom - TOLERANCE;
+  });
+}
+
+async function surfaceBoxes(page, view) {
+  const locators = [...SECRET_SURFACES.map((s) => page.locator(s)), page.getByText(LINK_KEY_TEXT)];
+  const boxes = [];
+  for (const locator of locators) boxes.push(...(await usableBoxes(locator, view)).boxes);
+  return boxes;
+}
+
 // A room or link value in the URL may be on screen (share dialog, link fields, QR code), so a
-// capture then needs explicit masks that produced boxes.
-function refuseSecretView(href, boxes) {
-  if (hasSecretFragment(href) && boxes.length === 0) {
+// capture then needs masks, and they must cover every element that may show the value.
+async function refuseSecretView(page, view, masks) {
+  if (masks.length === 0) {
     throw new Error('Screenshot refused: the URL fragment holds a collaboration value.');
+  }
+  const open = (await surfaceBoxes(page, view)).filter((box) => !isCovered(box, masks, view));
+  if (open.length > 0) {
+    const count = String(open.length);
+    throw new Error(
+      `Screenshot refused: ${count} element(s) that may show the collaboration value are not masked.`,
+    );
   }
 }
 
@@ -93,10 +137,14 @@ export async function screenshot(ctx, step) {
   await refuseIfPresent(ctx.page, step.refuseIf ?? []);
   const view = await ctx.page.evaluate(readView);
   const boxes = await maskBoxesFor(ctx.page, step.mask ?? [], view);
-  refuseSecretView(view.href, boxes);
+  const secret = hasSecretFragment(view.href);
+  if (secret) await refuseSecretView(ctx.page, view, boxes);
   const { data } = await ctx.cdp.send('Page.captureScreenshot', { format: 'png' });
-  // The fragment can change while the capture runs, so it is read again before writing.
-  refuseSecretView((await ctx.page.evaluate(readView)).href, boxes);
+  // The fragment can change while the capture runs, so it is read again before writing. A view
+  // that gained a value was never checked against its masks, so it is refused.
+  if (!secret && hasSecretFragment((await ctx.page.evaluate(readView)).href)) {
+    throw new Error('Screenshot refused: the URL gained a collaboration value during the capture.');
+  }
   let bytes = Buffer.from(data, 'base64');
   const scale = bytes.readUInt32BE(16) / view.cssWidth;
   if (boxes.length > 0) bytes = encodePng(paintBoxes(decodePng(bytes), boxes, scale));

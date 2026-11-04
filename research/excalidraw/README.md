@@ -106,10 +106,13 @@ the background just before a driver batch.
   `mask` selectors are painted onto the decoded image before writing. Every requested mask must
   yield at least one non-empty box that lies at least partly inside the viewport, or nothing is
   captured; an off-screen box paints nothing, so it does not count. While the live URL fragment
-  holds a `room` or `json` link value (in any of the forms listed under Privacy), checked before
-  and after the
-  capture, a screenshot is refused unless its masks produced boxes. `refuseIf` refuses the capture
-  while a selector matches. `check-masks.mjs` fails a masked capture that recorded no box.
+  holds a `room` or `json` link value (in any of the forms listed under Privacy), a screenshot
+  is refused unless its masks produced boxes and every on-screen element that may show the value
+  lies inside one mask box: each input, textarea, image and canvas in a `[role=dialog]`, and
+  each element whose text names a room or link key. An SVG code, a value split across elements
+  or a shadow root is not detected. A URL that gains such a value while the capture runs is
+  refused. `refuseIf` refuses the capture while a selector matches. `check-masks.mjs` fails a
+  masked capture that recorded no box.
 - **Privacy.** ARIA text, dialog messages, error text, download names (reported and on disk) and
   clipboard previews are redacted, including `room` and `json` link values. The key name and its
   `=` and `,` separators match in any case and any mix of literal and percent-encoded

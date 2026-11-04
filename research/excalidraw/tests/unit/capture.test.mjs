@@ -6,7 +6,7 @@ import { join } from 'node:path';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
-import { isUsableBox, screenshot } from '../../lib/capture.mjs';
+import { isCovered, isUsableBox, screenshot } from '../../lib/capture.mjs';
 import { MASK, decodePng, encodePng } from '../../lib/png.mjs';
 
 // Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).
@@ -23,13 +23,19 @@ const SHOT = encodePng({ width: 4, height: 4, bpp: 3, rows }).toString('base64')
 const BOX = { x: 0, y: 0, width: 2, height: 2 };
 const VIEW = { cssWidth: 4, cssHeight: 4 };
 
-function stubCtx({ hrefs = [CLEAN_HREF], boxes = {}, present = {} } = {}) {
+const matchesOf = (list) => (list ?? []).map((box) => ({ boundingBox: async () => box }));
+
+function stubCtx({ hrefs = [CLEAN_HREF], boxes = {}, present = {}, text = [] } = {}) {
   let reads = 0;
   const captures = [];
   const page = {
     locator: (selector) => ({
-      all: async () => (boxes[selector] ?? []).map((box) => ({ boundingBox: async () => box })),
+      all: async () => matchesOf(boxes[selector]),
       count: async () => present[selector] ?? 0,
+    }),
+    getByText: (pattern) => ({
+      all: async () =>
+        pattern instanceof RegExp && pattern.test('#room=x') ? matchesOf(text) : [],
     }),
     evaluate: async () => {
       reads += 1;
@@ -149,5 +155,79 @@ describe('screenshot masks fail closed', () => {
     );
     expect(captures).toEqual([]);
     expect(existsSync(shotFile('room-offscreen'))).toBe(false);
+  });
+});
+
+describe('masks must cover what may show the room value', () => {
+  const INPUT = { x: 0, y: 0, width: 2, height: 1 };
+  const room = (extra) => stubCtx({ hrefs: [ROOM_HREF], ...extra });
+
+  it('captures when every on-screen link field and image lies inside a mask box', async () => {
+    const { ctx } = room({
+      boxes: { '.masks': [BOX], '[role=dialog] input': [INPUT], '[role=dialog] img': [BOX] },
+    });
+    const result = await screenshot(ctx, { name: 'covered', mask: ['.masks'] });
+    expect(result.maskBoxes).toEqual([BOX]);
+  });
+
+  it.each([
+    ['a dialog input', { '[role=dialog] input': [{ x: 2, y: 2, width: 2, height: 1 }] }, []],
+    ['a dialog image', { '[role=dialog] img': [{ x: 1, y: 1, width: 3, height: 3 }] }, []],
+    ['a dialog canvas', { '[role=dialog] canvas': [{ x: 3, y: 0, width: 1, height: 1 }] }, []],
+    ['a dialog textarea', { '[role=dialog] textarea': [{ x: 0, y: 3, width: 1, height: 1 }] }, []],
+    ['text that holds a room value', {}, [{ x: 2, y: 0, width: 2, height: 1 }]],
+  ])('refuses, before capturing, when %s lies outside every mask', async (_l, extra, text) => {
+    const { ctx, captures } = room({ boxes: { '.masks': [BOX], ...extra }, text });
+    await expect(screenshot(ctx, { name: 'uncovered', mask: ['.masks'] })).rejects.toThrow(
+      /1 element\(s\) that may show the collaboration value are not masked/u,
+    );
+    expect(captures).toEqual([]);
+    expect(existsSync(shotFile('uncovered'))).toBe(false);
+  });
+
+  it('ignores off-screen elements, which the capture cannot show', async () => {
+    const offscreen = { x: 0, y: 900, width: 2, height: 1 };
+    const { ctx } = room({ boxes: { '.masks': [BOX], '[role=dialog] input': [offscreen] } });
+    await expect(
+      screenshot(ctx, { name: 'offscreen-field', mask: ['.masks'] }),
+    ).resolves.toMatchObject({
+      masks: 1,
+    });
+  });
+
+  it('applies only while the URL holds a room or link value', async () => {
+    const { ctx } = stubCtx({ boxes: { '[role=dialog] input': [{ ...BOX, x: 2 }] } });
+    await expect(screenshot(ctx, { name: 'clean-dialog' })).resolves.toMatchObject({ masks: 0 });
+  });
+
+  it('refuses a masked capture when the URL gains a value while it runs', async () => {
+    const { ctx, captures } = stubCtx({ hrefs: [CLEAN_HREF, ROOM_HREF], boxes: { '.m': [BOX] } });
+    await expect(screenshot(ctx, { name: 'late-masked', mask: ['.m'] })).rejects.toThrow(
+      /gained a collaboration value/u,
+    );
+    expect(captures).toEqual(['Page.captureScreenshot']);
+    expect(existsSync(shotFile('late-masked'))).toBe(false);
+  });
+});
+
+describe('isCovered', () => {
+  const view = { cssWidth: 100, cssHeight: 50 };
+  const mask = { x: 10, y: 10, width: 30, height: 20 };
+
+  it('needs one mask box to contain the whole element, within 1 px', () => {
+    expect(isCovered({ x: 10, y: 10, width: 30, height: 20 }, [mask], view)).toBe(true);
+    expect(isCovered({ x: 9.5, y: 10, width: 31, height: 20 }, [mask], view)).toBe(true);
+    expect(isCovered({ x: 5, y: 10, width: 30, height: 20 }, [mask], view)).toBe(false);
+    const halves = [
+      { x: 0, y: 0, width: 50, height: 50 },
+      { x: 50, y: 0, width: 50, height: 50 },
+    ];
+    expect(isCovered({ x: 40, y: 10, width: 20, height: 10 }, halves, view)).toBe(false);
+  });
+
+  it('compares only the parts inside the viewport', () => {
+    const edge = { x: 80, y: 40, width: 40, height: 40 };
+    expect(isCovered(edge, [{ x: 79, y: 39, width: 21, height: 11 }], view)).toBe(true);
+    expect(isCovered(edge, [], view)).toBe(false);
   });
 });

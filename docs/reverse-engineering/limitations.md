@@ -73,7 +73,11 @@
   halts the session. A failed navigation that leaves Chromium on its error page halts it too.
 - **Masks are measured just before the capture.** Content that moves between the box
   measurement and `Page.captureScreenshot` can leave the painted boxes. `check-masks.mjs` verifies
-  the recorded boxes only, not where the content went.
+  the recorded boxes only, not where the content went. In a room view the driver now also
+  requires every dialog input, textarea, image and canvas on screen, and every element whose text
+  names a room or link key, to lie inside one mask box; an SVG code, a value split across
+  elements or a shadow root would not be detected. This rule was added after s7 and is tested
+  only with stubs: no live room view has been captured with it.
 - **Live tooling checks.** With the fourth-review tooling fixes, `isolation-check.sh` (11 of 11)
   and `selftest.sh` (19 of 19) passed against real local containers on 2026-11-04, at 20:02 and
   20:03 UTC and again on `75f8eae` at 20:22 and 20:23 UTC, loading only `about:blank` and the

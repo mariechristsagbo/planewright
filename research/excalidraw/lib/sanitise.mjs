@@ -55,6 +55,8 @@ const JSON_KEY = encodedWord('json');
 const LINK_KEY = `(?:${ROOM_KEY}|${JSON_KEY})`;
 // A collaboration room or a shareable `#json=` link value, literal or percent-encoded.
 const SECRET_FRAGMENT = new RegExp(String.raw`${LINK_KEY}${EQ}[^&\s]`, 'iu');
+/** Text that names a room or `json` link key with its `=`, in any of the forms above. */
+export const LINK_KEY_TEXT = new RegExp(`${LINK_KEY}${EQ}`, 'iu');
 
 // Percent-escapes of ASCII characters, decoded again and again until nothing changes. It never
 // throws on a malformed escape, so one stray `%` cannot hide the rest of a text.
