@@ -1,0 +1,50 @@
+name: Behavioural investigation
+description: Document reference behaviour before a feature is designed or implemented.
+title: 'docs: investigate '
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Investigations record **observable behaviour** so that Planewright can be designed
+        independently. Follow docs/investigation/README.md. Do not paste, transcribe or attach
+        third-party source code, assets, fonts or icons.
+  - type: textarea
+    id: question
+    attributes:
+      label: Questions to answer
+      description: The specific behaviours this investigation must explain.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and reference
+      description: Reference application, version or date observed, mode (for example guest mode), and what is out of scope.
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Method
+      description: Tools and procedure, for example REA-assisted runtime observation, black-box UI testing or public documentation.
+    validations:
+      required: true
+  - type: textarea
+    id: findings
+    attributes:
+      label: Findings
+      description: Fill in as the investigation progresses. Link evidence stored under docs/investigation/.
+  - type: textarea
+    id: implications
+    attributes:
+      label: Design implications and follow-up issues
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Investigation rules
+      options:
+        - label: Findings describe behaviour in my own words and contain no third-party code or assets.
+          required: true
+        - label: The investigation stays within the terms, licences and authorisation that apply to the reference.
+          required: true

@@ -1,0 +1,69 @@
+name: Feature request
+description: Propose a capability. Features are implemented only after their behaviour is investigated.
+title: 'feat: '
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Planewright features follow an investigate-then-implement workflow. A feature issue is
+        ready for implementation only when its expected behaviour is specified and, where a
+        behavioural reference is used, linked to an investigation issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or user need
+      description: What are people unable to do today, and why does it matter?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behaviour
+      description: Describe the observable behaviour, not an implementation.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Testable statements that must all hold for the issue to be closed.
+      placeholder: |
+        - [ ] Given …, when …, then …
+        - [ ] Keyboard-only users can …
+    validations:
+      required: true
+  - type: input
+    id: investigation
+    attributes:
+      label: Investigation issue
+      description: Link to the investigation issue that documents the reference behaviour, if any.
+      placeholder: '#123'
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Proposed priority
+      options:
+        - P0 — required for a usable editor
+        - P1 — expected by most users
+        - P2 — valuable but deferrable
+        - Unsure
+    validations:
+      required: true
+  - type: textarea
+    id: considerations
+    attributes:
+      label: Accessibility, performance, security and privacy considerations
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: checkboxes
+    id: clean-room
+    attributes:
+      label: Independent implementation
+      options:
+        - label: >-
+            I understand that Planewright must not copy third-party source code, assets or
+            proprietary material, and that references are used for observable behaviour only.
+          required: true

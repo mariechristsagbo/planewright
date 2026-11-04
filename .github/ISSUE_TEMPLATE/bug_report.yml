@@ -1,0 +1,72 @@
+name: Bug report
+description: Something in Planewright does not behave as documented or expected.
+title: 'fix: '
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please search existing issues first.
+        **Security vulnerabilities must be reported privately** via the Security tab, not here.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: A clear and concise description of the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Minimal, numbered steps. Attach a sample file or recording if it helps.
+      placeholder: |
+        1. Open …
+        2. Do …
+        3. Observe …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include error messages, console output or screenshots.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Web application (apps/web)
+        - Collaboration service (apps/collab)
+        - Protocol package (packages/protocol)
+        - Tooling, CI or documentation
+        - Not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Commit or version
+      description: Output of `git rev-parse --short HEAD`, or the deployed version.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser and version, operating system, Node.js and npm versions where relevant.
+      placeholder: Chrome 140 on macOS 15; Node.js 24.22.1; npm 11.19.1
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context

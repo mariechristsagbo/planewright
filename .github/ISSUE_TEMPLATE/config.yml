@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/mariechristsagbo/planewright/security/advisories/new
+    about: Please report vulnerabilities privately. Do not open a public issue.
+  - name: Ask a question or start a discussion
+    url: https://github.com/mariechristsagbo/planewright/discussions
+    about: Use Discussions for questions and ideas that are not yet actionable.
