@@ -102,5 +102,49 @@ The theme was captured in light and dark on desktop: canvas, main menu, properti
 and export dialogs in s1 and s6, plus the element context menu, the per-type panels and
 Preferences in s6. On mobile, s7 captured the canvas, main menu, Help, Export, Command palette,
 Live collaboration, Clear canvas, Preferences and Actions in dark theme. Dark mode is an app-level setting
-stored separately (see S-03). The `<html>` element gets no class and keeps
+stored separately (see B-37). The `<html>` element gets no class and keeps
 `color-scheme: normal`.
+
+## Inventory IDs
+
+Every entry above has an ID. The [residual matrix](residual-matrix.md) has at least one row for
+each, with its status, evidence, limitations and next observation; `documentation.test.mjs`
+checks that every §1 and §2 table row is listed here and that every ID has a matrix row.
+
+| ID   | Section | Entry                         |
+| ---- | ------- | ----------------------------- |
+| F-01 | §1      | Top left                      |
+| F-02 | §1      | Top centre                    |
+| F-03 | §1      | Under bar                     |
+| F-04 | §1      | Top right                     |
+| F-05 | §1      | Bottom left                   |
+| F-06 | §1      | Bottom right                  |
+| F-07 | §1      | Canvas                        |
+| F-08 | §1      | Welcome                       |
+| F-09 | §2      | Main menu                     |
+| F-10 | §2      | More tools                    |
+| F-11 | §2      | Help dialog                   |
+| F-12 | §2      | Command palette               |
+| F-13 | §2      | Share dialog                  |
+| F-14 | §2      | Canvas context menu           |
+| F-15 | §2      | Library sidebar               |
+| F-16 | §2      | Export image dialog           |
+| F-17 | §2      | Properties panel              |
+| F-18 | §2      | Element context menu          |
+| F-19 | §2      | Preferences submenu           |
+| F-20 | §2      | Clear canvas dialog           |
+| F-21 | §2      | Native file pickers           |
+| F-22 | §3      | Modes and toggles             |
+| F-23 | §4      | Element types                 |
+| F-24 | §5      | Tool shortcuts                |
+| F-25 | §5      | View shortcuts                |
+| F-26 | §5      | Editor shortcuts              |
+| F-27 | §5      | Zoom-to-selection discrepancy |
+| F-28 | §6      | Mobile top bar                |
+| F-29 | §6      | Mobile bottom toolbar         |
+| F-30 | §6      | Mobile main menu              |
+| F-31 | §6      | More tools on mobile          |
+| F-32 | §6      | Diamond, Ellipse and Line     |
+| F-33 | §6      | Mobile compact property bar   |
+| F-34 | §6      | Mobile dark dialogs           |
+| F-35 | §7      | Theme coverage                |

@@ -9,7 +9,7 @@ records an aborted rerun. It is not exhaustive; see the residual matrix and the 
 | -------------------------------------------------------- | -------------------------------------------------------------------------- |
 | [methodology.md](methodology.md)                         | Clean-room rules, evidence labels, environment, reproduction, sanitisation |
 | [feature-inventory.md](feature-inventory.md)             | Desktop and mobile UI inventory, menus, dialogs, shortcuts                 |
-| [behavior-analysis.md](behavior-analysis.md)             | Reproducible behaviours B-01…B-35 with edge cases and confidence           |
+| [behavior-analysis.md](behavior-analysis.md)             | Behaviours B-01…B-37, each with the eleven issue #1 fields                 |
 | [network-analysis.md](network-analysis.md)               | Observed traffic, storage and workers, separated from backend hypotheses   |
 | [architecture-hypotheses.md](architecture-hypotheses.md) | Labelled inferences and hypotheses A-01…A-13                               |
 | [rea-findings.md](rea-findings.md)                       | What REA established, what needed the driver or inference                  |
