@@ -1,0 +1,32 @@
+{
+  "description": "Desktop 1280x720: restore emulation after the driver's CDP session was replaced (for example after a driver restart, which removes that session's overrides). Re-applies the override without trusting its immediate read-back, reloads, then asserts the metrics; the assertion after the reload is the authoritative check. Used once in s6.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720,
+      "deviceScaleFactor": 1,
+      "verify": false
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 2500
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

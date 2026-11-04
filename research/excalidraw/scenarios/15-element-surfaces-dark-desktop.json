@@ -1,0 +1,240 @@
+{
+  "description": "Desktop 1280x720, dark theme (end state of 07b): draw a rectangle, arrow and text in an empty viewport area, then capture the element context menu, the properties panel for each element type (arrow and text controls), the panel scrolled by a wheel over it to reveal its lower sections, and the Preferences submenu. Export to Link is not clicked: it would publish the scene. Runs after 07b and before 08. Requires 00 first in the session (the only emulate step).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [1000, 420],
+      "to": [1120, 500]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "15-rect"
+    },
+    {
+      "do": "click",
+      "at": [1000, 460],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-07-element-context-menu"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-07-element-context-menu"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1000, 460]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "15-rect-selected"
+    },
+    {
+      "do": "aria",
+      "save": "dark-08-panel-rect"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-08-panel-rect"
+    },
+    {
+      "do": "wheel",
+      "at": [110, 420],
+      "dy": 600
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "dark-09-panel-rect-scrolled"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-09-panel-rect-scrolled"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "a"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [1000, 560],
+      "to": [1120, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "15-arrow"
+    },
+    {
+      "do": "aria",
+      "save": "dark-10-panel-arrow"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-10-panel-arrow"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "t"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1000, 630]
+    },
+    {
+      "do": "type",
+      "text": "Txt"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "15-text"
+    },
+    {
+      "do": "aria",
+      "save": "dark-11-panel-text"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-11-panel-text"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [34, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-12-preferences"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-12-preferences"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "appState",
+      "label": "15-end"
+    }
+  ]
+}

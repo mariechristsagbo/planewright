@@ -1,11 +1,18 @@
 {
-  "description": "Image insertion by file drop recorded in s1: drop the self-generated 64x48 fixture at viewport (1000,200) and read the scene (06b-image-drop, io-04-image-drop). Requires the end state of 06 (scroll 90,45) and fixtures/test-64x48.png.",
+  "description": "Image insertion by file drop recorded in s1: drop the self-generated 64x48 fixture at viewport (1000,200) and read the scene (06b-image-drop, io-04-image-drop). Requires the end state of 06 (scroll 90,45) and fixtures/test-64x48.png. From s6 on, its emulate step is an assertMetrics step and only 00 emulates. In s5 the re-applied override read back the headless default screen (800x600) because the preceding Playwright screenshot had reset the emulated screen metrics; that was later reproduced on a self-authored fixture, and the driver now captures through CDP instead.",
   "continueOnError": true,
   "steps": [
     {
-      "do": "emulate",
-      "width": 1280,
-      "height": 720
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
     },
     {
       "do": "dropFile",

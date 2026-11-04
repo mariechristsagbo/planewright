@@ -1,11 +1,18 @@
 {
-  "description": "Desktop: selection (click, shift-click, box), group/ungroup, move, undo/redo, align, duplicate, resize and rotate on a rectangle and ellipse. Coordinates assume the 1280x720 viewport and default zoom.",
+  "description": "Desktop: selection (click, shift-click, box), group/ungroup, move, undo/redo, align, duplicate, resize and rotate on a rectangle and ellipse. Coordinates assume the 1280x720 viewport and default zoom. From s6 on, its emulate step is an assertMetrics step and only 00 emulates. In s5 the re-applied override read back the headless default screen (800x600) because the preceding Playwright screenshot had reset the emulated screen metrics; that was later reproduced on a self-authored fixture, and the driver now captures through CDP instead.",
   "continueOnError": true,
   "steps": [
     {
-      "do": "emulate",
-      "width": 1280,
-      "height": 720
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
     },
     {
       "do": "key",

@@ -1,5 +1,5 @@
 {
-  "description": "Bounded probe recorded in s4 (fresh profile, after 09): re-apply the scenario 10 emulation on the loaded page and read devicePixelRatio and the canvas backing store. Observed: DPR reads 1 while the canvas stays 1170x2532. Requires 09 first.",
+  "description": "Bounded probe, after 09: re-apply the mobile emulation on the loaded page and read devicePixelRatio and the canvas backing store. s4 (Playwright screenshot at the end of 09) read DPR 1 while the canvas stayed 1170x2532. s7 (CDP captures only) read DPR 3, screen 390x844 and canvas 1170x2532, and the emulate assertion passed. On a self-authored fixture, Playwright's page.screenshot() reset DPR to 1 and the screen to 800x600 until the next navigation. Run it last in a session.",
   "continueOnError": true,
   "steps": [
     {

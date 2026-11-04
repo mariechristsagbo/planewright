@@ -1,5 +1,5 @@
 {
-  "description": "Mobile emulation 390x844 CSS px, DPR 3, touch enabled, Android Chrome user agent, light scheme: initial load, metrics, ARIA and screenshot.",
+  "description": "Mobile emulation 390x844 CSS px, DPR 3, touch enabled, Android Chrome user agent, light scheme: initial load, metrics, ARIA and screenshot. From s6 on, an assertMetrics step aborts the run unless the loaded page reports exactly 390x844 CSS px, DPR 3, a 390x844 screen, 5 touch points, a coarse pointer and canvas backing stores of CSS size x DPR.",
   "continueOnError": true,
   "steps": [
     {
@@ -11,12 +11,44 @@
       "hasTouch": true,
       "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
     },
-    { "do": "colorScheme", "value": "light" },
-    { "do": "goto", "url": "https://excalidraw.com/" },
-    { "do": "wait", "ms": 3000 },
-    { "do": "metrics" },
-    { "do": "rootStyle" },
-    { "do": "aria", "save": "m01-initial-light" },
-    { "do": "screenshot", "name": "m01-initial-light" }
+    {
+      "do": "colorScheme",
+      "value": "light"
+    },
+    {
+      "do": "goto",
+      "url": "https://excalidraw.com/"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "rootStyle"
+    },
+    {
+      "do": "aria",
+      "save": "m01-initial-light"
+    },
+    {
+      "do": "screenshot",
+      "name": "m01-initial-light"
+    }
   ]
 }

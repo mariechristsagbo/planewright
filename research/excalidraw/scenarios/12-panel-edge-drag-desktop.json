@@ -1,0 +1,137 @@
+{
+  "description": "Desktop 1280x720 light, edge case for behaviour B-02: a shape drag that starts on the properties panel (x=200) creates nothing; the same drag started at x=300 creates the shape. Clears the canvas first and leaves it empty. Runs after 02b and before 03 (03 clears the canvas itself). Requires 00 first in the session (the only emulate step).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [640, 600]
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "12-cleared"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [200, 180],
+      "to": [360, 280]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "12-after-panel-drag"
+    },
+    {
+      "do": "appState",
+      "label": "12-after-panel-drag"
+    },
+    {
+      "do": "screenshot",
+      "name": "edge-01-after-panel-drag"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [300, 180],
+      "to": [420, 280]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "12-after-canvas-drag"
+    },
+    {
+      "do": "appState",
+      "label": "12-after-canvas-drag"
+    },
+    {
+      "do": "key",
+      "key": "l"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [200, 420],
+      "to": [360, 420]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "12-after-panel-line-drag"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "12-end"
+    }
+  ]
+}

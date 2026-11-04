@@ -1,0 +1,10 @@
+{
+  "description": "Playwright half of the REA cross-driver pair after 02's drawing (rea-pair-02-shapes). Run immediately after REA capture_web_screenshot, with no input in between. Requires the end state of 02.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "screenshot",
+      "name": "rea-pair-02-shapes"
+    }
+  ]
+}

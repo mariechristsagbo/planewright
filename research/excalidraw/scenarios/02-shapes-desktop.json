@@ -1,5 +1,5 @@
 {
-  "description": "Desktop 1280x720 light: create rectangle, ellipse, diamond, bound arrow, line, freedraw, text and sticky note with keyboard tool shortcuts and pointer drags; read the locally persisted scene summary. Drags start at x>=260 because the properties panel occupies x~16-211 while a drawing tool is active.",
+  "description": "Desktop 1280x720 light: create rectangle, ellipse, diamond, bound arrow, line, freedraw, text and sticky note with keyboard tool shortcuts and pointer drags; read the locally persisted scene summary. Drags start at x>=260 because the properties panel occupies x~16-211 while a drawing tool is active. From s6 on, its emulate step is an assertMetrics step and only 00 emulates. In s5 the re-applied override read back the headless default screen (800x600) because the preceding Playwright screenshot had reset the emulated screen metrics; that was later reproduced on a self-authored fixture, and the driver now captures through CDP instead.",
   "continueOnError": true,
   "steps": [
     {
@@ -11,9 +11,16 @@
       "ms": 2500
     },
     {
-      "do": "emulate",
-      "width": 1280,
-      "height": 720
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
     },
     {
       "do": "colorScheme",

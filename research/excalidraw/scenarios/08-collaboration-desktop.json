@@ -1,11 +1,18 @@
 {
-  "description": "Desktop light: start one guest live-collaboration session from the share dialog, record URL fragment shape and dialog, then stop the session. Run once; do not repeat in loops.",
+  "description": "Desktop light: start one guest live-collaboration session from the share dialog, record URL fragment shape and dialog, then stop the session. Run once; do not repeat in loops. Privacy: the dialog screenshot masks every input and image in the dialog (the link and its QR code), the in-session screenshot is refused while any dialog is open, and ARIA text is redacted by the driver. In s1 these protections did not exist; those captures were removed (see methodology). Do not run REA tools during this scenario: REA target listings keep URL fragments. From s6 on, its emulate step is an assertMetrics step and only 00 emulates. In s5 the re-applied override read back the headless default screen (800x600) because the preceding Playwright screenshot had reset the emulated screen metrics; that was later reproduced on a self-authored fixture, and the driver now captures through CDP instead.",
   "continueOnError": true,
   "steps": [
     {
-      "do": "emulate",
-      "width": 1280,
-      "height": 720
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
     },
     {
       "do": "key",
@@ -40,7 +47,11 @@
     },
     {
       "do": "screenshot",
-      "name": "collab-01-session-dialog"
+      "name": "collab-01-session-dialog",
+      "mask": [
+        ":is(dialog,[role=\"dialog\"]) input",
+        ":is(dialog,[role=\"dialog\"]) :is(img,svg,canvas,[role=\"img\"])"
+      ]
     },
     {
       "do": "key",
@@ -52,7 +63,8 @@
     },
     {
       "do": "screenshot",
-      "name": "collab-02-in-session"
+      "name": "collab-02-in-session",
+      "refuseIf": [":is(dialog,[role=\"dialog\"])"]
     },
     {
       "do": "aria",
