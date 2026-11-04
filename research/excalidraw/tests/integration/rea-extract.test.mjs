@@ -29,8 +29,8 @@ const result = JSON.stringify({
     },
   },
 });
-const extract = (input) =>
-  spawnSync(process.execPath, [SCRIPT, input], { encoding: 'utf8', cwd: dir });
+const extract = (...args) =>
+  spawnSync(process.execPath, [SCRIPT, ...args], { encoding: 'utf8', cwd: dir });
 
 describe('rea-extract.mjs screenshot output', () => {
   it('refuses an input whose name does not end in .json and leaves it intact', () => {
@@ -60,5 +60,28 @@ describe('rea-extract.mjs screenshot output', () => {
     expect(extract(input).status).not.toBe(0);
     expect(readFileSync(join(dir, 'other.png'), 'utf8')).toBe('an earlier file');
     expect(existsSync(input)).toBe(true);
+  });
+});
+
+describe('rea-extract.mjs summary output', () => {
+  it('refuses to write the summary over its own input', () => {
+    const input = join(dir, 'self.json');
+    writeFileSync(input, result);
+    const run = extract(input, input);
+    expect(run.status).not.toBe(0);
+    expect(run.stderr).toMatch(/already exists/u);
+    expect(readFileSync(input, 'utf8')).toBe(result);
+  });
+
+  it('writes a new summary file and never replaces an existing one', () => {
+    const input = join(dir, 'summary-source.json');
+    const output = join(dir, 'summary.json');
+    writeFileSync(input, result);
+    expect(extract(input, output).status).toBe(0);
+    expect(JSON.parse(readFileSync(output, 'utf8'))).toMatchObject({ kind: 'rea-screenshot' });
+    writeFileSync(output, 'an earlier summary');
+    const rerun = extract(input, output);
+    expect(rerun.status).not.toBe(0);
+    expect(readFileSync(output, 'utf8')).toBe('an earlier summary');
   });
 });

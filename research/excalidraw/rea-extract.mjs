@@ -6,6 +6,7 @@
 //   URLs (no query values), worker counts and completeness flags. No values or payloads.
 //
 // Usage: node research/excalidraw/rea-extract.mjs <rea-result.json> [summary-out.json]
+// The optional summary file must not exist yet; nothing that exists is ever replaced.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
@@ -44,6 +45,19 @@ function writePngBeside(input, bytes) {
     writeFileSync(png, bytes, { flag: 'wx' });
   } catch (error) {
     if (error?.code !== 'EEXIST' || !readFileSync(png).equals(bytes)) throw error;
+  }
+}
+
+// The summary is created exclusively: an existing file, including the input itself, is never
+// replaced.
+function writeSummary(file, text) {
+  try {
+    writeFileSync(file, text, { flag: 'wx' });
+  } catch (error) {
+    if (error?.code === 'EEXIST') {
+      throw new Error('The summary output already exists.', { cause: error });
+    }
+    throw error;
   }
 }
 
@@ -145,5 +159,5 @@ const summarise = summaries[evidence.operation];
 if (!summarise) throw new Error(`Unsupported REA operation "${String(evidence.operation)}".`);
 const summary = summarise(evidence, input);
 const text = `${JSON.stringify(summary, null, 2)}\n`;
-if (output) writeFileSync(output, text);
+if (output) writeSummary(output, text);
 else process.stdout.write(text);

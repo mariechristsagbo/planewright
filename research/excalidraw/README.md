@@ -121,7 +121,8 @@ the background just before a driver batch.
 - **Cleanup checks.** `isolation-check.sh` and `selftest.sh` pass a removal check only when a
   successful docker listing omits the name; a failed listing is a FAIL.
 - **REA extraction.** `rea-extract.mjs` needs an input ending in `.json` and never replaces an
-  existing PNG with different bytes.
+  existing PNG with different bytes. The optional summary file is created exclusively, so an
+  existing file, the input included, is never replaced.
 
 ## Scenario order and dependencies
 
