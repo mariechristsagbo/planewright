@@ -46,6 +46,15 @@
 ## Tooling limits
 
 - REA is passive for coordinate input (see [REA findings](rea-findings.md#5-rea-limitations-met)).
+- **What the REA windows can show.** `observe_web_session` retains navigation and lifecycle
+  metadata only, so the windows during scenarios 02 and 10 say nothing about requests, WebSocket
+  traffic or console output. The one `inspect_web_page` window during drawing (scenario 13)
+  covers only the allowed origin, starts at attach, and lasted 25 s. The s7 window armed 81 ms
+  after scenario 10's first tap. The bounds and counts are in `evidence/rea-windows.json`.
+- **Committed probe fields.** The committed probe summaries keep geometry, bindings, groups,
+  locks, eight style values, selection count, tool, zoom, scroll and theme. Point counts, font
+  fields, text length, the stored key count of `excalidraw-state` and which elements are
+  selected were read from raw timelines or not recorded, and cannot be re-checked from Git.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
@@ -79,6 +88,12 @@
 - That the feature inventory is exhaustive. It covers what was discovered through the menus,
   palette, help, panels and context menus of an empty or simple scene.
 - That bundle identifiers execute.
+- That drawing causes, or does not cause, network, WebSocket or console activity. Only one
+  same-origin REA window covered drawing.
+- That Ctrl+wheel zoom is anchored at the pointer, that a bound arrow end snaps to the outline,
+  or that the local save delay is measured from pointer-up. See B-36, B-04 and B-30.
+- That every behaviour entry covers all issue #1 dimensions. Entries mark each dimension that was
+  not observed.
 - That observed numeric thresholds (save delay, binding gap, handle offsets) are stable across
   versions. Several `index-*.js` chunks with different hashes were loaded across sessions.
   Whether that reflects lazy chunks or a deploy during the run is unknown.

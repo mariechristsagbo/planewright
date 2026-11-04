@@ -1,25 +1,25 @@
 # Checkpoint: issue #1 status
 
-Last updated: 2026-11-04 (after the fresh-profile reruns s6 and s7). Branch:
-`docs/1-excalidraw-research`. Issue #1 stays open: the Draft PR refers to it (`Refs #1`) and does
-not close it.
+Last updated: 2026-11-04 (third-review documentation remediation, from retained evidence only;
+no live session ran after s7). Branch: `docs/1-excalidraw-research`. Issue #1 stays open: the
+Draft PR refers to it (`Refs #1`) and does not close it.
 
 ## Acceptance criteria
 
-| Criterion                                                          | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                       |
-| ------------------------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `methodology.md`                                                   | Done    | Updated for the isolated network, the hardened driver, the capture fix and the REA CLI                                                                                                                                                                                                                                                                                      |
-| `feature-inventory.md` covers all discovered features              | Partial | Added in s6/s7: element context menu, panel Actions section, arrow and text controls, Preferences submenu, Clear canvas confirmation and the mobile dark dialogs. Still open: Find on canvas, language switch, library item flows, Export to Link (not clicked, because it publishes the scene). The exclusion of the generation features needs a maintainer decision       |
-| `behavior-analysis.md`                                             | Done    | Every documented behaviour that rests on a probe was replayed in fresh profile s6 or s7 with identical results (47 of 47 shared desktop probe labels; mobile touch, tap, pinch zoom and pan delta). Edge cases marked [U] remain in the [residual matrix](residual-matrix.md)                                                                                               |
-| `network-analysis.md`                                              | Done    | Observed metadata and hypotheses are separated; REA WebSocket frame shapes are marked lost                                                                                                                                                                                                                                                                                  |
-| `architecture-hypotheses.md`                                       | Done    | Every entry is labelled with a confidence                                                                                                                                                                                                                                                                                                                                   |
-| `rea-findings.md`                                                  | Done    | Evidence IDs reconciled: retained, lost, and new REA CLI records                                                                                                                                                                                                                                                                                                            |
-| `limitations.md`                                                   | Done    |                                                                                                                                                                                                                                                                                                                                                                             |
-| Desktop light/dark and mobile evidence sets                        | Done    | Desktop light and dark in s6, including dark element surfaces. Mobile light and dark in s7 at a DPR 3 asserted at every scenario boundary, including the dark Help, Export, Command palette, Share, Clear canvas, Preferences and Actions surfaces                                                                                                                          |
-| Canvas interactions through the external driver while REA observes | Done    | REA 6.8.0 (build `5b953e1`) observed while the driver drew: `observe-web-session` during desktop scenario 02 and mobile scenario 10, and `inspect-web-page` during scenario 13. These ran through the REA CLI from `../rea-build`, because the project-local REA MCP tools were denied permission in this non-interactive session (see [blockers](#blockers-and-residuals)) |
-| Evidence sanitized and stored under the agreed directories         | Done    | Raw evidence is in the workspace `artifacts/research/excalidraw/`; the sanitized index is in `evidence/`. Retained room values were removed or overwritten (see [privacy](#privacy-remediation)). One residual copy exists outside the workspace (see blockers)                                                                                                             |
-| No source maps, official repository, package or assets             | Done    | 0 `.map` requests in all seven netlogs; no package installed                                                                                                                                                                                                                                                                                                                |
-| Prioritised backlog with acceptance criteria                       | Done    | [backlog.md](backlog.md), updated with the save timing and the element context menu                                                                                                                                                                                                                                                                                         |
+| Criterion                                                          | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `methodology.md`                                                   | Done    | Updated for the isolated network, the hardened driver, the capture fix and the REA CLI                                                                                                                                                                                                                                                                                                                                      |
+| `feature-inventory.md` covers all discovered features              | Partial | Every entry now has an ID (F-01–F-35) with a residual-matrix row. Still open: Find on canvas, language switch, library item flows, Export to Link (not clicked, because it publishes the scene). The exclusion of the generation features needs a maintainer decision                                                                                                                                                       |
+| `behavior-analysis.md`                                             | Partial | Every entry (B-01–B-37) now has the eleven issue fields, and each dimension not observed says so and names its residual row. Many dimensions (undo, reload, mobile, edge cases) are unobserved for most entries, so the issue's per-feature contract is not yet met. Replay counts are corrected: 45 of 45 labels shared with s1 identical, 23 of 31 with s2, 2 of 6 mobile                                                 |
+| `network-analysis.md`                                              | Done    | Observed metadata and hypotheses are separated. Drawing-time traffic is limited to what one same-origin REA window shows; the earlier "no traffic while drawing" claim is withdrawn                                                                                                                                                                                                                                         |
+| `architecture-hypotheses.md`                                       | Done    | Every entry is labelled with a confidence; A-06 and A-10 bases corrected                                                                                                                                                                                                                                                                                                                                                    |
+| `rea-findings.md`                                                  | Done    | Evidence IDs reconciled. Each REA window is stated with its bounds, what its tool retains and which driver steps it covered, from `evidence/rea-windows.json`                                                                                                                                                                                                                                                               |
+| `limitations.md`                                                   | Done    | Adds the REA window limits, the fields missing from the committed probes, and the claims withdrawn by the third review                                                                                                                                                                                                                                                                                                      |
+| Desktop light/dark and mobile evidence sets                        | Done    | Desktop light and dark in s6, including dark element surfaces. Mobile light and dark in s7 at a DPR 3 asserted at every scenario boundary, including the dark Help, Export, Command palette, Share, Clear canvas, Preferences and Actions surfaces                                                                                                                                                                          |
+| Canvas interactions through the external driver while REA observes | Partial | REA 6.8.0 (build `5b953e1`) was attached while the driver drew: `observe-web-session` during desktop scenario 02 and mobile scenario 10, and `inspect-web-page` during scenario 13, through the REA CLI because the MCP tools were denied (see [blockers](#blockers-and-residuals)). Two windows retain navigation metadata only, the s7 window armed after scenario 10's first tap, and the third covers one origin (R-72) |
+| Evidence sanitized and stored under the agreed directories         | Done    | Raw evidence is in the workspace `artifacts/research/excalidraw/`; the sanitized index is in `evidence/`. Retained room values were removed or overwritten (see [privacy](#privacy-remediation)). One residual copy exists outside the workspace (see blockers)                                                                                                                                                             |
+| No source maps, official repository, package or assets             | Done    | 0 `.map` requests in all seven netlogs; no package installed                                                                                                                                                                                                                                                                                                                                                                |
+| Prioritised backlog with acceptance criteria                       | Done    | [backlog.md](backlog.md). Criteria that rested on unsupported zoom-anchor, arrow-endpoint and save-delay statements are now marked open, [H] or [U]                                                                                                                                                                                                                                                                         |
 
 ## Testing requirements
 
@@ -45,6 +45,15 @@ not close it.
    evidence without committed scenarios, and the open issue #1 criteria. It also raised
    non-blocking findings: missing tests, null-step, port, token-mode and download-name defects,
    confidence labels, the B-09 position, wrong Evidence IDs, and the room values in a session log.
+3. **Third review.** Its major findings: M1, behaviour entries lacked the issue's fields; M2,
+   unsupported zoom, arrow-binding and persistence statements and backlog criteria; M3, REA
+   observations overstated, especially drawing-time traffic and the CLI windows; M4, a
+   screenshot could be written while the URL held a room value; M5, an incomplete residual
+   matrix. M4 and the related tooling gaps were fixed in the tooling commits up to `4525a5c`.
+   M1, M2, M3 and M5 were addressed from retained evidence only: `rea-windows.mjs` and
+   `evidence/rea-windows.json`, the restructured behaviour entries, the relabelled backlog,
+   the complete residual matrix, and `documentation.test.mjs`, which checks the structure and the
+   cited numbers against the committed evidence. No review of this remediation has run yet.
 
 How each was handled on this branch, from `dbbab22` onwards:
 
@@ -127,7 +136,26 @@ Values were never printed; only counts and file names were recorded.
 - **Not observable here.** Native file pickers, save and export flows, the effective
   stop-session flow, multi-client collaboration, offline start, and the other ❌ rows of the
   [residual matrix](residual-matrix.md).
-- **Third review.** A fresh independent review of the remediation is still to be run.
+- **Review of the remediation.** A fresh independent review of the third-review remediation is
+  still to be run.
+
+## Remaining observation work
+
+The issue cannot be completed from retained evidence. These rows of the
+[residual matrix](residual-matrix.md) need work before the behaviour contract is met:
+
+- **Without a live session** (retained raw evidence only): set the driver netlog timestamps
+  against the drawing steps for drawing-time traffic (R-66) and the worker trigger (R-64);
+  re-export the s5–s7 REA records once the MCP tools are granted (R-73).
+- **New live observation, priority 1:** keyboard accessibility (R-27); multi-point and modifier
+  drawing (R-30, R-31); hit-testing (R-34); other handles, modifiers and nudging (R-36, R-37);
+  named style controls (R-10, R-39); text editing (R-40); arrow endpoint placement and binding
+  rules (R-42); file flows in a headed browser (R-16, R-18, R-46, R-47); Ctrl+wheel at an
+  off-centre pointer, zoom limits and pinch ratios (R-48); grouping, layers and alignment
+  (R-49–R-51); persistence of zoom and selection across reloads (R-54).
+- **New live observation, priority 2 and 3:** every other 🟡 or ❌ row, including mobile
+  versions of the desktop behaviours.
+- **Maintainer decisions:** Export to Link (R-56) and the generation features (R-63).
 
 ## Interrupted and aborted runs
 
@@ -155,5 +183,6 @@ Values were never printed; only counts and file names were recorded.
    restart the driver mid-session; if you must, run `00c`.
 4. Run `08`/`08b` last, at most once per session, and never during REA calls. The driver's
    `runLast` lock enforces the order and the single run; the REA rule stays manual.
-5. Rebuild the index with `build-evidence.mjs` for every session directory (see the
-   [research README](../../research/excalidraw/README.md)).
+5. Rebuild the index with `build-evidence.mjs` and the window summary with `rea-windows.mjs` for
+   every session directory (see the [research README](../../research/excalidraw/README.md)),
+   then update the documents until `documentation.test.mjs` passes.
