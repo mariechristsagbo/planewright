@@ -18,6 +18,7 @@
 # Cleanup ownership: start removes, on any failure or interruption, exactly the network and
 # container it created itself, by ID. stop removes only a container and network that carry both
 # this run's name and the research label. A same-named resource from another tool is never touched.
+# stop reports each removal, or that nothing labelled was found, and fails if a removal fails.
 set -euo pipefail
 
 # Pinned by digest: the tag v1.64.1-noble resolved to this image when the baseline was recorded.
@@ -108,13 +109,29 @@ labelled_id() { # labelled_id <container|network> <name> <labels field>
   if [[ "$label" == 1 && "$id" =~ $DOCKER_ID ]]; then echo "$id"; fi
 }
 
-stop() {
+# Removes one labelled resource and reports what actually happened. Finding none is reported as
+# such; a removal that fails is an error, never reported as removed.
+remove_labelled() { # remove_labelled <container|network> <name> <labels field>
   local id
-  id="$(labelled_id container "$NAME" .Config.Labels)"
-  if [[ -n "$id" ]]; then docker rm -f "$id" >/dev/null 2>&1 || true; fi
-  id="$(labelled_id network "$NET" .Labels)"
-  if [[ -n "$id" ]]; then docker network rm "$id" >/dev/null 2>&1 || true; fi
-  echo "stopped $NAME and removed $NET"
+  local remove=(docker network rm)
+  id="$(labelled_id "$1" "$2" "$3")"
+  if [[ -z "$id" ]]; then
+    echo "no $1 $2 with the research label"
+    return 0
+  fi
+  if [[ "$1" == container ]]; then remove=(docker rm -f); fi
+  if ! "${remove[@]}" "$id" >/dev/null 2>&1; then
+    echo "could not remove $1 $2" >&2
+    return 1
+  fi
+  echo "removed $1 $2"
+}
+
+stop() {
+  local status=0
+  remove_labelled container "$NAME" .Config.Labels || status=1
+  remove_labelled network "$NET" .Labels || status=1
+  return "$status"
 }
 
 case "$ACTION" in

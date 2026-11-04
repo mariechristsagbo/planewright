@@ -32,6 +32,8 @@ case "$1 $2" in
       *) [[ -n "\${FAKE_NET_LABEL:-}" ]] || exit 1; echo "$FAKE_NET_LABEL" ;;
     esac ;;
   "container inspect") [[ -n "\${FAKE_CONTAINER_LABEL:-}" ]] || exit 1; echo "$FAKE_CONTAINER_LABEL" ;;
+  "rm -f") [[ "\${FAKE_RM:-ok}" == ok ]] || exit 1 ;;
+  "network rm") [[ "\${FAKE_NET_RM:-ok}" == ok ]] || exit 1 ;;
   "run -d") [[ "\${FAKE_RUN:-ok}" == ok ]] || exit 125; echo "$FAKE_CONTAINER_ID" ;;
   "run --rm") printf '%s' "\${FAKE_PROBE_OUT:-}"; exit "\${FAKE_PROBE_EXIT:-0}" ;;
   "ps -a" | "network ls") [[ "\${FAKE_LIST:-ok}" == ok ]] || exit 1; printf '%s\\n' \${FAKE_NAMES:-} ;;
@@ -62,7 +64,7 @@ function sh(script, args, env = {}) {
   const removals = readFileSync(log, 'utf8')
     .split('\n')
     .filter((line) => /^(?:rm |network rm )/u.test(line));
-  return { status: run.status, stdout: run.stdout, removals };
+  return { status: run.status, stdout: run.stdout, stderr: run.stderr, removals };
 }
 
 describe('browser.sh owned cleanup', () => {
@@ -96,6 +98,35 @@ describe('browser.sh owned cleanup', () => {
     const { status, removals } = sh('browser.sh', ['stop', 'pw-t'], env);
     expect(status).toBe(0);
     expect(removals).toEqual([`network rm ${NET_ID}`]);
+  });
+});
+
+describe('browser.sh stop report', () => {
+  const labelled = { FAKE_CONTAINER_LABEL: `${CID} 1`, FAKE_NET_LABEL: `${NET_ID} 1` };
+
+  it('reports each removal it made', () => {
+    const { status, stdout } = sh('browser.sh', ['stop', 'pw-t'], labelled);
+    expect(status).toBe(0);
+    expect(stdout).toBe('removed container pw-t\nremoved network pw-t-net\n');
+  });
+
+  it('says so when it finds nothing to remove, and claims no removal', () => {
+    const { status, stdout, removals } = sh('browser.sh', ['stop', 'pw-t']);
+    expect(status).toBe(0);
+    expect(removals).toEqual([]);
+    expect(stdout).toContain('no container pw-t with the research label');
+    expect(stdout).toContain('no network pw-t-net with the research label');
+    expect(stdout).not.toMatch(/removed/u);
+  });
+
+  it.each([
+    ['container', { FAKE_RM: 'fail' }, 'could not remove container pw-t'],
+    ['network', { FAKE_NET_RM: 'fail' }, 'could not remove network pw-t-net'],
+  ])('fails, without claiming it, when the %s cannot be removed', (kind, env, message) => {
+    const { status, stdout, stderr } = sh('browser.sh', ['stop', 'pw-t'], { ...labelled, ...env });
+    expect(status).not.toBe(0);
+    expect(stderr).toContain(message);
+    expect(stdout).not.toContain(`removed ${kind}`);
   });
 });
 
