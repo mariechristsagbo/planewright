@@ -1,7 +1,8 @@
 // Builds the sanitized, committable evidence index from external session directories.
 // Emits only: screenshot names, SHA-256 digests and PNG dimensions; ARIA snapshot names and
 // line counts; labelled scene/appState probe summaries (geometry and style facts); network
-// metadata (method, origin, path, query key names, type, status, counts); REA Evidence IDs
+// metadata (method, origin, path, query key names, type, status, service-worker flag, counts);
+// REA Evidence IDs (MCP records or CLI { ok, data } envelopes)
 // and operations; sanitised failure messages; and captures retired for privacy (name, digest
 // and size only, from <session>/retired-captures.json). Screenshots, ARIA text, bundles and
 // REA payloads stay outside Git.
@@ -44,24 +45,25 @@ function aria(dir) {
     .map((name) => ({ name, lines: readFileSync(join(root, name), 'utf8').split('\n').length }));
 }
 
+// The grouping key for one netlog entry: every metadata field, with absent fields as null.
+const netKey = (entry) =>
+  JSON.stringify(
+    ['event', 'method', 'type', 'status', 'origin', 'path', 'queryKeys', 'fromServiceWorker'].map(
+      (field) => entry[field] ?? (field === 'origin' ? (entry.scheme ?? null) : null),
+    ),
+  );
+
 function network(dir) {
   const counts = new Map();
   for (const entry of readLines(join(dir, 'netlog.jsonl'))) {
-    const key = JSON.stringify([
-      entry.event,
-      entry.method ?? null,
-      entry.type ?? null,
-      entry.status ?? null,
-      entry.origin ?? entry.scheme ?? null,
-      entry.path ?? null,
-      entry.queryKeys ?? [],
-    ]);
+    const key = netKey({ ...entry, queryKeys: entry.queryKeys ?? [] });
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
   return [...counts]
     .map(([key, count]) => {
-      const [event, method, type, status, origin, path, queryKeys] = JSON.parse(key);
-      return { event, method, type, status, origin, path, queryKeys, count };
+      const [event, method, type, status, origin, path, queryKeys, fromServiceWorker] =
+        JSON.parse(key);
+      return { event, method, type, status, origin, path, queryKeys, fromServiceWorker, count };
     })
     .sort((a, b) => `${a.origin}${a.path}`.localeCompare(`${b.origin}${b.path}`));
 }
@@ -75,7 +77,9 @@ function rea(dir) {
       .filter((n) => n.endsWith('.json') && n !== 'retired-captures.json')
       .sort()) {
       const text = readFileSync(join(root, name), 'utf8');
-      const head = JSON.parse(text);
+      const parsed = JSON.parse(text);
+      // REA CLI output wraps one Evidence record as { ok, data }; MCP saves the record itself.
+      const head = parsed.data?.evidence_id ? parsed.data : parsed;
       if (head.evidence_id)
         found.push({ file: name, evidence_id: head.evidence_id, operation: head.operation });
       else if (Array.isArray(head.records))
