@@ -201,4 +201,27 @@ describe('sanitiseError', () => {
   it('never echoes non-Error values', () => {
     expect(sanitiseError({ secret: 'value' })).toBe('Non-error value thrown');
   });
+
+  // Synthetic, low-entropy room id and key built at run time (see sanitise.test.mjs).
+  const ROOM = 'a1B2'.repeat(5);
+  const KEY = `${'k_L-'.repeat(5)}m1`;
+  it.each([
+    ['a host with a room fragment', `goto: https://excalidraw.com#room=${ROOM},${KEY}`],
+    ['a bare room value', `bad fragment room=${ROOM},${KEY}`],
+    ['an upper-case room value', `bad fragment ROOM=${ROOM},${KEY}`],
+    ['a double-encoded room value', `u=%23room%253D${ROOM}%252C${KEY}`],
+    ['a json link', `https://excalidraw.com#json=${ROOM},${KEY}`],
+    ['a value at the length cut', `${'x'.repeat(280)} room=${ROOM},${KEY}`],
+  ])('redacts %s before it reaches the timeline', (_label, message) => {
+    const text = sanitiseError(new Error(message));
+    expect(text).not.toContain(ROOM.slice(0, 8));
+    expect(text).not.toContain(KEY.slice(0, 8));
+  });
+
+  it('redacts token-shaped values in error text', () => {
+    const token = `ghp_${'A'.repeat(36)}`;
+    expect(sanitiseError(new Error(`auth ${token} failed`))).toBe(
+      'auth <redacted:github-token> failed',
+    );
+  });
 });

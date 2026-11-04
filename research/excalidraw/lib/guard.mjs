@@ -3,6 +3,8 @@
 import { timingSafeEqual } from 'node:crypto';
 import { join, resolve, sep } from 'node:path';
 
+import { redactSecrets } from './sanitise.mjs';
+
 export const TOKEN_HEADER = 'x-research-token';
 /** Request bodies above this size are rejected before any JSON parsing. */
 export const MAX_BODY_BYTES = 256 * 1024;
@@ -96,11 +98,15 @@ export function isAllowedNavigation(raw) {
   }
 }
 
-/** Error text for clients and the timeline: first line only, no local paths, bounded length. */
+/**
+ * Error text for clients and the timeline: first line only, room and link values and other
+ * secret shapes redacted, no local paths, bounded length. Redaction runs before the cut, so a
+ * truncated value can never escape it. Timeline errors reach the committed sessions.json.
+ */
 export function sanitiseError(error) {
   const raw = error instanceof Error ? error.message : 'Non-error value thrown';
   const firstLine = raw.split('\n').find((line) => line.trim().length > 0) ?? '';
-  return firstLine
+  return redactSecrets(firstLine)
     .replace(/(?:[A-Za-z]:)?(?:\/[^\s/:'"`]+){2,}/gu, '<path>')
     .replace(/\s+/gu, ' ')
     .trim()
