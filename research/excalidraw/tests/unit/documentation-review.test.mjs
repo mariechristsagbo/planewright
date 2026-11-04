@@ -148,3 +148,65 @@ describe('confidence labels', () => {
     expect(doc('backlog.md')).toContain('whether select-all or copy excludes it is open (R-33)');
   });
 });
+
+describe('factual statements', () => {
+  const loads = (name) => {
+    const kinds = session(name).steps.byKind;
+    return (kinds.goto ?? 0) + (kinds.reload ?? 0);
+  };
+  const all = () => evidence('sessions.json').sessions.map((s) => s.session);
+
+  it('count the reference page loads from the committed steps', () => {
+    expect(loads('s6-desktop-fresh')).toBe(9);
+    const total = all().reduce((sum, name) => sum + loads(name), 0);
+    expect(total).toBe(17);
+    const text = doc('methodology.md');
+    expect(text).toContain(`navigated ${String(total)} times in total`);
+    expect(text).toContain('s6: 9 including the reloads');
+  });
+
+  it('do not say that every probe waits 700–800 ms', () => {
+    const steps = scenario('02-shapes-desktop').steps;
+    const early = steps.filter(
+      (step, i) => step.label === '02-tool-probe' && ['key', 'drag'].includes(steps[i - 1]?.do),
+    );
+    expect(early).toHaveLength(2);
+    expect(doc('limitations.md')).not.toContain('Every probe waits 700–800 ms');
+    expect(doc('limitations.md')).toContain('straight after a key press and a drag');
+  });
+
+  it('describe the aborted s6 runs by the step that failed', () => {
+    const first = (name) => scenario(name).steps[0].do;
+    expect(['01-ui-inventory-desktop', '12-panel-edge-drag-desktop'].map(first)).toEqual([
+      'assertMetrics',
+      'assertMetrics',
+    ]);
+    expect(first('00b-reload-and-verify-desktop')).toBe('reload');
+    const readme = flat(read('research/excalidraw/README.md'));
+    expect(readme).not.toContain('Aborted runs stopped at their first step and changed nothing');
+    expect(readme).toContain('00b after its reload');
+    expect(doc('README.md')).not.toContain('replayed every scenario');
+  });
+
+  it('cite no withdrawn network entry', () => {
+    for (const name of ['feature-inventory.md', 'behavior-analysis.md', 'backlog.md']) {
+      expect(doc(name), name).not.toMatch(/\bN-\d\d\b/u);
+    }
+  });
+
+  it('state where s7 asserted the mobile metrics instead of every scenario boundary', () => {
+    expect(session('s7-mobile-fresh').steps.byKind.assertMetrics).toBe(5);
+    const s10b = scenario('10b-mobile-screenshot-for-rea').steps.map((step) => step.do);
+    expect(s10b).not.toContain('assertMetrics');
+    for (const name of ['limitations.md', 'feature-inventory.md', 'checkpoint.md']) {
+      const text = doc(name);
+      expect(text, name).not.toMatch(/start and end of every scenario|every scenario boundary/u);
+      expect(text, name).toContain('at 5 points');
+    }
+    const claims = ['methodology.md', 'checkpoint.md'].map(doc);
+    claims.push(flat(read('research/excalidraw/README.md')));
+    for (const text of claims) {
+      expect(text).not.toMatch(/every later scenario asserts|asserted at every scenario start/iu);
+    }
+  });
+});

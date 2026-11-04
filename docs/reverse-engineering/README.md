@@ -2,8 +2,9 @@
 
 This is the first guest-mode behavioural baseline of the public reference application, captured
 on 2026-11-04 with REA plus an external Playwright driver. Sessions s1–s4 were the first pass;
-s6 (desktop) and s7 (mobile, verified DPR 3) replayed every scenario from fresh profiles, and s5
-records an aborted rerun. It is not exhaustive; see the residual matrix and the checkpoint.
+s6 (desktop) and s7 (mobile, verified DPR 3) re-ran the desktop and mobile chains from fresh
+profiles and added scenarios 12–15, which ran only there (12, 13 and 15 in s6, 14 in s7); 09b
+never ran, and s5 records an aborted rerun. It is not exhaustive; see the residual matrix and the checkpoint.
 
 | Document                                                 | Contents                                                                   |
 | -------------------------------------------------------- | -------------------------------------------------------------------------- |

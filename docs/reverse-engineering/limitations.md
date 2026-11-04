@@ -34,8 +34,7 @@
    - So every s3 capture and probe after `m01` (the last step of 09) ran at DPR 1. On desktop,
      only `screen.width/height` was affected (DPR 1 is the default). Those values were not
      recorded before s5.
-   - All mobile claims now cite s7, where DPR 3 was asserted at the start and end of every
-     scenario.
+   - All mobile claims now cite s7, where DPR 3 held at every assertion. s7 asserted the metrics at 5 points: after 09's load, and at the start and end of 10 and of 14. 10b's single capture falls between the end of 10 and the start of 14, and 11's emulate step asserts its own read-back.
 5. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried;
    right-to-left layouts were not observed.
 6. **Fixed coordinates.** Scenario coordinates depend on viewport and zoom. A layout change in the
@@ -75,7 +74,10 @@
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
 - The driver's state probes read localStorage, which lags live state by a few hundred
-  milliseconds (B-30). Every probe waits 700–800 ms after the action unless it measures timing.
+  milliseconds (B-30). Most probes run 700–800 ms after their action, but not all. In scenario 02
+  two of the three `02-tool-probe` reads run straight after a key press and a drag (B-01), and
+  02b, 04b, 14 and 15 have probes after shorter waits (300–600 ms) or none; scenario 13 reads at
+  fixed short delays on purpose.
 - **Page-started navigation is detected, not blocked.** The driver does not intercept requests,
   because interception changes caching and service-worker behaviour. A navigation the page starts
   itself (link, redirect, script, popup) has already been requested when the navigation watcher

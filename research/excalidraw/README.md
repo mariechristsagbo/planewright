@@ -135,22 +135,26 @@ the background just before a driver batch.
 ## Scenario order and dependencies
 
 Most scenarios continue from the previous one's end state. Only `00` (desktop) and `09` (mobile)
-emulate, before the first navigation; every later scenario asserts the metrics first.
+emulate, before the first navigation. Every main scenario asserts the metrics before its first
+input (02 right after its own load; 00b, 00c and 09b after their reload); the short follow-on
+scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 
-| Session              | Order                                                                                                                                                                                      |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Desktop (`s1`)       | 00 → 01 → 02 → 02b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 08 → 08b (earlier versions; see below)                                                                               |
-| Fresh rerun (`s2`)   | 02 (it loads the page itself) → 03 → 05                                                                                                                                                    |
-| Mobile (`s3`)        | 09 → 10 → 10b (earlier versions)                                                                                                                                                           |
-| DPR probe (`s4`)     | 09 → 11                                                                                                                                                                                    |
-| Aborted (`s5`)       | 00 → 01 (aborted at its first step by the metrics assertion)                                                                                                                               |
-| Desktop rerun (`s6`) | 00 → 01✗ → 02 → 00b✗ → 00c → 00b → 02c → 00b → 02b → 12✗ → 01✗ → 00c → 12 → 01 → 13 → 00b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 15 → 08 → 08b (✗ = aborted at its first step) |
-| Mobile rerun (`s7`)  | 09 → 10 → 10b → 14 → 11                                                                                                                                                                    |
+| Session              | Order                                                                                                                                                                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Desktop (`s1`)       | 00 → 01 → 02 → 02b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 08 → 08b (earlier versions; see below)                                                                                                                                           |
+| Fresh rerun (`s2`)   | 02 (it loads the page itself) → 03 → 05                                                                                                                                                                                                                |
+| Mobile (`s3`)        | 09 → 10 → 10b (earlier versions)                                                                                                                                                                                                                       |
+| DPR probe (`s4`)     | 09 → 11                                                                                                                                                                                                                                                |
+| Aborted (`s5`)       | 00 → 01 (aborted at its first step by the metrics assertion)                                                                                                                                                                                           |
+| Desktop rerun (`s6`) | 00 → 01✗ → 02 → 00b✗ → 00c → 00b → 02c → 00b → 02b → 12✗ → 01✗ → 00c → 12 → 01 → 13 → 00b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 15 → 08 → 08b (✗ = aborted by the metrics assertion: 01 and 12 at their first step, 00b after its reload) |
+| Mobile rerun (`s7`)  | 09 → 10 → 10b → 14 → 11                                                                                                                                                                                                                                |
 
 - **Planned s6 order.** It was 00 → 01 → 02 → 02c → 02b → 12 → 13 → 03 …. The extra `00b`/`00c`
   runs and the late 01 come from the metric aborts and two driver restarts recorded in the
   [checkpoint](../../docs/reverse-engineering/checkpoint.md#interrupted-and-aborted-runs).
-  Aborted runs stopped at their first step and changed nothing. One 02c attempt never reached
+  The aborted 01 and 12 runs stopped at their first step, the assertion, and changed nothing.
+  The aborted 00b stopped at its assertion, after its reload had run; that reload is counted
+  among s6's 9 page loads. One 02c attempt never reached
   the driver (a client path error), and one diagnostic `metrics` read was sent inline.
 - **Dependencies:**
   - `03` clears the canvas first, so it does not depend on 02's content.
