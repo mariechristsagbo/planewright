@@ -32,17 +32,27 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs                                                                                                                                                                                                                                                                                      |
 | Separate Claude Code review session                     | Partial | Five independent reviews ran. The fifth (of `cb11dff`) is remediated in the current tree; no review of that remediation has run yet (R-75)                                                                                                                                                                                                                                                                                              |
 
-## Local checks of this remediation
+## Checks of this remediation
 
-- `npm run validate` on `0155717` (2026-11-04, 22:46 UTC): format, lint, typecheck, guardrails,
-  secretlint, coverage and build passed; 27 test files and 415 tests; coverage 98.13%
-  statements, 95.1% branches, 96.85% functions and 98.76% lines. The commit that adds this
-  checkpoint changes only documentation and a documentation test, and is validated again before
-  it is pushed (see the PR description).
+- `npm run validate` passed on `0155717` (22:46 UTC: 27 test files, 415 tests) and on
+  `626e849` (22:51 UTC: format, lint, typecheck, guardrails, secretlint, coverage and build;
+  27 test files and 418 tests; coverage 98.13% statements, 95.1% branches, 96.85% functions and
+  98.76% lines), on 2026-11-04.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed since
-  `cb11dff`. The CI end-to-end job runs it.
+  `cb11dff`.
 - Every behaviour fix was sabotage-checked: putting back the old behaviour, or removing the new
   check, made at least one new test fail; each commit message says which.
+- The 23 commits `0587fac`..`626e849` were pushed normally at 22:53 UTC; the remote branch head
+  then read `626e849`. Their full bodies carry no trailers and no tool attribution, and
+  `secret-scan.mjs` found no secret shape in their patches.
+- On `626e849` all 8 GitHub check runs succeeded (Quality gates ran 27 test files and 418 tests,
+  and the end-to-end job passed 1 test), CodeRabbit skipped the Draft, and 0 code-scanning
+  alerts were open. PR #2 stayed a Draft with `Refs #1` and no closing reference; issue #1
+  stayed open.
+- After the local checks, no `pw-*` container or network, driver process, driver token file or
+  listener on the check ports remained.
+- The commit that adds the two items above changes only this file; its own checks are in the
+  PR description.
 
 ## Independent reviews
 
