@@ -32,6 +32,7 @@ it never writes raw third-party content into this repository. See
 | `rea-extract.mjs`      | Verifies saved REA screenshot Evidence (digest, bytes, PNG size) or reduces page inspections to names and keys.                                                                                             |
 | `api-surface.mjs`      | Counts standard web-platform identifiers in REA-exported shipped scripts; prints counts only.                                                                                                               |
 | `build-evidence.mjs`   | Builds the committed, sanitized evidence index from external session directories.                                                                                                                           |
+| `rea-windows.mjs`      | Summarises each saved REA observation window (bounds, what the tool retains, event counts) against the driver steps that started inside it; pure logic in `lib/windows.mjs`.                                |
 
 ## Checks that contact no website
 

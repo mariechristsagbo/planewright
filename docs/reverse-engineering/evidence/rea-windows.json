@@ -1,0 +1,376 @@
+{
+  "schema": "planewright-research-rea-windows/v1",
+  "generated_by": "research/excalidraw/rea-windows.mjs",
+  "windows": [
+    {
+      "session": "s1-desktop",
+      "file": "d01-inspect-initial.json",
+      "evidence_id": "ev_e87d6771ae37b1954ce16dd3e5f5c193d9cff3c10636a5c5281d832b0b7c8d75",
+      "operation": "inspect_web_page",
+      "allowed_origins": ["https://excalidraw.com"],
+      "window": {
+        "start": "2026-11-04T13:29:59.749Z",
+        "end": "2026-11-04T13:30:02.306Z",
+        "requested_ms": 2000,
+        "end_reason": null
+      },
+      "completeness": "policy_filtered",
+      "conditions": ["attach_limited", "policy_filtered"],
+      "attach_limited_sections": [
+        "console_events",
+        "metadata",
+        "network_requests",
+        "websocket_connections",
+        "websocket_frames",
+        "workers"
+      ],
+      "policy_filtered_sections": [
+        "json_body_shapes",
+        "metadata",
+        "resources",
+        "script_sources",
+        "scripts"
+      ],
+      "unavailable_sections": ["workers"],
+      "retains": "page inventory plus request, WebSocket and console metadata",
+      "network_coverage_started_at": "2026-11-04T13:30:00.130Z",
+      "console_coverage_started_at": "2026-11-04T13:29:59.773Z",
+      "network_requests": 0,
+      "websocket_connections": 0,
+      "console_events": 0,
+      "workers": 0,
+      "cache_names": 1,
+      "limitations": [
+        "Observation starts when REA attaches; prior network and console activity is unavailable.",
+        "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+        "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+        "Source maps are reported only as declarative URLs and are not fetched.",
+        "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+        "CDP discovery could not establish the target's debugger attachment state."
+      ],
+      "driver": {
+        "steps": 0,
+        "failed": 0,
+        "by_kind": {},
+        "probe_labels": [],
+        "first_step_at": null,
+        "last_step_at": null,
+        "previous_step": {
+          "at": "2026-11-04T13:29:45.772Z",
+          "do": "screenshot"
+        }
+      }
+    },
+    {
+      "session": "s1-desktop",
+      "file": "d02-inspect-with-scripts.json",
+      "evidence_id": "ev_d7cf0a58f36a540846ebf7e2efad29ba4df4dcdce7d88279be39d3c0edb59fde",
+      "operation": "inspect_web_page",
+      "allowed_origins": ["https://excalidraw.com"],
+      "window": {
+        "start": "2026-11-04T13:41:47.812Z",
+        "end": "2026-11-04T13:41:50.180Z",
+        "requested_ms": 1000,
+        "end_reason": null
+      },
+      "completeness": "policy_filtered",
+      "conditions": ["attach_limited", "policy_filtered"],
+      "attach_limited_sections": [
+        "console_events",
+        "metadata",
+        "network_requests",
+        "websocket_connections",
+        "websocket_frames",
+        "workers"
+      ],
+      "policy_filtered_sections": [
+        "accessibility",
+        "console_text",
+        "json_body_shapes",
+        "metadata",
+        "resources",
+        "scripts",
+        "websocket_shapes"
+      ],
+      "unavailable_sections": ["workers"],
+      "retains": "page inventory plus request, WebSocket and console metadata",
+      "network_coverage_started_at": "2026-11-04T13:41:48.768Z",
+      "console_coverage_started_at": "2026-11-04T13:41:47.842Z",
+      "network_requests": 0,
+      "websocket_connections": 0,
+      "console_events": 0,
+      "workers": 0,
+      "cache_names": 3,
+      "limitations": [
+        "Observation starts when REA attaches; prior network and console activity is unavailable.",
+        "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+        "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+        "Source maps are reported only as declarative URLs and are not fetched.",
+        "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+        "CDP discovery could not establish the target's debugger attachment state."
+      ],
+      "driver": {
+        "steps": 0,
+        "failed": 0,
+        "by_kind": {},
+        "probe_labels": [],
+        "first_step_at": null,
+        "last_step_at": null,
+        "previous_step": {
+          "at": "2026-11-04T13:41:23.960Z",
+          "do": "screenshot"
+        }
+      }
+    },
+    {
+      "session": "s5-desktop-aborted",
+      "file": "r02-observe-idle-after-abort.json",
+      "evidence_id": "ev_20da5d791f942e6b0f0ab1d7f9154c51e09dff040de2e3801af310c67146a093",
+      "operation": "observe_web_session",
+      "allowed_origins": ["https://excalidraw.com"],
+      "window": {
+        "start": "2026-11-04T16:01:18.285Z",
+        "end": "2026-11-04T16:01:58.385Z",
+        "requested_ms": 40000,
+        "end_reason": "window_elapsed"
+      },
+      "completeness": "attach_limited",
+      "conditions": ["attach_limited"],
+      "attach_limited_sections": ["timeline"],
+      "policy_filtered_sections": [],
+      "unavailable_sections": [],
+      "retains": "navigation and lifecycle metadata only",
+      "timeline_events": {},
+      "timeline_events_without_timestamp": 0,
+      "limitations": [
+        "The timeline begins after REA attaches; earlier navigation and network activity is unavailable.",
+        "Only navigation metadata is retained; headers, bodies, cookies, console values, and payloads are not captured by this tool.",
+        "An out-of-policy destination ends collection immediately and is recorded without its URL."
+      ],
+      "driver": {
+        "steps": 0,
+        "failed": 0,
+        "by_kind": {},
+        "probe_labels": [],
+        "first_step_at": null,
+        "last_step_at": null,
+        "previous_step": {
+          "at": "2026-11-04T16:01:13.193Z",
+          "do": "emulate"
+        }
+      }
+    },
+    {
+      "session": "s6-desktop-fresh",
+      "file": "r02-observe-during-02.json",
+      "evidence_id": "ev_58bb47ed12e6ab1c0944f3f1eafec813a8a1c62cf76b754b302deb5ea5e6985b",
+      "operation": "observe_web_session",
+      "allowed_origins": ["https://excalidraw.com"],
+      "window": {
+        "start": "2026-11-04T16:03:51.196Z",
+        "end": "2026-11-04T16:04:31.229Z",
+        "requested_ms": 40000,
+        "end_reason": "window_elapsed"
+      },
+      "completeness": "attach_limited",
+      "conditions": ["attach_limited"],
+      "attach_limited_sections": ["timeline"],
+      "policy_filtered_sections": [],
+      "unavailable_sections": [],
+      "retains": "navigation and lifecycle metadata only",
+      "timeline_events": {
+        "lifecycle:init": 1,
+        "navigation_committed": 1,
+        "lifecycle:domcontentloaded": 1,
+        "lifecycle:load": 1,
+        "lifecycle:firstmeaningfulpaintcandidate": 1,
+        "lifecycle:firstcontentfulpaint": 1,
+        "lifecycle:firstpaint": 1,
+        "lifecycle:networkalmostidle": 1,
+        "lifecycle:firstmeaningfulpaint": 1,
+        "lifecycle:networkidle": 1,
+        "lifecycle:firstimagepaint": 1,
+        "lifecycle:interactivetime": 1
+      },
+      "timeline_events_without_timestamp": 1,
+      "limitations": [
+        "The timeline begins after REA attaches; earlier navigation and network activity is unavailable.",
+        "Only navigation metadata is retained; headers, bodies, cookies, console values, and payloads are not captured by this tool.",
+        "An out-of-policy destination ends collection immediately and is recorded without its URL.",
+        "Timeline rows without a comparable producer timestamp have a null timestamp. Buffered events with unknown timing are retained as context only; they do not establish activity inside the selected observation window."
+      ],
+      "driver": {
+        "steps": 40,
+        "failed": 0,
+        "by_kind": {
+          "goto": 1,
+          "wait": 5,
+          "assertMetrics": 1,
+          "colorScheme": 1,
+          "click": 4,
+          "key": 11,
+          "appState": 3,
+          "drag": 5,
+          "aria": 3,
+          "screenshot": 2,
+          "path": 1,
+          "type": 2,
+          "scene": 1
+        },
+        "probe_labels": ["02-tool-probe", "02-all-shapes"],
+        "first_step_at": "2026-11-04T16:03:52.169Z",
+        "last_step_at": "2026-11-04T16:04:08.209Z",
+        "previous_step": {
+          "at": "2026-11-04T16:03:47.936Z",
+          "do": "assertMetrics"
+        }
+      }
+    },
+    {
+      "session": "s6-desktop-fresh",
+      "file": "r05-inspect-during-13.json",
+      "evidence_id": "ev_13a4756fd3b8b67f9c7500c868aa9704363f20eb156f8926c4efec8663900367",
+      "operation": "inspect_web_page",
+      "allowed_origins": ["https://excalidraw.com"],
+      "window": {
+        "start": "2026-11-04T16:11:06.445Z",
+        "end": "2026-11-04T16:11:32.276Z",
+        "requested_ms": 25000,
+        "end_reason": null
+      },
+      "completeness": "policy_filtered",
+      "conditions": ["attach_limited", "policy_filtered"],
+      "attach_limited_sections": [
+        "console_events",
+        "metadata",
+        "network_requests",
+        "websocket_connections",
+        "websocket_frames",
+        "workers"
+      ],
+      "policy_filtered_sections": [
+        "accessibility",
+        "console_text",
+        "json_body_shapes",
+        "metadata",
+        "resources",
+        "script_sources",
+        "scripts",
+        "websocket_shapes"
+      ],
+      "unavailable_sections": ["workers"],
+      "retains": "page inventory plus request, WebSocket and console metadata",
+      "network_coverage_started_at": "2026-11-04T16:11:07.044Z",
+      "console_coverage_started_at": "2026-11-04T16:11:06.515Z",
+      "network_requests": 0,
+      "websocket_connections": 0,
+      "console_events": 0,
+      "workers": 0,
+      "cache_names": 2,
+      "limitations": [
+        "Observation starts when REA attaches; prior network and console activity is unavailable.",
+        "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+        "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+        "Source maps are reported only as declarative URLs and are not fetched.",
+        "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+        "CDP discovery could not establish the target's debugger attachment state."
+      ],
+      "driver": {
+        "steps": 55,
+        "failed": 0,
+        "by_kind": {
+          "key": 10,
+          "wait": 22,
+          "scene": 20,
+          "drag": 3
+        },
+        "probe_labels": [
+          "13-cleared",
+          "13a-t0",
+          "13a-t100",
+          "13a-t200",
+          "13a-t300",
+          "13a-t500",
+          "13a-t1500",
+          "13b-t0",
+          "13b-t100",
+          "13b-t200",
+          "13b-t300",
+          "13b-t500",
+          "13b-t1500",
+          "13c-t0",
+          "13c-t100",
+          "13c-t200",
+          "13c-t300",
+          "13c-t500",
+          "13c-t1500",
+          "13-end"
+        ],
+        "first_step_at": "2026-11-04T16:11:06.457Z",
+        "last_step_at": "2026-11-04T16:11:21.071Z",
+        "previous_step": {
+          "at": "2026-11-04T16:11:06.362Z",
+          "do": "click"
+        }
+      }
+    },
+    {
+      "session": "s7-mobile-fresh",
+      "file": "r02-observe-during-10.json",
+      "evidence_id": "ev_73a3c3b49f0739616c9b1adc06d7e8d630d305df10958f9dfa17377ca5581e1e",
+      "operation": "observe_web_session",
+      "allowed_origins": ["https://excalidraw.com"],
+      "window": {
+        "start": "2026-11-04T16:15:56.409Z",
+        "end": "2026-11-04T16:16:36.448Z",
+        "requested_ms": 40000,
+        "end_reason": "window_elapsed"
+      },
+      "completeness": "attach_limited",
+      "conditions": ["attach_limited"],
+      "attach_limited_sections": ["timeline"],
+      "policy_filtered_sections": [],
+      "unavailable_sections": [],
+      "retains": "navigation and lifecycle metadata only",
+      "timeline_events": {
+        "lifecycle:firstimagepaint": 1
+      },
+      "timeline_events_without_timestamp": 0,
+      "limitations": [
+        "The timeline begins after REA attaches; earlier navigation and network activity is unavailable.",
+        "Only navigation metadata is retained; headers, bodies, cookies, console values, and payloads are not captured by this tool.",
+        "An out-of-policy destination ends collection immediately and is recorded without its URL."
+      ],
+      "driver": {
+        "steps": 61,
+        "failed": 0,
+        "by_kind": {
+          "wait": 15,
+          "aria": 8,
+          "screenshot": 8,
+          "touchDrag": 3,
+          "scene": 6,
+          "appState": 6,
+          "tap": 12,
+          "colorScheme": 1,
+          "role": 1,
+          "assertMetrics": 1
+        },
+        "probe_labels": [
+          "m-rect-touch",
+          "m-tap-select-stroke",
+          "m-pinch-out",
+          "m-two-finger-pan",
+          "m-dark-scheme-emulated",
+          "m-dark-via-menu"
+        ],
+        "first_step_at": "2026-11-04T16:15:56.499Z",
+        "last_step_at": "2026-11-04T16:16:14.203Z",
+        "previous_step": {
+          "at": "2026-11-04T16:15:56.328Z",
+          "do": "tap"
+        }
+      }
+    }
+  ]
+}
