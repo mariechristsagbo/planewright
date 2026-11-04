@@ -3,8 +3,11 @@
 ## Out of scope by policy
 
 - Anything that needs an account: Excalidraw+, sign-up, persistent cloud scenes.
-- The generation features (Text to diagram, Wireframe to code, and Mermaid conversion). They may
-  call external services and were not opened.
+- The generation features (Text to diagram, Mermaid to Excalidraw, Wireframe to code). They may
+  call external services and were not opened. Issue #1 does not exclude them explicitly, so this
+  exclusion is **pending a maintainer decision**.
+- "Export to Link". It uploads the scene and creates a shareable link with a key, so it was
+  inventoried but not clicked.
 - The reference source repository, its packages, source maps, and copied assets or text.
 - Server internals: everything about the collaboration relay, Firebase rules and analytics
   processing is hypothesis (see [network analysis](network-analysis.md#4-backend-hypotheses-not-verified)).
@@ -19,45 +22,54 @@
 2. **Container `--no-sandbox`.** Chromium's sandbox is disabled inside the container, which is the
    isolation boundary instead. Rendering could differ slightly from a sandboxed desktop browser.
 3. **Emulated mobile.** Device metrics, touch and user agent were emulated on desktop Chromium.
-   DPR 3 was verified at load (scenario 09). Re-applying the same emulation after the page has
-   loaded (scenario 10, and again live in session `s4-dpr-probe`, scenario 11) makes
-   `window.devicePixelRatio` read **1**, while the canvas backing store stays 1170×2532 and
-   `about:blank` keeps DPR 3. Captures and probes from scenario 10 onward (mobile handles, the
-   mobile REA pair, pinch/pan) therefore have an uncertain effective DPR. The pinch and pan
-   arithmetic is in CSS pixels and is not affected; rendering-sensitive claims are narrowed.
-   No real device, no iOS Safari, no virtual keyboard and no hardware pen.
-4. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried;
+   There was no real device, no iOS Safari, no virtual keyboard and no hardware pen.
+4. **DPR history (s1–s4).**
+   - In s3 and s4, `window.devicePixelRatio` read 1 instead of 3 after the first screenshot. The
+     earlier documents blamed re-applying the emulation; that was wrong.
+   - On a self-authored fixture, Playwright's `page.screenshot()` over CDP reset DPR to 1 and the
+     emulated screen to the headless default 800×600, and re-emulation did not undo it. A
+     navigation restored the override.
+   - In s7, with CDP captures only, re-emulating the loaded reference page read back DPR 3
+     (scenario 11).
+   - So every s3 capture and probe after `m01` (the last step of 09) ran at DPR 1. On desktop,
+     only `screen.width/height` was affected (DPR 1 is the default). Those values were not
+     recorded before s5.
+   - All mobile claims now cite s7, where DPR 3 was asserted at the start and end of every
+     scenario.
+5. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried;
    right-to-left layouts were not observed.
-5. **Fixed coordinates.** Scenario coordinates depend on viewport and zoom. A layout change in the
+6. **Fixed coordinates.** Scenario coordinates depend on viewport and zoom. A layout change in the
    reference breaks replay (B-21 shows how a reflow redirected clicks).
-6. **Single run of some interactions.** Rotation, lock, eraser, clipboard and collaboration were
-   observed once, in s1 only. Scenarios 02, 03 and 05 were replayed in a fresh profile (s2) with
-   identical results.
+7. **Single collaboration client.** Only one guest client was used per room, so multi-user
+   behaviour is unverified.
 
 ## Tooling limits
 
-- REA is passive for coordinate input (see [REA findings](rea-findings.md#5-rea-limitations-met-in-this-run)).
+- REA is passive for coordinate input (see [REA findings](rea-findings.md#5-rea-limitations-met)).
+- **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
+  of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
+  a validated Evidence bundle.
 - The driver's state probes read localStorage, which lags live state by a few hundred
-  milliseconds. Every probe waited 700–800 ms after the action.
-- Native-dialog handling through Playwright over CDP was unreliable in the collaboration stop
-  flow. The page stopped answering `Runtime.evaluate` while no dialog was showing. The cause is
-  unknown and it is recorded as unverified, not as reference behaviour.
+  milliseconds (B-30). Every probe waits 700–800 ms after the action unless it measures timing.
+- **Re-attaching the driver drops emulation.** Restarting the driver replaces its CDP session,
+  which removes that session's emulation override (seen in s6). Scenario `00c` restores it.
+- **Native dialogs.** Native-dialog handling through Playwright over CDP was unreliable in the s1
+  collaboration stop flow; the page stopped answering `Runtime.evaluate`. The cause is unknown and
+  it is recorded as unverified, not as reference behaviour.
 - `analyze_web_bundle` did not finish the main chunk within the default deadline.
-- Failed steps were not written to the timeline before the driver hardening. All four recorded
-  sessions (s1–s4) ran on the earlier driver, so `failed: 0` in `evidence/sessions.json` means
-  "not recorded", not "none". Steps did fail in s1: download and file-chooser waits in 06, early
-  stop-session clicks, and one ambiguous ARIA selector. Sessions run with the hardened driver
-  record failures with sanitised messages.
-- One scenario client was killed with exit 137 mid-run. Results come from the driver's timeline,
-  which is written per step, so client loss does not lose evidence. See
-  [checkpoint](checkpoint.md#interrupted-runs).
+- **Failed steps in s1–s4.** They were not written to the timeline, so `failed: 0` for s1–s4 in
+  `evidence/sessions.json` means "not recorded", not "none". Steps did fail in s1: download and
+  file-chooser waits in 06, early stop-session clicks, and one ambiguous ARIA selector. From s5
+  on, every failure is recorded with a sanitised message.
+- One s1 scenario client was killed with exit 137 mid-run. Results come from the driver's
+  timeline, which is written per step (see [checkpoint](checkpoint.md#interrupted-and-aborted-runs)).
 
 ## Claims this baseline does **not** make
 
 - That the feature inventory is exhaustive. It covers what was discovered through the menus,
-  palette, help and context menu of an empty or simple scene.
+  palette, help, panels and context menus of an empty or simple scene.
 - That bundle identifiers execute.
-- That observed numeric thresholds (debounce, binding gap, handle offsets) are stable across
+- That observed numeric thresholds (save delay, binding gap, handle offsets) are stable across
   versions. Several `index-*.js` chunks with different hashes were loaded across sessions.
   Whether that reflects lazy chunks or a deploy during the run is unknown.
 

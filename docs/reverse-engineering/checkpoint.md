@@ -1,59 +1,155 @@
-# Checkpoint: issue #1 status after the first baseline run
+# Checkpoint: issue #1 status
 
-Last updated: 2026-11-04. Branch: `docs/1-excalidraw-research`.
+Last updated: 2026-11-04 (after the fresh-profile reruns s6 and s7). Branch:
+`docs/1-excalidraw-research`. Issue #1 stays open: the Draft PR refers to it (`Refs #1`) and does
+not close it.
 
 ## Acceptance criteria
 
-| Criterion                                                          | Status                       | Notes                                                                                                                                                                                                                                                                 |
-| ------------------------------------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `methodology.md`                                                   | Done                         |                                                                                                                                                                                                                                                                       |
-| `feature-inventory.md` covers all discovered features              | Done for what was discovered | The element context menu, the panel "Actions" section and dark-mode secondary surfaces are open ([residual matrix](residual-matrix.md))                                                                                                                               |
-| `behavior-analysis.md`                                             | Done (baseline)              | 33 behaviours; many edge cases are listed as residual                                                                                                                                                                                                                 |
-| `network-analysis.md`                                              | Done                         | Observed metadata and hypotheses are separated                                                                                                                                                                                                                        |
-| `architecture-hypotheses.md`                                       | Done                         | Every entry is labelled with a confidence                                                                                                                                                                                                                             |
-| `rea-findings.md`                                                  | Done                         |                                                                                                                                                                                                                                                                       |
-| `limitations.md`                                                   | Done                         |                                                                                                                                                                                                                                                                       |
-| Desktop light/dark and mobile evidence sets                        | Partial                      | Desktop light: full. Desktop dark: canvas, main menu, panel, help, export. Mobile: light (inventory and touch) and dark (canvas and menu). Mobile dark dialogs are not captured                                                                                       |
-| Canvas interactions through the external driver while REA observes | Partial                      | REA observed the reload and collaboration windows and screenshotted states after driver interactions (3 byte-identical comparisons). No REA observation window was armed **during** shape drawing, so canvas input produces no network or lifecycle events to observe |
-| Evidence sanitized and stored under the agreed directories         | Done                         | Raw evidence is in the workspace `artifacts/research/excalidraw/`; the sanitized index is in `docs/reverse-engineering/evidence/`                                                                                                                                     |
-| No source maps, official repository, package or assets             | Done                         | `fetch_source_maps: false` throughout; no package installed                                                                                                                                                                                                           |
-| Prioritised backlog with acceptance criteria                       | Done (initial)               | [backlog.md](backlog.md)                                                                                                                                                                                                                                              |
+| Criterion                                                          | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `methodology.md`                                                   | Done    | Updated for the isolated network, the hardened driver, the capture fix and the REA CLI                                                                                                                                                                                                                                                                                      |
+| `feature-inventory.md` covers all discovered features              | Partial | Added in s6/s7: element context menu, panel Actions section, arrow and text controls, Preferences submenu, Clear canvas confirmation and the mobile dark dialogs. Still open: Find on canvas, language switch, library item flows, Export to Link (not clicked, because it publishes the scene). The exclusion of the generation features needs a maintainer decision       |
+| `behavior-analysis.md`                                             | Done    | Every documented behaviour that rests on a probe was replayed in fresh profile s6 or s7 with identical results (47 of 47 shared desktop probe labels; mobile touch, tap, pinch zoom and pan delta). Edge cases marked [U] remain in the [residual matrix](residual-matrix.md)                                                                                               |
+| `network-analysis.md`                                              | Done    | Observed metadata and hypotheses are separated; REA WebSocket frame shapes are marked lost                                                                                                                                                                                                                                                                                  |
+| `architecture-hypotheses.md`                                       | Done    | Every entry is labelled with a confidence                                                                                                                                                                                                                                                                                                                                   |
+| `rea-findings.md`                                                  | Done    | Evidence IDs reconciled: retained, lost, and new REA CLI records                                                                                                                                                                                                                                                                                                            |
+| `limitations.md`                                                   | Done    |                                                                                                                                                                                                                                                                                                                                                                             |
+| Desktop light/dark and mobile evidence sets                        | Done    | Desktop light and dark in s6, including dark element surfaces. Mobile light and dark in s7 at a DPR 3 asserted at every scenario boundary, including the dark Help, Export, Command palette, Share, Clear canvas, Preferences and Actions surfaces                                                                                                                          |
+| Canvas interactions through the external driver while REA observes | Done    | REA 6.8.0 (build `5b953e1`) observed while the driver drew: `observe-web-session` during desktop scenario 02 and mobile scenario 10, and `inspect-web-page` during scenario 13. These ran through the REA CLI from `../rea-build`, because the project-local REA MCP tools were denied permission in this non-interactive session (see [blockers](#blockers-and-residuals)) |
+| Evidence sanitized and stored under the agreed directories         | Done    | Raw evidence is in the workspace `artifacts/research/excalidraw/`; the sanitized index is in `evidence/`. Retained room values were removed or overwritten (see [privacy](#privacy-remediation)). One residual copy exists outside the workspace (see blockers)                                                                                                             |
+| No source maps, official repository, package or assets             | Done    | 0 `.map` requests in all seven netlogs; no package installed                                                                                                                                                                                                                                                                                                                |
+| Prioritised backlog with acceptance criteria                       | Done    | [backlog.md](backlog.md), updated with the save timing and the element context menu                                                                                                                                                                                                                                                                                         |
 
 ## Testing requirements
 
-| Requirement                                             | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                                                        |
-| ------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Re-run each documented interaction from a fresh profile | Partial | 02, 03 and 05 were replayed in fresh profile s2 with identical probe results (05's fit scroll differs, explained by its dependency on 04b). 04, 06, 07, 08 and every `b` scenario ran only in s1. 09 ran in fresh profiles s3 and s4; 10 and 10b ran only in s3                                                                                                                                              |
-| Screenshot dimensions validated                         | Done    | Every PNG header checked; REA viewport matched                                                                                                                                                                                                                                                                                                                                                               |
-| Generated JSON and REA bundles validated                | Done    | All 16 committed JSON files parse. `sessions.json` and the three probe summaries regenerate byte-identically from the external sessions. Both REA bundles re-validated with `rea evidence-export` (exit 0; 3 and 7 records, 0 unknowns)                                                                                                                                                                      |
-| CDP and driver ports loopback-only                      | Done    | `127.0.0.1:9222` and `127.0.0.1:9333` checked with `ss -ltn`                                                                                                                                                                                                                                                                                                                                                 |
-| Owned processes and profiles cleaned up                 | Done    | Rechecked after the interrupted runs: no `pw-*` containers, no driver, runner or Chromium process, ports 9222/9333 free, no `/tmp` REA or Playwright profiles; profiles were container tmpfs                                                                                                                                                                                                                 |
-| Separate Claude Code review session                     | Done    | An independent review of Draft PR #2 (2026-11-04) found 5 blocking issues: the arrow start-binding claim, the rectangle roundness default, the scenario 10 DPR claim, driver hardening, and ad-hoc evidence lacking scenarios. It also found non-blocking contradictions. All were addressed on this branch; the DPR question was re-verified live (session `s4-dpr-probe`). Residual scope stays open below |
+| Requirement                                             | Status  | Notes                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Re-run each documented interaction from a fresh profile | Done    | s6 ran the whole desktop chain (00, 02, 02c, 02b, 12, 01, 13, 03, 03b, 04, 04b, 05, 06, 06b, 07, 07b, 15, 08, 08b) and s7 the mobile chain (09, 10, 10b, 14, 11), each in one fresh profile. Every s6 and s7 timeline row matches a committed scenario step. Native picker, save and export flows cannot complete in headless Chromium                              |
+| Screenshot dimensions validated                         | Done    | PNG headers checked, and now also CSS viewport, DPR, screen, touch points and canvas backing store, asserted at every scenario start. s7 captures are 1170×2532 device pixels at DPR 3                                                                                                                                                                              |
+| Generated JSON and REA bundles validated                | Partial | All committed JSON parses and the s1–s3 probe summaries regenerate unchanged. `bundle-01-desktop.json` passes `rea evidence-export`. The new REA CLI records cannot be exported as a bundle without the MCP `export_evidence_bundle` tool; their screenshot records were checked against their own digests instead. `bundle-02-collab-mobile.json` no longer exists |
+| CDP and driver ports loopback-only                      | Done    | `isolation-check.sh`: 11 of 11 checks passed (2026-11-04 15:43 UTC, and again at 16:53 UTC on the final tree). `selftest.sh` passed all 18 checks. The previous launcher was reachable from a default-bridge container (probe result `REACHABLE`); the new one is not                                                                                               |
+| Owned processes and profiles cleaned up                 | Done    | After every session: no `pw-*` container or network, no driver process, ports 9222/9333 free, no driver token files; profiles were container tmpfs                                                                                                                                                                                                                  |
+| Separate Claude Code review session                     | Partial | Two independent reviews ran (see below). A third, fresh review of this remediation has not run yet                                                                                                                                                                                                                                                                  |
 
-## Interrupted runs
+## Independent reviews
 
-- In session `s1-desktop`, the **client** of scenario 03 (`run.mjs`) was killed with exit 137.
-  The driver had already executed every step: all of them, including the final screenshot and
-  ARIA snapshot, are in that session's timeline. The results were taken from the timeline, and
-  the scenario was later replayed in full in the fresh profile `s2-desktop-fresh` with
-  identical results.
-- Later agent runs were interrupted by turn limits. After each interruption, ownership was
-  rechecked: no owned container, process, port or profile remained.
+1. **Review of `3f9fc06`** (posted on PR #2). It found **7 major findings** (mobile DPR, claims that
+   contradicted the probes, a room id and key in external REA evidence, driver hardening, CDP
+   reachable on the Docker bridge, coverage against issue #1 and "Fixes #1", reproducibility),
+   plus 8 minor findings and 5 suggestions. The previous version of this checkpoint said that
+   review had 5 blocking findings and that all were addressed. That was wrong: it left out the
+   room key, the bridge exposure and coverage, and the room key had not been dealt with.
+2. **Review of `18b94a6`**. It found 5 blockers: CDP still reachable on the bridge, docs citing a
+   removed REA bundle, incomplete driver hardening and broken reproduction commands, cited
+   evidence without committed scenarios, and the open issue #1 criteria. It also raised
+   non-blocking findings: missing tests, null-step, port, token-mode and download-name defects,
+   confidence labels, the B-09 position, wrong Evidence IDs, and the room values in a session log.
+
+How each was handled on this branch, from `dbbab22` onwards:
+
+- **CDP isolation:** a per-run network with inter-container traffic disabled, plus a gateway-only
+  forwarder, proven by `isolation-check.sh`.
+- **Driver hardening:**
+  - Origin, Fetch Metadata and declared-length checks, and a streamed body cap applied before
+    parsing.
+  - A navigation allowlist (the reference origin and `about:blank`) and a separate fixture step.
+  - Validated ports, a recreated token file, and logged null or primitive steps.
+  - Download names that always pass the name rules, and captures that are never overwritten.
+  - Integration tests that drive the real server over loopback.
+- **Reproduction commands:** fixed here and in the research README (`--out` and
+  `run.mjs --quit`).
+- **Ad-hoc evidence:** replaced by committed scenarios 12, 13, 14 and 15 and rerun fresh. Claims
+  now cite s6/s7.
+- **DPR:** assertions after emulation abort on any mismatch. The cause of the old DPR 1 readings
+  was isolated (Playwright screenshots) and fixed, and the mobile run was redone at a verified
+  DPR 3.
+- **Documentation:** confidence labels, the B-09 position, Evidence IDs and this checkpoint
+  corrected.
+- **Privacy:** see below.
+
+## Privacy remediation
+
+Values were never printed; only counts and file names were recorded.
+
+- `bundle-02-collab-mobile.json` (7 records) and `s1-desktop/rea/d03-inspect-collab.json` held
+  the room id and key. Both were already gone from the workspace at about 14:29 UTC. No
+  retained transcript records who removed them. The Evidence they carried is listed as lost in
+  [REA findings](rea-findings.md#evidence-ids).
+- A value scan found the room id or key in 3 more files, 4 occurrences each:
+  - `logs/claude-excalidraw-research-03.stream.jsonl`;
+  - one capture-session transcript;
+  - one of its cached tool results.
+
+  Every occurrence was first overwritten in place. The equal-length placeholders were then
+  replaced with a neutral `<redacted-room-fragment>` marker, so that no shape scanner, strict or
+  naive, still matches a room id and key. A re-scan finds 0 matches, and the JSONL files still
+  parse. None of the 8 images embedded in that log dates from s1's collaboration window
+  (13:43:45–13:46 UTC), so none can show the room link.
+
+- The s1 screenshots `collab-01-session-dialog`, `collab-02-in-session` and `collab-04-stopped`
+  showed part of the room id and a QR code that encodes the link. They were removed with
+  `shred` (overwritten, then deleted). Their digests remain as `retired_screenshots` in
+  `evidence/sessions.json`.
+- In the s6 rerun, the driver redacted ARIA text and masked every input and image of the share
+  dialog. `check-masks.mjs` passed both masked captures. The in-session capture was refused
+  while the dialog was open. No REA call ran during the collaboration window, because REA target
+  listings keep URL fragments.
+- Shape scans (`secret-scan.mjs`) on 2026-11-04 found:
+  - no secret-shaped values in the repository working tree or its full Git history;
+  - none in the workspace logs, checkpoints and state, the s2–s7 raw sessions, the s1
+    session outside its REA directory, or the orchestrator logs;
+  - in the s1 raw REA directory, only the public web-config API key that is embedded in the
+    reference's shipped script: 9 occurrences, 3 in each of 3 files (the exported main script
+    and two REA records that contain it). It is public configuration, not a credential of this
+    project, and it stays outside Git;
+  - in the Claude project directory, the same public key 3 times in one cached REA result, and
+    PEM header literals (no key material) in this session's transcript, written while testing
+    the scanner.
+
+## Blockers and residuals
+
+- **REA MCP permission.** `mcp__rea__list_browser_targets` was denied twice in this
+  non-interactive session (once during s5, and once on a disposable `about:blank` browser at
+  16:19 UTC). Because of this:
+  - the s5–s7 observations used the REA CLI of the same build;
+  - the new records were not exported as an MCP Evidence bundle.
+
+  A maintainer can grant the project-local REA MCP tools and re-export.
+
+- **Retained copy outside the workspace.** This session's own Claude transcript contains the two
+  s1 collaboration screenshots, as images, because they were opened once to confirm what they
+  showed. The QR code in them still encodes the old room link. The file is under
+  `~/.claude/projects/` and should be deleted after the session ends.
+- **Scope decision.** The generation features (Text to diagram, Mermaid to Excalidraw, Wireframe
+  to code) are excluded in [limitations](limitations.md) without maintainer approval.
+- **Not observable here.** Native file pickers, save and export flows, the effective
+  stop-session flow, multi-client collaboration, offline start, and the other ❌ rows of the
+  [residual matrix](residual-matrix.md).
+- **Third review.** A fresh independent review of the remediation is still to be run.
+
+## Interrupted and aborted runs
+
+- s1: the client of scenario 03 was killed (exit 137) after the driver had executed every step.
+  The results come from the timeline, and 03 replayed identically in s2 and s6.
+- s5: aborted at scenario 01 by the new metrics assertion (screen read 800×600).
+- s6: four further metric aborts (01 twice, 12 once, and 00b once after a driver restart). Each
+  stopped at its first step without changing the scene, and the scenario was rerun after 00b or
+  00c restored the metrics. The driver was restarted twice in s6: once to load the new 00b
+  scenario, and once to load the CDP capture fix.
+- Agent runs were interrupted three times by turn limits. Ownership was rechecked after each:
+  no owned container, network, process, port, token file or profile remained.
 
 ## Resume instructions
 
-1. Pick the P1 rows from the [residual matrix](residual-matrix.md), and add one scenario file per
-   row under `research/excalidraw/scenarios/` (number 12 onwards; 11 is the DPR probe).
-2. Use a new external session directory (for example `s5-desktop`). Rebuild
-   `evidence/sessions.json` with `build-evidence.mjs`, listing every session directory.
-3. When new REA bundles are exported, validate them with
-   `node rea-build/scripts/rea.mjs evidence-export <bundle> <out>` (outside the repository).
-4. To close the fresh-rerun requirement, replay the whole desktop chain in one fresh profile.
-   Most scenarios depend on the previous end state, so they cannot run in isolation (see
-   [scenario order](../../research/excalidraw/README.md#scenario-order-and-dependencies)):
-   `00 → 01 → 02 → 02b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 08 → 08b`.
-   Run 08 and 08b only once. Start the driver with a fresh `--out` and pass the same directory
-   to `run.mjs --out` so it can read the per-run token.
-5. For mobile, avoid re-applying emulation after the page has loaded (scenario 10's first step).
-   Either restart the driver and reload, or drop that step, and check `devicePixelRatio` with a
-   `metrics` step before relying on DPR.
+1. Run the checks first, without contacting any site:
+   - `research/excalidraw/isolation-check.sh`
+   - `research/excalidraw/selftest.sh`
+   - `npx vitest run --project 'research:*'`
+2. Start each session with `00` (desktop) or `09` (mobile). These are the only steps that emulate.
+   Every later scenario asserts the metrics first.
+3. After any tool that may disturb emulation, run `00b`/`09b` (reload and assert). Do not
+   restart the driver mid-session; if you must, run `00c`.
+4. Run `08`/`08b` at most once per session, and never during REA calls.
+5. Rebuild the index with `build-evidence.mjs` for every session directory (see the
+   [research README](../../research/excalidraw/README.md)).
