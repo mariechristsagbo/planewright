@@ -13,10 +13,13 @@
 #
 #   research/excalidraw/isolation-check.sh [host-port]   # default 9242
 #
-# Prints one PASS/FAIL line per check and exits non-zero if any check fails.
+# Prints one PASS/FAIL line per check and exits non-zero if any check fails. A probe that could
+# not run, or printed anything but one known outcome, is a FAIL (see lib/probe-outcome.sh).
 set -euo pipefail
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=lib/probe-outcome.sh
+. "$HERE/lib/probe-outcome.sh"
 PORT="${1:-9242}"
 NAME="pw-isocheck"
 NET="${NAME}-net"
@@ -29,9 +32,10 @@ result() { # result <PASS|FAIL> <message>
 }
 
 # Runs a throwaway, capability-free probe container that tries an HTTP GET on host:port and
-# prints REACHABLE or UNREACHABLE:<reason>.
+# prints REACHABLE, UNREACHABLE:<reason> or PROBE-ERROR:<reason>.
 probe() { # probe <network> <host> <port>
-  docker run --rm --network "$1" --user pwuser --cap-drop ALL --security-opt no-new-privileges \
+  local output code=0
+  output="$(docker run --rm --network "$1" --user pwuser --cap-drop ALL --security-opt no-new-privileges \
     --entrypoint node "$IMAGE" -e "
       const net = require('node:net');
       const socket = net.connect({ host: process.argv[1], port: Number(process.argv[2]) });
@@ -46,7 +50,8 @@ probe() { # probe <network> <host> <port>
         if (data.includes('Browser')) done('REACHABLE');
       });
       socket.on('close', () => done('UNREACHABLE:closed-without-response'));
-    " "$2" "$3" 2>/dev/null || echo "UNREACHABLE:probe-error"
+    " "$2" "$3" 2>/dev/null)" || code=$?
+  probe_outcome "$code" "$output"
 }
 
 cleanup() { "$HERE/browser.sh" stop "$NAME" >/dev/null 2>&1 || true; }
@@ -56,6 +61,12 @@ trap cleanup EXIT
 browser_ip="$(docker inspect "$NAME" --format "{{(index .NetworkSettings.Networks \"$NET\").IPAddress}}")"
 bridge_gw="$(docker network inspect bridge --format '{{(index .IPAM.Config 0).Gateway}}')"
 icc="$(docker network inspect "$NET" --format '{{index .Options "com.docker.network.bridge.enable_icc"}}')"
+# An empty or malformed address would aim every probe at the wrong place; stop instead.
+ipv4='^([0-9]{1,3}[.]){3}[0-9]{1,3}$'
+if ! [[ "$browser_ip" =~ $ipv4 && "$bridge_gw" =~ $ipv4 ]]; then
+  echo "FAIL could not read the browser or default-bridge gateway IPv4 address"
+  exit 1
+fi
 
 bindings="$(docker port "$NAME" 9223/tcp | sort -u | tr '\n' ' ')"
 if [[ "$bindings" == "127.0.0.1:${PORT} " ]]; then

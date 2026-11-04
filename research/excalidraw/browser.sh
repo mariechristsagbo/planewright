@@ -14,6 +14,10 @@
 # disabled, and the forwarder accepts connections only from that network's gateway (the host
 # side). Other containers, on this or any other Docker network, cannot reach DevTools.
 # research/excalidraw/isolation-check.sh verifies this.
+#
+# Cleanup ownership: start removes, on any failure or interruption, exactly the network and
+# container it created itself, by ID. stop removes only a container and network that carry both
+# this run's name and the research label. A same-named resource from another tool is never touched.
 set -euo pipefail
 
 # Pinned by digest: the tag v1.64.1-noble resolved to this image when the baseline was recorded.
@@ -28,13 +32,29 @@ NET="${NAME}-net"
 [[ "$PORT" =~ ^[0-9]+$ ]] && ((PORT >= 1024 && PORT <= 65535)) ||
   { echo "host port must be 1024-65535" >&2; exit 2; }
 
+# IDs of the resources this start invocation created; cleared once start succeeds.
+OWNED_CONTAINER=""
+OWNED_NET=""
+DOCKER_ID='^[0-9a-f]{12,64}$'
+
+release_owned() {
+  if [[ -n "$OWNED_CONTAINER" ]]; then docker rm -f "$OWNED_CONTAINER" >/dev/null 2>&1 || true; fi
+  if [[ -n "$OWNED_NET" ]]; then docker network rm "$OWNED_NET" >/dev/null 2>&1 || true; fi
+}
+
 start() {
-  docker network create --driver bridge --label planewright.research=1 \
-    --opt com.docker.network.bridge.enable_icc=false "$NET" >/dev/null
-  local gateway
+  trap release_owned EXIT
+  trap 'exit 130' INT
+  trap 'exit 143' TERM
+  local id gateway
+  # If the name is taken, create fails here and nothing has been created, so nothing is removed.
+  id="$(docker network create --driver bridge --label planewright.research=1 \
+    --opt com.docker.network.bridge.enable_icc=false "$NET")"
+  [[ "$id" =~ $DOCKER_ID ]] || { echo "unexpected network id for $NET" >&2; return 1; }
+  OWNED_NET="$id"
   gateway="$(docker network inspect "$NET" --format '{{(index .IPAM.Config 0).Gateway}}')"
-  [[ "$gateway" =~ ^[0-9.]+$ ]] || { echo "no IPv4 gateway for $NET" >&2; docker network rm "$NET" >/dev/null; return 1; }
-  docker run -d --rm --name "$NAME" --network "$NET" --label planewright.research=1 \
+  [[ "$gateway" =~ ^[0-9.]+$ ]] || { echo "no IPv4 gateway for $NET" >&2; return 1; }
+  id="$(docker run -d --rm --name "$NAME" --network "$NET" --label planewright.research=1 \
     --user pwuser --cap-drop ALL --security-opt no-new-privileges \
     --shm-size 1g --tmpfs /tmp:rw,size=1g,mode=1777 \
     -p "127.0.0.1:${PORT}:9223" \
@@ -63,10 +83,15 @@ start() {
         upstream.on('error', () => client.destroy());
         client.on('error', () => upstream.destroy());
       }).listen(9223, '0.0.0.0');
-    " >/dev/null
+    ")"
+  [[ "$id" =~ $DOCKER_ID ]] || { echo "unexpected container id for $NAME" >&2; return 1; }
+  OWNED_CONTAINER="$id"
   for _ in $(seq 1 30); do
     if curl -sf "http://127.0.0.1:${PORT}/json/version" >/dev/null; then
       curl -s "http://127.0.0.1:${PORT}/json/version" | grep -E '"Browser"'
+      OWNED_CONTAINER=""
+      OWNED_NET=""
+      trap - EXIT INT TERM
       return 0
     fi
     sleep 0.5
@@ -75,9 +100,20 @@ start() {
   return 1
 }
 
+# Prints the ID of the container or network with exactly this name, if it has the research label.
+labelled_id() { # labelled_id <container|network> <name> <labels field>
+  local id="" label=""
+  read -r id label < <(docker "$1" inspect --format "{{.Id}} {{index $3 \"planewright.research\"}}" \
+    "$2" 2>/dev/null) || true
+  if [[ "$label" == 1 && "$id" =~ $DOCKER_ID ]]; then echo "$id"; fi
+}
+
 stop() {
-  docker stop "$NAME" >/dev/null 2>&1 || true
-  docker network rm "$NET" >/dev/null 2>&1 || true
+  local id
+  id="$(labelled_id container "$NAME" .Config.Labels)"
+  if [[ -n "$id" ]]; then docker rm -f "$id" >/dev/null 2>&1 || true; fi
+  id="$(labelled_id network "$NET" .Labels)"
+  if [[ -n "$id" ]]; then docker network rm "$id" >/dev/null 2>&1 || true; fi
   echo "stopped $NAME and removed $NET"
 }
 
