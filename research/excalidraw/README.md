@@ -122,7 +122,8 @@ the background just before a driver batch.
   successful docker listing omits the name; a failed listing is a FAIL.
 - **REA extraction.** `rea-extract.mjs` needs an input ending in `.json` and never replaces an
   existing PNG with different bytes. The optional summary file is created exclusively, so an
-  existing file, the input included, is never replaced.
+  existing file, the input included, is never replaced. Accessible names and descriptions, and
+  REA's own condition and limitation text, are redacted before they are copied into a summary.
 
 ## Scenario order and dependencies
 

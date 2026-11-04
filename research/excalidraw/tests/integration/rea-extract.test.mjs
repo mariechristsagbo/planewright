@@ -85,3 +85,39 @@ describe('rea-extract.mjs summary output', () => {
     expect(readFileSync(output, 'utf8')).toBe('an earlier summary');
   });
 });
+
+// Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).
+const ROOM = 'a1B2'.repeat(5);
+const KEY = `${'k_L-'.repeat(5)}m1`;
+const LINK = `https://excalidraw.com/#room=${ROOM},${KEY}`;
+
+describe('rea-extract.mjs page inspection', () => {
+  it('redacts room values in accessible names, descriptions and limitations', () => {
+    const input = join(dir, 'inspect.json');
+    const inspection = {
+      operation: 'inspect_web_page',
+      evidence_id: 'ev-inspect',
+      normalized_result: {
+        target: { url: LINK },
+        accessibility: {
+          total_nodes: 2,
+          nodes: [
+            { role: 'textbox', name: LINK, description: `Share ${LINK}` },
+            { role: 'button', name: 'Copy link', states: [{ name: 'disabled', value: false }] },
+          ],
+        },
+        limitations: [`target ${LINK} was attach-limited`, { detail: LINK }],
+      },
+    };
+    writeFileSync(input, JSON.stringify(inspection));
+    const run = extract(input);
+    expect(run.status).toBe(0);
+    expect(run.stdout).not.toContain(ROOM);
+    expect(run.stdout).not.toContain(KEY);
+    const summary = JSON.parse(run.stdout);
+    expect(summary.url).toBe('https://excalidraw.com/');
+    expect(summary.controls[0].name).toBe('https://excalidraw.com/#room=<redacted>');
+    expect(summary.controls[1]).toEqual({ role: 'button', name: 'Copy link', disabled: false });
+    expect(summary.limitations[1]).toEqual({ detail: 'https://excalidraw.com/#room=<redacted>' });
+  });
+});

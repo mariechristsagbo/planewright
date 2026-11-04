@@ -3,14 +3,15 @@
 // - capture_web_screenshot: decodes the PNG next to the input, verifies its SHA-256 and byte
 //   count against the Evidence record, and reports the PNG's own dimensions.
 // - inspect_web_page: keeps named accessibility nodes, storage key names, script and resource
-//   URLs (no query values), worker counts and completeness flags. No values or payloads.
+//   URLs (no query values), worker counts and completeness flags. No values or payloads; copied
+//   names, descriptions and REA condition and limitation text are redacted.
 //
 // Usage: node research/excalidraw/rea-extract.mjs <rea-result.json> [summary-out.json]
 // The optional summary file must not exist yet; nothing that exists is ever replaced.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
-import { stripQuery } from './lib/sanitise.mjs';
+import { redactSecrets, stripQuery } from './lib/sanitise.mjs';
 
 const INTERACTIVE = new Set([
   'button',
@@ -130,24 +131,42 @@ function eventCounts(result) {
   };
 }
 
+// Page text copied into a summary (accessible names and descriptions, REA's own condition and
+// limitation text) can quote the page URL, so every string in it is redacted the way the
+// driver redacts its ARIA snapshots.
+function redactStrings(value) {
+  if (typeof value === 'string') return redactSecrets(value);
+  if (Array.isArray(value)) return value.map(redactStrings);
+  if (value === null || typeof value !== 'object') return value;
+  return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, redactStrings(v)]));
+}
+
+function controls(nodes) {
+  return nodes
+    .filter((n) => INTERACTIVE.has(n.role) && !n.ignored)
+    .map((n) => ({
+      role: n.role,
+      name: redactStrings(n.name),
+      description: redactStrings(n.description),
+      ...states(n),
+    }));
+}
+
 function inspection(evidence) {
   const result = evidence.normalized_result;
-  const nodes = result.accessibility?.nodes ?? [];
   return {
     kind: 'rea-inspect-web-page',
     evidence_id: evidence.evidence_id,
     url: stripQuery(result.target?.url ?? ''),
     capture_window: result.capture_window,
     completeness: result.completeness?.status,
-    conditions: result.completeness?.conditions,
+    conditions: redactStrings(result.completeness?.conditions),
     accessibility_total: result.accessibility?.total_nodes,
     dom_total: result.dom?.total_nodes,
-    controls: nodes
-      .filter((n) => INTERACTIVE.has(n.role) && !n.ignored)
-      .map((n) => ({ role: n.role, name: n.name, description: n.description, ...states(n) })),
+    controls: controls(result.accessibility?.nodes ?? []),
     storage: storageKeys(result.storage),
     ...inventory(result),
-    limitations: result.limitations,
+    limitations: redactStrings(result.limitations),
   };
 }
 
