@@ -120,7 +120,7 @@ describe('encoded room and json link forms', () => {
 
   it('counts the encoded room and json link shapes without returning values', () => {
     expect(countSecretShapes(`${ENCODED} ${JSON_LINK}`)).toEqual({
-      'room-fragment-encoded': 1,
+      'room-fragment': 1,
       'json-link': 1,
     });
     expect(countSecretShapes(redactSecrets(`${ENCODED} ${JSON_LINK}`))).toEqual({});
@@ -147,6 +147,47 @@ describe('encoded room and json link forms', () => {
   });
 });
 
+describe('mixed and letter-by-letter encodings', () => {
+  // URLSearchParams encodes the comma but not the key or `=`; other encoders differ again, and a
+  // key name can itself be percent-encoded letter by letter.
+  it.each([
+    ['comma encoded only', `room=${ROOM}%2C${KEY}`],
+    ['equals encoded only', `room%3D${ROOM},${KEY}`],
+    ['double-encoded comma only', `room=${ROOM}%252c${KEY}`],
+    ['letter-encoded key', `%72oom=${ROOM},${KEY}`],
+    ['letter- and comma-encoded key', `%72%6F%6Fm%3D${ROOM}%2C${KEY}`],
+    ['double-encoded upper-case letter', `%2552OOM=${ROOM},${KEY}`],
+    ['letter-encoded json key', `%6Ason=${ROOM},${KEY}`],
+  ])('redacts and counts a room or link value with the %s', (_label, text) => {
+    expect(Object.values(countSecretShapes(text))).toEqual([1]);
+    const out = redactSecrets(text);
+    expect(leaks(out)).toBe(false);
+    expect(out).toContain('<redacted>');
+    expect(countSecretShapes(out)).toEqual({});
+  });
+
+  it('counts a value whose own characters are percent-encoded', () => {
+    const encodedValue = [...`${ROOM},${KEY}`]
+      .map((c) => `%${c.charCodeAt(0).toString(16)}`)
+      .join('');
+    const text = `see room%3D${encodedValue} here`;
+    expect(countSecretShapes(text)).toEqual({ 'room-fragment': 1 });
+    expect(countSecretShapes(redactSecrets(text))).toEqual({});
+  });
+
+  it('counts mixed literal and encoded forms in one text once each', () => {
+    const text = `${ROOM_URL} room%3D${ROOM}%2C${KEY} %72oom=${ROOM},${KEY}`;
+    expect(countSecretShapes(text)).toEqual({ 'room-fragment': 3 });
+  });
+
+  it('leaves ordinary words and malformed escapes alone', () => {
+    for (const text of ['the room is ready', 'bedroom', '100% done', 'room %3 and %zz']) {
+      expect(redactSecrets(text)).toBe(text);
+      expect(countSecretShapes(text)).toEqual({});
+    }
+  });
+});
+
 describe('hasSecretFragment', () => {
   it.each([
     ROOM_URL,
@@ -157,6 +198,7 @@ describe('hasSecretFragment', () => {
     `https://excalidraw.com/#room=${ROOM}%E0%A4%A`,
     `https://excalidraw.com/#room%253D${ROOM}`,
     `https://excalidraw.com/#%2572oom%25253D${ROOM}`,
+    `https://excalidraw.com/#%6Ason%3D${ROOM}`,
   ])('detects a collaboration value in %s', (href) => {
     expect(hasSecretFragment(href)).toBe(true);
   });

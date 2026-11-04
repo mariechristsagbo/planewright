@@ -39,33 +39,48 @@ export function urlShapeOf(href) {
   return { origin: url.origin, path: url.pathname, queryKeys: queryKeysOf(url), fragment: parts };
 }
 
-// `=` and `,` in any case, literal or percent-encoded any number of times (`%3D`, `%253D`, ...).
-const EQ = String.raw`(?:=|%(?:25)*3d)`;
-const COMMA = String.raw`(?:,|%(?:25)*2c)`;
+// One character in either case, literal or percent-encoded any number of times (`r`, `%72`,
+// `%2552`, ...). Every character of a key name and of the `=` and `,` separators is matched this
+// way, so any mix of literal and encoded characters matches. The patterns use the `i` flag.
+const hexOf = (ch) => ch.charCodeAt(0).toString(16);
+const anyForm = (ch) => {
+  const cases = [...new Set([ch.toLowerCase(), ch.toUpperCase()])];
+  return `(?:${ch}|%(?:25)*(?:${cases.map(hexOf).join('|')}))`;
+};
+const encodedWord = (word) => [...word].map(anyForm).join('');
+const EQ = encodedWord('=');
+const COMMA = encodedWord(',');
+const ROOM_KEY = encodedWord('room');
+const JSON_KEY = encodedWord('json');
+const LINK_KEY = `(?:${ROOM_KEY}|${JSON_KEY})`;
 // A collaboration room or a shareable `#json=` link value, literal or percent-encoded.
-const SECRET_FRAGMENT = new RegExp(String.raw`(?:room|json)${EQ}[^&\s]`, 'iu');
-const MAX_DECODES = 4;
+const SECRET_FRAGMENT = new RegExp(String.raw`${LINK_KEY}${EQ}[^&\s]`, 'iu');
 
-/** Every decoding of a text, from raw to fully decoded; a malformed escape ends the chain. */
-function decodings(text) {
-  const forms = [text];
-  for (let i = 0; i < MAX_DECODES; i += 1) {
-    let next;
-    try {
-      next = decodeURIComponent(forms.at(-1));
-    } catch {
-      break;
-    }
-    if (next === forms.at(-1)) break;
-    forms.push(next);
+// Percent-escapes of ASCII characters, decoded again and again until nothing changes. It never
+// throws on a malformed escape, so one stray `%` cannot hide the rest of a text.
+const ASCII_ESCAPE = /%([0-7][0-9a-f])/giu;
+const decodeChar = (_match, hex) => String.fromCharCode(Number.parseInt(hex, 16));
+function decodeAscii(text) {
+  let previous = '';
+  let out = String(text);
+  while (out !== previous) {
+    previous = out;
+    out = out.replace(ASCII_ESCAPE, decodeChar);
   }
-  return forms;
+  return out;
+}
+
+/** A text and, when it differs, its ASCII-decoded form. */
+function formsOf(text) {
+  const raw = String(text);
+  const decoded = decodeAscii(raw);
+  return decoded === raw ? [raw] : [raw, decoded];
 }
 
 /** True when a URL's fragment carries a room or `json` link value, in raw or encoded form. */
 export function hasSecretFragment(href) {
   const hash = String(href).split('#').slice(1).join('#');
-  return decodings(hash).some((form) => SECRET_FRAGMENT.test(form));
+  return formsOf(hash).some((form) => SECRET_FRAGMENT.test(form));
 }
 
 /** Origin and path only; drops userinfo, query and fragment. Null when unparseable. */
@@ -78,15 +93,18 @@ export function stripQuery(raw) {
   }
 }
 
-// Shapes of values that must never be stored or published. Key names match in any case and in
-// any depth of percent-encoding. Placeholders written by our own redaction (`<redacted>`,
-// `REDACTED_…`) do not match.
+// Shapes of values that must never be stored or published. Room and link key names and their
+// separators match in any case and any mix of literal and percent-encoded characters; a value
+// whose own characters are encoded is found in the decoded form (see countSecretShapes).
+// Placeholders written by our own redaction (`<redacted>`, `REDACTED_…`) do not match.
 const ID20 = '(?!REDACTED)[A-Za-z0-9_-]{20}';
 const KEY22 = '[A-Za-z0-9_-]{22}';
 export const SECRET_SHAPES = [
-  ['room-fragment', new RegExp(`room=${ID20},${KEY22}`, 'giu')],
-  ['room-fragment-encoded', new RegExp(`room%(?:25)*3D${ID20}%(?:25)*2C${KEY22}`, 'giu')],
-  ['json-link', new RegExp(`json${EQ}(?!REDACTED)[A-Za-z0-9_-]{16,}${COMMA}${KEY22}`, 'giu')],
+  ['room-fragment', new RegExp(`${ROOM_KEY}${EQ}${ID20}${COMMA}${KEY22}`, 'giu')],
+  [
+    'json-link',
+    new RegExp(`${JSON_KEY}${EQ}(?!REDACTED)[A-Za-z0-9_-]{16,}${COMMA}${KEY22}`, 'giu'),
+  ],
   ['github-token', /\b(?:gh[opsur]_[A-Za-z0-9]{36,}|github_pat_[A-Za-z0-9_]{40,})\b/gu],
   ['anthropic-key', /\bsk-ant-[A-Za-z0-9_-]{20,}/gu],
   ['openai-style-key', /\bsk-(?!ant-)(?:proj-)?[A-Za-z0-9_-]{32,}/gu],
@@ -97,19 +115,24 @@ export const SECRET_SHAPES = [
   ['private-key', /-----BEGIN (?:[A-Z]+ )?PRIVATE KEY-----/gu],
 ];
 
-/** Counts each secret shape in a text. Returns only shape names and counts, never values. */
+/**
+ * Counts each secret shape in a text and in its ASCII-decoded form, keeping the larger count per
+ * shape. Returns only shape names and counts, never values.
+ */
 export function countSecretShapes(text) {
+  const forms = formsOf(text);
   const counts = {};
   for (const [name, pattern] of SECRET_SHAPES) {
-    const found = text.match(pattern)?.length ?? 0;
+    const found = Math.max(...forms.map((form) => form.match(pattern)?.length ?? 0));
     if (found > 0) counts[name] = found;
   }
   return counts;
 }
 
-// Shapes already covered by the room/json value replacement in redactSecrets.
-const LINK_SHAPES = new Set(['room-fragment', 'room-fragment-encoded', 'json-link']);
-const LINK_VALUE = new RegExp(String.raw`((?:room|json)${EQ})[^\s"'<>&)\]]+`, 'giu');
+// Shapes already covered by the room/json value replacement in redactSecrets. The replacement
+// takes everything up to a delimiter, so it does not depend on how the value is encoded.
+const LINK_SHAPES = new Set(['room-fragment', 'json-link']);
+const LINK_VALUE = new RegExp(String.raw`(${LINK_KEY}${EQ})[^\s"'<>&)\]]+`, 'giu');
 
 /**
  * Replaces collaboration room values, `json` link values (literal or percent-encoded) and

@@ -102,14 +102,17 @@ the background just before a driver batch.
   `mask` selectors are painted onto the decoded image before writing. Every requested mask must
   yield at least one non-empty box that lies at least partly inside the viewport, or nothing is
   captured; an off-screen box paints nothing, so it does not count. While the live URL fragment
-  holds a `room` or `json` link value (in any case, percent-encoded to any depth), checked before
+  holds a `room` or `json` link value (in any of the forms listed under Privacy), checked before
   and after the
   capture, a screenshot is refused unless its masks produced boxes. `refuseIf` refuses the capture
   while a selector matches. `check-masks.mjs` fails a masked capture that recorded no box.
 - **Privacy.** ARIA text, dialog messages, error text, download names (reported and on disk) and
-  clipboard previews are redacted, including `room` and `json` link values in any case and at
-  any depth of percent-encoding (`room%3D`, `room%253D`, ...). The clipboard text is
-  redacted in full before its preview is cut. URL probes and the netlog return key names and value
+  clipboard previews are redacted, including `room` and `json` link values. The key name and its
+  `=` and `,` separators match in any case and any mix of literal and percent-encoded
+  characters, at any depth (`room=<id>%2C<key>`, `room%3D`, `%72oom=`, `room%253D`, ...); the
+  whole value up to the next delimiter is replaced, however it is encoded. The secret-shape
+  count also reads the ASCII-decoded text, so a value whose own characters are encoded is
+  counted. The clipboard text is redacted in full before its preview is cut. URL probes and the netlog return key names and value
   lengths only; a key that is not a plain identifier is replaced by `<non-identifier>`.
 - **Failures.** Every step is appended to `timeline.jsonl`; failures keep a sanitised one-line
   message, redacted before it is cut to length, because these messages reach the committed
