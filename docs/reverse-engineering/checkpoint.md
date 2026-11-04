@@ -21,14 +21,24 @@ Last updated: 2026-11-04. Branch: `docs/1-excalidraw-research`.
 
 ## Testing requirements
 
-| Requirement                                             | Status  | Notes                                                                                                                                                                |
-| ------------------------------------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Re-run each documented interaction from a fresh profile | Partial | Scenarios 02, 03 and 05 were replayed in fresh profile s2 with identical results. Scenarios 04, 06, 07 and 08 ran only in s1; 09 and 10 ran in fresh profile s3 only |
-| Screenshot dimensions validated                         | Done    | Every PNG header checked; REA viewport matched                                                                                                                       |
-| Generated JSON and REA bundles validated                | Partial | Committed JSON is generated and passes Prettier. The REA bundles were written by `export_evidence_bundle` but not re-validated with `rea evidence-export`            |
-| CDP and driver ports loopback-only                      | Done    | `127.0.0.1:9222` and `127.0.0.1:9333` checked with `ss -ltn`                                                                                                         |
-| Owned processes and profiles cleaned up                 | Done    | No `pw-*` containers, no driver, ports free; profiles were container tmpfs                                                                                           |
-| Separate Claude Code review session                     | Open    | Not started                                                                                                                                                          |
+| Requirement                                             | Status  | Notes                                                                                                                                                                                                                                   |
+| ------------------------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Re-run each documented interaction from a fresh profile | Partial | Scenarios 02, 03 and 05 were replayed in fresh profile s2 with identical results. Scenarios 04, 06, 07 and 08 ran only in s1; 09 and 10 ran in fresh profile s3 only                                                                    |
+| Screenshot dimensions validated                         | Done    | Every PNG header checked; REA viewport matched                                                                                                                                                                                          |
+| Generated JSON and REA bundles validated                | Done    | All 16 committed JSON files parse. `sessions.json` and the three probe summaries regenerate byte-identically from the external sessions. Both REA bundles re-validated with `rea evidence-export` (exit 0; 3 and 7 records, 0 unknowns) |
+| CDP and driver ports loopback-only                      | Done    | `127.0.0.1:9222` and `127.0.0.1:9333` checked with `ss -ltn`                                                                                                                                                                            |
+| Owned processes and profiles cleaned up                 | Done    | Rechecked after the interrupted runs: no `pw-*` containers, no driver, runner or Chromium process, ports 9222/9333 free, no `/tmp` REA or Playwright profiles; profiles were container tmpfs                                            |
+| Separate Claude Code review session                     | Open    | Not started                                                                                                                                                                                                                             |
+
+## Interrupted runs
+
+- In session `s1-desktop`, the **client** of scenario 03 (`run.mjs`) was killed with exit 137.
+  The driver had already executed every step: all of them, including the final screenshot and
+  ARIA snapshot, are in that session's timeline. The results were taken from the timeline, and
+  the scenario was later replayed in full in the fresh profile `s2-desktop-fresh` with
+  identical results.
+- Later agent runs were interrupted by turn limits. After each interruption, ownership was
+  rechecked: no owned container, process, port or profile remained.
 
 ## Resume instructions
 
@@ -36,7 +46,7 @@ Last updated: 2026-11-04. Branch: `docs/1-excalidraw-research`.
    row under `research/excalidraw/scenarios/` (number 11 onwards).
 2. Use a new external session directory (for example `s4-desktop`). Rebuild
    `evidence/sessions.json` with `build-evidence.mjs`, listing every session directory.
-3. Re-validate the REA bundles:
+3. When new REA bundles are exported, validate them with
    `node rea-build/scripts/rea.mjs evidence-export <bundle> <out>` (outside the repository).
 4. Run scenarios 04, 06, 07 and 08 in a fresh profile to close the fresh-rerun requirement.
    Run 08 only once.

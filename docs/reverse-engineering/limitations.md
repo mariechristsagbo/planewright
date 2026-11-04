@@ -37,6 +37,9 @@
   flow. The page stopped answering `Runtime.evaluate` while no dialog was showing. The cause is
   unknown and it is recorded as unverified, not as reference behaviour.
 - `analyze_web_bundle` did not finish the main chunk within the default deadline.
+- One scenario client was killed with exit 137 mid-run. Results come from the driver's timeline,
+  which is written per step, so client loss does not lose evidence. See
+  [checkpoint](checkpoint.md#interrupted-runs).
 
 ## Claims this baseline does **not** make
 
