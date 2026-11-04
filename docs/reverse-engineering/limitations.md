@@ -55,6 +55,13 @@
   locks, eight style values, selection count, tool, zoom, scroll and theme. Point counts, font
   fields, text length, the stored key count of `excalidraw-state` and which elements are
   selected were read from raw timelines or not recorded, and cannot be re-checked from Git.
+- **Facts read only from raw records outside Git.** These are cited with that caveat and cannot
+  be re-checked from the committed evidence:
+  - the zen, grid, snap and view-mode keys of the saved app state (B-37);
+  - the load lifecycle offsets of `ev_58bb47ed` (`rea-windows.json` keeps the event names only);
+  - the start time of scenario 13's Delete keypress (16:11:07.053, from the s6 timeline);
+  - the s6 storage inventory of `ev_13a4756f`, including `workbox-expiration` and the `fonts`
+    cache, and the later s1 inspection's 3 caches (B-31).
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

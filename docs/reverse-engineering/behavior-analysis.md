@@ -710,17 +710,21 @@ value is a value the page had saved locally.
 - **Action:** REA page inspection and driver storage probes, values redacted.
 - **Immediate result:** `localStorage`: `excalidraw`, `excalidraw-state`, `excalidraw-theme`,
   `i18nextLng`, `version-dataState`, `version-files`. `sessionStorage`: empty. IndexedDB:
-  `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`, plus `workbox-expiration` in
-  s6 (`ev_13a4756f`). Cache Storage: 1 cache at s1's first load, 3 at s1's later inspection, 2
-  in s6 (the precache and `fonts`) [O].
+  `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`. Cache Storage: the Workbox
+  precache only. These are the committed inventory of s1's first load [O]. From raw REA records
+  only: s6 (`ev_13a4756f`) also listed `workbox-expiration` in IndexedDB and 2 caches (the
+  precache and `fonts`), and a later s1 inspection listed 3 caches [O, raw only].
 - **State and related effects:** key names only.
 - **Persistence:** these are the persistent stores.
 - **Undo/redo:** not applicable.
 - **Edge cases:** contents of `files-db` and the library database: Not observed (R-45, R-15).
 - **Desktop/mobile:** mobile storage inventory: Not observed (R-61).
-- **Reproduction:** `evidence/rea-inspect-initial.summary.json`; `evidence/rea-windows.json`.
-- **Confidence:** [O] high (REA and the driver).
-- **Limitations:** values are redacted by design (R-61).
+- **Reproduction:** `evidence/rea-inspect-initial.summary.json` (s1 first load). The s6 inventory
+  is not in a committed file: `evidence/rea-windows.json` keeps no storage names.
+- **Confidence:** [O] medium: one committed inventory, and the raw inventories differ from it
+  in IndexedDB and Cache Storage.
+- **Limitations:** values are redacted by design; the s6 and later s1 inventories are raw only
+  (R-61).
 
 ## Import, export and collaboration
 
