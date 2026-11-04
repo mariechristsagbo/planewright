@@ -2,9 +2,11 @@
 // input or one bounded read of state the session itself created. Nothing here fetches
 // application code, assets or source maps. Pointer, keyboard and touch input live in input.mjs.
 import { createHash } from 'node:crypto';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
+import { screenshot } from './capture.mjs';
+import { streamExclusive, writeExclusive } from './files.mjs';
 import {
   REFERENCE_ORIGIN,
   checkNavigation,
@@ -15,7 +17,6 @@ import {
 } from './guard.mjs';
 import { inputHandlers, point, sleep } from './input.mjs';
 import { FatalStepError, assertMetrics, expectedFromEmulation, readMetrics } from './metrics.mjs';
-import { decodePng, encodePng, paintBoxes } from './png.mjs';
 import { redactSecrets } from './sanitise.mjs';
 
 const metrics = (ctx) => ctx.page.evaluate(readMetrics);
@@ -57,45 +58,6 @@ function sha256(bytes) {
   return createHash('sha256').update(bytes).digest('hex');
 }
 
-// Captures the viewport through the driver's own CDP session. Playwright's page.screenshot() was
-// found to reset emulated metrics (mobile DPR to 1, screen to 800x600) until the next navigation,
-// so it is not used. Masks are painted onto the decoded image in this process: the unmasked bytes
-// never reach disk and the page DOM is not touched. When a mask matches nothing, or a `refuseIf`
-// selector matches something, nothing is written. Mask boxes (CSS px) and the image/CSS scale
-// are returned for offline checks with check-masks.mjs.
-async function maskBoxesFor(ctx, selectors) {
-  const boxes = [];
-  for (const [index, selector] of selectors.entries()) {
-    const matches = await ctx.page.locator(selector).all();
-    if (matches.length === 0) throw new Error(`Mask ${String(index)} matched nothing.`);
-    for (const match of matches) {
-      const box = await match.boundingBox();
-      if (box) boxes.push(box);
-    }
-  }
-  return boxes;
-}
-
-async function screenshot(ctx, step) {
-  const file = outputPath(ctx.outDir, 'screenshots', step.name, '.png');
-  for (const selector of step.refuseIf ?? []) {
-    if ((await ctx.page.locator(selector).count()) > 0) {
-      throw new Error('Screenshot refused: a refuseIf selector is present.');
-    }
-  }
-  const maskBoxes = await maskBoxesFor(ctx, step.mask ?? []);
-  const cssWidth = await ctx.page.evaluate(() => window.innerWidth);
-  const { data } = await ctx.cdp.send('Page.captureScreenshot', { format: 'png' });
-  let bytes = Buffer.from(data, 'base64');
-  const scale = bytes.readUInt32BE(16) / cssWidth;
-  if (maskBoxes.length > 0) bytes = encodePng(paintBoxes(decodePng(bytes), maskBoxes, scale));
-  // 'wx': an existing capture is never overwritten, so every name maps to one capture.
-  writeFileSync(file, bytes, { flag: 'wx' });
-  const size = { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
-  const masks = (step.mask ?? []).length;
-  return { file: basename(file), sha256: sha256(bytes), masks, maskBoxes, scale, ...size };
-}
-
 async function runNested(ctx, steps) {
   if (!Array.isArray(steps)) throw new Error('A trigger needs a steps array.');
   for (const nested of steps) await ctx.run(nested);
@@ -111,8 +73,8 @@ async function download(ctx, step) {
     safeDownloadName(step.name, item.suggestedFilename()),
     '',
   );
-  if (existsSync(file)) throw new Error('Download name already used in this session.');
-  await item.saveAs(file);
+  // O_EXCL: a name already used in this session fails with EEXIST and its file stays intact.
+  await streamExclusive(await item.createReadStream(), file);
   const bytes = readFileSync(file);
   return {
     suggestedFilename: redactSecrets(item.suggestedFilename()),
@@ -175,7 +137,7 @@ async function role(ctx, step) {
 async function aria(ctx, step) {
   const text = redactSecrets(await ctx.page.locator(step.selector ?? 'body').ariaSnapshot());
   if (step.save) {
-    writeFileSync(outputPath(ctx.outDir, 'aria', step.save, '.yml'), text, { flag: 'wx' });
+    writeExclusive(outputPath(ctx.outDir, 'aria', step.save, '.yml'), text);
   }
   return { lines: text.split('\n').length, preview: step.save ? undefined : text };
 }
