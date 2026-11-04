@@ -50,7 +50,7 @@ Sources:
 
 Zen mode (Alt+Z), view mode (Alt+R), grid (Ctrl+'), snap to objects (Alt+S), theme (Alt+Shift+D),
 keep-tool-active (Q), arrow binding and snap to midpoints (context-menu checkboxes). Their
-effects are in [behaviour](behavior-analysis.md#view-modes).
+effects are in [behaviour](behavior-analysis.md#b-37-view-modes-and-toggles).
 
 ## 4. Element types created in this baseline [O, high]
 

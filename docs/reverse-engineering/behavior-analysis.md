@@ -1,10 +1,9 @@
 # Behaviour analysis
 
-Every entry records the eleven fields that issue #1 asks for, in this order:
-
-1. **Initial state**, 2. **Action**, 3. **Immediate result**, 4. **State and related effects**,
-2. **Persistence**, 6. **Undo/redo**, 7. **Edge cases**, 8. **Desktop/mobile**,
-3. **Reproduction**, 10. **Confidence**, 11. **Limitations**.
+Every entry records the eleven fields that issue #1 asks for, in this order: **Initial state**,
+**Action**, **Immediate result**, **State and related effects**, **Persistence**,
+**Undo/redo**, **Edge cases**, **Desktop/mobile**, **Reproduction**, **Confidence** and
+**Limitations**.
 
 A field that this baseline did not observe says **Not observed** and names the residual row
 (`R-xx`) in the [residual matrix](residual-matrix.md) that tracks it. Nothing in a field is
