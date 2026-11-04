@@ -1,0 +1,15 @@
+# Normalize line endings for every text file.
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# Generated files: collapse in diffs and exclude from language statistics.
+package-lock.json linguist-generated=true -diff
