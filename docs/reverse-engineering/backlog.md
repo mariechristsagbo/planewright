@@ -86,8 +86,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       delete commands with their shortcuts [O]. Layer, flip and style effects are **open**
       (R-09, R-50).
 11. **Clipboard.** Ref: B-26.
-    - Copy produces a typed JSON payload, and paste centres the copies on the pointer and
-      selects them [O].
+    - Copy produces a typed JSON payload [O, raw timelines only], and paste centres the copies
+      on the pointer and selects them [O].
 12. **Eraser.** Ref: B-29.
     - After an eraser drag across a freshly drawn freedraw stroke, the scene held no freedraw
       element [O]. That the stroke existed just before is [I] from B-05, because no probe ran in

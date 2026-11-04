@@ -75,3 +75,30 @@ describe('the merged 02-tool-probe reads', () => {
     expect(row('R-02')).toContain('02-tool-probe');
   });
 });
+
+describe('raw-only labels', () => {
+  const committed = () =>
+    readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).map((name) =>
+      read(`docs/reverse-engineering/evidence/${name}`),
+    );
+
+  it('mark the clipboard shape as raw-only, because no committed file holds it', () => {
+    for (const text of committed()) expect(text).not.toContain('excalidraw/clipboard');
+    expect(field(entry('B-26'), 'State and related effects')).toContain('[O, raw timelines only');
+    expect(doc('backlog.md')).toContain('typed JSON payload [O, raw timelines only]');
+    expect(rawOnly()).toContain('the clipboard shape after Ctrl+C');
+  });
+
+  it('do not mark the cache counts as raw-only, because rea-windows.json holds them', () => {
+    const counts = evidence('rea-windows.json')
+      .windows.map((w) => w.cache_names)
+      .filter((n) => n !== undefined);
+    expect(counts).toEqual(expect.arrayContaining([3, 2]));
+    expect(doc('network-analysis.md')).not.toContain('from raw REA records only, 3');
+    expect(field(entry('B-31'), 'Immediate result')).not.toMatch(/3 caches \[O, raw only\]/u);
+    expect(rawOnly()).not.toContain("inspection's 3 caches");
+    for (const name of ['network-analysis.md', 'limitations.md']) {
+      expect(doc(name), name).toMatch(/cache counts?\b[^.]*evidence\/rea-windows\.json/u);
+    }
+  });
+});

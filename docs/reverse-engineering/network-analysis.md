@@ -68,13 +68,13 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
 
 ## 2. Storage [O]
 
-| Store          | Keys / names                                                                                                                                  |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| localStorage   | `excalidraw`, `excalidraw-state`, `excalidraw-theme`, `i18nextLng`, `version-dataState`, `version-files`                                      |
-| sessionStorage | none                                                                                                                                          |
-| IndexedDB      | `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`; also `workbox-expiration` in s6 (raw REA record only)                         |
-| Cache Storage  | 1 cache (the Workbox precache) at s1's initial load; from raw REA records only, 3 at s1's later inspection and 2 in s6 (precache and `fonts`) |
-| Usage          | about 2.5 MB of a 644 MB quota (REA, initial load; not kept in the committed summary)                                                         |
+| Store          | Keys / names                                                                                                                                                                                                        |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| localStorage   | `excalidraw`, `excalidraw-state`, `excalidraw-theme`, `i18nextLng`, `version-dataState`, `version-files`                                                                                                            |
+| sessionStorage | none                                                                                                                                                                                                                |
+| IndexedDB      | `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`; also `workbox-expiration` in s6 (raw REA record only)                                                                                               |
+| Cache Storage  | 1 cache (the Workbox precache) at s1's initial load; 3 at s1's later inspection and 2 in s6 (cache counts in `evidence/rea-windows.json`); the s6 names, the precache and `fonts`, are from the raw REA record only |
+| Usage          | about 2.5 MB of a 644 MB quota (REA, initial load; not kept in the committed summary)                                                                                                                               |
 
 ## 3. Static bundle signals [S]
 

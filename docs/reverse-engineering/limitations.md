@@ -58,13 +58,17 @@
 - **Facts read only from raw records outside Git.** These are cited with that caveat and cannot
   be re-checked from the committed evidence:
   - the zen, grid, snap and view-mode keys of the saved app state (B-37);
+  - the load lifecycle offsets of `ev_58bb47ed` (`rea-windows.json` keeps the event names only);
+  - the start time of scenario 13's Delete keypress (16:11:07.053, from the s6 timeline);
+  - the s6 storage names of `ev_13a4756f`, including `workbox-expiration` and the `fonts` cache
+    (B-31); the cache counts, 2 in s6 and 3 at the later s1 inspection, are in
+    `evidence/rea-windows.json`;
   - the first two of the three `02-tool-probe` reads in scenario 02 (B-01): the committed entry
     keeps the first read's time and the last read's values, and `timeline-summary.mjs` now warns
     when a label is read more than once by the same probe;
-  - the load lifecycle offsets of `ev_58bb47ed` (`rea-windows.json` keeps the event names only);
-  - the start time of scenario 13's Delete keypress (16:11:07.053, from the s6 timeline);
-  - the s6 storage inventory of `ev_13a4756f`, including `workbox-expiration` and the `fonts`
-    cache, and the later s1 inspection's 3 caches (B-31).
+  - the clipboard shape after Ctrl+C in scenario 06: top-level keys `type`, `elements` and
+    `files`, type `excalidraw/clipboard`, element types rectangle, text and arrow, the same in s1
+    and s6 (B-26, B-13). The committed index counts the `clipboard` step only.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
