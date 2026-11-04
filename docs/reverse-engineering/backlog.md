@@ -36,7 +36,8 @@ feature issue. "Ref" points to the evidence.
      empty).
 6. **Local persistence.** Ref: B-30, B-31.
    - The scene and view state survive reload.
-   - Writes happen shortly after changes without blocking input.
+   - Writes happen within about 350 ms of a change without blocking input (the reference wrote
+     between about 230 and 340 ms after pointer-up in 4 of 4 trials).
    - Deleted elements are not persisted.
    - Binary files are stored apart from the scene.
 
@@ -53,9 +54,12 @@ feature issue. "Ref" points to the evidence.
    - An arrow end dropped on a shape outline binds and snaps to the outline, and the binding is
      recorded on both elements.
    - Moving a bound shape updates the arrow (pending R-arrow investigation).
-10. **Groups, lock and layers.** Ref: B-19, B-22.
+10. **Groups, lock and layers.** Ref: B-19, B-22, B-24, B-34.
     - Group and ungroup with shortcuts; groups move as a unit.
     - Locked elements cannot be selected or moved by pointer.
+    - An element context menu offers the clipboard, style, layer, flip, link, duplicate, lock and
+      delete commands with their shortcuts (layer, flip and style effects pending
+      investigation).
 11. **Clipboard.** Ref: B-26.
     - Copy produces a typed JSON payload, and paste centres the copies on the pointer and
       selects them.
@@ -86,3 +90,5 @@ feature issue. "Ref" points to the evidence.
 - Name the main menu trigger, sidebar tabs and every icon-only radio (stroke width, pressure,
   export scale).
 - Expose context menus with `menu`/`menuitem` roles.
+- Give arrowhead, arrow-type, font-size and text-align controls human-readable names (the
+  reference exposes raw identifiers or no names).
