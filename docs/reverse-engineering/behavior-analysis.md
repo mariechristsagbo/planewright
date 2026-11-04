@@ -8,7 +8,8 @@ Every entry records the eleven fields that issue #1 asks for, in this order:
 
 A field that this baseline did not observe says **Not observed** and names the residual row
 (`R-xx`) in the [residual matrix](residual-matrix.md) that tracks it. Nothing in a field is
-filled in by analogy with another entry.
+filled in by analogy with another entry. **Not applicable** is used only where the action
+changes no stored or undoable state, and always says why in parentheses.
 
 Labels follow the [methodology](methodology.md#evidence-labels): **[O]** observed behaviour,
 **[S]** static artefact finding (shipped bundle), **[I]** engineering inference with no
@@ -103,7 +104,7 @@ value is a value the page had saved locally.
   or press Enter to edit text" [O].
 - **State and related effects:** display only; no stored state was read.
 - **Persistence:** not applicable (no stored state).
-- **Undo/redo:** not applicable.
+- **Undo/redo:** not applicable (a hint changes no state).
 - **Edge cases:** the hint for the other tools and states: Not observed (R-01).
 - **Desktop/mobile:** the mobile hint line: Not observed (R-23).
 - **Reproduction:** ARIA snapshots of scenarios 01, 02 and 15 (s1, s6), for example
@@ -249,7 +250,7 @@ value is a value the page had saved locally.
 - **State and related effects:** selection is part of the saved app state
   (`selectedElementIds`) [O].
 - **Persistence:** whether a selection survives a reload: Not observed (R-54).
-- **Undo/redo:** not applicable.
+- **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
 - **Edge cases:** filled shapes and hit tolerance: Not observed (R-34).
 - **Desktop/mobile:** a tap on the stroke of the rectangle selects it (`m-tap-select-stroke`,
   s3 and s7) [O]; a tap inside: Not observed (R-33).
@@ -264,8 +265,9 @@ value is a value the page had saved locally.
 - **Action:** Shift+click the ellipse's stroke.
 - **Immediate result:** 2 selected (`shift-click-ellipse`) [O].
 - **State and related effects:** none on the elements [O].
-- **Persistence:** not applicable.
-- **Undo/redo:** not applicable.
+- **Persistence:** the selection is part of the saved app state (B-10); whether it survives a
+  reload: Not observed (R-54).
+- **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
 - **Edge cases:** Shift+click on a selected element and Ctrl deep select: Not observed (R-33).
 - **Desktop/mobile:** mobile multi-select: Not observed (R-33).
 - **Reproduction:** scenario 03 (s1, s2, s6).
@@ -278,8 +280,9 @@ value is a value the page had saved locally.
 - **Action:** drag on empty canvas around both whole elements.
 - **Immediate result:** 2 selected (`box-select`) [O].
 - **State and related effects:** none on the elements [O].
-- **Persistence:** not applicable.
-- **Undo/redo:** not applicable.
+- **Persistence:** the selection is part of the saved app state (B-10); whether it survives a
+  reload: Not observed (R-54).
+- **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
 - **Edge cases:** partial overlap and Ctrl box select: Not observed (R-33).
 - **Desktop/mobile:** mobile: Not observed (R-33).
 - **Reproduction:** scenario 03 (s1, s2, s6).
@@ -311,8 +314,8 @@ value is a value the page had saved locally.
   Mobile: a 140×100 rectangle shows 8 handles (corners and edge midpoints) plus the rotation
   handle (`m04-rect-selected`) [O].
 - **State and related effects:** none [O].
-- **Persistence:** not applicable.
-- **Undo/redo:** not applicable.
+- **Persistence:** not applicable (handles are drawn chrome, not stored state).
+- **Undo/redo:** not applicable (showing handles changes no element).
 - **Edge cases:** whether the handle count depends on element size or input device: [U] (R-35).
 - **Desktop/mobile:** as above.
 - **Reproduction:** scenario 03b (s1, s6); scenario 10 (s3 at DPR 1, s7 at DPR 3).
@@ -436,8 +439,8 @@ value is a value the page had saved locally.
     actions;
   - text: "Font family", "Font size" (4) and "Text align" (3); no stroke width, stroke style,
     sloppiness or edges.
-- **Persistence:** not applicable (layout).
-- **Undo/redo:** not applicable.
+- **Persistence:** not applicable (a panel layout change, not an element or setting).
+- **Undo/redo:** not applicable (layout only; no element changes).
 - **Edge cases:** at 1280×720 the panel is cut off at "Actions"; a wheel over it scrolls it
   (`dark-09-panel-rect-scrolled`) [O].
 - **Desktop/mobile:** mobile uses a compact bar instead (summary table below, R-11).
@@ -649,7 +652,7 @@ value is a value the page had saved locally.
   mobile `m12-dark-export` in s7) [O].
 - **State and related effects:** Not observed (R-16).
 - **Persistence:** Not observed (R-16).
-- **Undo/redo:** not applicable.
+- **Undo/redo:** not applicable (opening the dialog changes no scene state).
 - **Edge cases:** unchecking it and exporting: Not observed (R-16).
 - **Desktop/mobile:** same on both [O].
 - **Reproduction:** scenarios 07 (s1, s6) and 14 (s7).
@@ -719,7 +722,7 @@ value is a value the page had saved locally.
   precache and `fonts`), and a later s1 inspection listed 3 caches [O, raw only].
 - **State and related effects:** key names only.
 - **Persistence:** these are the persistent stores.
-- **Undo/redo:** not applicable.
+- **Undo/redo:** not applicable (an inventory read changes nothing).
 - **Edge cases:** contents of `files-db` and the library database: Not observed (R-45, R-15).
 - **Desktop/mobile:** mobile storage inventory: Not observed (R-61).
 - **Reproduction:** `evidence/rea-inspect-initial.summary.json` (s1 first load). The s6 inventory
@@ -738,7 +741,7 @@ value is a value the page had saved locally.
 - **Immediate result:** no download event and no in-page UI (s1 and s6) [O].
 - **State and related effects:** Not observed (R-46).
 - **Persistence:** Not observed (R-46).
-- **Undo/redo:** not applicable.
+- **Undo/redo:** not applicable (no export or save completed).
 - **Edge cases:** File System Access identifiers are in the bundle [S]; a native save picker,
   invisible headless, is [H], medium. The file formats: [U] (R-46).
 - **Desktop/mobile:** mobile export: dialog only (B-28a); exporting: Not observed (R-46).
@@ -759,7 +762,7 @@ value is a value the page had saved locally.
   the dialog closed in s6 [O, high]. One WebSocket and Firebase requests start (network
   analysis) [O].
 - **Persistence:** Not observed (R-55).
-- **Undo/redo:** not applicable.
+- **Undo/redo:** undo during a session: Not observed (R-55).
 - **Edge cases:** Escape did not dismiss the dialog in either session [O]. Stop session is [U]:
   an early role click timed out in both sessions; in s6 the reopened dialog's Stop session click
   reported success, but 2.5 s later the fragment and the dialog were still present
