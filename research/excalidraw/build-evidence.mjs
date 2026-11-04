@@ -2,7 +2,9 @@
 // Emits only: screenshot names, SHA-256 digests and PNG dimensions; ARIA snapshot names and
 // line counts; labelled scene/appState probe summaries (geometry and style facts); network
 // metadata (method, origin, path, query key names, type, status, counts); REA Evidence IDs
-// and operations. Screenshots, ARIA text, bundles and REA payloads stay outside Git.
+// and operations; sanitised failure messages; and captures retired for privacy (name, digest
+// and size only, from <session>/retired-captures.json). Screenshots, ARIA text, bundles and
+// REA payloads stay outside Git.
 //
 // Usage: node research/excalidraw/build-evidence.mjs <sessions-root> <output.json> <session...>
 import { createHash } from 'node:crypto';
@@ -70,7 +72,7 @@ function rea(dir) {
     const root = join(dir, sub);
     if (!existsSync(root)) continue;
     for (const name of readdirSync(root)
-      .filter((n) => n.endsWith('.json'))
+      .filter((n) => n.endsWith('.json') && n !== 'retired-captures.json')
       .sort()) {
       const text = readFileSync(join(root, name), 'utf8');
       const head = JSON.parse(text);
@@ -83,6 +85,27 @@ function rea(dir) {
   return found;
 }
 
+function retired(dir) {
+  const file = join(dir, 'retired-captures.json');
+  if (!existsSync(file)) return [];
+  return JSON.parse(readFileSync(file, 'utf8')).retired.map(
+    ({ name, sha256, width, height, reason }) => ({ name, sha256, width, height, reason }),
+  );
+}
+
+// Groups failed rows by step name, sanitised message and fatal flag.
+function failureCounts(rows) {
+  const failures = new Map();
+  for (const row of rows.filter((r) => r.result === undefined)) {
+    const key = JSON.stringify([row.step?.do ?? null, row.error ?? null, row.fatal === true]);
+    failures.set(key, (failures.get(key) ?? 0) + 1);
+  }
+  return [...failures].map(([key, count]) => {
+    const [step, error, fatal] = JSON.parse(key);
+    return { step, error, fatal, count };
+  });
+}
+
 function steps(dir) {
   const rows = readLines(join(dir, 'timeline.jsonl'));
   const byKind = {};
@@ -91,6 +114,7 @@ function steps(dir) {
   return {
     total: rows.length,
     failed: rows.length - ok.length,
+    failures: failureCounts(rows),
     first: rows[0]?.started ?? null,
     last: rows.at(-1)?.started ?? null,
     byKind,
@@ -114,6 +138,7 @@ const index = {
       session: name,
       steps: steps(dir),
       screenshots: screenshots(dir),
+      retired_screenshots: retired(dir),
       aria_snapshots: aria(dir),
       network: network(dir),
       rea: rea(dir),
