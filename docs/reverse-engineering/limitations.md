@@ -91,8 +91,11 @@
   only with stubs: no live room view has been captured with it.
 - **Live tooling checks.** With the fourth-review tooling fixes, `isolation-check.sh` (11 of 11)
   and `selftest.sh` (19 of 19) passed against real local containers on 2026-11-04, at 20:02 and
-  20:03 UTC and again on `75f8eae` at 20:22 and 20:23 UTC, loading only `about:blank` and the
-  self-authored fixture. No reference session has run with the remediated driver.
+  20:03 UTC and again on `75f8eae` at 20:22 and 20:23 UTC. With the fifth-review fixes they
+  passed again on `dc6eef1`, at 22:18 and 22:19 UTC. Each run loaded only `about:blank` and the
+  self-authored fixture. The self-test cannot reach a room view, so the room-view capture and
+  halt rules are tested with stubs only. No reference session has run with the remediated
+  driver.
 - **Re-attaching the driver drops emulation.** Restarting the driver replaces its CDP session,
   which removes that session's emulation override (seen in s6). Scenario `00c` restores it. The
   `runLast` lock and any halt reason now survive a restart (`$OUT/driver-state.json`). Neither

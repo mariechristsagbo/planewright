@@ -272,3 +272,34 @@ describe('backlog scope', () => {
     expect(flat(item)).not.toMatch(/[^[]\bmust\b/u);
   });
 });
+
+describe('checkpoint statuses', () => {
+  const status = (criterion) =>
+    read('docs/reverse-engineering/checkpoint.md')
+      .split('\n')
+      .find((line) => line.startsWith(`| ${criterion} `))
+      .split('|')[2]
+      .trim();
+  const column = (id, n) => row(id).split('|')[4].trim().split('/')[n];
+
+  it('call partial what the corpus itself calls partial', () => {
+    expect(row('R-26').split('|')[5].trim()).toBe('🟡');
+    for (const id of ['R-03', 'R-07', 'R-08', 'R-14', 'R-15', 'R-17'])
+      expect(column(id, 1), id).toBe('❌');
+    for (const criterion of [
+      'Desktop light/dark and mobile evidence sets',
+      'Prioritised backlog with acceptance criteria',
+      '`limitations.md`',
+      'Re-run each documented interaction from a fresh profile',
+    ]) {
+      expect(status(criterion), criterion).toBe('Partial');
+    }
+  });
+
+  it('list the stop-session flow, a second client and offline start as planned', () => {
+    for (const id of ['R-55', 'R-57']) expect(row(id).split('|')[8].trim(), id).not.toBe('None');
+    const text = doc('checkpoint.md');
+    expect(text).not.toMatch(/Not observable here\. [^.]*stop-session/u);
+    expect(text).toMatch(/Not observed yet, but planned\.[^.]*\(R-55\)[^.]*\(R-57\)/u);
+  });
+});
