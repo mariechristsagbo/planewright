@@ -1,7 +1,7 @@
 // Checks the research documents' links and the specific claims that earlier reviews found
 // overstated, against the committed evidence and scenario files. Each check fails if the
 // withdrawn wording returns or if the evidence it rests on changes.
-import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -48,6 +48,18 @@ function anchorsOf(markdown) {
   return anchors;
 }
 
+// Reads a link target once, so nothing is checked first and used later: its text, '' for a
+// directory, or null when it does not exist.
+function targetText(resolved) {
+  try {
+    return readFileSync(resolved, 'utf8');
+  } catch (error) {
+    if (error?.code === 'EISDIR') return '';
+    if (error?.code === 'ENOENT') return null;
+    throw error;
+  }
+}
+
 function brokenLinks(path) {
   const text = read(path).replace(/```[\s\S]*?```/gu, '');
   const broken = [];
@@ -55,10 +67,9 @@ function brokenLinks(path) {
     if (/^[a-z]+:/u.test(target)) continue;
     const [file, anchor] = target.split('#');
     const resolved = file ? join(ROOT, dirname(path), file) : join(ROOT, path);
-    if (!existsSync(resolved)) broken.push(target);
-    else if (anchor && statSync(resolved).isFile() && resolved.endsWith('.md')) {
-      if (!anchorsOf(readFileSync(resolved, 'utf8')).has(anchor)) broken.push(target);
-    }
+    const content = targetText(resolved);
+    const anchored = anchor && resolved.endsWith('.md');
+    if (content === null || (anchored && !anchorsOf(content).has(anchor))) broken.push(target);
   }
   return broken;
 }
