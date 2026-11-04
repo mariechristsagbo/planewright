@@ -54,6 +54,9 @@ Confidence follows one rule:
 1. REA collected passive evidence: target listing, page inspection (DOM, accessibility, storage
    keys, scripts), navigation lifecycle, viewport screenshots, script export, static bundle
    analysis, and observation windows armed **while the driver drew on the canvas** (s6 and s7).
+   Two of those windows used `observe_web_session`, which retains navigation and lifecycle
+   metadata only; one used `inspect_web_page`, which also retained same-origin request,
+   WebSocket and console metadata. Their bounds and contents are in `evidence/rea-windows.json`.
 2. The Playwright driver performed the canvas inputs REA cannot express: pointer drags,
    modifier clicks, wheel, keyboard chords, multi-touch, file drop and native-dialog handling.
    Between batches it read back session-created state and layout metrics.
@@ -79,7 +82,8 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
   [research README](../../research/excalidraw/README.md#scenario-order-and-dependencies).
 - To rebuild the committed index, run:
   `node research/excalidraw/build-evidence.mjs <root> docs/reverse-engineering/evidence/sessions.json <sessions...>`
-  and then `npx prettier --write` on the output.
+  and then `npx prettier --write` on the output. The REA window summary is rebuilt the same way
+  with `node research/excalidraw/rea-windows.mjs <root> docs/reverse-engineering/evidence/rea-windows.json <sessions...>`.
 - Coordinates assume the stated viewport and default zoom. Drags that create shapes must start
   at x ≥ 260 on desktop, because the properties panel covers x≈16–211 as soon as a drawing tool
   is active
@@ -138,7 +142,13 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
 - Every screenshot's PNG header was checked. Layout metrics are asserted at every scenario start
   from s6 on.
 - Committed JSON is produced by scripts and formatted by Prettier, so `npm run format:check`
-  parses it. The s1–s3 probe summaries regenerate unchanged with the current tools.
+  parses it. The s1–s3 probe summaries regenerate unchanged with the current tools, and
+  `evidence/rea-windows.json` regenerates byte for byte from the retained REA records and
+  timelines.
+- `research/excalidraw/tests/unit/documentation.test.mjs` checks the documents against the
+  committed evidence: the eleven fields of every behaviour entry, a residual row for every scope
+  and inventory ID, and the cited cross-session counts, save timings, REA windows, arrow, paste,
+  image and zoom geometry, and service-worker counts.
 - `bundle-01-desktop.json` passes `rea evidence-export` (3 records, 0 unknowns). The other REA
   bundle no longer exists, and the s5–s7 CLI records are single Evidence records (see
   [REA findings](rea-findings.md#evidence-ids)).
