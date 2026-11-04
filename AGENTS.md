@@ -1,0 +1,76 @@
+# Agent instructions
+
+These instructions apply to every AI coding agent working in this repository. Human contributors
+follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Project state
+
+- Planewright is in its **foundation phase**. The drawing engine, canvas, shapes, persistence
+  and collaboration features do **not** exist yet.
+- **Behavioural investigation precedes feature implementation.** Do not implement editor
+  features until the relevant investigation issue is complete and a feature issue with
+  acceptance criteria exists.
+- Keep the web UI factual. Never present the foundation as a finished or working editor.
+
+## Non-negotiable rules
+
+1. **Independent implementation.** Never add `@excalidraw/*` or other Excalidraw-derived
+   packages. Never copy, transcribe or adapt Excalidraw source code, assets, fonts, icons or
+   documentation text. Reference applications are studied only for observable behaviour; see
+   [ADR 0003](docs/adr/0003-clean-room-reference-policy.md).
+2. **No affiliation claims.** Excalidraw is a behavioural reference and REA is investigation
+   methodology and tooling. Neither is a partner, sponsor or upstream of Planewright.
+3. **Issue-driven work.** Every change maps to a GitHub issue. Work on a branch named
+   `<type>/<issue>-<kebab-summary>` and merge through a pull request. Do not push to `main`.
+   The only direct-to-`main` push was the one-time bootstrap.
+4. **Conventional Commits.** Make atomic commits; commitlint runs in the `commit-msg` hook and
+   in CI. Do not bypass hooks with `--no-verify`.
+5. **No releases.** Do not create tags, GitHub releases or published packages unless a
+   maintainer explicitly asks for one.
+6. **Report results faithfully.** Record only commands you actually ran and their real output.
+   If a check fails or is skipped, say so.
+7. **Secrets.** Never commit secrets or `.env` files, and never print tokens in logs.
+
+## Commands
+
+Toolchain: Node.js 24.22.1 and npm 11.19.1, pinned exactly.
+
+```sh
+npm ci                     # install (also installs Git hooks)
+npm run format             # write formatting
+npm run lint               # ESLint, zero warnings allowed
+npm run typecheck          # strict TypeScript, all workspaces
+npm run test:unit          # unit tests
+npm run test:integration   # integration tests
+npm run test:coverage      # all Vitest projects with coverage thresholds
+npm run test:e2e           # Playwright (Chromium) against the production build
+npm run build              # production builds
+npm run guardrails         # file-size and dependency-policy checks
+npm run secrets:scan       # secretlint
+npm run audit:deps         # npm audit and signature verification
+npm run validate           # every local gate except e2e and audit
+```
+
+Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI changes.
+
+## Code map
+
+- `apps/web`: React 19 and Vite 8 application. Source in `src/`, unit tests in `tests/unit`,
+  Playwright tests in `tests/e2e`, static files in `public/`.
+- `apps/collab`: Node.js WebSocket service built with `ws` and bundled by esbuild. In
+  development it runs TypeScript directly through Node's type stripping.
+- `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and
+  Node.js APIs.
+- `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
+  `scripts/tests`.
+
+## Coding conventions
+
+- Use relative imports with explicit `.ts`/`.tsx` extensions; the code is erasable-syntax
+  TypeScript (no enums, namespaces or parameter properties).
+- Stay within the ESLint guardrails (complexity 10, depth 3, 4 parameters, 60 lines per function,
+  300 lines per module). Split code instead of disabling rules.
+- Validate untrusted input at boundaries (environment, network, files) and fail fast with clear
+  errors.
+- Add or update tests with every behaviour change, and record architectural decisions as ADRs in
+  `docs/adr`.
