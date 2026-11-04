@@ -16,22 +16,33 @@ parameters appear below by key name only.
 
 ### Page load
 
-| Origin                                               | Requests                                                                                                                                                                                                                | Notes                                                                                                                                                                                                   |
-| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `https://excalidraw.com`                             | document `/`, one stylesheet, module scripts (`index-*.js` ≈1.9 MB, `bundler-helpers`, `roundRect`, `workbox-window`), manifest, icons                                                                                  | The first load in a fresh profile came from the network (9 requests with `fromServiceWorker: false` in s2–s7); reloads were served by a Workbox service worker (79 `true` in s6, all 26 recorded in s1) |
-| `https://excalidraw.nyc3.cdn.digitaloceanspaces.com` | 7 distinct WOFF2 files under `/oss/fonts/` in every session (Nunito, Excalifont, Comic Shanns, and 4 Assistant files), plus an 8th, Cascadia Code, in s1, s3, s6 and s7 (not s2, s4 or s5). Its trigger is not isolated | Also served through the service worker                                                                                                                                                                  |
-| `https://scripts.simpleanalyticscdn.com`             | `GET /latest.js`                                                                                                                                                                                                        | Third-party analytics script                                                                                                                                                                            |
-| `https://queue.simpleanalyticscdn.com`               | `GET /simple.gif` → 202, 23 query keys (names include viewport/screen size, language, timezone, OS, user agent, page id, session id)                                                                                    | Analytics beacon on every page load                                                                                                                                                                     |
-| `https://sentry.io`                                  | `POST /api/<project>/envelope/` with 3 query keys                                                                                                                                                                       | Error/session telemetry on every page load (9 in s6, which had 9 document loads)                                                                                                                        |
+| Origin                                               | Requests                                                                                                                                                                                                                | Notes                                                                                                                                                                                                                                                |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `https://excalidraw.com`                             | document `/`, one stylesheet, module scripts (`index-*.js` ≈1.9 MB, `bundler-helpers`, `roundRect`, `workbox-window`), manifest, icons                                                                                  | On this origin, the first load in a fresh profile came from the network (9 requests with `fromServiceWorker: false` in each of s2–s7); later loads were served by a Workbox service worker (79 `true` in s6; all 26 of s1's requests to this origin) |
+| `https://excalidraw.nyc3.cdn.digitaloceanspaces.com` | 7 distinct WOFF2 files under `/oss/fonts/` in every session (Nunito, Excalifont, Comic Shanns, and 4 Assistant files), plus an 8th, Cascadia Code, in s1, s3, s6 and s7 (not s2, s4 or s5). Its trigger is not isolated | Also served through the service worker                                                                                                                                                                                                               |
+| `https://scripts.simpleanalyticscdn.com`             | `GET /latest.js`                                                                                                                                                                                                        | Third-party analytics script                                                                                                                                                                                                                         |
+| `https://queue.simpleanalyticscdn.com`               | `GET /simple.gif` → 202, 23 query keys (names include viewport/screen size, language, timezone, OS, user agent, page id, session id)                                                                                    | Analytics beacon on every page load                                                                                                                                                                                                                  |
+| `https://sentry.io`                                  | `POST /api/<project>/envelope/` with 3 query keys                                                                                                                                                                       | Error/session telemetry on every page load (9 in s6, which had 9 document loads)                                                                                                                                                                     |
 
 REA lifecycle (`observe_web_session`, `ev_58bb47ed`, s6 scenario 02, service worker warm):
-relative to navigation init, DOMContentLoaded at about 0.31 s, load at 0.38 s, first contentful
-paint at 0.59 s, network idle at 0.67 s, first image paint at 3.4 s. Measured once [O, medium].
-The s1 figures (about 1.4–2.1 s) came from Evidence lost in an MCP restart and are withdrawn.
+relative to the `init` lifecycle event, DOMContentLoaded at 0.314 s, load at 0.381 s, first
+contentful paint at 0.594 s, network idle at 0.666 s, first image paint at 3.397 s. Measured
+once [O, medium]. The s1 figures (about 1.4–2.1 s) came from Evidence lost in an MCP restart
+and are withdrawn.
 
-While the driver drew on the canvas (scenarios 02, 10 and 13), REA recorded no request,
-WebSocket, console, navigation or failure event attributable to drawing [O, high: s6 desktop
-and s7 mobile].
+**Traffic while the driver drew** (window facts from `evidence/rea-windows.json`; details in
+[REA findings](rea-findings.md#1-established-directly-by-rea-o)):
+
+- Scenario 13 (s6, `inspect_web_page`): REA retained 0 requests, 0 WebSocket connections and
+  0 console events for the one allowed origin, `https://excalidraw.com`, from 16:11:07.044 to
+  16:11:32.276 UTC, a span that includes all 3 drags [O, medium: one window]. Other origins
+  were excluded by policy and are not represented.
+- Scenarios 02 (s6) and 10 (s7) were observed with `observe_web_session`, which retains
+  navigation and lifecycle metadata only. They show no navigation other than 02's own load;
+  they cannot show requests, WebSocket traffic or console output.
+- Whether drawing causes traffic on any origin is therefore **not established** [U]. The driver
+  netlog has per-request timestamps that could be set against the drawing steps without a new
+  live session; that analysis has not been done.
 
 ### Lazily loaded chunks [O]
 
@@ -56,13 +67,13 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
 
 ## 2. Storage [O]
 
-| Store          | Keys / names                                                                                             |
-| -------------- | -------------------------------------------------------------------------------------------------------- |
-| localStorage   | `excalidraw`, `excalidraw-state`, `excalidraw-theme`, `i18nextLng`, `version-dataState`, `version-files` |
-| sessionStorage | none                                                                                                     |
-| IndexedDB      | `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`; also `workbox-expiration` in s6          |
-| Cache Storage  | one Workbox precache (`workbox-precache-v2-…`)                                                           |
-| Usage          | about 2.5 MB of a 644 MB quota (REA, initial load)                                                       |
+| Store          | Keys / names                                                                                                    |
+| -------------- | --------------------------------------------------------------------------------------------------------------- |
+| localStorage   | `excalidraw`, `excalidraw-state`, `excalidraw-theme`, `i18nextLng`, `version-dataState`, `version-files`        |
+| sessionStorage | none                                                                                                            |
+| IndexedDB      | `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`; also `workbox-expiration` in s6                 |
+| Cache Storage  | 1 cache (the Workbox precache) at s1's initial load, 3 at s1's later inspection, 2 in s6 (precache and `fonts`) |
+| Usage          | about 2.5 MB of a 644 MB quota (REA, initial load; not kept in the committed summary)                           |
 
 ## 3. Static bundle signals [S]
 
