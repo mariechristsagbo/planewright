@@ -1,0 +1,93 @@
+{
+  "description": "Desktop light: start one guest live-collaboration session from the share dialog, record URL fragment shape and dialog, then stop the session. Run once; do not repeat in loops.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "key",
+      "key": "Alt+Shift+d"
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "click",
+      "at": [1198, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Start session"
+    },
+    {
+      "do": "wait",
+      "ms": 4000
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "aria",
+      "save": "collab-01-session-dialog"
+    },
+    {
+      "do": "screenshot",
+      "name": "collab-01-session-dialog"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "screenshot",
+      "name": "collab-02-in-session"
+    },
+    {
+      "do": "aria",
+      "save": "collab-02-in-session"
+    },
+    {
+      "do": "click",
+      "at": [1198, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stop session"
+    },
+    {
+      "do": "wait",
+      "ms": 2000
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "aria",
+      "save": "collab-03-after-stop"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "storage"
+    }
+  ]
+}

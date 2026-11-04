@@ -1,0 +1,302 @@
+{
+  "description": "Desktop: selection (click, shift-click, box), group/ungroup, move, undo/redo, align, duplicate, resize and rotate on a rectangle and ellipse. Coordinates assume the 1280x720 viewport and default zoom.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "drag",
+      "from": [300, 200],
+      "to": [420, 300]
+    },
+    {
+      "do": "key",
+      "key": "o"
+    },
+    {
+      "do": "drag",
+      "from": [600, 200],
+      "to": [720, 300]
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "two-shapes"
+    },
+    {
+      "do": "appState",
+      "label": "two-shapes"
+    },
+    {
+      "do": "click",
+      "at": [360, 250]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "click-inside-transparent-rect"
+    },
+    {
+      "do": "appState",
+      "label": "click-inside-transparent-rect"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "click",
+      "at": [300, 250]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "click-rect-stroke"
+    },
+    {
+      "do": "appState",
+      "label": "click-rect-stroke"
+    },
+    {
+      "do": "click",
+      "at": [600, 250],
+      "modifiers": ["Shift"]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "shift-click-ellipse"
+    },
+    {
+      "do": "appState",
+      "label": "shift-click-ellipse"
+    },
+    {
+      "do": "key",
+      "key": "Control+g"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "group"
+    },
+    {
+      "do": "appState",
+      "label": "group"
+    },
+    {
+      "do": "drag",
+      "from": [300, 250],
+      "to": [340, 290]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "drag-group-by-40"
+    },
+    {
+      "do": "appState",
+      "label": "drag-group-by-40"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "undo-move"
+    },
+    {
+      "do": "appState",
+      "label": "undo-move"
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+z"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "redo-move"
+    },
+    {
+      "do": "appState",
+      "label": "redo-move"
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+g"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "ungroup"
+    },
+    {
+      "do": "appState",
+      "label": "ungroup"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "drag",
+      "from": [260, 160],
+      "to": [800, 360]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "box-select"
+    },
+    {
+      "do": "appState",
+      "label": "box-select"
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+ArrowUp"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "align-top"
+    },
+    {
+      "do": "appState",
+      "label": "align-top"
+    },
+    {
+      "do": "key",
+      "key": "Control+d"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "duplicate"
+    },
+    {
+      "do": "appState",
+      "label": "duplicate"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "click",
+      "at": [340, 290]
+    },
+    {
+      "do": "drag",
+      "from": [464, 344],
+      "to": [524, 394]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "resize-se-handle"
+    },
+    {
+      "do": "appState",
+      "label": "resize-se-handle"
+    },
+    {
+      "do": "drag",
+      "from": [400, 224],
+      "to": [520, 320]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "rotate-handle"
+    },
+    {
+      "do": "appState",
+      "label": "rotate-handle"
+    },
+    {
+      "do": "screenshot",
+      "name": "sel-01-after-rotate"
+    },
+    {
+      "do": "aria",
+      "save": "sel-01-rect-selected"
+    }
+  ]
+}

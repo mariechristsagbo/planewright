@@ -1,0 +1,179 @@
+{
+  "description": "Desktop 1280x720 light: create rectangle, ellipse, diamond, bound arrow, line, freedraw, text and sticky note with keyboard tool shortcuts and pointer drags; read the locally persisted scene summary. Drags start at x>=260 because the properties panel occupies x~16-211 while a drawing tool is active.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "goto",
+      "url": "https://excalidraw.com/"
+    },
+    {
+      "do": "wait",
+      "ms": 2500
+    },
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "colorScheme",
+      "value": "light"
+    },
+    {
+      "do": "click",
+      "at": [640, 640]
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "appState",
+      "label": "02-tool-probe"
+    },
+    {
+      "do": "drag",
+      "from": [300, 180],
+      "to": [420, 280]
+    },
+    {
+      "do": "appState",
+      "label": "02-tool-probe"
+    },
+    {
+      "do": "aria",
+      "save": "shape-01-rect-selected"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "screenshot",
+      "name": "shape-01-rect"
+    },
+    {
+      "do": "key",
+      "key": "o"
+    },
+    {
+      "do": "drag",
+      "from": [520, 180],
+      "to": [660, 280]
+    },
+    {
+      "do": "key",
+      "key": "d"
+    },
+    {
+      "do": "drag",
+      "from": [820, 170],
+      "to": [940, 290]
+    },
+    {
+      "do": "key",
+      "key": "a"
+    },
+    {
+      "do": "drag",
+      "from": [425, 230],
+      "to": [515, 230]
+    },
+    {
+      "do": "aria",
+      "save": "shape-02-arrow-selected"
+    },
+    {
+      "do": "key",
+      "key": "l"
+    },
+    {
+      "do": "drag",
+      "from": [300, 420],
+      "to": [420, 420]
+    },
+    {
+      "do": "key",
+      "key": "p"
+    },
+    {
+      "do": "path",
+      "points": [
+        [520, 400],
+        [540, 420],
+        [560, 400],
+        [580, 430],
+        [600, 400],
+        [620, 440]
+      ]
+    },
+    {
+      "do": "key",
+      "key": "t"
+    },
+    {
+      "do": "click",
+      "at": [820, 420]
+    },
+    {
+      "do": "type",
+      "text": "Hello"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "n"
+    },
+    {
+      "do": "click",
+      "at": [1000, 520]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "type",
+      "text": "Note"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "aria",
+      "save": "shape-03-after-sticky"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [1100, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "screenshot",
+      "name": "shape-02-all-tools"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "02-all-shapes"
+    },
+    {
+      "do": "appState",
+      "label": "02-tool-probe"
+    }
+  ]
+}

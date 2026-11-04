@@ -1,0 +1,161 @@
+{
+  "description": "Desktop dark theme: toggle with Alt+Shift+D, read theme storage and root styles, capture canvas, main menu, properties panel, help and export dialogs.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "click",
+      "at": [1150, 650]
+    },
+    {
+      "do": "key",
+      "key": "Alt+Shift+d"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "rootStyle"
+    },
+    {
+      "do": "appState",
+      "label": "07-dark"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-01-canvas"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-01-canvas"
+    },
+    {
+      "do": "click",
+      "at": [34, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-02-main-menu"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-02-main-menu"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [430, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-03-props-panel"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-03-props-panel"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1150, 650]
+    },
+    {
+      "do": "key",
+      "key": "?"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-04-help"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-04-help"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1150, 650]
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+e"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-05-export"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-05-export"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1150, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-06-idle-for-rea"
+    }
+  ]
+}

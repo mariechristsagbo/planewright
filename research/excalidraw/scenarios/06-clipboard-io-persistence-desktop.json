@@ -1,0 +1,204 @@
+{
+  "description": "Desktop: copy/paste clipboard shape, export PNG/SVG downloads, Ctrl+S save, image insertion through the file chooser with a self-generated PNG, reload persistence.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "grantClipboard",
+      "origin": "https://excalidraw.com"
+    },
+    {
+      "do": "click",
+      "at": [1100, 650]
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Control+c"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "clipboard"
+    },
+    {
+      "do": "click",
+      "at": [1100, 650]
+    },
+    {
+      "do": "move",
+      "at": [900, 600]
+    },
+    {
+      "do": "key",
+      "key": "Control+v"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "06-paste"
+    },
+    {
+      "do": "appState",
+      "label": "06-paste"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "06-undo-paste"
+    },
+    {
+      "do": "appState",
+      "label": "06-undo-paste"
+    },
+    {
+      "do": "click",
+      "at": [1100, 650]
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+e"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "download",
+      "name": "export-png",
+      "trigger": [
+        {
+          "do": "role",
+          "role": "button",
+          "name": "Export to PNG"
+        }
+      ]
+    },
+    {
+      "do": "download",
+      "name": "export-svg",
+      "trigger": [
+        {
+          "do": "role",
+          "role": "button",
+          "name": "Export to SVG"
+        }
+      ]
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "download",
+      "name": "save-ctrl-s",
+      "timeout": 6000,
+      "trigger": [
+        {
+          "do": "key",
+          "key": "Control+s"
+        }
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "io-01-after-ctrl-s"
+    },
+    {
+      "do": "screenshot",
+      "name": "io-01-after-ctrl-s"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "fileChooser",
+      "files": ["test-64x48.png"],
+      "timeout": 6000,
+      "trigger": [
+        {
+          "do": "key",
+          "key": "9"
+        }
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "click",
+      "at": [1000, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "06-image-inserted"
+    },
+    {
+      "do": "appState",
+      "label": "06-image-inserted"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "screenshot",
+      "name": "io-02-image"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 2500
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "06-after-reload"
+    },
+    {
+      "do": "appState",
+      "label": "06-after-reload"
+    },
+    {
+      "do": "screenshot",
+      "name": "io-03-after-reload"
+    }
+  ]
+}

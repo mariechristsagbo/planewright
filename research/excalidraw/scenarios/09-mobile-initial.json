@@ -1,0 +1,22 @@
+{
+  "description": "Mobile emulation 390x844 CSS px, DPR 3, touch enabled, Android Chrome user agent, light scheme: initial load, metrics, ARIA and screenshot.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
+    },
+    { "do": "colorScheme", "value": "light" },
+    { "do": "goto", "url": "https://excalidraw.com/" },
+    { "do": "wait", "ms": 3000 },
+    { "do": "metrics" },
+    { "do": "rootStyle" },
+    { "do": "aria", "save": "m01-initial-light" },
+    { "do": "screenshot", "name": "m01-initial-light" }
+  ]
+}

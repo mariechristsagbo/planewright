@@ -1,0 +1,262 @@
+{
+  "description": "Desktop: rotate via handle, apply styles from the properties panel, layer order, container label, arrow binding follow on move, lock, eraser. Starts from the end state of 03.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "click",
+      "at": [340, 300]
+    },
+    {
+      "do": "drag",
+      "from": [430, 220],
+      "to": [530, 315],
+      "steps": 20
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-rotate-90"
+    },
+    {
+      "do": "appState",
+      "label": "04-rotate-90"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "click",
+      "at": [66, 124]
+    },
+    {
+      "do": "click",
+      "at": [66, 185]
+    },
+    {
+      "do": "click",
+      "at": [124, 249]
+    },
+    {
+      "do": "click",
+      "at": [84, 316]
+    },
+    {
+      "do": "click",
+      "at": [44, 383]
+    },
+    {
+      "do": "click",
+      "at": [44, 450]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-styles-applied"
+    },
+    {
+      "do": "appState",
+      "label": "04-styles-applied"
+    },
+    {
+      "do": "click",
+      "at": [164, 587]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-bring-to-front"
+    },
+    {
+      "do": "appState",
+      "label": "04-bring-to-front"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "type",
+      "text": "Box"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-container-label"
+    },
+    {
+      "do": "appState",
+      "label": "04-container-label"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "a"
+    },
+    {
+      "do": "drag",
+      "from": [535, 300],
+      "to": [645, 290]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-arrow-bound"
+    },
+    {
+      "do": "appState",
+      "label": "04-arrow-bound"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "click",
+      "at": [340, 300]
+    },
+    {
+      "do": "drag",
+      "from": [340, 300],
+      "to": [340, 360]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-move-bound-rect"
+    },
+    {
+      "do": "appState",
+      "label": "04-move-bound-rect"
+    },
+    {
+      "do": "screenshot",
+      "name": "bind-01-after-move"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "click",
+      "at": [760, 290]
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+l"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-lock-ellipse"
+    },
+    {
+      "do": "appState",
+      "label": "04-lock-ellipse"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "drag",
+      "from": [760, 290],
+      "to": [860, 290]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-drag-locked"
+    },
+    {
+      "do": "appState",
+      "label": "04-drag-locked"
+    },
+    {
+      "do": "key",
+      "key": "p"
+    },
+    {
+      "do": "path",
+      "points": [
+        [400, 550],
+        [450, 580],
+        [500, 550],
+        [550, 580]
+      ]
+    },
+    {
+      "do": "key",
+      "key": "e"
+    },
+    {
+      "do": "drag",
+      "from": [470, 520],
+      "to": [480, 620]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "04-eraser"
+    },
+    {
+      "do": "appState",
+      "label": "04-eraser"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "screenshot",
+      "name": "bind-02-end-state"
+    }
+  ]
+}
