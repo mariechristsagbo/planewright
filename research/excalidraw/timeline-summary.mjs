@@ -16,7 +16,8 @@ const rows = readFileSync(file, 'utf8')
   .split('\n')
   .filter(Boolean)
   .map((line) => JSON.parse(line))
-  .filter((row) => row.step.label && (!values.since || row.started >= values.since));
+  // Failed steps carry "error" instead of "result" and are not probe summaries.
+  .filter((row) => row.result && row.step.label && (!values.since || row.started >= values.since));
 
 const element = (e) => ({
   type: e.type,

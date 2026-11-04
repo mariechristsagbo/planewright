@@ -3,7 +3,9 @@
 // created. Nothing here fetches application code, assets or source maps.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
-import { basename, isAbsolute, join } from 'node:path';
+import { basename } from 'node:path';
+
+import { fixturePath, outputPath, safeDownloadName, safeName } from './guard.mjs';
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -129,7 +131,7 @@ function metrics(ctx) {
 }
 
 async function screenshot(ctx, step) {
-  const file = join(ctx.outDir, 'screenshots', `${step.name}.png`);
+  const file = outputPath(ctx.outDir, 'screenshots', step.name, '.png');
   const bytes = await ctx.page.screenshot({ path: file });
   const size = { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) };
   return { file: basename(file), sha256: sha256(bytes), ...size };
@@ -143,7 +145,8 @@ async function download(ctx, step) {
   const pending = ctx.page.waitForEvent('download', { timeout: step.timeout ?? 15000 });
   await runNested(ctx, step.trigger);
   const item = await pending;
-  const file = join(ctx.outDir, 'downloads', `${step.name}-${item.suggestedFilename()}`);
+  const name = `${safeName(step.name, 'download name')}-${safeDownloadName(item.suggestedFilename())}`;
+  const file = outputPath(ctx.outDir, 'downloads', name, '');
   await item.saveAs(file);
   const bytes = readFileSync(file);
   return {
@@ -158,16 +161,15 @@ async function fileChooser(ctx, step) {
   const pending = ctx.page.waitForEvent('filechooser', { timeout: step.timeout ?? 8000 });
   await runNested(ctx, step.trigger);
   const chooser = await pending;
-  // Relative fixture names resolve to <out>/../fixtures so scenarios carry no local paths.
-  await chooser.setFiles(
-    step.files.map((f) => (isAbsolute(f) ? f : join(ctx.outDir, '..', 'fixtures', f))),
-  );
-  return { multiple: chooser.isMultiple(), files: step.files.map((f) => basename(f)) };
+  // Only fixture names are accepted; they resolve inside <out>/../fixtures.
+  const files = step.files.map((name) => fixturePath(ctx.outDir, name));
+  await chooser.setFiles(files);
+  return { multiple: chooser.isMultiple(), files: files.map((f) => basename(f)) };
 }
 
 // Drops a fixture file onto the canvas the way a desktop file manager drag would.
 async function dropFile(ctx, step) {
-  const file = isAbsolute(step.file) ? step.file : join(ctx.outDir, '..', 'fixtures', step.file);
+  const file = fixturePath(ctx.outDir, step.file);
   const payload = {
     b64: readFileSync(file).toString('base64'),
     name: basename(file),
@@ -210,7 +212,7 @@ async function role(ctx, step) {
 
 async function aria(ctx, step) {
   const text = await ctx.page.locator(step.selector ?? 'body').ariaSnapshot();
-  if (step.save) writeFileSync(join(ctx.outDir, 'aria', `${step.save}.yml`), text);
+  if (step.save) writeFileSync(outputPath(ctx.outDir, 'aria', step.save, '.yml'), text);
   return { lines: text.split('\n').length, preview: step.save ? undefined : text };
 }
 

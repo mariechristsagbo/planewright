@@ -4,9 +4,12 @@
 // so that REA can observe the same page passively between interaction batches. Accepts step
 // batches over a loopback-only HTTP endpoint and appends every executed step to a timeline.
 // A request body is an inline batch ({ steps: [...] }) or { scenario: "<name>" }.
+// Every request must be a POST to 127.0.0.1:<port> carrying the per-run token from
+// <out>/driver.token in the x-research-token header; /run also requires application/json.
 //
 // Usage: node research/excalidraw/driver.mjs --cdp http://127.0.0.1:9222 --port 9333 --out <dir>
-import { appendFileSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
+import { appendFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { basename, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,6 +17,7 @@ import { parseArgs } from 'node:util';
 
 import { chromium } from 'playwright-core';
 
+import { checkRequest, sanitiseError } from './lib/guard.mjs';
 import { attachNetlog } from './lib/netlog.mjs';
 import { probes } from './lib/probes.mjs';
 import { handlers } from './lib/steps.mjs';
@@ -36,10 +40,6 @@ function toBatch(body) {
   const file = SCENARIOS.get(body.scenario);
   if (!file) throw new Error('Unknown scenario name.');
   return JSON.parse(readFileSync(file, 'utf8'));
-}
-
-function messageOf(error) {
-  return error instanceof Error ? error.message : 'Non-error value thrown';
 }
 
 function options() {
@@ -71,23 +71,33 @@ function createContext(session, outDir) {
   const timeline = join(outDir, 'timeline.jsonl');
   const ctx = { ...session, outDir };
   ctx.run = async (step) => {
-    const handler = typeof step.do === 'string' ? STEPS.get(step.do) : undefined;
-    if (typeof handler !== 'function') throw new Error(`Unknown step "${String(step.do)}"`);
     const started = new Date().toISOString();
-    const result = await handler(ctx, step);
-    appendFileSync(timeline, `${JSON.stringify({ started, step, result })}\n`);
-    return { do: step.do, result };
+    try {
+      const handler = typeof step.do === 'string' ? STEPS.get(step.do) : undefined;
+      if (typeof handler !== 'function') throw new Error('Unknown step name.');
+      const result = await handler(ctx, step);
+      appendFileSync(timeline, `${JSON.stringify({ started, step, result })}\n`);
+      return { do: step.do, result };
+    } catch (error) {
+      // Failed steps are evidence too; record them with a sanitised message.
+      appendFileSync(
+        timeline,
+        `${JSON.stringify({ started, step, error: sanitiseError(error) })}\n`,
+      );
+      throw error;
+    }
   };
   return ctx;
 }
 
 async function runBatch(ctx, batch) {
+  if (!Array.isArray(batch?.steps)) throw new Error('A batch needs a "steps" array.');
   const results = [];
   for (const step of batch.steps) {
     try {
       results.push(await ctx.run(step));
     } catch (error) {
-      results.push({ do: step.do, error: messageOf(error) });
+      results.push({ do: step.do, error: sanitiseError(error) });
       if (!batch.continueOnError) break;
     }
   }
@@ -103,12 +113,18 @@ function readBody(request) {
   });
 }
 
-function serve(ctx, port, shutdown) {
+function serve(ctx, { port, token }, shutdown) {
   const server = createServer(async (request, response) => {
     const reply = (status, body) => {
       response.writeHead(status, { 'content-type': 'application/json' });
       response.end(JSON.stringify(body, null, 1));
     };
+    const rejected = checkRequest(request, { token, port });
+    if (rejected) {
+      request.resume();
+      reply(rejected.status, { error: rejected.error });
+      return;
+    }
     if (request.url === '/quit') {
       reply(200, { bye: true });
       shutdown(server);
@@ -117,7 +133,7 @@ function serve(ctx, port, shutdown) {
     try {
       reply(200, await runBatch(ctx, toBatch(JSON.parse(await readBody(request)))));
     } catch (error) {
-      reply(400, { error: messageOf(error) });
+      reply(400, { error: sanitiseError(error) });
     }
   });
   server.listen(port, LOOPBACK, () => console.log(`driver listening on ${LOOPBACK}:${port}`));
@@ -127,7 +143,10 @@ const opts = options();
 const session = await connect(opts.cdp);
 const ctx = createContext(session, opts.out);
 attachNetlog(session.page, opts.out);
-serve(ctx, opts.port, (server) => {
+// A fresh random token per run, readable only by the current user.
+const token = randomBytes(32).toString('hex');
+writeFileSync(join(opts.out, 'driver.token'), token, { mode: 0o600 });
+serve(ctx, { port: opts.port, token }, (server) => {
   server.close();
   // Disconnect only; the browser belongs to the disposable container and is stopped separately.
   void session.browser.close().finally(() => process.exit(0));

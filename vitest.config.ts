@@ -17,6 +17,14 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'research:unit',
+          root: '.',
+          include: ['research/**/tests/**/*.test.mjs'],
+          environment: 'node',
+        },
+      },
+      {
+        test: {
           name: 'protocol:unit',
           root: './packages/protocol',
           include: ['tests/unit/**/*.test.ts'],

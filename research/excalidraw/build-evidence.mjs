@@ -87,13 +87,15 @@ function steps(dir) {
   const rows = readLines(join(dir, 'timeline.jsonl'));
   const byKind = {};
   for (const row of rows) byKind[row.step.do] = (byKind[row.step.do] ?? 0) + 1;
+  const ok = rows.filter((r) => r.result !== undefined);
   return {
     total: rows.length,
+    failed: rows.length - ok.length,
     first: rows[0]?.started ?? null,
     last: rows.at(-1)?.started ?? null,
     byKind,
-    urlShapes: rows.filter((r) => r.step.do === 'url').map((r) => ({ at: r.started, ...r.result })),
-    metrics: rows
+    urlShapes: ok.filter((r) => r.step.do === 'url').map((r) => ({ at: r.started, ...r.result })),
+    metrics: ok
       .filter((r) => r.step.do === 'metrics' || r.step.do === 'emulate')
       .map((r) => r.result),
   };
