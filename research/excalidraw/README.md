@@ -9,7 +9,7 @@ it never writes raw third-party content into this repository. See
 | ---------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `browser.sh`           | Starts/stops a disposable Chromium in a non-root container; DevTools published on `127.0.0.1` only.                   |
 | `driver.mjs`           | Loopback-only interaction driver (Playwright over CDP); appends every step to `timeline.jsonl`.                       |
-| `run.mjs`              | Sends a scenario file or inline step batch to the driver.                                                             |
+| `run.mjs`              | Sends a scenario name (or path) or an inline step batch.                                                              |
 | `lib/steps.mjs`        | Pointer, keyboard, wheel, touch, file-drop, download, native-dialog and accessibility-snapshot steps.                 |
 | `lib/probes.mjs`       | Reads of session-created state: storage key inventory, scene and appState shape, clipboard shape, URL fragment shape. |
 | `lib/netlog.mjs`       | Metadata-only network log (no headers, cookies, bodies or query values).                                              |
@@ -25,7 +25,7 @@ it never writes raw third-party content into this repository. See
 OUT=/absolute/path/outside/the/repo/s1-desktop
 research/excalidraw/browser.sh start pw-research 9222
 node research/excalidraw/driver.mjs --cdp http://127.0.0.1:9222 --port 9333 --out "$OUT" &
-node research/excalidraw/run.mjs research/excalidraw/scenarios/02-shapes-desktop.json
+node research/excalidraw/run.mjs 02-shapes-desktop
 node research/excalidraw/timeline-summary.mjs "$OUT/timeline.jsonl"
 curl -s http://127.0.0.1:9333/quit
 research/excalidraw/browser.sh stop pw-research

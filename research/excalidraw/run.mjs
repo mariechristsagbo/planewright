@@ -1,7 +1,9 @@
-// Sends a step batch (a JSON file or inline JSON) to the loopback driver and prints the results.
+// Asks the loopback driver to run a named scenario, or sends an inline step batch given on the
+// command line, and prints the results. Scenario files are read by the driver itself from
+// research/excalidraw/scenarios, so this client never forwards file contents.
 //
-// Usage: node research/excalidraw/run.mjs <scenario.json | '{"steps":[...]}'> [--port 9333]
-import { existsSync, readFileSync } from 'node:fs';
+// Usage: node research/excalidraw/run.mjs <scenario name or path | '{"steps":[...]}'> [--port 9333]
+import { basename } from 'node:path';
 import { parseArgs } from 'node:util';
 
 const { values, positionals } = parseArgs({
@@ -9,9 +11,11 @@ const { values, positionals } = parseArgs({
   options: { port: { type: 'string', default: '9333' } },
 });
 const [input] = positionals;
-if (!input) throw new Error('Pass a scenario file or inline JSON.');
-const body = existsSync(input) ? readFileSync(input, 'utf8') : input;
-JSON.parse(body);
+if (!input) throw new Error('Pass a scenario name, a scenario path or inline JSON.');
+const inline = input.trimStart().startsWith('{');
+const body = inline
+  ? JSON.stringify(JSON.parse(input))
+  : JSON.stringify({ scenario: basename(input, '.json') });
 
 const response = await fetch(`http://127.0.0.1:${values.port}/run`, { method: 'POST', body });
 console.log(await response.text());
