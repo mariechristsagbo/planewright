@@ -27,10 +27,16 @@ const LINKED_DOCS = [
   ...readdirSync(RE)
     .filter((n) => n.endsWith('.md'))
     .map((n) => `docs/reverse-engineering/${n}`),
+  'docs/README.md',
   'docs/investigation/1-guest-mode-baseline.md',
   'docs/investigation/README.md',
   'research/excalidraw/README.md',
 ];
+
+// Every committed research text: documents, evidence, investigation notes, tooling, scenarios,
+// fixtures and tests. Tests build their synthetic secret-shaped values at run time.
+const SCANNED_TREES = ['docs/reverse-engineering', 'docs/investigation', 'research/excalidraw'];
+const SCANNED = /\.(?:md|json|mjs|sh|html|yml)$/u;
 
 // GitHub heading anchors: lower case, punctuation removed, spaces to hyphens, -1 for repeats.
 function anchorsOf(markdown) {
@@ -89,13 +95,20 @@ describe('document structure', () => {
     );
   });
 
-  it('keeps every committed research document free of secret-shaped values', () => {
-    const files = readdirSync(RE, { recursive: true }).map(String);
-    for (const name of files.filter((n) => /\.(?:md|json)$/u.test(n))) {
-      expect(countSecretShapes(readFileSync(join(RE, name), 'latin1')), name).toEqual({});
-    }
-    expect(relative(ROOT, RE)).toBe(join('docs', 'reverse-engineering'));
-  });
+  it.each(SCANNED_TREES)(
+    'keeps every research text under %s free of secret-shaped values',
+    (tree) => {
+      const files = readdirSync(join(ROOT, tree), { recursive: true }).map(String);
+      const scanned = files.filter(
+        (n) => SCANNED.test(n) && !n.split('/').includes('node_modules'),
+      );
+      expect(scanned.length).toBeGreaterThan(0);
+      for (const name of scanned) {
+        expect(countSecretShapes(readFileSync(join(ROOT, tree, name), 'latin1')), name).toEqual({});
+      }
+      expect(relative(ROOT, RE)).toBe(join('docs', 'reverse-engineering'));
+    },
+  );
 });
 
 const reloads = (name) =>
