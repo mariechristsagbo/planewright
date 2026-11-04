@@ -1,0 +1,1681 @@
+{
+  "schema": "planewright-research-evidence/v1",
+  "generated_by": "research/excalidraw/build-evidence.mjs",
+  "sessions": [
+    {
+      "session": "s1-desktop",
+      "steps": {
+        "total": 472,
+        "first": "2026-11-04T13:29:41.785Z",
+        "last": "2026-11-04T13:45:28.896Z",
+        "byKind": {
+          "emulate": 12,
+          "colorScheme": 4,
+          "goto": 1,
+          "wait": 105,
+          "metrics": 1,
+          "storage": 5,
+          "rootStyle": 2,
+          "screenshot": 35,
+          "reload": 2,
+          "click": 53,
+          "aria": 27,
+          "key": 92,
+          "appState": 50,
+          "drag": 20,
+          "path": 2,
+          "type": 3,
+          "scene": 39,
+          "wheel": 3,
+          "keyDown": 1,
+          "keyUp": 1,
+          "grantClipboard": 1,
+          "clipboard": 1,
+          "move": 1,
+          "role": 5,
+          "dropFile": 1,
+          "url": 5
+        },
+        "urlShapes": [
+          {
+            "at": "2026-11-04T13:43:46.282Z",
+            "origin": "https://excalidraw.com",
+            "path": "/",
+            "queryKeys": [],
+            "fragment": []
+          },
+          {
+            "at": "2026-11-04T13:43:51.325Z",
+            "origin": "https://excalidraw.com",
+            "path": "/",
+            "queryKeys": [],
+            "fragment": [
+              {
+                "key": "room",
+                "valueLengths": [20, 22]
+              }
+            ]
+          },
+          {
+            "at": "2026-11-04T13:44:01.172Z",
+            "origin": "https://excalidraw.com",
+            "path": "/",
+            "queryKeys": [],
+            "fragment": [
+              {
+                "key": "room",
+                "valueLengths": [20, 22]
+              }
+            ]
+          },
+          {
+            "at": "2026-11-04T13:44:44.439Z",
+            "origin": "https://excalidraw.com",
+            "path": "/",
+            "queryKeys": [],
+            "fragment": [
+              {
+                "key": "room",
+                "valueLengths": [20, 22]
+              }
+            ]
+          },
+          {
+            "at": "2026-11-04T13:45:04.492Z",
+            "origin": "https://excalidraw.com",
+            "path": "/",
+            "queryKeys": [],
+            "fragment": [
+              {
+                "key": "room",
+                "valueLengths": [20, 22]
+              }
+            ]
+          }
+        ],
+        "metrics": [
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "bind-01-after-move.png",
+          "sha256": "747737a5d8237dd57eae3dae2f20bf4e3b1c7225577c9ed16620958c7e81f864",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "bind-02-end-state.png",
+          "sha256": "e6aefdbb2ad2e27e627f0ccee31e06f55ef891ad67b43edc44406ce8376ad02d",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "collab-01-session-dialog.png",
+          "sha256": "fc8b857549aaff71739aebe34509b4372a0d287c4f08745b8cdee882abb67c93",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "collab-02-in-session.png",
+          "sha256": "fc8b857549aaff71739aebe34509b4372a0d287c4f08745b8cdee882abb67c93",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "collab-04-stopped.png",
+          "sha256": "4330a9bd4b9f978ab216bb659dffce5aa10d56466b8e68d5760671949b5de039",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "d01-initial-light.png",
+          "sha256": "896394c9e875ab07199b9713ac7f7639370e1fd76ffb66b527c1dacab2d7fc25",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "dark-01-canvas.png",
+          "sha256": "f5b627473753d493dd7124b891fde24993193c112eaa0bdb570258bced3a7276",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "dark-02-main-menu.png",
+          "sha256": "227f336118f4d5a37b06539a1f4b9477812a5ced3ca332d6dc3b16fd9c4d2440",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "dark-03-props-panel.png",
+          "sha256": "6aa762dcac2be6416e0753725ed4a6a506a87c7a89283cffce76f37959ad10cd",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "dark-04-help.png",
+          "sha256": "67fa00b60166184409ebb615fce7ea27dc21ac6213e510d6d4e20f08a02e8e43",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "dark-05-export.png",
+          "sha256": "318ba9a05195779d1e6420ae99b028c9df1f2539b7314a57695c5fb0ff0a09fd",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "dark-06-idle-for-rea.png",
+          "sha256": "f038f64dab0d2fee6f4967fb93f3466b3b9e942d9b0d415f00ca6ddd03b05928",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "diag-after-eraser.png",
+          "sha256": "45914e1c211f65433f51f5d2cb096b54a51ab46c37494089f03209f4d7e2869c",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "diag-rect.png",
+          "sha256": "cad182bab4f83fdbe7ab1273ebb4f8d935a6adb5367cb73357e45148538bdc2c",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "io-01-after-ctrl-s.png",
+          "sha256": "e5b723a85fc8a2ea5d9a37eaf65afca1fc061bebd7bff2c85c47d95e05caad6f",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "io-02-image.png",
+          "sha256": "17d0a0c4bb5021dc1d5c4054994349b4eb88df1c522b3993469dafbfb972baf8",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "io-03-after-reload.png",
+          "sha256": "0491cbf72db259313f827e64c32916b1204e1810d767ed7349d8cf6c37ba5d13",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "io-04-image-drop.png",
+          "sha256": "900b7b6792fa56df2a30c4fdf73ba1f01704a8b51b270539103ecb677fbbc91a",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "sel-01-after-rotate.png",
+          "sha256": "99e9bb23df5569cbcca9d5ac21c74c4bd8982c478a56aae4a4bc5fd74ab3a883",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "sel-02-rect-handles.png",
+          "sha256": "910064f60a01f5e75db6c2cdc7a1265278ed4cfe2f5e8da10b060be19aef8fee",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "shape-01-rect.png",
+          "sha256": "3b9fece25d0dc3963988853dd3ce5512a80f199937a836cc165387fdb6cab904",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "shape-02-all-tools.png",
+          "sha256": "75e849d8460e186b9dc647c6e45353a0850171bc94ee112f5bc5bb2975a43478",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-01-main-menu.png",
+          "sha256": "fa7ff86de379971d5ea95cc70ce3e8b1f1b5f8ca7808914e08336b858ca8b00e",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-02-more-tools.png",
+          "sha256": "0a8636948e77594877e7bd9f58a3039b1315a0b4f59af0ae585e053860668116",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-03-help-dialog.png",
+          "sha256": "e408b80a2cfbaf956ac381b85311a29272d9cd7626465a56b44f6ea4291c0008",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-04-library-sidebar.png",
+          "sha256": "1242c1a3069935845cbdaf3b8f6cf37da94a5dbabbc2db255593e5979edb1579",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-05-command-palette.png",
+          "sha256": "bfa591361c23d1bc236cddc63436ab98a81f7e610b11685d9b7a7f64b9dffc0b",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-06-share-dialog.png",
+          "sha256": "93e7bef0e80f3d8f87998c77778bc97500d4d8cabd1137c1e6df388996beaa8e",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-07-context-menu-canvas.png",
+          "sha256": "42c2f81f1d8f5a7d014896486a0c95f69bbc4471d0588faf8bbfc816ec4add1e",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "ui-08-export-image-dialog.png",
+          "sha256": "f33ef6ca354da0bfaa8871a578e66386c6fd824e6ca4587f65dcdd888958cae2",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "view-01-zen.png",
+          "sha256": "5c87a9be5eeecd8b3f84f7cc132d12f55edee1b2d17aa1c0b2a84ecaed1bd752",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "view-02-viewmode.png",
+          "sha256": "2c8aad3be7cf75876be2b5b180a874d7adb19d262960c50b557cd8ce7f841487",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "view-03-grid.png",
+          "sha256": "6263ca9017797551f83fee84c1dc63a06ac50c6d586012345cd14104b4c102bd",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "aria_snapshots": [
+        {
+          "name": "collab-01-session-dialog.yml",
+          "lines": 50
+        },
+        {
+          "name": "collab-02-in-session.yml",
+          "lines": 50
+        },
+        {
+          "name": "collab-03-after-stop.yml",
+          "lines": 38
+        },
+        {
+          "name": "collab-04-stopped.yml",
+          "lines": 50
+        },
+        {
+          "name": "dark-01-canvas.yml",
+          "lines": 36
+        },
+        {
+          "name": "dark-02-main-menu.yml",
+          "lines": 89
+        },
+        {
+          "name": "dark-03-props-panel.yml",
+          "lines": 112
+        },
+        {
+          "name": "dark-04-help.yml",
+          "lines": 53
+        },
+        {
+          "name": "dark-05-export.yml",
+          "lines": 54
+        },
+        {
+          "name": "io-01-after-ctrl-s.yml",
+          "lines": 36
+        },
+        {
+          "name": "panel-selected-a.yml",
+          "lines": 69
+        },
+        {
+          "name": "sel-01-rect-selected.yml",
+          "lines": 36
+        },
+        {
+          "name": "shape-01-rect-selected.yml",
+          "lines": 79
+        },
+        {
+          "name": "shape-02-arrow-selected.yml",
+          "lines": 84
+        },
+        {
+          "name": "shape-03-after-sticky.yml",
+          "lines": 97
+        },
+        {
+          "name": "ui-01-main-menu.yml",
+          "lines": 97
+        },
+        {
+          "name": "ui-02-more-tools.yml",
+          "lines": 56
+        },
+        {
+          "name": "ui-03-help-dialog.yml",
+          "lines": 61
+        },
+        {
+          "name": "ui-04-library-sidebar.yml",
+          "lines": 56
+        },
+        {
+          "name": "ui-05-command-palette.yml",
+          "lines": 47
+        },
+        {
+          "name": "ui-06-share-dialog.yml",
+          "lines": 49
+        },
+        {
+          "name": "ui-07-context-menu-canvas.yml",
+          "lines": 65
+        },
+        {
+          "name": "ui-08-export-image-dialog.yml",
+          "lines": 83
+        },
+        {
+          "name": "view-01-zen.yml",
+          "lines": 24
+        },
+        {
+          "name": "view-02-viewmode.yml",
+          "lines": 17
+        }
+      ],
+      "network": [
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 200,
+          "origin": "blob:",
+          "path": null,
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/firebaseSDK-BRg0yXND.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-ChGp7972.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-DVAv9QEc.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/qrcode.chunk-DRz-_p9I.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/random-username.esm-__vdrxyo.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/subset-shared.chunk-D3ioWSie.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/subset-worker.chunk-CVR6pt27.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "worker",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/subset-worker.chunk-CVR6pt27.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/CascadiaCode/CascadiaCode-Regular.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "xhr",
+          "status": 200,
+          "origin": "https://firebasestorage.googleapis.com",
+          "path": "/v0/b/excalidraw-room-persistence.appspot.com/o",
+          "queryKeys": ["name"],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "xhr",
+          "status": 200,
+          "origin": "https://firestore.googleapis.com",
+          "path": "/v1/projects/excalidraw-room-persistence/databases/(default)/documents:batchGet",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "xhr",
+          "status": 200,
+          "origin": "https://firestore.googleapis.com",
+          "path": "/v1/projects/excalidraw-room-persistence/databases/(default)/documents:commit",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "event",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "metadata",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "count": 4
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "count": 2
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "count": 2
+        },
+        {
+          "event": "websocket-open",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "wss://oss-collab.excalidraw.com",
+          "path": "/socket.io/",
+          "queryKeys": ["EIO", "transport"],
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "bundle-01-desktop.json",
+          "bundle_records": 3
+        },
+        {
+          "file": "d01-inspect-initial.json",
+          "evidence_id": "ev_e87d6771ae37b1954ce16dd3e5f5c193d9cff3c10636a5c5281d832b0b7c8d75",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "d01-inspect-initial.summary.json",
+          "evidence_id": "ev_e87d6771ae37b1954ce16dd3e5f5c193d9cff3c10636a5c5281d832b0b7c8d75"
+        },
+        {
+          "file": "d01-rea-screenshot-initial.json",
+          "evidence_id": "ev_8da6254e837ce14dca3ffc569812202a901ed75013e33bde973020f92f4d6925",
+          "operation": "capture_web_screenshot"
+        },
+        {
+          "file": "d02-inspect-with-scripts.json",
+          "evidence_id": "ev_d7cf0a58f36a540846ebf7e2efad29ba4df4dcdce7d88279be39d3c0edb59fde",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "d03-inspect-collab.json",
+          "evidence_id": "ev_43b25e14a85334719091cefbf250a68caefddb0c67d49a324fb5e156e95621f8",
+          "operation": "inspect_web_page"
+        }
+      ]
+    },
+    {
+      "session": "s2-desktop-fresh",
+      "steps": {
+        "total": 179,
+        "first": "2026-11-04T13:49:41.931Z",
+        "last": "2026-11-04T13:50:31.019Z",
+        "byKind": {
+          "goto": 1,
+          "wait": 37,
+          "emulate": 3,
+          "colorScheme": 1,
+          "click": 13,
+          "key": 44,
+          "appState": 32,
+          "drag": 13,
+          "aria": 6,
+          "screenshot": 6,
+          "path": 1,
+          "type": 2,
+          "scene": 15,
+          "wheel": 3,
+          "keyDown": 1,
+          "keyUp": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 0
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "sel-01-after-rotate.png",
+          "sha256": "7917511043bf0741be1317a6869424f2a7b8026149d5d83aa6b90ac65d9a5ce1",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "shape-01-rect.png",
+          "sha256": "d9da43f83746615699374f7e54c1611ee3c3a30f5d80820d5f662061cf3c9420",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "shape-02-all-tools.png",
+          "sha256": "c4c4c82b22204f2ae18bb3626cf994e21179f06d9362fb43966f520cce8ad15b",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "view-01-zen.png",
+          "sha256": "329c5fc67e411d124db076f67967eeb840294d5574af50caab264ce669b6f2d0",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "view-02-viewmode.png",
+          "sha256": "b1d7943026c75b1b23d9f89ecec7749b4f97c4c593ef0f43e68877b26dada7fc",
+          "width": 1280,
+          "height": 720
+        },
+        {
+          "name": "view-03-grid.png",
+          "sha256": "e833ed98ac94333777aa83bb793901f06c342492e1de6f793255551775383e73",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "aria_snapshots": [
+        {
+          "name": "sel-01-rect-selected.yml",
+          "lines": 36
+        },
+        {
+          "name": "shape-01-rect-selected.yml",
+          "lines": 85
+        },
+        {
+          "name": "shape-02-arrow-selected.yml",
+          "lines": 84
+        },
+        {
+          "name": "shape-03-after-sticky.yml",
+          "lines": 97
+        },
+        {
+          "name": "view-01-zen.yml",
+          "lines": 24
+        },
+        {
+          "name": "view-02-viewmode.yml",
+          "lines": 17
+        }
+      ],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-DVAv9QEc.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "count": 1
+        }
+      ],
+      "rea": []
+    },
+    {
+      "session": "s3-mobile",
+      "steps": {
+        "total": 71,
+        "first": "2026-11-04T13:51:02.637Z",
+        "last": "2026-11-04T13:52:16.291Z",
+        "byKind": {
+          "emulate": 2,
+          "colorScheme": 2,
+          "goto": 1,
+          "wait": 16,
+          "metrics": 1,
+          "rootStyle": 1,
+          "aria": 9,
+          "screenshot": 10,
+          "tap": 13,
+          "touchDrag": 3,
+          "scene": 6,
+          "appState": 6,
+          "role": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 980,
+            "innerHeight": 2121,
+            "devicePixelRatio": 3,
+            "maxTouchPoints": 5
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "maxTouchPoints": 5
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 1,
+            "maxTouchPoints": 5
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "m01-initial-light.png",
+          "sha256": "a5b2cc18a2ea26e342f935849d2acadcff6806cfd82b4daabbfbc42d2203377e",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m02-rect-tool-active.png",
+          "sha256": "f5a74b906d9e47222d999bff77f8b5bf0c40e06648b04ccca31631ec7aa8662b",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m03-rect-drawn.png",
+          "sha256": "c0ae39e34a2dd56e060b7e50ffac94a248ce0b35b8f8a9929e63512f4794c81e",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m04-rect-selected.png",
+          "sha256": "05aa194a4cec03b3b457ec483017147b1ddc9758be7a7b5996c857346817c6f5",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m05-main-menu.png",
+          "sha256": "71877cf53dcd0f56f62e41eed4105f3c87468cbd85bba45d2c69325ab3a2a160",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m06-more-tools.png",
+          "sha256": "8b777d3448d9dde4a6bc41292a26256771cb9fa52537a0cb1dd2ab1a071370e0",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m07-library.png",
+          "sha256": "bb1fc59883655e76001bbf91d0fa86778b0e5b5f50b09faaa6f1b625c39c5763",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m08-dark-menu.png",
+          "sha256": "5a1d5316993193e472c908af36bd267c591f048837a771fd4bb3d4bade7ec4fa",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m09-dark-canvas.png",
+          "sha256": "e50d8838bab73a9434e8f21e92b42f733f468c05d4b5d3fbec2a6b0e6e914814",
+          "width": 390,
+          "height": 844
+        },
+        {
+          "name": "m10-dark-for-rea.png",
+          "sha256": "e50d8838bab73a9434e8f21e92b42f733f468c05d4b5d3fbec2a6b0e6e914814",
+          "width": 390,
+          "height": 844
+        }
+      ],
+      "aria_snapshots": [
+        {
+          "name": "m01-initial-light.yml",
+          "lines": 24
+        },
+        {
+          "name": "m02-rect-tool-active.yml",
+          "lines": 25
+        },
+        {
+          "name": "m03-rect-drawn.yml",
+          "lines": 22
+        },
+        {
+          "name": "m04-rect-selected.yml",
+          "lines": 22
+        },
+        {
+          "name": "m05-main-menu.yml",
+          "lines": 64
+        },
+        {
+          "name": "m06-more-tools.yml",
+          "lines": 28
+        },
+        {
+          "name": "m07-library.yml",
+          "lines": 16
+        },
+        {
+          "name": "m08-dark-menu.yml",
+          "lines": 64
+        },
+        {
+          "name": "m09-dark-canvas.yml",
+          "lines": 16
+        }
+      ],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-CA0yydio.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-DVAv9QEc.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/CascadiaCode/CascadiaCode-Regular.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "event",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "metadata",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "bundle-02-collab-mobile.json",
+          "bundle_records": 7
+        }
+      ]
+    }
+  ]
+}

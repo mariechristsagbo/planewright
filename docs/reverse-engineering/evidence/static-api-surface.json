@@ -1,0 +1,88 @@
+[
+  {
+    "file": "files/isolated/source-3-02f7324d767c6f1ca8ce597017281684d7439657b08c6c00531ea98954b1ed04.js",
+    "bytes": 225,
+    "hits": {}
+  },
+  {
+    "file": "files/isolated/source-5-f8fff194ef6e98feaff456d48392f4047740393d3220ff58c30ee9f23f723551.js",
+    "bytes": 105,
+    "hits": {}
+  },
+  {
+    "file": "files/isolated/source-7-4e0899988fea339d5a5e0cf0ede6471cd5b07540b218c8561beac122eaea33eb.js",
+    "bytes": 703,
+    "hits": {
+      "localStorage": 1
+    }
+  },
+  {
+    "file": "files/isolated/source-8-8ff57cc7077eb1c7023e1f6e69908fc6d5576c7d6921b773c862203ad5238922.js",
+    "bytes": 908,
+    "hits": {}
+  },
+  {
+    "file": "files/isolated/source-9-8b59d52c23d6c6b50c1946bda05a345990b8f35610c454ae337f2b523df20808.js",
+    "bytes": 597,
+    "hits": {}
+  },
+  {
+    "file": "files/assets/bundler-helpers-DA6W-a70.js",
+    "bytes": 1057,
+    "hits": {}
+  },
+  {
+    "file": "files/assets/index-DVAv9QEc.js",
+    "bytes": 1911647,
+    "hits": {
+      "showOpenFilePicker": 2,
+      "showSaveFilePicker": 1,
+      "launchQueue": 3,
+      "indexedDB": 4,
+      "localStorage": 44,
+      "sessionStorage": 7,
+      "BroadcastChannel": 1,
+      "serviceWorker": 1,
+      "new Worker": 1,
+      "SharedWorker": 1,
+      "WebSocket": 2,
+      "EventSource": 1,
+      "crypto.subtle": 8,
+      "AES-GCM": 5,
+      "navigator.clipboard": 14,
+      "ClipboardItem": 3,
+      "clipboardData": 18,
+      "requestAnimationFrame": 18,
+      "Path2D": 7,
+      "getContext": 12,
+      "ResizeObserver": 10,
+      "PointerEvent": 25,
+      "pointerdown": 14,
+      "touchstart": 7,
+      "gesturestart": 1,
+      "wheel": 21,
+      "visibilitychange": 2,
+      "beforeunload": 3,
+      "navigator.onLine": 3,
+      "FontFace": 6,
+      "WebAssembly": 5,
+      "navigator.share": 1,
+      "beforeinstallprompt": 1
+    }
+  },
+  {
+    "file": "files/assets/roundRect-0PYZxl1G.js",
+    "bytes": 3097,
+    "hits": {
+      "OffscreenCanvas": 4,
+      "Path2D": 3
+    }
+  },
+  {
+    "file": "files/assets/workbox-window.prod.es5-B9K5rw8f.js",
+    "bytes": 5781,
+    "hits": {
+      "serviceWorker": 6
+    }
+  }
+]
