@@ -232,9 +232,11 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
   - `25` and `26` run right after `09`, each in a fresh session, because their touch points
     assume zoom 1, scroll (0,0) and an empty canvas. `27` runs after `25`, whose rectangles stay
     above its pinch, and before `24`, so that 24 reloads with a selection at a zoom other than 1.
-  - `28`, `29` and `30` run right after `09`, each in a fresh session, for the same reason. `28`
-    saves the ARIA of every popover of the compact property bar that the later touch-control
-    scenarios name, so that they can click each control by its exact name.
+  - `28` to `33` run right after `09`, each in a fresh session, for the same reason. `28` saves
+    the ARIA of every popover of the compact property bar, and `31`–`33` click each control by
+    the exact name it saved in s22; `32` touches the style popover's unnamed radios at the button
+    centres of s22's capture. `31` and `32` deselect and reselect before every popover they
+    open, so no step depends on whether an action closes its popover.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

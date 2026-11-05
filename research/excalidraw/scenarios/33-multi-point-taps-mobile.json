@@ -1,0 +1,246 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-30: multi-point lines by taps and the line editor by touch. Taps the Arrow tool and saves its ARIA and a capture, then taps (60,200) with it; picks the Line tool by name and taps (60,280), (200,320) and (320,280); then draws a line by a drag from (60,420) to (300,420), double-taps its middle (two taps 120 ms apart) to open the line editor, and drags from the middle to (180,360), which adds a point if the editor shows a midpoint handle there and otherwise moves the line. Reads the scene, with each line's point count, and the app state after each step. s22 found that a tap with the Arrow tool makes a 100 px arrow and that the Rectangle tool opens a Rectangle, Diamond and Ellipse choice, so the Line tool is looked for in the Arrow tool's choice. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m33-01-arrow-tool"
+    },
+    {
+      "do": "screenshot",
+      "name": "m33-01-arrow-tool"
+    },
+    {
+      "do": "tap",
+      "at": [60, 200]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "33-arrow-tap"
+    },
+    {
+      "do": "appState",
+      "label": "33-arrow-tap"
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Line",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m33-02-line-tool"
+    },
+    {
+      "do": "tap",
+      "at": [60, 280]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [200, 320]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [320, 280]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "33-line-taps"
+    },
+    {
+      "do": "appState",
+      "label": "33-line-taps"
+    },
+    {
+      "do": "aria",
+      "save": "m33-03-line-taps"
+    },
+    {
+      "do": "screenshot",
+      "name": "m33-03-line-taps"
+    },
+    {
+      "do": "tap",
+      "at": [350, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Line",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 420]],
+      "to": [[300, 420]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "33-line-drag"
+    },
+    {
+      "do": "appState",
+      "label": "33-line-drag"
+    },
+    {
+      "do": "tap",
+      "at": [180, 420]
+    },
+    {
+      "do": "wait",
+      "ms": 120
+    },
+    {
+      "do": "tap",
+      "at": [180, 420]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "33-double-tap"
+    },
+    {
+      "do": "appState",
+      "label": "33-double-tap"
+    },
+    {
+      "do": "aria",
+      "save": "m33-04-double-tap"
+    },
+    {
+      "do": "screenshot",
+      "name": "m33-04-double-tap"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 420]],
+      "to": [[180, 360]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "33-midpoint-drag"
+    },
+    {
+      "do": "appState",
+      "label": "33-midpoint-drag"
+    },
+    {
+      "do": "aria",
+      "save": "m33-05-midpoint-drag"
+    },
+    {
+      "do": "screenshot",
+      "name": "m33-05-midpoint-drag"
+    },
+    {
+      "do": "tap",
+      "at": [350, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "33-end"
+    },
+    {
+      "do": "appState",
+      "label": "33-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
