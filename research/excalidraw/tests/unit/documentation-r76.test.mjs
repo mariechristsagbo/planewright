@@ -5,8 +5,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  R76,
-  RE,
+  cells,
   differing,
   doc,
   entry,
@@ -16,7 +15,9 @@ import {
   ms,
   order,
   probe,
+  R76,
   range,
+  RE,
   read,
   scenario,
   session,
@@ -151,5 +152,45 @@ describe('the scenario 13 save timing', () => {
       `absent at the ${range(offsets('t100'))} ms read and present at the ` +
         `${range(offsets('t300'))} ms read after the first post-drag read in 6 of 6 trials`,
     );
+  });
+});
+
+// Whether a second run holds what R-76 asks for: a storage read, an initial-page inspection and a
+// REA window over its scenario.
+const holds = (run) => {
+  const own = evidence('rea-windows.json').windows.filter((w) => w.session === run.name);
+  return (
+    session(run.name).steps.byKind.storage > 0 &&
+    own.some((w) => w.file === 'r02-inspect-initial.json') &&
+    own.some((w) => w.file === `r03-inspect-during-${run.observed}.json`)
+  );
+};
+
+describe('the R-76 record', () => {
+  it('marks R-76 done only while every second run holds its reads and windows', () => {
+    const done = R76.every(holds);
+    const [, , , , columns, status, cited, , next, priority] = cells('R-76');
+    expect([columns, status, priority]).toEqual(
+      done ? ['✅/✅/✅', '✅', '—'] : [columns, '🟡', '2'],
+    );
+    for (const run of R76) {
+      const earlier = run.short === 's11' ? 's7' : 's6';
+      expect(cited).toContain(`${run.observed} (${earlier}, ${run.short})`);
+    }
+    expect(next).toMatch(/^None planned; the open points are tracked in R-54/u);
+  });
+
+  it('records the runs, their bounds and their cleanup in the checkpoint', () => {
+    const checkpoint = read(`${RE}/checkpoint.md`);
+    const text = flat(checkpoint.split('## R-76 runs (s8–s11)\n')[1].split(/^## /mu)[0]);
+    for (const run of R76) expect(text).toContain(run.name);
+    expect(text).toContain(
+      'Export to Link, the generation features and collaboration were not used',
+    );
+    expect(text).toContain('the netlogs hold 0 .map requests');
+    expect(text).toMatch(/Cleanup, checked after each session/u);
+    expect(text).toContain('no independent review covers them yet');
+    expect(flat(checkpoint)).toContain('(R-76 ✅)');
+    expect(flat(checkpoint)).toContain('No review covers the R-76 commits after 935f2fc');
   });
 });

@@ -186,14 +186,14 @@ describe('remaining observation work', () => {
     for (const id of ids) expect(cells(id)[9], id).toBe(p);
   });
 
-  it('plans the second fresh-profile runs in a row of their own', () => {
+  it('plans the second fresh-profile runs in a row of their own, now run', () => {
     const text = bullet('Second fresh-profile runs:');
-    expect(idsOf(text)).toEqual(['R-76']);
-    const [, , , , , status, , , next] = cells('R-76');
-    expect(status).toBe('🟡');
-    expect(next).toMatch(/12, 13, 14 and 15/u);
-    expect(next).toMatch(/storage inventory/u);
-    expect(next).toMatch(/initial-page inspection/u);
+    expect(idsOf(text)).toEqual(['R-76', 'R-54']);
+    const [, , , , , status, evidence] = cells('R-76');
+    expect(status).toBe('✅');
+    expect(evidence).toMatch(/12 \(s6, s8\), 13 \(s6, s9\), 15 \(s6, s10\) and 14 \(s7, s11\)/u);
+    expect(evidence).toMatch(/storage inventories and REA initial-page inspections in s8–s11/u);
+    expect(text).toContain('done in s8–s11 (R-76)');
   });
 });
 
