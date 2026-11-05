@@ -34,7 +34,7 @@
    - So every s3 capture and probe after `m01` (the last step of 09) ran at DPR 1. On desktop,
      only `screen.width/height` was affected (DPR 1 is the default). Those values were not
      recorded before s5.
-   - All mobile claims now cite s7, where DPR 3 held at every assertion. s7 asserted the metrics at 5 points: after 09's load, and at the start and end of 10 and of 14. 10b's single capture falls between the end of 10 and the start of 14, and 11's emulate step asserts its own read-back.
+   - All mobile claims now cite s7, where DPR 3 held at every assertion. s7 asserted the metrics at 5 points: after 09's load, and at the start and end of 10 and of 14. 10b's single capture falls between the end of 10 and the start of 14, and 11's emulate step asserts its own read-back. s11 asserted at the same 5 points, and DPR 3 held at each.
 5. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried;
    right-to-left layouts were not observed.
 6. **Fixed coordinates.** Scenario coordinates depend on viewport and zoom. A layout change in the
@@ -79,7 +79,10 @@
   - the driver netlog requests set against scenarios 12, 13, 15 and 14 in s8–s11 (network
     analysis): `evidence/sessions.json` keeps request counts per session, not their times;
   - the s1 and s6 ARIA snapshot comparison behind the medium rating of the secondary surfaces
-    (feature inventory §2); the committed index keeps line counts only.
+    (feature inventory §2); the committed index keeps line counts only;
+  - the s6 and s10 (scenario 15) and s7 and s11 (scenarios 09, 10 and 14) ARIA snapshot
+    comparisons behind the R-76 ratings of B-03, B-21, B-34, B-35 and feature inventory §2 and
+    §6. The committed index keeps line counts, and digests for the byte-identical captures.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

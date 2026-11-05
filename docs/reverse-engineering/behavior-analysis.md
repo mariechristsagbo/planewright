@@ -45,8 +45,17 @@ value is a value the page had saved locally.
 - s8 shares 5 labels with s6, and 5 of 5 are identical: all of scenario 12 (B-02).
 - s9 shares 20 labels with s6, and 19 of 20 are identical: all of scenario 13 except `13a-t200`,
   where s9 had already saved the new shape (B-30).
+- s10 shares 5 labels with s6, and 0 of 5 are identical: s10 ran scenario 15 after 00 and 07c,
+  s6 at the end of the desktop chain. With s6's scroll (90,45) subtracted, the three elements
+  that 15 draws have the same type, box, angle and binding flags in both; their style values
+  differ (the stock defaults in s10, scenario 04's styles in s6), and tool, selection, zoom and
+  theme agree [O].
 - s7 shares 6 labels with s3, and 2 of 6 are identical. The other 4 differ only in scrollX
   after the pinch (−135 in s3 at DPR 1, −132 in s7 at DPR 3), which carries into later labels.
+- s11 shares 9 labels with s7, and 2 of 9 are identical; the other 7 differ only in scrollX
+  (−135 in s11, −132 in s7), set by the pinch in scenario 10 and carried into 14's labels. s11
+  shares 6 labels with s3, and 6 of 6 are identical. s7 and s11 both ran at DPR 3, so the
+  scrollX difference does not follow the DPR [I].
 
 ## Creation
 
@@ -76,13 +85,13 @@ value is a value the page had saved locally.
 - **Edge cases:** a drag that starts on the properties panel creates nothing (B-02).
   Shift/Alt modifiers, drags towards the top-left and very small drags: Not observed (R-31).
 - **Desktop/mobile:** a one-finger touch drag (120,250)→(260,350) with the Rectangle tool gives
-  `[120,250,140,100]` (`m-rect-touch`, s3 and s7) [O]. Ellipse, diamond and line on mobile: Not
+  `[120,250,140,100]` (`m-rect-touch`, s3, s7 and s11) [O]. Ellipse, diamond and line on mobile: Not
   observed (R-24).
 - **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`), 12 (s6, s8:
-  `12-after-canvas-drag`), 10 (s3, s7: `m-rect-touch`).
-- **Confidence:** [O] high (s2 and s6 identical; s3 and s7 identical).
+  `12-after-canvas-drag`), 10 (s3, s7, s11: `m-rect-touch`).
+- **Confidence:** [O] high (s2 and s6 identical; s3, s7 and s11 identical).
 - **Limitations:** one size per shape; dark theme only for a rectangle and an arrow
-  (scenario 15); the line's point count (2) is from the raw timeline (R-29).
+  (scenario 15, s6 and s10); the line's point count (2) is from the raw timeline (R-29).
 
 ### B-02 Properties panel occupies the canvas while a tool is active
 
@@ -118,9 +127,10 @@ value is a value the page had saved locally.
 - **Undo/redo:** not applicable (a hint changes no state).
 - **Edge cases:** the hint for the other tools and states: Not observed (R-01).
 - **Desktop/mobile:** the mobile hint line: Not observed (R-23).
-- **Reproduction:** ARIA snapshots of scenarios 01, 02 and 15 (s1, s6), for example
-  `dark-11-panel-text`.
-- **Confidence:** [O] high for the first three (s1 and s6); medium for the text hint (s6 only).
+- **Reproduction:** ARIA snapshots of scenarios 01, 02 and 15 (s1, s6; 15 also in s10), for
+  example `dark-11-panel-text`.
+- **Confidence:** [O] high for the first three (s1 and s6); high for the text hint, whose
+  `dark-11-panel-text` snapshots in s6 and s10 are identical (a raw comparison).
 - **Limitations:** the text comes from ARIA snapshots outside Git; only their names and line
   counts are committed.
 
@@ -191,9 +201,10 @@ value is a value the page had saved locally.
 - **Undo/redo:** Not observed (R-40).
 - **Edge cases:** re-edit by double-click, multiline, wrapping, an empty text on Escape and the
   font picker: Not observed (R-40).
-- **Desktop/mobile:** dark desktop text: `15-text` `[910,572.5,40,25]` (s6) [O, medium]. Text on
-  mobile: Not observed (R-40).
-- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`), scenario 15 (s6).
+- **Desktop/mobile:** dark desktop text: `15-text` `[910,572.5,40,25]` in s6 and
+  `[1000,617.5,40,25]` in s10, the same box once s6's scroll (90,45) is subtracted [O, high].
+  Text on mobile: Not observed (R-40).
+- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`), scenario 15 (s6, s10).
 - **Confidence:** [O] high for the geometry (s2 and s6 identical).
 - **Limitations:** the width depends on the loaded font (R-40).
 
@@ -264,9 +275,9 @@ value is a value the page had saved locally.
 - **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
 - **Edge cases:** filled shapes and hit tolerance: Not observed (R-34).
 - **Desktop/mobile:** a tap on the stroke of the rectangle selects it (`m-tap-select-stroke`,
-  s3 and s7) [O]; a tap inside: Not observed (R-33).
+  s3, s7 and s11) [O]; a tap inside: Not observed (R-33).
 - **Reproduction:** scenario 03 (s1, s2, s6: `click-inside-transparent-rect`,
-  `click-rect-stroke`); scenario 10 (s3, s7).
+  `click-rect-stroke`); scenario 10 (s3, s7, s11).
 - **Confidence:** [O] high.
 - **Limitations:** one shape type and one stroke width (R-34).
 
@@ -444,8 +455,8 @@ value is a value the page had saved locally.
   for stroke width, stroke style, edges and layers landed elsewhere. Their results are not used
   as findings [O].
 - **State and related effects:** the rectangle's roundness stayed 3 throughout, its value from
-  creation (B-01), not an effect of these clicks [O]. Sections by element type (s6 dark ARIA,
-  `dark-08`, `dark-10`, `dark-11`):
+  creation (B-01), not an effect of these clicks [O]. Sections by element type (s6 and s10 dark
+  ARIA, `dark-08`, `dark-10`, `dark-11`):
   - rectangle: stroke, background, fill, stroke width, stroke style, sloppiness, edges, opacity,
     layers, actions;
   - arrow: "Arrow type" (3 options) and "Arrowheads" replace edges, and "Edit arrow" joins the
@@ -458,8 +469,12 @@ value is a value the page had saved locally.
 - **Edge cases:** at 1280×720 the panel is cut off at "Actions"; a wheel over it scrolls it
   (`dark-09-panel-rect-scrolled`) [O].
 - **Desktop/mobile:** mobile uses a compact bar instead (summary table below, R-11).
-- **Reproduction:** scenarios 04 (s1, s6) and 15 (s6).
-- **Confidence:** [O] high for the Fill row (s1, s6); medium for the per-type sections (s6).
+- **Reproduction:** scenarios 04 (s1, s6) and 15 (s6, s10).
+- **Confidence:** [O] high for the Fill row (s1, s6); in s10, whose rectangle kept a
+  transparent background, `dark-08` has no Fill group. High for the text section (`dark-11`
+  identical in s6 and s10); medium for the rectangle and arrow sections, whose s10 snapshots
+  differ from s6 in the Fill group and in which Sloppiness radio is checked, following the
+  styles in use (raw comparisons).
 - **Limitations:** light-theme per-type sections not captured (R-10).
 
 ## Grouping, layers, alignment
@@ -585,8 +600,8 @@ value is a value the page had saved locally.
   | Shift+1                                 | `05-shift-1-fit`       | 1, (90,45)            | content x 340–760 centred (scroll 90); y not centred (would be 15); no zoom-in |
   | Space+drag (−100,−50)                   | `05-space-drag`        | 1, (−10,−5)           | scroll moves by the drag delta; tool unchanged                                 |
   | Hand tool drag (+50,+50)                | `05-hand-drag`         | 1, (40,45)            | scroll moves by the drag delta                                                 |
-  | Mobile pinch, fingers 90 → 190 px apart | `m-pinch-out`          | 2.111111, (−132,−263) | zoom equals 190/90 in this one sample                                          |
-  | Mobile two-finger pan 80 px up          | `m-two-finger-pan`     | 2.111111, (−132,−301) | scrollY −38 = −80/zoom, rounded, in this one sample                            |
+  | Mobile pinch, fingers 90 → 190 px apart | `m-pinch-out`          | 2.111111, (−132,−263) | zoom equals 190/90 in s3, s7 and s11; scrollX −135 in s3 and s11               |
+  | Mobile two-finger pan 80 px up          | `m-two-finger-pan`     | 2.111111, (−132,−301) | scrollY −38 = −80/zoom, rounded, in s3, s7 and s11                             |
 
 - **State and related effects:** zoom and scroll are saved in the app state [O]. No element
   changes [O].
@@ -601,14 +616,15 @@ value is a value the page had saved locally.
     the pointer; that is [U] (R-48).
   - Shift+1's vertical rule and whether it ever zooms above 100%: [U]; one scene only (R-48).
   - That pinch zoom always follows the finger-distance ratio, and that two-finger pan always
-    moves by delta / zoom, is [H] from one sample each (R-48).
+    moves by delta / zoom, is [H] from one input each, repeated in three sessions (R-48).
   - Zoom limits, step sizes outside 0.9–1.1, PgUp/PgDn, the zoom buttons and the exact pinch
-    anchor (scrollX −135 in s3 vs −132 in s7): Not observed (R-48).
+    anchor (scrollX −135 in s3 and s11 vs −132 in s7): Not observed (R-48).
 - **Desktop/mobile:** as in the table; mobile has no zoom buttons (F-28).
-- **Reproduction:** scenario 05 (s1, s2, s6) and scenario 10 (s3, s7).
+- **Reproduction:** scenario 05 (s1, s2, s6) and scenario 10 (s3, s7, s11).
 - **Confidence:** desktop rows [O] high (s1 and s6 identical; s2 differs from Shift+1 on because
   05 ran straight after 03 there, see the [research README](../../research/excalidraw/README.md#scenario-order-and-dependencies)).
-  Mobile rows [O] high for zoom and the pan delta (s3 and s7); scrollX after the pinch differs.
+  Mobile rows [O] high for zoom and the pan delta (s3, s7 and s11); scrollX after the pinch
+  differs between sessions (see the cross-session replay above).
 - **Limitations:** the "scene point stays put" reading uses the convention
   scene = viewport / zoom − scroll, which also makes the wheel rows consistent [I] (R-48).
 
@@ -657,7 +673,7 @@ value is a value the page had saved locally.
 - **Edge cases:** the "System" radio: Not observed (R-26).
 - **Desktop/mobile:** desktop dark by shortcut and menu (B-37); desktop emulation: Not observed
   (R-26).
-- **Reproduction:** scenario 10 (s3, s7).
+- **Reproduction:** scenario 10 (s3, s7, s11).
 - **Confidence:** [O] high.
 - **Limitations:** default settings only (R-26).
 
@@ -666,13 +682,13 @@ value is a value the page had saved locally.
 - **Initial state:** dark theme.
 - **Action:** open the Export image dialog.
 - **Immediate result:** "Dark mode" is already checked (desktop `dark-05-export` in s1 and s6;
-  mobile `m12-dark-export` in s7) [O].
+  mobile `m12-dark-export` in s7 and s11) [O].
 - **State and related effects:** Not observed (R-16).
 - **Persistence:** Not observed (R-16).
 - **Undo/redo:** not applicable (opening the dialog changes no scene state).
 - **Edge cases:** unchecking it and exporting: Not observed (R-16).
 - **Desktop/mobile:** same on both [O].
-- **Reproduction:** scenarios 07 (s1, s6) and 14 (s7).
+- **Reproduction:** scenarios 07 (s1, s6) and 14 (s7, s11).
 - **Confidence:** [O] high.
 - **Limitations:** the export itself could not complete headless (B-32, R-16).
 
@@ -806,7 +822,8 @@ value is a value the page had saved locally.
 
 ### B-34 Element context menu
 
-- **Initial state:** a selected rectangle, dark theme (s6).
+- **Initial state:** a selected rectangle, dark theme (s6; in s10 on an otherwise empty
+  scene).
 - **Action:** right-click on its stroke.
 - **Immediate result:** a list of buttons (no `menu` role), in groups: Cut, Copy, Paste / Wrap
   selection in frame / Copy to clipboard as PNG, as SVG / Copy styles, Paste styles / Add to
@@ -817,9 +834,12 @@ value is a value the page had saved locally.
 - **Undo/redo:** Not observed (R-09).
 - **Edge cases:** menu on multi-selection or groups: Not observed (R-09).
 - **Desktop/mobile:** light desktop and mobile: Not observed (R-09).
-- **Reproduction:** scenario 15 (s6).
-- **Confidence:** [O] medium (s6 only). Effects of Duplicate and Lock are known only through
-  their shortcuts (B-18, B-19).
+- **Reproduction:** scenario 15 (s6, s10).
+- **Confidence:** [O] medium. The menu entries are identical in s6 and s10, but the snapshots
+  are not: the panel behind the menu has no Fill group in s10 and another Sloppiness radio
+  checked, following the styles in use (a raw comparison). By the rule applied to the secondary
+  surfaces in the feature inventory, that stays medium. Effects of Duplicate and Lock are known
+  only through their shortcuts (B-18, B-19).
 - **Limitations:** no item was clicked (R-09).
 
 ### B-35 Clear canvas confirmation
@@ -833,9 +853,11 @@ value is a value the page had saved locally.
 - **Undo/redo:** Not observed (R-13).
 - **Edge cases:** Confirm: Not observed (R-13).
 - **Desktop/mobile:** desktop: Not observed (R-13).
-- **Reproduction:** scenario 14 (s7).
-- **Confidence:** [O] medium (s7 only).
-- **Limitations:** one session (R-13).
+- **Reproduction:** scenario 14 (s7, s11).
+- **Confidence:** [O] high: s7 and s11 give identical `m15-dark-reset-confirm` snapshots (a raw
+  comparison) and byte-identical captures, and `14-end` keeps the element in both; s11 ran a
+  later build.
+- **Limitations:** mobile dark only (R-13).
 
 ## Desktop and mobile differences (summary)
 
