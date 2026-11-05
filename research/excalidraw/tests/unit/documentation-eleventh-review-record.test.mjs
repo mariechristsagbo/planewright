@@ -1,29 +1,20 @@
 // Checks the record of the review of 79fc538, found by its head: its counts, session, range,
 // permission-limited verification and verdict, the handling of each finding, where the
-// tenth-review remediation ends, and R-75, the review-session requirement and issue #1 left open
-// while the remediation of that review is not covered by a review.
+// tenth-review remediation ends, and that the review of 4e9c663 covers the remediation of that
+// review.
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState, listedReviews, reviewByHead } from './review-list.mjs';
+import { blockingFindings, listedReviews, reviewByHead } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s+/gu, ' ');
 const checkpoint = () => read('docs/reverse-engineering/checkpoint.md');
 const section = (title) => checkpoint().split(`## ${title}\n`)[1].split(/^## /mu)[0];
-// The names of the rows of a checkpoint status table whose status is `status`, in table order.
-const withStatus = (title, status) =>
-  section(title)
-    .split('\n')
-    .filter((line) => /^\| [^-]/u.test(line))
-    .slice(1)
-    .map((line) => line.split('|').map((cell) => flat(cell).trim()))
-    .filter((cells) => cells[2] === status)
-    .map((cells) => cells[1]);
 const r75 = () =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
@@ -72,47 +63,23 @@ describe('the record of the review of 79fc538', () => {
     expect(entry()).toMatch(/footer-leading-blank[^.]*on bdaa4a4/u);
   });
 
-  it('names its remediation as not covered by a review, with a finite next review', () => {
+  it('records that the review of 4e9c663 covers the remediation, which keeps R-75 open', () => {
     const text = reviewByHead(checkpoint(), '79fc538').text;
-    expect(text).toMatch(/^ +- \*\*Not covered by a review\.\*\*/mu);
+    expect(text).not.toMatch(/^ +- \*\*Not covered by a review\.\*\*/mu);
+    expect(text).toMatch(/^ +- \*\*Covered by the review of `4e9c663`\.\*\*/mu);
     expect(entry()).toMatch(
-      /Not covered by a review\. The eleventh-review remediation, from d61898e to the commit that records its checks, is behaviour-changing\. R-75 stays 🟡 until one fresh independent read-only review of the head where it ends, covering 79fc538 to that head, reports 0 critical, 0 major and 0 minor findings\./u,
+      /Covered by the review of 4e9c663\. The eleventh-review remediation, 79fc538\.\.4e9c663, from d61898e to 4e9c663, is behaviour-changing\. The review of 4e9c663 covers it and reports two minor findings, so it does not meet the exit rule/u,
     );
+    expect(blockingFindings(reviewByHead(checkpoint(), '79fc538'))).toBe(1);
+    expect(r75()[6]).toContain('79fc538');
   });
 });
 
-describe('R-75 after the review of 79fc538', () => {
-  it('ends the tenth-review remediation at 79fc538, the head it reviewed', () => {
+describe('where the tenth-review remediation ends', () => {
+  it('ends it at 79fc538, the head that the review of 79fc538 covered', () => {
     expect(flat(section('Checks of the tenth-review remediation'))).toContain(
       'The remediation ends at 79fc538, the commit that adds this section',
     );
-    expect(exitRuleState(checkpoint())).toMatchObject({
-      head: '79fc538',
-      blocking: 1,
-      covers: true,
-      unreviewed: true,
-      met: false,
-    });
-  });
-
-  it('leaves R-75, the review requirement and issue #1 open', () => {
-    expect([r75()[5], r75()[9]]).toEqual(['🟡', '1']);
-    expect(r75()[6]).toContain('79fc538');
-    expect(withStatus('Acceptance criteria', 'Partial')).toEqual([
-      'feature-inventory.md covers all discovered features',
-      'behavior-analysis.md',
-      'limitations.md',
-      'Desktop light/dark and mobile evidence sets',
-      'Canvas interactions through the external driver while REA observes',
-      'Prioritised backlog with acceptance criteria',
-    ]);
-    expect(withStatus('Testing requirements', 'Partial')).toEqual([
-      'Re-run each documented interaction from a fresh profile',
-      'Generated JSON and REA bundles validated',
-      'Separate Claude Code review session',
-    ]);
-    expect(flat(checkpoint())).toContain('Issue #1 stays open');
-    expect(flat(section('Blockers and residuals'))).toContain('Independent review (R-75), open.');
   });
 });
 
@@ -124,7 +91,7 @@ describe('the checks of the eleventh-review remediation', () => {
   it('name its commits, where it ends and the checks that ran or did not', () => {
     const checks = flat(text());
     for (const commit of [...Object.values(COMMITS), '776dc05']) expect(checks).toContain(commit);
-    expect(checks).toContain('The remediation ends at the commit that adds this section');
+    expect(checks).toContain('The remediation ends at 4e9c663, the commit that adds this section');
     expect(checks).toMatch(/npm run validate passed on 776dc05[^.]*42 test files and 546 tests/u);
     expect(checks).toContain(
       `all ${String(committed().length)} committed evidence files regenerate byte for byte`,
@@ -137,8 +104,11 @@ describe('the checks of the eleventh-review remediation', () => {
     expect(checks).toContain('no live session ran');
   });
 
-  it('name the remediation as not covered by a review', () => {
-    expect(text()).toMatch(/^- \*\*Not covered by a review\.\*\*/mu);
-    expect(exitRuleState(checkpoint())).toMatchObject({ remediated: true, met: false });
+  it('say that the review of 4e9c663 covers the remediation', () => {
+    expect(text()).not.toMatch(/^- \*\*Not covered by a review\.\*\*/mu);
+    expect(flat(text())).toContain(
+      'Review. The review of 4e9c663, the twelfth, covers this remediation (79fc538..4e9c663). ' +
+        'It reported two minor findings, so the exit rule is not met',
+    );
   });
 });
