@@ -1,6 +1,7 @@
-// Checks the scenarios of the observation batch (17-23): they name only driver steps, assert the
-// metrics first, never navigate or emulate, keep each export alone in its session, keep the
-// Export to Link secret out of captures, and bound the generation requests. No browser is started.
+// Checks the scenarios of the observation batch (17-23) and of the mobile follow-up (24): they name
+// only driver steps, assert the metrics first, never navigate or emulate, keep each export alone in
+// its session, keep the Export to Link secret out of captures, bound the generation requests, and
+// keep the reload scenario free of input. No browser is started.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -27,7 +28,11 @@ const DESKTOP = [
   '21-generation-desktop',
   '23-modifier-drawing-nudge-desktop',
 ];
-const MOBILE = ['19-export-svg-mobile', '22-generation-dialogs-mobile'];
+const MOBILE = [
+  '19-export-svg-mobile',
+  '22-generation-dialogs-mobile',
+  '24-reload-persistence-mobile',
+];
 const ALL = [...DESKTOP, ...MOBILE];
 
 describe('the observation-batch scenarios', () => {
@@ -146,5 +151,28 @@ describe('the modifier and nudge scenario (R-31, R-37)', () => {
     expect(modifiers).toEqual([['Shift'], ['Alt'], ['Shift']]);
     const keys = steps.filter((step) => step.do === 'key').map((step) => step.key);
     expect(keys).toEqual(expect.arrayContaining(['ArrowRight', 'Shift+ArrowRight', 'Control+z']));
+  });
+});
+
+describe('the mobile reload scenario (R-54)', () => {
+  const name = '24-reload-persistence-mobile';
+  const kinds = () => flatSteps(name).map((step) => step.do);
+
+  it('sends no input: only metrics, probes, captures, waits and one reload', () => {
+    const allowed = new Set(['assertMetrics', 'scene', 'appState', 'aria', 'screenshot', 'wait']);
+    expect(kinds().filter((kind) => !allowed.has(kind))).toEqual(['reload']);
+  });
+
+  it('reads and captures the scene on both sides of the reload, asserting the metrics after it', () => {
+    const at = kinds().indexOf('reload');
+    const before = kinds().slice(0, at);
+    const after = kinds()
+      .slice(at + 1)
+      .filter((kind) => kind !== 'wait');
+    for (const side of [before, after])
+      expect(side).toEqual(expect.arrayContaining(['scene', 'appState', 'aria', 'screenshot']));
+    expect(after[0]).toBe('assertMetrics');
+    const labels = flatSteps(name).flatMap((step) => (step.label ? [step.label] : []));
+    expect(new Set(labels)).toEqual(new Set(['24-before-reload', '24-after-reload']));
   });
 });

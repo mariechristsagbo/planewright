@@ -219,6 +219,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     and style defaults that 01–07b leave.
   - `17`, `18`, `20`, `21` and `23` run after `00`, and `19` and `22` after `09`, each in a fresh
     session (17–19 keep each export alone in its session; 20 publishes the scene once).
+  - `24` sends no input: it reads and captures a drawn scene, reloads with 09b's reload, wait and
+    assertion, and reads and captures again, so it runs after a scenario that leaves a drawn
+    scene (planned after 22 and 16).
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
