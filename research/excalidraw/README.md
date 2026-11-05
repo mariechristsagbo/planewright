@@ -126,7 +126,9 @@ the background just before a driver batch.
   `sessions.json`. A failed trigger in `download`, `fileChooser` or `acceptDialog` fails its step
   and leaves no pending waiter that could stop the driver.
 - **Cleanup checks.** `isolation-check.sh` and `selftest.sh` pass a removal check only when a
-  successful docker listing omits the name; a failed listing is a FAIL.
+  successful docker listing omits the name; a failed listing is a FAIL. `browser.sh stop` reports
+  "no … with the research label" only after a listing that worked, and otherwise fails with
+  state UNKNOWN.
 - **REA extraction.** `rea-extract.mjs` needs an input ending in `.json` and never replaces an
   existing PNG with different bytes. The optional summary file is created exclusively, so an
   existing file, the input included, is never replaced. Accessible names and descriptions, and
