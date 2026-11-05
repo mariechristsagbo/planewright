@@ -136,8 +136,9 @@ the background just before a driver batch.
 
 ## Scenario order and dependencies
 
-Most scenarios continue from the previous one's end state. Only `00` (desktop) and `09` (mobile)
-emulate, before the first navigation. Every main scenario asserts the metrics before its first
+Most scenarios continue from the previous one's end state. `00` (desktop) and `09` (mobile) emulate
+before the first navigation; `00c` re-emulates after a driver restart, and `11` re-emulates on
+purpose to probe DPR. Every main scenario asserts the metrics before its first
 input (02 right after its own load; 00b, 00c and 09b after their reload); the short follow-on
 scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 

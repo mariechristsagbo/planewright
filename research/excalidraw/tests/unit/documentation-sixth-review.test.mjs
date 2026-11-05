@@ -238,3 +238,43 @@ describe('the rating of the secondary surfaces', () => {
     expect(doc('checkpoint.md')).not.toContain('The high rating of §2');
   });
 });
+
+describe('wording', () => {
+  const emulating = () =>
+    scenarios()
+      .filter(({ steps }) => steps.some((step) => step.do === 'emulate'))
+      .map(({ name }) => name.split('-')[0]);
+
+  it('name every scenario that emulates', () => {
+    expect(emulating()).toEqual(['00', '00c', '09', '11']);
+    const texts = [doc('checkpoint.md'), flat(read('research/excalidraw/README.md'))];
+    for (const text of texts) {
+      expect(text).not.toMatch(
+        /These are the only steps that emulate|Only 00 \(desktop\) and 09 \(mobile\) emulate/u,
+      );
+      expect(text).toMatch(/00c re-emulates after a driver restart, and 11 re-emulates/u);
+    }
+  });
+
+  it('date the metric assertions from s6, because s1–s5 have none', () => {
+    for (const name of [
+      's1-desktop',
+      's2-desktop-fresh',
+      's3-mobile',
+      's4-dpr-probe',
+      's5-desktop-aborted',
+    ]) {
+      expect(session(name).steps.byKind.assertMetrics ?? 0, name).toBe(0);
+    }
+    expect(doc('checkpoint.md')).toMatch(/From s6 on, CSS viewport, DPR/u);
+  });
+
+  it('keep the remaining-copy wording, the regenerated summaries and the open items exact', () => {
+    expect(doc('rea-findings.md')).not.toContain('so none remains');
+    expect(doc('rea-findings.md')).toContain('no copy is known to remain');
+    const methodology = doc('methodology.md');
+    expect(methodology).not.toContain('The s1–s3 probe summaries regenerate');
+    expect(methodology).toContain('All five probe summaries (s1, s2, s3, s6 and s7) regenerate');
+    expect(doc('backlog.md')).not.toContain('so every criterion below is open');
+  });
+});

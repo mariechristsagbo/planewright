@@ -135,8 +135,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 
 ## Pending observation: scope items without observed behaviour
 
-These issue #1 scope items have no observed behaviour yet, so every criterion below is **open**
-until its residual row is observed. Their priority is set when the feature issue is written.
+These issue #1 scope items have no observed behaviour yet. The first bullet of each item records
+only what was inventoried or seen [O]; every behaviour criterion after it is **open** until its
+residual row is observed. Their priority is set when the feature issue is written.
 
 19. **Libraries.** Ref: feature inventory §2 (Library sidebar), R-15.
     - The sidebar, its four unnamed tabs, an empty state and a link to an external library site

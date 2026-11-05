@@ -172,7 +172,7 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
 - Every screenshot's PNG header was checked. From s6 on, layout metrics are asserted before the
   first input of every main scenario (see Environment).
 - Committed JSON is produced by scripts and formatted by Prettier, so `npm run format:check`
-  parses it. The s1–s3 probe summaries regenerate unchanged with the current tools, and
+  parses it. All five probe summaries (s1, s2, s3, s6 and s7) regenerate unchanged with the current tools, and
   `evidence/rea-windows.json` regenerates byte for byte from the retained REA records and
   timelines.
 - `research/excalidraw/tests/unit/documentation.test.mjs` checks the documents against the
