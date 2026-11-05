@@ -75,3 +75,28 @@ describe("R-64's mobile column", () => {
     );
   });
 });
+
+describe('commit ranges in the checkpoint', () => {
+  // Every A..B range of the checkpoint, as [A, B].
+  const ranges = () =>
+    [...doc('checkpoint.md').matchAll(/\b([0-9a-f]{7})\.\.([0-9a-f]{7})\b/gu)].map(([, a, b]) => [
+      a,
+      b,
+    ]);
+
+  it('follow the Git notation that the checkpoint states', () => {
+    expect(doc('checkpoint.md')).toContain(
+      'Commit ranges are written as Git reads them: A..B is the commits after A up to and ' +
+        'including B. A span that includes its first commit is written from A to B.',
+    );
+    expect(doc('checkpoint.md')).toContain('The 23 commits from 0587fac to 626e849');
+  });
+
+  it('start at the same commit wherever they end at the same commit', () => {
+    const starts = new Map();
+    for (const [a, b] of ranges()) starts.set(b, [...new Set([...(starts.get(b) ?? []), a])]);
+    expect(starts.size).toBeGreaterThan(1);
+    for (const [end, list] of starts) expect(list, end).toHaveLength(1);
+    expect(starts.get('f1562ed')).toEqual(['935f2fc']);
+  });
+});

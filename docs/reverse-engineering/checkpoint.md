@@ -5,6 +5,8 @@ latest sessions are still the R-76 runs s8–s11, on 2026-11-05 at 04:48–04:55
 comes from retained evidence and local checks).
 Branch: `docs/1-excalidraw-research`. Issue #1 stays
 open: the Draft PR refers to it (`Refs #1`) and does not close it.
+Commit ranges are written as Git reads them: `A`..`B` is the commits after `A` up to and
+including `B`. A span that includes its first commit is written from `A` to `B`.
 
 ## Acceptance criteria
 
@@ -46,7 +48,7 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
   check, made at least one new test fail. Most commit messages name that test; those of
   `0587fac`, `73bb550` and `ddc61f6` do not name it, and the sixth review's own sabotage runs
   confirmed all three.
-- The 23 commits `0587fac`..`626e849` were pushed normally at 22:53 UTC; the remote branch head
+- The 23 commits from `0587fac` to `626e849` were pushed normally at 22:53 UTC; the remote branch head
   then read `626e849`. Their full bodies carry no trailers and no tool attribution, and
   `secret-scan.mjs` found no secret shape in their patches.
 - On `626e849` all 8 GitHub check runs succeeded (Quality gates ran 27 test files and 418 tests,
@@ -264,7 +266,7 @@ profile, with a storage inventory and a REA initial-page inspection in that sess
 behaviour-changing commit reports 0 critical, 0 major and 0 minor findings. Suggestions that do not
 block may stay open if they are listed here with their handling. A commit is behaviour-changing when
 it changes the research tooling, its tests or a documented research claim, whether or not it
-remediates a review; the R-76 commits `0b4fb19`..`f1562ed` were. A behaviour-changing commit that no
+remediates a review; the R-76 commits `935f2fc`..`f1562ed`, from `0b4fb19` to `f1562ed`, were. A behaviour-changing commit that no
 listed review covers is named under a **Not covered by a review.** bullet in this checkpoint, and
 R-75 stays 🟡 while such a bullet remains. Commits that only record a review, its checks or the PR
 description are not, so a review that meets the rule does not call for another one. Updating the
