@@ -3,6 +3,8 @@
 // it. Both files take their times from the driver process's clock. The netlog writes a request
 // when it has finished or failed (netlog.mjs), so an entry's time bounds the request's start from
 // above and is never that start; the timeline records when each step started, not when it ended.
+// Netlogs written since the observation batch also give each request's start (`startedAt`); for
+// those, an entry text carries its start offset and the drawing summary counts request starts.
 // Kept: step lines, kinds, start times and role names; per entry its offset, event, resource type,
 // status, origin and path, and whether the service worker served it, how many query keys it had
 // and whether its URL had a fragment. No query keys or values, headers, bodies or payloads.
@@ -109,8 +111,11 @@ const flags = (entry) => [
   entry.hasFragment === true ? 'fragment' : '',
 ];
 
-/** One entry as `<offset> <event> [type] [status] <origin+path> [sw] [qN] [fragment]`. */
-export function entryText(entry, ms) {
+/**
+ * One entry as `<offset> <event> [type] [status] <origin+path> [sw] [qN] [fragment] [start]`;
+ * `start±N` is the request's start offset from the same step start, when it is known.
+ */
+export function entryText(entry, ms, startMs) {
   const parts = [
     `${ms < 0 ? '' : '+'}${String(ms)}`,
     EVENTS.has(entry.event) ? entry.event : 'other',
@@ -118,11 +123,39 @@ export function entryText(entry, ms) {
     Number.isInteger(entry.status) ? String(entry.status) : '',
     target(entry),
     ...flags(entry),
+    startMs === undefined ? '' : `start${startMs < 0 ? '' : '+'}${String(startMs)}`,
   ];
   return redactSecrets(parts.filter(Boolean).join(' '));
 }
 
 const isDrawing = (step) => DRAWING.includes(step?.do);
+const REQUESTS = new Set(['request', 'request-failed']);
+
+// A request's start time, or null when the entry has none. A start that is present must be in
+// the canonical form, like every other time; netlogs written before starts were recorded have no
+// `startedAt` key.
+const startOf = (entry, index) =>
+  REQUESTS.has(entry?.event) && 'startedAt' in entry && entry.startedAt !== null
+    ? timeOf(entry.startedAt, `netlog line ${String(index + 1)} start`)
+    : null;
+
+/**
+ * How many request starts are known, how many are not, and how many fell while a drawing step was
+ * the latest to start. Absent for a netlog without start times, so its summary is unchanged.
+ */
+function requestStarts(steps, entries, starts) {
+  const requests = entries.filter((entry) => REQUESTS.has(entry?.event));
+  if (!requests.some((entry) => 'startedAt' in entry)) return {};
+  const known = starts.filter((t) => t !== null);
+  const during = known.filter((t) => isDrawing(steps[latestStep(steps, t)])).length;
+  return {
+    request_starts: {
+      known: known.length,
+      unknown: requests.length - known.length,
+      during_drawing: during,
+    },
+  };
+}
 
 /**
  * The drawing steps of a session: how many of each kind, how many entries were written while one
@@ -160,21 +193,27 @@ export function placeSession(rows, entries) {
   const times = entries.map((entry, index) =>
     timeOf(entry?.at, `netlog line ${String(index + 1)}`),
   );
+  const starts = entries.map(startOf);
   const groups = new Map();
   const before = [];
   entries.forEach((entry, index) => {
     const k = latestStep(steps, times[index]);
-    const text = entryText(entry, times[index] - steps[Math.max(k, 0)].t);
+    const base = steps[Math.max(k, 0)].t;
+    const start = starts[index] === null ? undefined : starts[index] - base;
+    const text = entryText(entry, times[index] - base, start);
     if (k < 0) before.push(text);
     else groups.set(k, [...(groups.get(k) ?? []), text]);
   });
   return {
     timeline_rows: rows.length,
     netlog_entries: entries.length,
-    drawing: drawingSummary(
-      steps,
-      [...times].sort((a, b) => a - b),
-    ),
+    drawing: {
+      ...drawingSummary(
+        steps,
+        [...times].sort((a, b) => a - b),
+      ),
+      ...requestStarts(steps, entries, starts),
+    },
     before_first_step: before,
     placements: [...groups.keys()]
       .sort((a, b) => a - b)
