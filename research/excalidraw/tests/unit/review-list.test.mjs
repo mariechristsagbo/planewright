@@ -74,3 +74,32 @@ describe("the latest review's own verdict and the commits after it", () => {
       expect(exitRuleState(text)).toMatchObject({ reviewMeets: false, met: false });
   });
 });
+
+describe('a review that covers work recorded in its own section', () => {
+  // Fourteen clean reviews, the last of which covers work in `title`, not a remediation.
+  const other = (sentence, title = 'Netlog placement (R-64, R-66)') =>
+    record(14).replace(
+      '## Checks of the thirteenth-review remediation\n- The remediation ends at 000000e.',
+      `## ${title}\n- ${sentence}.`,
+    );
+
+  it('reads where the netlog placement ends as the head the latest review covers', () => {
+    const text = other('The work ends at 000000e');
+    expect(text).not.toContain('-review remediation');
+    expect(exitRuleState(text)).toMatchObject({
+      head: '000000e',
+      covers: true,
+      reviewMeets: true,
+      met: true,
+    });
+  });
+
+  it('needs that section to end the work at the latest head, in its own words', () => {
+    for (const text of [
+      other('The work ends at 000000d'),
+      other('The remediation ends at 000000e'),
+      other('The work ends at 000000e', 'Other work'),
+    ])
+      expect(exitRuleState(text)).toMatchObject({ head: '000000e', covers: false, met: false });
+  });
+});

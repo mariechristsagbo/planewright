@@ -75,21 +75,37 @@ export function blockingFindings(review) {
 // A bullet, at any depth, that names behaviour-changing commits no listed review covers yet.
 const UNREVIEWED = /^\s*- \*\*Not covered by a review\.\*\*/mu;
 
+// The checkpoint sections that record work a review covers and that is not a review remediation.
+const OTHER_WORK = ['Netlog placement (R-64, R-66)'];
+
+// The flattened text of a checkpoint section, or '' when there is none.
+const sectionText = (checkpoint, title) =>
+  flat((checkpoint.split(`## ${title}\n`)[1] ?? '').split(/^## /mu)[0]);
+
+// Whether the work that the review numbered `count` covers ends at `head`: the checks of the
+// remediation of the review before it say so, or a section of other work does.
+function covered(checkpoint, count, head) {
+  const remediation = `Checks of the ${reviewWords(count - 1).ordinal}-review remediation`;
+  return (
+    sectionText(checkpoint, remediation).includes(`The remediation ends at ${head}`) ||
+    OTHER_WORK.some((title) => sectionText(checkpoint, title).includes(`The work ends at ${head}`))
+  );
+}
+
 /**
  * How the latest listed review stands against the R-75 exit rule: its blocking findings, whether
- * the checks of the remediation before it say that this remediation ends at its head (`covers`),
- * whether a remediation of its own is recorded, which would leave a later head unreviewed, and
- * whether the checkpoint names commits that no review covers (`unreviewed`). `reviewMeets` is the
- * review's own verdict: no blocking finding, the head covered and no remediation of its own. `met`
- * also needs no unreviewed commit, so a review that met the rule stays met in its own record
- * while later behaviour-changing commits keep R-75 open.
+ * the record of the work it covers says that this work ends at its head (`covers`), whether a
+ * remediation of its own is recorded, which would leave a later head unreviewed, and whether the
+ * checkpoint names commits that no review covers (`unreviewed`). `reviewMeets` is the review's
+ * own verdict: no blocking finding, the head covered and no remediation of its own. `met` also
+ * needs no unreviewed commit, so a review that met the rule stays met in its own record while
+ * later behaviour-changing commits keep R-75 open.
  */
 export function exitRuleState(checkpoint) {
   const reviews = listedReviews(checkpoint);
   const latest = reviews.at(-1);
   const checks = (count) => `## Checks of the ${reviewWords(count).ordinal}-review remediation\n`;
-  const before = checkpoint.split(checks(reviews.length - 1))[1] ?? '';
-  const covers = flat(before.split(/^## /mu)[0]).includes(`The remediation ends at ${latest.head}`);
+  const covers = covered(checkpoint, reviews.length, latest.head);
   const remediated = checkpoint.includes(checks(reviews.length));
   const unreviewed = UNREVIEWED.test(checkpoint);
   const blocking = blockingFindings(latest);
