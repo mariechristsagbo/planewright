@@ -75,6 +75,17 @@ inspection is summarised in `evidence/rea-inspect-initial-<session>.summary.json
 | `s14-desktop-svg-only` | `r01-targets.json`                  | `ev_11fa40c9`     | `list_browser_targets`                                                                                                                                                                                   |
 | `s14-desktop-svg-only` | `r02-inspect-during-17.json`        | `ev_0b415085`     | `inspect_web_page`, 16:55:36.612–16:56:12.089, 7 origins, over the verification page; scenario 17 stopped at its first step                                                                              |
 
+**Mobile follow-up records** (s15–s16, on 2026-11-05, times UTC). The window armed before
+scenario 24 in s16 returned no record (limitation 12).
+
+| Session                        | File                         | Evidence (prefix) | Operation and window                                                                                                                |
+| ------------------------------ | ---------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `s15-mobile-svg-only`          | `r01-targets.json`           | `ev_81901411`     | `list_browser_targets`                                                                                                              |
+| `s15-mobile-svg-only`          | `r02-inspect-during-19.json` | `ev_0c2e9b3b`     | `inspect_web_page`, 17:57:10.652–17:57:46.409, 7 origins. Armed 4191 ms before scenario 19's first step; all its 21 steps inside it |
+| `s16-mobile-generation-reload` | `r01-targets.json`           | `ev_c77d2c12`     | `list_browser_targets`                                                                                                              |
+| `s16-mobile-generation-reload` | `r02-inspect-during-10.json` | `ev_0d96dd39`     | `inspect_web_page`, 17:59:30.865–18:00:16.692, 7 origins. Armed 4300 ms before scenario 10's first step; all its 63 steps inside it |
+| `s16-mobile-generation-reload` | `r03-inspect-during-22.json` | `ev_c1deacac`     | `inspect_web_page`, 18:00:21.114–18:00:56.748, 7 origins. Armed 4637 ms before scenario 22's first step; all its 32 steps inside it |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
@@ -203,7 +214,7 @@ the committed index beyond their IDs.
 1. Network and console capture start at attach (`attach_limited`). Page-load request metadata
    came from the driver netlog.
 2. Third-party origins are policy-filtered unless listed explicitly. Every window before s12
-   allowed only `https://excalidraw.com`; the s12–s14 windows allowed 7 HTTP(S) origins. REA
+   allowed only `https://excalidraw.com`; the s12–s16 windows allowed 7 HTTP(S) origins. REA
    accepts exact HTTP(S) origins only, so a WebSocket origin or a wildcard cannot be listed.
 3. `observe_web_session` retains navigation and lifecycle metadata only; it cannot show requests,
    WebSocket traffic or console output.
@@ -223,4 +234,10 @@ the committed index beyond their IDs.
    export back with the same records in the same order (R-73). The bundles stay outside Git.
 10. `capture_browser_scenario` (REA-driven locator flows) was not used.
 11. REA keeps no time per retained request, so a window bounds a scenario, not a step. In s12 its
-    67 requests match, in number, the 67 that the driver netlog started inside the window.
+    67 requests match, in number, the 67 that the driver netlog started inside the window, and in
+    s15 and s16 the three windows kept 1, 67 and 18, as many as the netlog started inside each.
+12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
+    `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
+    Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that
+    ends before it and one that starts after it, or `observe_web_session` for the navigation
+    metadata alone.

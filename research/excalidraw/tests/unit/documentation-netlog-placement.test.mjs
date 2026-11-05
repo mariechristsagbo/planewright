@@ -265,7 +265,18 @@ describe('the step in which the dedicated worker started (R-64)', () => {
     expect(network()).not.toContain('Which action triggered it was not isolated');
     const mobile = ['09', '10', '10b', '11', '14', '16'].map((id) => JSON.stringify(scenario(id)));
     expect(mobile.some((text) => text.includes('Export to SVG'))).toBe(false);
-    expect(network()).toContain('No mobile scenario clicks Export to SVG.');
+    // From s15 on, scenario 19 clicks Export to SVG alone on mobile; it wrote no worker event.
+    expect(JSON.stringify(scenario('19').steps)).toContain('Export to SVG');
+    expect(JSON.stringify(scenario('19').steps)).not.toContain('Export to PNG');
+    const s15 = evidence('sessions-s15-s16.json').sessions.find((s) =>
+      s.session.startsWith('s15-'),
+    );
+    expect(s15.steps.byKind.download).toBe(1);
+    expect(s15.network.filter((e) => e.event === 'worker')).toEqual([]);
+    expect(network()).toContain(
+      'Of the mobile scenarios only 19 clicks Export to SVG, with no Export to PNG before it; ' +
+        'in s15 it wrote no worker event.',
+    );
   });
 });
 
@@ -280,7 +291,7 @@ describe('R-64 and the subset-worker hypothesis', () => {
       `written during the step that clicks Export to SVG in both, ${String(s1)} and ` +
         `${String(s6)} ms after it started ${PLACEMENT}`,
     );
-    expect(row[7]).toContain('no mobile scenario clicks Export to SVG');
+    expect(row[7]).toContain('even in s15, whose 19 clicked Export to SVG alone');
     // The times are an inference; the hypothesis is the trigger.
     const [s] = dedicated();
     const png = seconds(

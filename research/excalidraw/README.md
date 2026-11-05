@@ -69,7 +69,7 @@ example `node ../rea-build/scripts/rea.mjs observe-web-session http://127.0.0.1:
 `--allowed-origins https://excalidraw.com --observation-ms 40000 --include-storage-keys` (45000
 in s11), started 5 s before the batch (8 s in s11). The initial-page inspections of s8–s11 used
 `--observation-ms 2000` with accessibility, console and WebSocket-shape text approved, as s1's
-did. In s12–s14 `inspect-web-page` ran with one `--allowed-origins` flag for each of the 7
+did. In s12–s16 `inspect-web-page` ran with one `--allowed-origins` flag for each of the 7
 HTTP(S) origins of the s1–s11 netlogs and `--include-storage-keys`, started 6–8 s before the
 batch. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
 `rea-bundle.mjs` lays saved records out as a bundle for REA's own import (`rea evidence-import`,
@@ -195,6 +195,8 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Observation (`s12`)  | 09 → 10 → 22 → 16                                                                                                                                                                                                                                      |
 | Observation (`s13`)  | 00 → 12✗ → 23✗ → 16 (✗ = stopped at its first step, the metrics assertion, on the verification page)                                                                                                                                                   |
 | Observation (`s14`)  | 00 → 17✗                                                                                                                                                                                                                                               |
+| Follow-up (`s15`)    | 09 → 19                                                                                                                                                                                                                                                |
+| Follow-up (`s16`)    | 09 → 10 → 22 → 16 → 24                                                                                                                                                                                                                                 |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
@@ -226,7 +228,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
   earlier `07b` that overwrote 07's captures, and earlier emulate steps that `s6` replaced with
-  assertions. `s3` ran an earlier `10` that re-emulated.
+  assertions. `s3` ran an earlier `10` that re-emulated. `s3`, `s4`, `s7`, `s11` and `s12` ran `09`
+  before it asked for a portrait screen orientation (from `s15` on), and `s12` ran `22` before its
+  assertions expected it.
 - **REA.** Run REA calls only outside the collaboration window (`08`, `08b`): REA target
   listings keep URL fragments. The driver's `runLast` lock keeps 08/08b at the end of a session,
   but it cannot see REA calls, so this rule stays manual.

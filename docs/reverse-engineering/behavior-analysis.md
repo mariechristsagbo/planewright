@@ -741,16 +741,22 @@ value is a value the page had saved locally.
   and s9): the
   probe counts every stored element, including flagged ones, so deleted elements are dropped
   from storage [O].
-- **Undo/redo:** history across a reload: Not observed (R-52).
-- **Edge cases:** zoom across a reload (zoom was 1), selection across a reload, several tabs,
-  storage quota and mobile reload: Not observed (R-54).
-- **Desktop/mobile:** mobile reload: Not observed. Scenario `09b` exists but never ran: s3, s4
-  and s7 each record 0 reloads (R-54).
+- **Undo/redo:** on mobile, the Undo button was enabled before s16's reload and disabled after it,
+  so the history was not kept [O, raw ARIA]; on desktop, history across a reload: Not observed
+  (R-52).
+- **Edge cases:** zoom across a desktop reload (zoom was 1), selection across a reload, several tabs
+  and storage quota: Not observed (R-54).
+- **Desktop/mobile:** mobile reload (s16, scenario 24 after 10, 22 and 16): the document came from
+  the service worker, the stored scene (22 elements) and app state (60 keys: dark, zoom 0.875, the
+  same scroll and tool, nothing selected) read the same before and after (`24-before-reload`,
+  `24-after-reload`) [O], and the two captures show the same view but for the Undo button
+  [O, raw captures and ARIA]. Scenario `09b` itself never ran (R-54).
 - **Reproduction:** scenario 13 (s6, s9: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1,
-  s6).
+  s6); scenario 24 (s16).
 - **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6; deletion also
   in s8 and s9); [O] medium for the timing: s6 and s9 differ at the third read of one of six
-  trials, and an s1 timing reading is not in the committed index.
+  trials, and an s1 timing reading is not in the committed index; [O] medium for the mobile
+  reload: one session.
 - **Limitations:** `excalidraw-state` keeps 60 keys (raw count); the read cadence bounds the save
   time only to the 100–150 ms gaps between reads (R-54).
 
@@ -887,14 +893,19 @@ value is a value the page had saved locally.
   new ones, 5 rectangles, 1 diamond, 5 arrows with bindings and 10 text labels in containers,
   none in a group (`22-mermaid-inserted`) [O]. The next probe read zoom 0.875; which step
   changed it is [U].
-- **Persistence:** read from local storage [O]; a reload was not observed (R-63).
+- **Persistence:** read from local storage [O]; in s16 the 22 elements read the same after a reload
+  (B-30) [O].
 - **Undo/redo:** Not observed (R-63).
 - **Edge cases:** Not observed (R-63): an own definition, an invalid one, a type inserted as an
   image.
 - **Desktop/mobile:** desktop: Not observed (R-63; scenario 21 did not run).
-- **Reproduction:** scenario 22 after 09 and 10 (s12).
-- **Confidence:** [O] medium: one session.
-- **Limitations:** one mobile session in dark theme; the dialog's links were not followed (R-63).
+- **Reproduction:** scenario 22 after 09 and 10 (s12, s16).
+- **Confidence:** [O] high for the dialog, the script requests and the inserted elements' types,
+  sizes, bindings and styles: identical in s12 and s16, both fresh profiles (the dialog by a raw
+  ARIA comparison); medium for the insert's position, which follows the view: in s16 every inserted
+  element's x was 3.4 smaller, with the scroll after scenario 10's pinch at −132 instead of −135.
+- **Limitations:** two mobile sessions, both in dark theme, s12 most likely with a landscape-primary
+  orientation reported (limitations); the dialog's links were not followed (R-63).
 
 ### B-39 Text to diagram and Wireframe to code
 
@@ -914,8 +925,9 @@ value is a value the page had saved locally.
 - **Edge cases:** Not observed (R-63): a prompt, a limit or sign-in that generation may ask for,
   and a frame drawn with the Wireframe to code tool.
 - **Desktop/mobile:** desktop: Not observed (R-63; scenario 21 did not run).
-- **Reproduction:** scenario 22 (s12).
-- **Confidence:** [O] medium: one session.
+- **Reproduction:** scenario 22 (s12, s16).
+- **Confidence:** [O] high for the Text to diagram tab and the `magicframe` tool: identical in s12
+  and s16, both fresh profiles (the tab by a raw ARIA comparison).
 - **Limitations:** nothing was generated, by design of scenario 22; the unnamed button has no
   accessible name (R-63).
 

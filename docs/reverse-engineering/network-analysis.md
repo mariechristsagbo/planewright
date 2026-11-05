@@ -105,8 +105,8 @@ in an MCP restart and are withdrawn.
   chunks and before it wrote both again [I, raw netlog and timeline times]. Both sessions clicked
   Export to PNG 15.0 s before, in the same dialog, and wrote no worker event then. These times
   cannot tell the SVG click from a delayed effect of the PNG export or of opening the dialog, so
-  that the SVG export starts the worker is a hypothesis [H]. No mobile scenario clicks Export to
-  SVG.
+  that the SVG export starts the worker is a hypothesis [H]. Of the mobile scenarios only 19
+  clicks Export to SVG, with no Export to PNG before it; in s15 it wrote no worker event.
 - On collaboration start: `firebaseSDK-*.js`, `qrcode.chunk-*.js`, `random-username.esm-*.js`.
 - Other `index-*.js` chunks with different hashes were also loaded. What they contain is [U].
 
@@ -141,6 +141,18 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   requested a script, a worker and a fetch under `/.well-known/vercel/security/`, with one POST
   to it that failed (`evidence/sessions-s12-s14.json`). No app script, font or analytics request
   followed.
+
+### Mobile follow-up (s15–s16) [O]
+
+- **Export to SVG on mobile.** In s15 the only request after the load was an analytics beacon whose
+  query keys include `event`, started 229 ms after scenario 19's Export to SVG click step; no
+  `worker` event, script or font followed (`evidence/sessions-s15-s16.json`)
+  [I, raw netlog and timeline times].
+- **Mermaid to Excalidraw again.** In s16 opening it wrote the same 2 aborted script requests and 14
+  scripts served by the service worker as in s12.
+- **Mobile reload.** The reload of scenario 24 got its document (HTTP 200) from the service worker.
+- **REA beside the netlog.** The three s15 and s16 windows kept 1, 67 and 18 requests, as many as
+  the netlog started inside each (`evidence/rea-windows-s15-s16.json`).
 
 ## 2. Storage [O]
 

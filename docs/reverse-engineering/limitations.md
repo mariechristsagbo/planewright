@@ -47,10 +47,19 @@
    (requests under `/.well-known/vercel/security/`) instead of the app; s12, two minutes earlier
    with the mobile user agent, loaded the app. Export to Link, the desktop generation features,
    the isolated exports of R-64 and the desktop all-origin window of R-66 wait for a session that
-   loads the page without it. What the page depends on is unverified [U].
+   loads the page without it. What the page depends on is unverified [U]. The mobile sessions s15
+   and s16 (17:56 and 17:59 UTC) loaded the app too; the desktop was not tried again.
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
+10. **Screen orientation of the earlier mobile sessions.** Until s15 the mobile emulation named no
+    screen orientation. On the self-authored fixture, the emulate calls that s7, s11 and s12 used
+    (unchanged since `77ad658`) read a `landscape-primary` screen at angle 0 for the 390×844
+    portrait screen [O, local fixture], so those sessions most likely reported that orientation to
+    the reference [I]; s3 and s4 used earlier calls and are not known. From s15 on, 09 asks for
+    portrait-primary at angle 0 and every mobile assertion checks it. s16 repeated s12's 10 and 22
+    that way, and their 13 shared ARIA snapshots are identical byte for byte, so no effect of the
+    change was seen there.
 
 ## Tooling limits
 
@@ -94,7 +103,11 @@
     (feature inventory §2); the committed index keeps line counts only;
   - the s6 and s10 (scenario 15) and s7 and s11 (scenarios 09, 10 and 14) ARIA snapshot
     comparisons behind the R-76 ratings of B-03, B-21, B-34, B-35 and feature inventory §2 and
-    §6. The committed index keeps line counts, and digests for the byte-identical captures.
+    §6. The committed index keeps line counts, and digests for the byte-identical captures;
+  - the s12 and s16 ARIA snapshot comparison behind the high ratings of B-38 and B-39, the s15
+    export dialog read the same before and after the Export to SVG click (R-64), and the Undo
+    button's state and the view before and after s16's reload (B-30): the committed index keeps ARIA
+    line counts and capture digests only.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
