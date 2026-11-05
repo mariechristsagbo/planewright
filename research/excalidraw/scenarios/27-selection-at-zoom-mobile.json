@@ -1,0 +1,96 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-54: a selection at a zoom other than 1 for the reload of 24. Pinches by 1.5 about (195,560), then draws a rectangle with the Rectangle tool, which leaves it selected, and reads the scene and app state, the ARIA and a capture with no further input. Runs after 25, whose two rectangles stay above the pinch, and before 24, which reloads the page and reads the state again.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [135, 560],
+        [255, 560]
+      ],
+      "to": [
+        [105, 560],
+        [285, 560]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "27-zoomed"
+    },
+    {
+      "do": "appState",
+      "label": "27-zoomed"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[120, 600]],
+      "to": [[260, 690]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "27-selected-at-zoom"
+    },
+    {
+      "do": "appState",
+      "label": "27-selected-at-zoom"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m27-01-selected-at-zoom"
+    },
+    {
+      "do": "screenshot",
+      "name": "m27-01-selected-at-zoom"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

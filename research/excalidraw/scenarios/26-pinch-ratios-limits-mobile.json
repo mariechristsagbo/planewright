@@ -1,0 +1,376 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-48: pinch ratios, anchors and zoom limits with the selection tool. Draws a small reference rectangle [30,90,40,30] at the top left and deselects it, then makes 13 two-finger pinches whose midpoint stays still: ratios 2 and 0.5 about (195,450), 1.5 about (300,560) and 1/3 about (150,600), then three of 0.2 and six of 5 about (195,400), reading the scene and app state 800 ms after each. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[30, 90]],
+      "to": [[70, 120]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [300, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-start"
+    },
+    {
+      "do": "appState",
+      "label": "26-start"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [145, 450],
+        [245, 450]
+      ],
+      "to": [
+        [95, 450],
+        [295, 450]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p01"
+    },
+    {
+      "do": "appState",
+      "label": "26-p01"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [95, 450],
+        [295, 450]
+      ],
+      "to": [
+        [145, 450],
+        [245, 450]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p02"
+    },
+    {
+      "do": "appState",
+      "label": "26-p02"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [300, 500],
+        [300, 620]
+      ],
+      "to": [
+        [300, 470],
+        [300, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p03"
+    },
+    {
+      "do": "appState",
+      "label": "26-p03"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [90, 600],
+        [210, 600]
+      ],
+      "to": [
+        [130, 600],
+        [170, 600]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p04"
+    },
+    {
+      "do": "appState",
+      "label": "26-p04"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 150],
+        [195, 650]
+      ],
+      "to": [
+        [195, 350],
+        [195, 450]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p05"
+    },
+    {
+      "do": "appState",
+      "label": "26-p05"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 150],
+        [195, 650]
+      ],
+      "to": [
+        [195, 350],
+        [195, 450]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p06"
+    },
+    {
+      "do": "appState",
+      "label": "26-p06"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 150],
+        [195, 650]
+      ],
+      "to": [
+        [195, 350],
+        [195, 450]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p07"
+    },
+    {
+      "do": "appState",
+      "label": "26-p07"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 350],
+        [195, 450]
+      ],
+      "to": [
+        [195, 150],
+        [195, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p08"
+    },
+    {
+      "do": "appState",
+      "label": "26-p08"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 350],
+        [195, 450]
+      ],
+      "to": [
+        [195, 150],
+        [195, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p09"
+    },
+    {
+      "do": "appState",
+      "label": "26-p09"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 350],
+        [195, 450]
+      ],
+      "to": [
+        [195, 150],
+        [195, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p10"
+    },
+    {
+      "do": "appState",
+      "label": "26-p10"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 350],
+        [195, 450]
+      ],
+      "to": [
+        [195, 150],
+        [195, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p11"
+    },
+    {
+      "do": "appState",
+      "label": "26-p11"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 350],
+        [195, 450]
+      ],
+      "to": [
+        [195, 150],
+        [195, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p12"
+    },
+    {
+      "do": "appState",
+      "label": "26-p12"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [195, 350],
+        [195, 450]
+      ],
+      "to": [
+        [195, 150],
+        [195, 650]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "26-p13"
+    },
+    {
+      "do": "appState",
+      "label": "26-p13"
+    },
+    {
+      "do": "aria",
+      "save": "m26-01-after-pinches"
+    },
+    {
+      "do": "screenshot",
+      "name": "m26-01-after-pinches"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

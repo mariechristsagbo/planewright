@@ -223,7 +223,10 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     session (17–19 keep each export alone in its session; 20 publishes the scene once).
   - `24` sends no input: it reads and captures a drawn scene, reloads with 09b's reload, wait and
     assertion, and reads and captures again, so it runs after a scenario that leaves a drawn
-    scene (planned after 22 and 16).
+    scene (after 22 and 16 in s16; planned after 27).
+  - `25` and `26` run right after `09`, each in a fresh session, because their touch points
+    assume zoom 1, scroll (0,0) and an empty canvas. `27` runs after `25`, whose rectangles stay
+    above its pinch, and before `24`, so that 24 reloads with a selection at a zoom other than 1.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

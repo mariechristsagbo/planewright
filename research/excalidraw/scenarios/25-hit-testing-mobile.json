@@ -1,0 +1,713 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-34: hit-testing by tap at zoom 1. Draws a transparent rectangle [100,110,120,80] and a second of the same size [100,260,120,80], gives the second the #a5d8ff background through the compact property bar's Background popover, then taps each left stroke (x 100) at its vertical middle at offsets of -24 to +24 px and at the centre (+60), each tap after a deselecting tap on empty canvas, and reads the app state 900 ms after each. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas). The emulated touch points have the CDP default contact radius of 1 px, so a finger's contact area is not modelled.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[100, 110]],
+      "to": [[220, 190]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[100, 260]],
+      "to": [[220, 340]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m25-01-background-popover"
+    },
+    {
+      "do": "screenshot",
+      "name": "m25-01-background-popover"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "#a5d8ff"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [320, 520]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "25-shapes"
+    },
+    {
+      "do": "appState",
+      "label": "25-shapes"
+    },
+    {
+      "do": "aria",
+      "save": "m25-02-shapes"
+    },
+    {
+      "do": "screenshot",
+      "name": "m25-02-shapes"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [76, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-m24"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [84, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-m16"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [88, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-m12"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [92, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-m8"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [96, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-m4"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [98, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-m2"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [100, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-0"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [102, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-p2"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [104, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-p4"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [108, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-p8"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [112, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-p12"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [116, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-p16"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [124, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-p24"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [160, 150]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-transparent-centre"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [76, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-m24"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [84, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-m16"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [88, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-m12"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [92, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-m8"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [96, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-m4"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [98, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-m2"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [100, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-0"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [102, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-p2"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [104, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-p4"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [108, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-p8"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [112, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-p12"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [116, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-p16"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [124, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-p24"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [160, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "25-filled-centre"
+    },
+    {
+      "do": "tap",
+      "at": [320, 660]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "25-end"
+    },
+    {
+      "do": "appState",
+      "label": "25-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
