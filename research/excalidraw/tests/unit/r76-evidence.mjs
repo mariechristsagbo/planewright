@@ -1,10 +1,11 @@
 // Shared reads of the committed R-76 evidence (sessions s8–s11) for the documentation checks in
-// documentation-r76.test.mjs and documentation-r76-surfaces.test.mjs.
+// documentation-r76.test.mjs, documentation-r76-surfaces.test.mjs and
+// documentation-tenth-review.test.mjs.
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
+export const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 export const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 export const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s+/gu, ' ');
 export const RE = 'docs/reverse-engineering';

@@ -170,6 +170,7 @@ describe('factual statements', () => {
     const text = doc('methodology.md');
     expect(text).toContain(`navigated ${String(total)} times in total`);
     expect(text).toContain('s6: 9 including the reloads');
+    expect(doc('checkpoint.md')).toContain(`The page-load count (${String(total)})`);
   });
 
   it('do not say that every probe waits 700–800 ms', () => {
