@@ -1,13 +1,15 @@
 // Checks the checkpoint statements that the review of a78a210 found stale or wrong (R-75): where
 // the evidence regeneration was checked, how many reviews it counts, and which documentation
-// checks passed against the 46b2b01 documents; and the record of that review itself. Where it
-// can, each check derives its expectation from the repository (the review list, the test
-// sources) instead of a fixed phrase.
+// checks passed against the 46b2b01 documents; and the record of that review itself, found by its
+// head. Where it can, each check derives its expectation from the repository (the review list,
+// the test sources) instead of a fixed phrase, so recording a later review does not break it.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
+
+import { NUMBERS, listedReviews, reviewByHead, reviewWords } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -33,17 +35,13 @@ describe('the regeneration note', () => {
 });
 
 describe('review counts', () => {
-  const NUMBERS = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-  const listed = () =>
-    section('Independent reviews').match(/^\d+\. \*\*Review of `[0-9a-f]{7}`/gmu) ?? [];
-
   it('match the number of reviews listed in the checkpoint', () => {
+    const { number } = reviewWords(listedReviews(checkpoint()).length);
     const counts = [
       ...flat(checkpoint()).matchAll(/\b([A-Za-z]+) (?:independent )?reviews\b/gu),
     ].filter(([, word]) => NUMBERS.includes(word.toLowerCase()));
     expect(counts.length).toBeGreaterThan(0);
-    for (const [phrase, word] of counts)
-      expect(NUMBERS.indexOf(word.toLowerCase()) + 1, phrase).toBe(listed().length);
+    for (const [phrase, word] of counts) expect(word.toLowerCase(), phrase).toBe(number);
   });
 
   it('name the reviews whose remediations added raw-only facts', () => {
@@ -80,37 +78,22 @@ describe('the sixth-review sabotage record', () => {
   });
 });
 
-describe('the record of the review of a78a210', () => {
-  const entry = () =>
-    flat(
-      section('Independent reviews')
-        .split(/\n(?=\d+\. \*\*Review of)/u)
-        .at(-1),
-    );
-  const status = (id) =>
-    read('docs/reverse-engineering/residual-matrix.md')
-      .split('\n')
-      .find((line) => line.startsWith(`| ${id} |`))
-      .split('|')[5]
-      .trim();
+const row = (id) =>
+  read('docs/reverse-engineering/residual-matrix.md')
+    .split('\n')
+    .find((line) => line.startsWith(`| ${id} |`))
+    .split('|');
 
-  it('lists it last, with its findings, their commits and the suggestions left open', () => {
+describe('the record of the review of a78a210', () => {
+  const entry = () => flat(reviewByHead(checkpoint(), 'a78a210').text);
+
+  it('lists it seventh, with its findings, their commits and the suggestions left open', () => {
     expect(entry()).toMatch(
       /^7\. Review of a78a210: 0 critical, 0 major, 3 minor findings and 3 suggestions\./u,
     );
     for (const commit of ['b72d28d', '4f25d13', 'db24b1f']) expect(entry()).toContain(commit);
     expect(entry()).toMatch(/Suggestions 2 and 3[^.]*not addressed/u);
-  });
-
-  it('keeps R-75 and issue #1 open', () => {
-    expect(status('R-75')).toBe('🟡');
-    expect(note('Separate Claude Code review session')).toMatch(
-      /^Seven independent reviews ran\. The seventh \(of a78a210\) is remediated[^.]*; no review of that remediation has run yet/u,
-    );
-    expect(flat(checkpoint())).toContain('Issue #1 stays open');
-    expect(flat(section('Blockers and residuals'))).toMatch(
-      /seventh-review remediation is still to be run \(R-75\)/u,
-    );
+    expect(row('R-75')[6]).toContain('`a78a210`');
   });
 
   it('records the checks of its remediation', () => {
@@ -118,5 +101,24 @@ describe('the record of the review of a78a210', () => {
     expect(checks).toMatch(/npm run validate passed on db24b1f[^.]*30 test files and 461 tests/u);
     expect(checks).toContain('in a temporary copy outside the repository');
     expect(checks).toMatch(/test:e2e was not run locally/u);
+  });
+});
+
+describe('the latest listed review', () => {
+  it('keeps R-75 and issue #1 open while its remediation is unreviewed', () => {
+    const reviews = listedReviews(checkpoint());
+    const { number, ordinal } = reviewWords(reviews.length);
+    const opening = `${number[0].toUpperCase()}${number.slice(1)} independent reviews ran`;
+    expect(row('R-75')[5].trim()).toBe('🟡');
+    expect(note('Separate Claude Code review session')).toMatch(
+      new RegExp(
+        `^${opening}\\. The ${ordinal} \\(of ${reviews.at(-1).head}\\) is remediated[^.]*; no review of that remediation has run yet`,
+        'u',
+      ),
+    );
+    expect(flat(checkpoint())).toContain('Issue #1 stays open');
+    expect(flat(section('Blockers and residuals'))).toContain(
+      `${ordinal}-review remediation is still to be run (R-75)`,
+    );
   });
 });

@@ -7,6 +7,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { listedReviews, reviewWords } from './review-list.mjs';
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const evidence = (name) => JSON.parse(read(`docs/reverse-engineering/evidence/${name}`));
@@ -310,20 +312,14 @@ describe('checkpoint statuses', () => {
 });
 
 describe('the open review row', () => {
-  const ORDINALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
-
   it('names every listed review and the one whose remediation is still unreviewed', () => {
-    const list = read('docs/reverse-engineering/checkpoint.md')
-      .split('## Independent reviews\n')[1]
-      .split(/^## /mu)[0];
-    const heads = [...list.matchAll(/^\d+\. \*\*Review of `([0-9a-f]{7})`/gmu)].map(([, h]) => h);
+    const heads = listedReviews(read('docs/reverse-engineering/checkpoint.md')).map((r) => r.head);
     const last = heads.at(-1);
     const r75 = row('R-75');
     expect(heads.length).toBeGreaterThan(5);
     for (const head of heads) expect(r75).toContain(`\`${head}\``);
     expect(r75).toContain(`The remediation of the \`${last}\` review has not been reviewed`);
-    expect(doc('checkpoint.md')).toContain(
-      `The ${ORDINALS[heads.length - 1]} (of ${last}) is remediated`,
-    );
+    const { ordinal } = reviewWords(heads.length);
+    expect(doc('checkpoint.md')).toContain(`The ${ordinal} (of ${last}) is remediated`);
   });
 });
