@@ -263,6 +263,12 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     type popover's unnamed radios, touched at the centres measured on s34's capture, and Edit
     arrow (39), and a shade, a typed hex code, Duplicate and the text and freehand popovers (40).
     40 types into the hex box and a new text with the keyboard, which stands in for the phone's.
+  - `41` and `42` run right after `09`, each in a fresh session: 41 opens Text align and picks a
+    font, 42 inserts the Mermaid dialog's offered definition, each with Undo and Redo. `43` sends
+    one Text to diagram prompt; run it once, after 42 in one session only, to keep the generation
+    requests to one. `44` uploads the scene once with Export to Link; run it once, right after
+    `09` in its own fresh session, with no REA call during or after it, because REA records keep
+    URL fragments and DOM attributes, and in no other session.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
