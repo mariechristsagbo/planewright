@@ -117,6 +117,26 @@ describe('rea-extract.mjs REA CLI output', () => {
       storage: { local_storage_keys: ['a', 'b'], indexed_db_names: ['files-db'] },
     });
   });
+
+  it('refuses a failed CLI envelope with a clear message and writes nothing', () => {
+    const shot = JSON.parse(result);
+    const cases = [
+      ['failed-with-record', { ok: false, data: shot }],
+      ['failed', { ok: false, error: { code: 'target_not_found' } }],
+      ['ok-without-record', { ok: true, data: {} }],
+    ];
+    for (const [name, envelope] of cases) {
+      const input = join(dir, `${name}.json`);
+      const output = join(dir, `${name}.summary.json`);
+      writeFileSync(input, JSON.stringify(envelope));
+      const run = extract(input, output);
+      expect(run.status, name).not.toBe(0);
+      expect(run.stderr, name).toMatch(/The REA CLI output (does not report|reports) ok: true/u);
+      expect(run.stderr, name).not.toMatch(/Unsupported REA operation/u);
+      expect(existsSync(output), name).toBe(false);
+      expect(existsSync(join(dir, `${name}.png`)), name).toBe(false);
+    }
+  });
 });
 
 // Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).

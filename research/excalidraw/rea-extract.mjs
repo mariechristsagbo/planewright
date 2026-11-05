@@ -8,8 +8,8 @@
 //
 // Usage: node research/excalidraw/rea-extract.mjs <rea-result.json> [summary-out.json]
 // The input is an Evidence record saved by the MCP server or REA CLI output, which wraps one
-// record as { ok, data }. The optional summary file must not exist yet; nothing that exists is
-// ever replaced.
+// record as { ok, data }. CLI output that does not report ok: true is refused before anything is
+// written. The optional summary file must not exist yet; nothing that exists is ever replaced.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 

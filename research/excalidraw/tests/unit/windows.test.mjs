@@ -55,12 +55,38 @@ const rows = [
   { started: '2026-01-01T00:00:20.001Z', step: { do: 'drag' }, result: {} },
 ];
 
-describe('REA window summaries', () => {
+describe('REA CLI envelopes', () => {
   it('unwraps CLI envelopes and keeps MCP records as they are', () => {
     expect(recordOf({ ok: true, data: observeRecord })).toBe(observeRecord);
     expect(recordOf(observeRecord)).toBe(observeRecord);
+    expect(recordOf([observeRecord])).toEqual([observeRecord]);
   });
 
+  it('refuses a CLI envelope that does not report ok: true, even with a record inside', () => {
+    for (const ok of [false, 'true', 1, undefined]) {
+      expect(() => recordOf({ ok, data: observeRecord }), String(ok)).toThrow(
+        /REA CLI output does not report ok: true/u,
+      );
+    }
+    expect(() => recordOf({ ok: false, error: { code: 'target_not_found' } })).toThrow(
+      /\(error code target_not_found\)/u,
+    );
+    const text = `https://example.test/#room=${'a1B2'.repeat(5)}`;
+    expect(() => recordOf({ ok: false, error: { code: text, message: text } })).toThrow(
+      /^The REA CLI output does not report ok: true, so it holds no Evidence record to read\.$/u,
+    );
+  });
+
+  it('refuses a CLI envelope that reports ok: true without an Evidence record', () => {
+    for (const data of [undefined, null, {}, { operation: 'inspect_web_page' }]) {
+      expect(() => recordOf({ ok: true, data }), JSON.stringify(data)).toThrow(
+        /reports ok: true but holds no Evidence record/u,
+      );
+    }
+  });
+});
+
+describe('REA window summaries', () => {
   it('reads both window shapes and rejects records without one', () => {
     expect(windowOf(observeRecord.normalized_result)).toEqual({
       start: '2026-01-01T00:00:10.000Z',

@@ -136,7 +136,10 @@ did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
   "no … with the research label" only after a listing that worked, and otherwise fails with
   state UNKNOWN.
 - **REA extraction.** `rea-extract.mjs` reads an Evidence record saved by the MCP server or the
-  `{ ok, data }` output of the REA CLI. It needs an input ending in `.json` and never replaces an
+  `{ ok, data }` output of the REA CLI. CLI output that does not report `ok: true`, or holds no
+  Evidence record, is refused with a message and nothing is written; `rea-windows.mjs` reads
+  records the same way, so a failed call stops its build instead of being summarised as a
+  window or left out without notice. It needs an input ending in `.json` and never replaces an
   existing PNG with different bytes. The optional summary file is created exclusively, so an
   existing file, the input included, is never replaced. Accessible names and descriptions, and
   REA's own condition and limitation text, are redacted before they are copied into a summary.

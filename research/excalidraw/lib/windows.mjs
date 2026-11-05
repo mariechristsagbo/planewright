@@ -10,8 +10,31 @@ const tally = (items, keyOf) => {
   return out;
 };
 
-// REA CLI output wraps one Evidence record as { ok, data }; the MCP server saves the record.
-export const recordOf = (parsed) => (parsed?.data?.evidence_id ? parsed.data : parsed);
+// The CLI's own error code is named in the message only when it is a short identifier, so no
+// page text (a URL with a room value) can reach the output.
+const SAFE_CODE = /^[\w.-]{1,64}$/u;
+const failureCode = (envelope) => {
+  const code = envelope.error?.code;
+  return typeof code === 'string' && SAFE_CODE.test(code) ? ` (error code ${code})` : '';
+};
+
+// REA CLI output wraps one Evidence record as { ok, data }; the MCP server saves the bare record.
+// An envelope must report ok: true and hold a record, so a failed CLI call is never read as one.
+export function recordOf(parsed) {
+  if (parsed === null || typeof parsed !== 'object' || !('ok' in parsed || 'data' in parsed)) {
+    return parsed;
+  }
+  if (parsed.ok !== true) {
+    throw new Error(
+      `The REA CLI output does not report ok: true${failureCode(parsed)}, so it holds no ` +
+        'Evidence record to read.',
+    );
+  }
+  if (!parsed.data?.evidence_id) {
+    throw new Error('The REA CLI output reports ok: true but holds no Evidence record in data.');
+  }
+  return parsed.data;
+}
 
 export function windowOf(result) {
   if (result?.window) {
