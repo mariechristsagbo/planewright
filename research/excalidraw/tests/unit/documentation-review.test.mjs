@@ -312,7 +312,10 @@ describe('checkpoint statuses', () => {
 describe('the open review row', () => {
   it('names the review whose remediation is still unreviewed', () => {
     const r75 = row('R-75');
-    expect(r75).toContain('`cb11dff`');
-    expect(r75).toContain('The remediation of the `cb11dff` review has not been reviewed');
+    for (const head of ['cb11dff', '46b2b01']) expect(r75).toContain(`\`${head}\``);
+    expect(r75).toContain('The remediation of the `46b2b01` review has not been reviewed');
+    expect(flat(read('docs/reverse-engineering/checkpoint.md'))).toContain(
+      'Six independent reviews ran. The sixth (of 46b2b01) is remediated',
+    );
   });
 });

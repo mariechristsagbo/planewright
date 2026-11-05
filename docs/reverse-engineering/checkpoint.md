@@ -1,6 +1,6 @@
 # Checkpoint: issue #1 status
 
-Last updated: 2026-11-04 (fifth-review remediation, from retained evidence and local checks
+Last updated: 2026-11-05 (sixth-review remediation, from retained evidence and local checks
 only; no reference session ran after s7). Branch: `docs/1-excalidraw-research`. Issue #1 stays
 open: the Draft PR refers to it (`Refs #1`) and does not close it.
 
@@ -30,9 +30,9 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
 | Generated JSON and REA bundles validated                | Partial | All committed JSON parses. With the changed tools, `sessions.json`, `rea-windows.json`, the five probe summaries and `rea-inspect-initial.summary.json` regenerate byte for byte from the retained records (checked in this remediation). `bundle-01-desktop.json` passed `rea evidence-export` earlier on 2026-11-04. The REA CLI records of s5–s7 cannot be exported as a bundle without the MCP `export_evidence_bundle` tool (R-73)                                                                                                                                                    |
 | CDP and driver ports loopback-only                      | Done    | With the sixth-review tooling, `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 against real local containers on 2026-11-05 at 00:15–00:16 UTC, on `e38955a`, contacting no website; their output is committed in [local-checks/](local-checks/). The earlier runs on `dc6eef1` (2026-11-04, 22:18 and 22:19 UTC) kept no output. This holds from s5 on: s1–s4 ran on the default Docker bridge, where the DevTools forwarder was reachable from other containers (see the methodology). A probe that cannot run, and a failed docker listing during cleanup, count as FAIL |
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs. The removal checks of the `e38955a` runs are in local-checks                                                                                                                                                                                                                                                                                                                                                                           |
-| Separate Claude Code review session                     | Partial | Five independent reviews ran. The fifth (of `cb11dff`) is remediated in the current tree; no review of that remediation has run yet (R-75)                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| Separate Claude Code review session                     | Partial | Six independent reviews ran. The sixth (of `46b2b01`) is remediated in the current tree; no review of that remediation has run yet (R-75)                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 
-## Checks of this remediation
+## Checks of the fifth-review remediation
 
 - `npm run validate` passed on `0155717` (22:46 UTC: 27 test files, 415 tests) and on
   `626e849` (22:51 UTC: format, lint, typecheck, guardrails, secretlint, coverage and build;
@@ -55,6 +55,27 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
   listener on the check ports remained.
 - The commit that adds the two items above changes only this file; its own checks are in the
   PR description.
+
+## Checks of the sixth-review remediation
+
+- `npm run validate` passed on `e59bac5` (2026-11-05, 00:18–00:19 UTC: format, lint, typecheck,
+  guardrails, secretlint, coverage and build; 29 test files and 455 tests; coverage 98.17%
+  statements, 95.27% branches, 96.91% functions and 98.78% lines).
+- `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 on `e38955a` against local
+  containers only (see [local-checks/](local-checks/)); afterwards no `pw-*` container or network
+  remained.
+- Sabotage checks: with the `46b2b01` source put back, the new tests failed: the `goto` refusal
+  6, the timeline redaction 1, the capture re-check 2 and the `browser.sh stop` report 2. With
+  the `46b2b01` documents put back, 21 of the 23 new documentation checks failed; the other two
+  guard the UI-created room path and the priority 2 list, which were already right. With the
+  `02-tool-probe` raw-only item removed, the bounded `rawOnly()` fails where the old one passed.
+- `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed.
+- `sessions.json`, `rea-windows.json`, the probe summaries and the inspect summary were not
+  regenerated again: `build-evidence.mjs`, `timeline-summary.mjs`, `rea-windows.mjs` and
+  `rea-extract.mjs` are unchanged since `46b2b01`, where the sixth review regenerated them byte
+  for byte.
+- New commit bodies carry no trailers and no tool attribution, and `secret-scan.mjs` found no
+  secret shape in their patches; the push and the GitHub checks are in the PR description.
 
 ## Independent reviews
 
@@ -115,6 +136,21 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
      wider link and secret-shape tests (s5, `675675b`); an accurate `browser.sh stop` report
      (s6, `9553059`). `a24596d` lists the new controls in the methodology, and `0155717` adds
      backlog items 19–22.
+6. **Review of `46b2b01`**: 0 critical, 0 major, 7 minor findings and 7 suggestions. Handled as
+   follows; each fix has a test that fails against the `46b2b01` code or wording:
+   - **Minors 1–5** (backlog labels, raw-only facts, how the newer controls were verified, what
+     the commit messages record, priorities and new row R-76) and **suggestions 4 and 5** (§2
+     rated medium, three architecture hypotheses narrowed): `4a43c1a`. A scripting error
+     committed these seven corrections and their tests together under a message that names only
+     the §2 rating; the commit was kept, because no commit is rewritten.
+   - **Minor 6, a `goto` could join a room before the halt:** refused before navigation in
+     `c766e9d`; step records are redacted before the raw timeline in `d7e4ea9`. Rooms are still
+     created through the UI under `runLast`.
+   - **Minor 7, live checks without retained output:** `e59bac5` commits the output of fresh `isolation-check.sh` (11 of 11) and `selftest.sh` (19 of 19) runs on `e38955a`, and the Done notes say that s1–s4 ran on the default bridge.
+   - **Suggestions:** surfaces measured again after the capture (s1, `253e4a0`); `browser.sh stop`
+     reports UNKNOWN (s2, `6725cda`, after moving a test in `479df72`); the raw-only bound and the
+     exact entry count (s3, `e38955a`; the new checks are derived from evidence, but the earlier
+     exact-phrase checks remain); wording (s6, `868820e`); the code map (s7, `0d38da1`).
 
 ## Privacy remediation
 
@@ -159,7 +195,7 @@ Values were never printed; only counts and file names were recorded.
   and R-46 plan them in a headed browser.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client
   collaboration (R-55), and offline start and reconnection (R-57).
-- **Review of the remediation.** A fresh independent review of the fifth-review remediation is
+- **Review of the remediation.** A fresh independent review of the sixth-review remediation is
   still to be run (R-75).
 
 ## Remaining observation work
