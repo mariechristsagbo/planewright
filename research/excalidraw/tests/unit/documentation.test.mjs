@@ -271,17 +271,23 @@ describe('cited network counts match the committed evidence', () => {
     const fresh = evidence('sessions.json')
       .sessions.map((s) => s.session)
       .filter((s) => s !== 's1-desktop');
-    expect(fresh).toHaveLength(6);
-    const network = new Set(fresh.map((s) => count(s, origin(false))));
-    expect(network.size, 'one count for each of s2–s7').toBe(1);
+    expect(fresh).toHaveLength(10);
+    const usual = count('s2-desktop-fresh', origin(false));
+    const other = fresh.filter((s) => count(s, origin(false)) !== usual);
+    expect(other, 'one count for each of s2–s10').toEqual(['s11-mobile-r76-14']);
+    // s11's extra request is one page fetch, not from the service worker.
+    const extra = count('s11-mobile-r76-14', (e) => origin(false)(e) && e.type === 'fetch');
+    expect(count('s11-mobile-r76-14', origin(false))).toBe(usual + extra);
+    expect(extra).toBe(1);
     const sw = count('s6-desktop-fresh', origin(true));
     const s1 = count('s1-desktop', origin(true));
     expect(count('s1-desktop', origin(false))).toBe(0);
     const text = flat(doc('network-analysis.md'));
     expect(text).toContain(
-      `${[...network][0]} requests with fromServiceWorker: false in each of s2–s7`,
+      `${usual} requests with fromServiceWorker: false in each of s2–s10; s11 had ${usual + extra}`,
     );
     expect(text).toContain(`${sw} true in s6; all ${s1} of s1's requests to this origin`);
+    expect(text).toContain(`also had ${count('s11-mobile-r76-14', origin(true))} true`);
     for (const s of evidence('sessions.json').sessions) {
       expect(count(s.session, (e) => (e.path ?? '').endsWith('.map'))).toBe(0);
     }

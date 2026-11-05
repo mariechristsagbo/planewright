@@ -166,7 +166,7 @@ describe('factual statements', () => {
   it('count the reference page loads from the committed steps', () => {
     expect(loads('s6-desktop-fresh')).toBe(9);
     const total = all().reduce((sum, name) => sum + loads(name), 0);
-    expect(total).toBe(17);
+    expect(total).toBe(21);
     const text = doc('methodology.md');
     expect(text).toContain(`navigated ${String(total)} times in total`);
     expect(text).toContain('s6: 9 including the reloads');

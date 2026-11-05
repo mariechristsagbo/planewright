@@ -48,7 +48,7 @@ npx vitest run --project 'research:*'         # unit and integration tests
 ## Reproduce a session
 
 ```sh
-OUT=/absolute/path/outside/the/repo/s8-desktop      # a new directory per session
+OUT=/absolute/path/outside/the/repo/s12-desktop     # a new directory per session
 research/excalidraw/browser.sh start pw-research 9222
 node research/excalidraw/driver.mjs --cdp http://127.0.0.1:9222 --port 9333 --out "$OUT" &
 node research/excalidraw/run.mjs --out "$OUT" 00-initial-load-desktop
@@ -60,10 +60,14 @@ research/excalidraw/browser.sh stop pw-research     # also removes the run netwo
 rm -f "$OUT/driver.token"
 ```
 
-REA observes the same browser through `http://127.0.0.1:9222`. In s6 and s7 this ran through the
-CLI of the REA build (for example `node ../rea-build/scripts/rea.mjs observe-web-session
-http://127.0.0.1:9222 <target> --observation-ms 40000 --format json --full-output`), started in
-the background just before a driver batch.
+REA observes the same browser through `http://127.0.0.1:9222`. From s6 to s11 this ran through the
+CLI of the REA build, started in the background just before a driver batch: in s6 and s7 for
+example `node ../rea-build/scripts/rea.mjs observe-web-session http://127.0.0.1:9222 <target>
+--observation-ms 40000 --format json --full-output`, and in s8–s11 `inspect-web-page` with
+`--allowed-origins https://excalidraw.com --observation-ms 40000 --include-storage-keys` (45000
+in s11), started 5 s before the batch (8 s in s11). The initial-page inspections of s8–s11 used
+`--observation-ms 2000` with accessibility, console and WebSocket-shape text approved, as s1's
+did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
 
 ## Driver protocol and safety
 
@@ -154,7 +158,15 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Aborted (`s5`)       | 00 → 01 (aborted at its first step by the metrics assertion)                                                                                                                                                                                           |
 | Desktop rerun (`s6`) | 00 → 01✗ → 02 → 00b✗ → 00c → 00b → 02c → 00b → 02b → 12✗ → 01✗ → 00c → 12 → 01 → 13 → 00b → 03 → 03b → 04 → 04b → 05 → 06 → 06b → 07 → 07b → 15 → 08 → 08b (✗ = aborted by the metrics assertion: 01 and 12 at their first step, 00b after its reload) |
 | Mobile rerun (`s7`)  | 09 → 10 → 10b → 14 → 11                                                                                                                                                                                                                                |
+| Desktop R-76 (`s8`)  | 00 → 12 → 16                                                                                                                                                                                                                                           |
+| Desktop R-76 (`s9`)  | 00 → 13 → 16                                                                                                                                                                                                                                           |
+| Desktop R-76 (`s10`) | 00 → 07c → 15 → 16                                                                                                                                                                                                                                     |
+| Mobile R-76 (`s11`)  | 09 → 16 → 10 → 14 → 16                                                                                                                                                                                                                                 |
 
+- **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
+  Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
+  inspection after 00 or 09, then an `inspect-web-page` window armed before 12, 13, 15 or 14.
+  The two `16` runs of s11 read storage before 10 and after 14.
 - **Planned s6 order.** It was 00 → 01 → 02 → 02c → 02b → 12 → 13 → 03 …. The extra `00b`/`00c`
   runs and the late 01 come from the metric aborts and two driver restarts recorded in the
   [checkpoint](../../docs/reverse-engineering/checkpoint.md#interrupted-and-aborted-runs).

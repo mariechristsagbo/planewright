@@ -275,7 +275,9 @@ describe('wording', () => {
     expect(doc('rea-findings.md')).toContain('no copy is known to remain');
     const methodology = doc('methodology.md');
     expect(methodology).not.toContain('The s1–s3 probe summaries regenerate');
-    expect(methodology).toContain('All five probe summaries (s1, s2, s3, s6 and s7) regenerate');
+    expect(methodology).toContain(
+      'All nine probe summaries (s1, s2, s3, s6, s7 and s8–s11) regenerate',
+    );
     expect(doc('backlog.md')).not.toContain('so every criterion below is open');
   });
 });

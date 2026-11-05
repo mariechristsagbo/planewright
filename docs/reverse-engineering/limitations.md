@@ -47,8 +47,10 @@
 - REA is passive for coordinate input (see [REA findings](rea-findings.md#5-rea-limitations-met)).
 - **What the REA windows can show.** `observe_web_session` retains navigation and lifecycle
   metadata only, so the windows during scenarios 02 and 10 say nothing about requests, WebSocket
-  traffic or console output. The one `inspect_web_page` window during drawing (scenario 13)
-  covers only the allowed origin, starts at attach, and lasted 25 s. The s7 window armed 81 ms
+  traffic or console output. The `inspect_web_page` windows cover only the allowed origin and
+  start at attach: the s6 window during scenario 13 lasted 25 s, and the four R-76 windows
+  (scenarios 12, 13, 15 and 14 in s8–s11) lasted 40–45 s and were armed before their scenario's
+  first step. The s7 window armed 81 ms
   after scenario 10's first tap. The bounds and counts are in `evidence/rea-windows.json`.
 - **Committed probe fields.** The committed probe summaries keep geometry, bindings, groups,
   locks, eight style values, selection count, tool, zoom, scroll and theme. Point counts, font
@@ -74,6 +76,8 @@
     [REA findings](rea-findings.md#2-cross-driver-screenshot-comparison): only the driver digests
     are in `evidence/sessions.json`, and the index keeps the REA Evidence IDs;
   - the 84–91 KB sizes of the large REA results (REA findings, limitation 4);
+  - the driver netlog requests set against scenarios 12, 13, 15 and 14 in s8–s11 (network
+    analysis): `evidence/sessions.json` keeps request counts per session, not their times;
   - the s1 and s6 ARIA snapshot comparison behind the medium rating of the secondary surfaces
     (feature inventory §2); the committed index keeps line counts only.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
@@ -105,8 +109,8 @@
   [local-checks/](local-checks/). Before the R-76 sessions they passed on `0b4fb19` at
   04:45–04:46 UTC, with that output beside it. Each run loaded only `about:blank` and the
   self-authored fixture. The self-test cannot reach a room view, so the room-view capture and
-  halt rules are tested with stubs only. No reference session has run with the remediated
-  driver.
+  halt rules are tested with stubs only. The R-76 sessions s8–s11 ran the driver at `0b4fb19`,
+  but none of them opened a room view, so those rules were not triggered live.
 - **Re-attaching the driver drops emulation.** Restarting the driver replaces its CDP session,
   which removes that session's emulation override (seen in s6). Scenario `00c` restores it. The
   `runLast` lock and any halt reason now survive a restart (`$OUT/driver-state.json`). Neither
@@ -128,8 +132,8 @@
 - That the feature inventory is exhaustive. It covers what was discovered through the menus,
   palette, help, panels and context menus of an empty or simple scene.
 - That bundle identifiers execute.
-- That drawing causes, or does not cause, network, WebSocket or console activity. Only one
-  same-origin REA window covered drawing.
+- That drawing causes, or does not cause, network, WebSocket or console activity. Only
+  same-origin REA windows covered drawing: scenario 13 in s6 and s9, 12 in s8 and 15 in s10.
 - That Ctrl+wheel zoom is anchored at the pointer, that a bound arrow end snaps to the outline,
   or that the local save delay is measured from pointer-up. See B-36, B-04 and B-30.
 - That every behaviour entry covers all issue #1 dimensions. Entries mark each dimension that was
@@ -138,7 +142,10 @@
   scene. No session reloaded while dark or with a mode on, and scenario `09b` never ran (R-19,
   R-54).
 - That observed numeric thresholds (save delay, binding gap, handle offsets) are stable across
-  versions. Several `index-*.js` chunks with different hashes were loaded across sessions.
-  Whether that reflects lazy chunks or a deploy during the run is unknown.
+  versions. Several `index-*.js` chunks with different hashes were loaded across sessions. The
+  REA initial-page inspections list the same 9 scripts in s1 and in s8–s11 except the main
+  `index-*.js` chunk, whose name changed between s1 (2026-11-04) and s8–s11 (2026-11-05)
+  [O]; so s8–s11 ran a later build [I]. Whether the other hash differences within a day
+  reflect lazy chunks or a deploy is unknown.
 
 All open questions are tracked in the [residual matrix](residual-matrix.md).

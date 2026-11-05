@@ -6,13 +6,13 @@ unauthenticated guest. Planewright is not affiliated with Excalidraw or REA; see
 
 ## Clean-room rules applied
 
-| Rule                                                   | How it was applied                                                                                                                                                                                                                                                                                                                                                                              |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No reference source repository, package or source maps | Nothing was cloned or installed. `analyze_web_bundle`, the only REA operation that can fetch source maps, ran with `fetch_source_maps: false`. The driver netlogs of all seven sessions contain 0 `.map` requests.                                                                                                                                                                              |
-| Shipped bundles are observable artefacts only          | REA captured the scripts the browser received and exported them to a directory **outside** the repository. The only derived output is `evidence/static-api-surface.json`: occurrence counts of standard web-platform identifiers, with no code excerpts.                                                                                                                                        |
-| No copied code, components, assets or text             | Docs describe behaviour in our own words. Control names are quoted only where they are needed to identify the control. Screenshots, ARIA snapshot text and bundles are not committed.                                                                                                                                                                                                           |
-| Guest only; no protection bypass                       | No login, sign-up, Excalidraw+ or generation feature was used. Two live-collaboration sessions were started, one in s1 and one in s6. "Export to Link" was not clicked, because it publishes the scene.                                                                                                                                                                                         |
-| Human-scale request volume                             | 7 short sessions. The reference page was loaded or navigated 17 times in total (s1: 3, s2–s5: 1 each, s6: 9 including the reloads that restore emulation, s7: 1), counted from the `goto` and `reload` steps in `evidence/sessions.json`. Two collaboration rooms were created. Everything else (isolation check, self-test, emulation probes) ran on `about:blank` or a self-authored fixture. |
+| Rule                                                   | How it was applied                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No reference source repository, package or source maps | Nothing was cloned or installed. `analyze_web_bundle`, the only REA operation that can fetch source maps, ran with `fetch_source_maps: false`. The driver netlogs of all eleven sessions contain 0 `.map` requests.                                                                                                                                                                                                              |
+| Shipped bundles are observable artefacts only          | REA captured the scripts the browser received and exported them to a directory **outside** the repository. The only derived output is `evidence/static-api-surface.json`: occurrence counts of standard web-platform identifiers, with no code excerpts.                                                                                                                                                                         |
+| No copied code, components, assets or text             | Docs describe behaviour in our own words. Control names are quoted only where they are needed to identify the control. Screenshots, ARIA snapshot text and bundles are not committed.                                                                                                                                                                                                                                            |
+| Guest only; no protection bypass                       | No login, sign-up, Excalidraw+ or generation feature was used. Two live-collaboration sessions were started, one in s1 and one in s6. "Export to Link" was not clicked, because it publishes the scene.                                                                                                                                                                                                                          |
+| Human-scale request volume                             | 11 short sessions. The reference page was loaded or navigated 21 times in total (s1: 3, s2–s5: 1 each, s6: 9 including the reloads that restore emulation, s7: 1, s8–s11: 1 each), counted from the `goto` and `reload` steps in `evidence/sessions.json`. Two collaboration rooms were created, both before s7. Everything else (isolation check, self-test, emulation probes) ran on `about:blank` or a self-authored fixture. |
 
 ## Evidence labels
 
@@ -40,24 +40,25 @@ Confidence follows one rule:
 
 | Item      | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Date      | 2026-11-04: s1–s4 13:29–14:25 UTC, s5–s7 16:00–16:18 UTC                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Date      | 2026-11-04: s1–s4 13:29–14:25 UTC, s5–s7 16:00–16:18 UTC; 2026-11-05: s8–s11 04:48–04:56 UTC (R-76)                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | Browser   | Chrome 156.0.8078.80, headless, from `mcr.microsoft.com/playwright:v1.64.1-noble`, pinned by digest `sha256:2f05f8a7…` from s5 on                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | Isolation | One disposable container per session: non-root user, all capabilities dropped, `no-new-privileges`, profile in tmpfs, no host mounts. Chromium's own sandbox cannot run under the container's seccomp profile, so the container is the boundary.                                                                                                                                                                                                                                                                                                                           |
 | Network   | s1–s4 used the default Docker bridge. There the DevTools forwarder was reachable from other containers (verified afterwards: a default-bridge probe got `REACHABLE`). From s5 on, each run has its own bridge network with inter-container traffic disabled, and the forwarder accepts only the network gateway, the host side of the published port. `isolation-check.sh` verifies this                                                                                                                                                                                   |
 | Ports     | DevTools published only on the host's `127.0.0.1:9222`; driver on `127.0.0.1:9333`, guarded by a per-run token, Host, Origin, method, content-type and body-size checks                                                                                                                                                                                                                                                                                                                                                                                                    |
-| REA       | 6.8.0 at build `5b953e13c4451df3afcaab7724c06db5eedf58f7`: the project-local MCP server for s1–s3, the CLI of the same build for s5–s7 (the MCP tools were denied permission)                                                                                                                                                                                                                                                                                                                                                                                              |
+| REA       | 6.8.0 at build `5b953e13c4451df3afcaab7724c06db5eedf58f7`: the project-local MCP server for s1–s3, the CLI of the same build for s5–s11 (the MCP tools were denied permission in s5–s7; s8–s11 kept the CLI, whose output goes straight to the workspace artifact tree, while granting the MCP tools is a maintainer decision, R-73)                                                                                                                                                                                                                                       |
 | Driver    | Playwright-core 1.64.1 over CDP (`research/excalidraw/driver.mjs`). From s6 on, screenshots use CDP `Page.captureScreenshot` on the driver's own session                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | Viewports | Desktop 1280×720 at DPR 1, with a 1280×720 screen. Mobile 390×844 CSS px at DPR 3, with a 390×844 screen, 5 touch points, a coarse pointer and an Android Chrome user agent. Emulation is applied once, before the first navigation. Every main scenario asserts the CSS viewport, DPR, screen, touch points and canvas backing store (CSS size × DPR) before its first input and aborts on any mismatch (02 right after its own load, 00b, 00c and 09b after their reload); the short follow-on scenarios (02b, 02c, 03b, 04b, 07b, 08b, 10b) rely on the one before them |
-| Sessions  | `s1-desktop` (472 steps), `s2-desktop-fresh` (179), `s3-mobile` (71), `s4-dpr-probe` (14), `s5-desktop-aborted` (10, stopped by the metrics assertion), `s6-desktop-fresh` (616, the whole desktop chain in one fresh profile), `s7-mobile-fresh` (142, the mobile chain at a verified DPR 3)                                                                                                                                                                                                                                                                              |
+| Sessions  | `s1-desktop` (472 steps), `s2-desktop-fresh` (179), `s3-mobile` (71), `s4-dpr-probe` (14), `s5-desktop-aborted` (10, stopped by the metrics assertion), `s6-desktop-fresh` (616, the whole desktop chain in one fresh profile), `s7-mobile-fresh` (142, the mobile chain at a verified DPR 3), and the R-76 second fresh-profile runs `s8-desktop-r76-12` (39), `s9-desktop-r76-13` (67), `s10-desktop-r76-15` (68) and `s11-mobile-r76-14` (137), each in its own new container and profile                                                                               |
 
 ## Division of labour
 
 1. REA collected passive evidence: target listing, page inspection (DOM, accessibility, storage
    keys, scripts), navigation lifecycle, viewport screenshots, script export, static bundle
-   analysis, and observation windows armed **while the driver drew on the canvas** (s6 and s7).
-   Two of those windows used `observe_web_session`, which retains navigation and lifecycle
-   metadata only; one used `inspect_web_page`, which also retained same-origin request,
-   WebSocket and console metadata. Their bounds and contents are in `evidence/rea-windows.json`.
+   analysis, and observation windows armed **while the driver drew on the canvas** (s6 and s7)
+   or ran a scenario (s8–s11). Two of those windows used `observe_web_session`, which retains
+   navigation and lifecycle metadata only; five used `inspect_web_page`, which also retained
+   same-origin request, WebSocket and console metadata. The four of s8–s11 were armed before
+   their scenario's first step. Their bounds and contents are in `evidence/rea-windows.json`.
 2. The Playwright driver performed the canvas inputs REA cannot express: pointer drags,
    modifier clicks, wheel, keyboard chords, multi-touch, file drop and native-dialog handling.
    Between batches it read back session-created state and layout metrics.
@@ -66,7 +67,7 @@ Confidence follows one rule:
 ## Reproduction
 
 ```sh
-OUT=/absolute/path/outside/the/repo/s8-desktop   # a new directory per session
+OUT=/absolute/path/outside/the/repo/s12-desktop  # a new directory per session
 research/excalidraw/isolation-check.sh            # optional: proves DevTools isolation
 research/excalidraw/browser.sh start pw-research 9222
 node research/excalidraw/driver.mjs --cdp http://127.0.0.1:9222 --port 9333 --out "$OUT" &
@@ -122,8 +123,11 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
   - Screenshots of the share dialog paint every dialog input and image before writing, and
     `check-masks.mjs` verifies the painted pixels.
   - A screenshot is refused while a dialog that may show the link is open.
-- **Controls added after s7** (remediation of the third review; no live session has run with
-  them yet, and they are covered by stub-based unit and integration tests):
+- **The R-76 sessions (s8–s11)** ran the driver at `0b4fb19` with every control below in place.
+  None of them opened a room view, started a page navigation of its own, refused a capture or
+  halted, so the controls below that act only in those cases were not triggered live.
+- **Controls added after s7** (remediation of the third review; covered by stub-based unit and
+  integration tests, and not triggered in a live session):
   - Any screenshot is refused while the live URL fragment holds a room or `json` link value,
     raw or percent-encoded, checked before and after the capture, unless every requested mask
     produced a visible box (tightened after the review of `cb11dff`, below). A mask with no
@@ -181,7 +185,7 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
 - Every screenshot's PNG header was checked. From s6 on, layout metrics are asserted before the
   first input of every main scenario (see Environment).
 - Committed JSON is produced by scripts and formatted by Prettier, so `npm run format:check`
-  parses it. All five probe summaries (s1, s2, s3, s6 and s7) regenerate unchanged with the current tools, and
+  parses it. All nine probe summaries (s1, s2, s3, s6, s7 and s8–s11) regenerate unchanged with the current tools, and
   `evidence/rea-windows.json` regenerates byte for byte from the retained REA records and
   timelines.
 - `research/excalidraw/tests/unit/documentation.test.mjs` checks the documents against the
@@ -191,6 +195,9 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
 - `bundle-01-desktop.json` passes `rea evidence-export` (3 records, 0 unknowns). The other REA
   bundle no longer exists, and the s5–s7 CLI records are single Evidence records (see
   [REA findings](rea-findings.md#evidence-ids)).
-- Every s6 and s7 timeline row matches a step of a committed scenario.
+- Every s6 and s7 timeline row matches a step of a committed scenario. Each s8–s11 timeline is
+  exactly the steps of the scenarios in its row of the
+  [research README](../../research/excalidraw/README.md#scenario-order-and-dependencies), in
+  that order, with no failed step.
 - All owned containers, networks, drivers, ports and token files were stopped, removed and
   checked after each session.

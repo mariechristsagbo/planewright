@@ -1,0 +1,312 @@
+{
+  "kind": "rea-inspect-web-page",
+  "evidence_id": "ev_760387799750e00f94b5915d29cc2fe56d9c1719d2f9b9da5e2df0461b0674ba",
+  "url": "https://excalidraw.com/",
+  "capture_window": {
+    "started_at": "2026-11-05T04:52:25.171Z",
+    "ended_at": "2026-11-05T04:52:27.579Z",
+    "observation_ms": 2000
+  },
+  "completeness": "policy_filtered",
+  "conditions": ["attach_limited", "policy_filtered"],
+  "accessibility_total": 199,
+  "dom_total": 386,
+  "controls": [
+    {
+      "role": "heading",
+      "name": "Excalidraw",
+      "description": null
+    },
+    {
+      "role": "Canvas",
+      "name": "",
+      "description": null
+    },
+    {
+      "role": "Canvas",
+      "name": "",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Open Ctrl+O",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Help ?",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Live collaboration...",
+      "description": null
+    },
+    {
+      "role": "link",
+      "name": "Sign up",
+      "description": null
+    },
+    {
+      "role": "region",
+      "name": "Shapes",
+      "description": null
+    },
+    {
+      "role": "link",
+      "name": "Try Excalidraw+ 14-day free trial",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Live collaboration...",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Library",
+      "description": "Library",
+      "pressed": "false"
+    },
+    {
+      "role": "region",
+      "name": "Canvas actions",
+      "description": null
+    },
+    {
+      "role": "link",
+      "name": "Blog post on end-to-end encryption in Excalidraw",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "",
+      "description": null,
+      "expanded": false
+    },
+    {
+      "role": "heading",
+      "name": "Canvas actions",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Zoom out",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Reset zoom",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Zoom in",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Undo",
+      "description": null,
+      "disabled": true
+    },
+    {
+      "role": "button",
+      "name": "Redo",
+      "description": null,
+      "disabled": true
+    },
+    {
+      "role": "button",
+      "name": "Help",
+      "description": null
+    },
+    {
+      "role": "heading",
+      "name": "Shapes",
+      "description": null
+    },
+    {
+      "role": "button",
+      "name": "Keep selected tool active after drawing",
+      "description": "Keep selected tool active after drawing — Q",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Hand (panning tool)",
+      "description": "Hand (panning tool) — H",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Selection",
+      "description": "Selection — V or 1",
+      "pressed": "true"
+    },
+    {
+      "role": "button",
+      "name": "Rectangle",
+      "description": "Rectangle — R or 2",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Diamond",
+      "description": "Diamond — D or 3",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Ellipse",
+      "description": "Ellipse — O or 4",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Arrow",
+      "description": "Arrow — A or 5",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Line",
+      "description": "Line — L or 6",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Draw",
+      "description": "Draw — P or 7",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Text",
+      "description": "Text — T or 8",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Sticky note",
+      "description": "Sticky note — N",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "Eraser",
+      "description": "Eraser — E or 0",
+      "pressed": "false"
+    },
+    {
+      "role": "button",
+      "name": "More tools",
+      "description": null,
+      "expanded": false
+    }
+  ],
+  "storage": {
+    "local_storage_keys": [
+      "excalidraw",
+      "excalidraw-state",
+      "excalidraw-theme",
+      "i18nextLng",
+      "version-dataState",
+      "version-files"
+    ],
+    "session_storage_keys": [],
+    "indexed_db_names": ["excalidraw-library-db", "excalidraw-ttd-chats-db", "files-db"],
+    "cache_names": ["workbox-precache-v2-https://excalidraw.com/"],
+    "values_redacted": true
+  },
+  "scripts": [
+    {
+      "url": "https://excalidraw.com/assets/workbox-window.prod.es5-B9K5rw8f.js",
+      "module": true,
+      "length": 5781
+    },
+    {
+      "url": "https://excalidraw.com/",
+      "module": false,
+      "length": 225
+    },
+    {
+      "url": "https://excalidraw.com/assets/index-COQVqmE8.js",
+      "module": true,
+      "length": 1913091
+    },
+    {
+      "url": "https://excalidraw.com/assets/roundRect-0PYZxl1G.js",
+      "module": true,
+      "length": 3097
+    },
+    {
+      "url": "https://excalidraw.com/",
+      "module": false,
+      "length": 105
+    },
+    {
+      "url": "https://excalidraw.com/assets/bundler-helpers-DA6W-a70.js",
+      "module": true,
+      "length": 1057
+    },
+    {
+      "url": "https://excalidraw.com/",
+      "module": false,
+      "length": 703
+    },
+    {
+      "url": "https://excalidraw.com/",
+      "module": false,
+      "length": 908
+    },
+    {
+      "url": "https://excalidraw.com/",
+      "module": false,
+      "length": 597
+    }
+  ],
+  "resources": [
+    {
+      "url": "https://excalidraw.com/assets/roundRect-0PYZxl1G.js",
+      "type": "Script",
+      "size": 3097
+    },
+    {
+      "url": "https://excalidraw.com/assets/bundler-helpers-DA6W-a70.js",
+      "type": "Script",
+      "size": 1057
+    },
+    {
+      "url": "https://excalidraw.com/assets/index-D0I-IbtP.css",
+      "type": "Stylesheet",
+      "size": 209332
+    },
+    {
+      "url": "https://excalidraw.com/manifest.webmanifest",
+      "type": "Manifest",
+      "size": 1355
+    },
+    {
+      "url": "https://excalidraw.com/assets/index-COQVqmE8.js",
+      "type": "Script",
+      "size": 1913698
+    },
+    {
+      "url": "https://excalidraw.com/assets/workbox-window.prod.es5-B9K5rw8f.js",
+      "type": "Script",
+      "size": 5781
+    }
+  ],
+  "workers": 0,
+  "websocket_connections": 0,
+  "console_events": 0,
+  "limitations": [
+    "Observation starts when REA attaches; prior network and console activity is unavailable.",
+    "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+    "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+    "Source maps are reported only as declarative URLs and are not fetched.",
+    "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+    "CDP discovery could not establish the target's debugger attachment state."
+  ]
+}

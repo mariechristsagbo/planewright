@@ -1,0 +1,181 @@
+[
+  {
+    "label": "m-rect-touch",
+    "at": "2026-11-05T04:54:04.993Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light"
+  },
+  {
+    "label": "m-tap-select-stroke",
+    "at": "2026-11-05T04:54:06.840Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light"
+  },
+  {
+    "label": "m-pinch-out",
+    "at": "2026-11-05T04:54:09.202Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -263],
+    "theme": "light"
+  },
+  {
+    "label": "m-two-finger-pan",
+    "at": "2026-11-05T04:54:10.580Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -301],
+    "theme": "light"
+  },
+  {
+    "label": "m-dark-scheme-emulated",
+    "at": "2026-11-05T04:54:15.228Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -301],
+    "theme": "light"
+  },
+  {
+    "label": "m-dark-via-menu",
+    "at": "2026-11-05T04:54:16.587Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -301],
+    "theme": "dark"
+  },
+  {
+    "label": "14-start",
+    "at": "2026-11-05T04:54:34.913Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -301],
+    "theme": "dark"
+  },
+  {
+    "label": "14-selected",
+    "at": "2026-11-05T04:54:51.153Z",
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -301],
+    "theme": "dark"
+  },
+  {
+    "label": "14-end",
+    "at": "2026-11-05T04:54:52.868Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 2.111111,
+    "scroll": [-135, -301],
+    "theme": "dark"
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "label": "12-cleared",
+    "at": "2026-11-05T04:49:38.634Z",
+    "elements": []
+  },
+  {
+    "label": "12-after-panel-drag",
+    "at": "2026-11-05T04:49:40.751Z",
+    "elements": [],
+    "selected": 0,
+    "tool": "rectangle",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light"
+  },
+  {
+    "label": "12-after-canvas-drag",
+    "at": "2026-11-05T04:49:43.580Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [300, 180, 120, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light"
+  },
+  {
+    "label": "12-after-panel-line-drag",
+    "at": "2026-11-05T04:49:45.644Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [300, 180, 120, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ]
+  },
+  {
+    "label": "12-end",
+    "at": "2026-11-05T04:49:46.720Z",
+    "elements": []
+  }
+]
