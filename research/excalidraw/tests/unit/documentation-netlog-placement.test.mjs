@@ -75,12 +75,16 @@ describe('the drawing steps set against the netlog (R-66)', () => {
       .filter((s) => drawn(s) > 0 && s.drawing.without_later_entry === drawn(s))
       .map(short);
     expect(none).toEqual(['s2', 's8', 's9', 's10']);
+    // The gaps bound when the netlog wrote a request that drawing started, not when it finished.
     expect(network()).toContain(
-      `After a drawing step, the next entry came at least ${joined(gaps)}.`,
+      `After a drawing step, the next entry came at least ${joined(gaps)}. In s2 and s8–s10 the ` +
+        'netlog wrote nothing after the first drawing step. So the netlog wrote any request on ' +
+        'any origin that a drawing step started no sooner than that, or never wrote it. It ' +
+        'writes a request after the request has finished or failed, and a finished one only ' +
+        'after the driver has awaited its response, so a write time is not when the request ' +
+        'finished or failed either.',
     );
-    expect(network()).toContain(
-      'In s2 and s8–s10 the netlog wrote nothing after the first drawing step.',
-    );
+    expect(network()).not.toMatch(/finished no sooner|did not finish while/u);
     expect(network()).toMatch(/cannot be told from the netlog \[U\]/u);
   });
 });

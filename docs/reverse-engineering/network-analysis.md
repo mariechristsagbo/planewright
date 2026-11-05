@@ -59,8 +59,10 @@ in an MCP restart and are withdrawn.
   drawing, pinch and pan in s3, s7 and s11). No netlog entry was written during any of them.
   - After a drawing step, the next entry came at least 59.0 s later in s1, 2.6 s in s3, 5.1 s in
     s6, 3.3 s in s7 and 2.8 s in s11. In s2 and s8–s10 the netlog wrote nothing after the first
-    drawing step. So a request on any origin that a drawing step started finished no sooner than
-    that, or did not finish while the driver ran. Each of those next entries was written during
+    drawing step. So the netlog wrote any request on any origin that a drawing step started no
+    sooner than that, or never wrote it. It writes a request after the request has finished or
+    failed, and a finished one only after the driver has awaited its response, so a write time is
+    not when the request finished or failed either. Each of those next entries was written during
     a later step that does not draw; whether a drawing step started one of them cannot be told
     from the netlog [U].
   - The netlog keeps no console output, and it counts WebSocket frames only when a socket
