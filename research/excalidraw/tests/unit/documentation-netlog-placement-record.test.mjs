@@ -60,10 +60,14 @@ describe('the record of the netlog placement', () => {
     expect(text).toMatch(/selftest\.sh were not run again/u);
   });
 
-  it('discloses the wrong counts in the bodies of 545b97b and 0b2ebda', () => {
+  it('discloses the errors in the bodies of 545b97b, 3a1d1a3 and 0b2ebda', () => {
     expect(flat(record())).toContain(
       'The body of 545b97b says that the summary places 523 entries against 1,825 timeline ' +
         'rows; it is 1,815.',
+    );
+    expect(flat(record())).toContain(
+      'The body of 3a1d1a3 names R-66 among the documents that said a request started; R-66 ' +
+        'said only when requests came, and that commit added the finish-time limit to it.',
     );
     expect(flat(record())).toContain(
       'The body of 0b2ebda says that the new record checks failed 6 tests; 5 were new and 1 was ' +

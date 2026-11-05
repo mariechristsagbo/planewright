@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState, listedReviews, reviewByHead } from './review-list.mjs';
+import { exitRuleState, listedReviews, reviewByHead, reviewState } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -104,7 +104,7 @@ describe('the review of 6d5d264 against the exit rule', () => {
     expect(flat(section('Checks of the twelfth-review remediation'))).toContain(
       'The remediation ends at 6d5d264, the commit that adds this section',
     );
-    expect(exitRuleState(checkpoint())).toMatchObject({
+    expect(reviewState(checkpoint(), '6d5d264')).toEqual({
       head: '6d5d264',
       blocking: 0,
       covers: true,
@@ -126,12 +126,12 @@ describe('the review of 6d5d264 against the exit rule', () => {
       'Canvas interactions through the external driver while REA observes',
       'Prioritised backlog with acceptance criteria',
     ]);
-    expect(withStatus('Testing requirements', 'Partial')).toEqual(
-      expect.arrayContaining([
-        'Re-run each documented interaction from a fresh profile',
-        'Generated JSON and REA bundles validated',
-      ]),
-    );
+    // The review requirement stays open only while R-75 does, under the exit rule.
+    expect(withStatus('Testing requirements', 'Partial')).toEqual([
+      'Re-run each documented interaction from a fresh profile',
+      'Generated JSON and REA bundles validated',
+      ...(exitRuleState(checkpoint()).met ? [] : ['Separate Claude Code review session']),
+    ]);
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
   });
 });

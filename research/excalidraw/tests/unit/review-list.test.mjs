@@ -1,10 +1,10 @@
 // Checks the number and ordinal words of review-list.mjs, that a checkpoint listing fourteen
 // reviews is read to its last entry, which the record checks need once a fourteenth review is
-// recorded, and that the latest review's own verdict is kept apart from later commits that no
-// review covers.
+// recorded, that the latest review's own verdict is kept apart from later commits that no review
+// covers, and that any listed review keeps its own state whatever review comes after it.
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState, listedReviews, reviewWords } from './review-list.mjs';
+import { exitRuleState, listedReviews, reviewState, reviewWords } from './review-list.mjs';
 
 // A minimal checkpoint listing `count` clean reviews, whose last remediation ends at the last head.
 const record = (count) => {
@@ -101,5 +101,49 @@ describe('a review that covers work recorded in its own section', () => {
       other('The work ends at 000000e', 'Other work'),
     ])
       expect(exitRuleState(text)).toMatchObject({ head: '000000e', covers: false, met: false });
+  });
+});
+
+describe('the state of any listed review', () => {
+  // Review 2 had a minor finding and is remediated up to 0000003, which review 3 covers.
+  const text = [
+    '# Checkpoint',
+    '## Checks of the first-review remediation',
+    '- The remediation ends at 0000002.',
+    '## Checks of the second-review remediation',
+    '- The remediation ends at 0000003.',
+    '## Independent reviews',
+    '1. **Review of `0000001`**: 0 critical, 1 major, 0 minor findings.',
+    '2. **Review of `0000002`**: 0 critical, 0 major, 1 minor findings.',
+    '3. **Review of `0000003`**: 0 critical, 0 major, 0 minor findings.',
+    '',
+  ].join('\n');
+
+  it('keeps an earlier review to its own verdict, whatever review comes after it', () => {
+    expect(reviewState(text, '0000002')).toEqual({
+      head: '0000002',
+      blocking: 1,
+      covers: true,
+      remediated: true,
+      reviewMeets: false,
+    });
+    expect(reviewState(text, '0000003')).toEqual({
+      head: '0000003',
+      blocking: 0,
+      covers: true,
+      remediated: false,
+      reviewMeets: true,
+    });
+    expect(exitRuleState(text)).toEqual({
+      ...reviewState(text, '0000003'),
+      unreviewed: false,
+      met: true,
+    });
+  });
+
+  it('refuses a head that the list does not name', () => {
+    expect(() => reviewState(text, 'fffffff')).toThrow(
+      'The checkpoint lists no review of fffffff.',
+    );
   });
 });

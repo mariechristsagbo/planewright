@@ -93,30 +93,36 @@ function covered(checkpoint, count, head) {
 }
 
 /**
- * How the latest listed review stands against the R-75 exit rule: its blocking findings, whether
- * the record of the work it covers says that this work ends at its head (`covers`), whether a
- * remediation of its own is recorded, which would leave a later head unreviewed, and whether the
- * checkpoint names commits that no review covers (`unreviewed`). `reviewMeets` is the review's
- * own verdict: no blocking finding, the head covered and no remediation of its own. `met` also
+ * How the listed review of `head` stands on its own against the R-75 exit rule, wherever it is in
+ * the list: its blocking findings, whether the record of the work it covers says that this work
+ * ends at its head (`covers`), whether a remediation of its own is recorded (`remediated`), which
+ * would leave a later head unreviewed, and its own verdict (`reviewMeets`): no blocking finding,
+ * the head covered and no remediation of its own.
+ */
+export function reviewState(checkpoint, head) {
+  const count = listedReviews(checkpoint).findIndex((review) => review.head === head) + 1;
+  const blocking = blockingFindings(reviewByHead(checkpoint, head));
+  const covers = covered(checkpoint, count, head);
+  const remediated = checkpoint.includes(
+    `## Checks of the ${reviewWords(count).ordinal}-review remediation\n`,
+  );
+  return {
+    head,
+    blocking,
+    covers,
+    remediated,
+    reviewMeets: blocking === 0 && covers && !remediated,
+  };
+}
+
+/**
+ * How the latest listed review stands against the R-75 exit rule: its own state (reviewState),
+ * whether the checkpoint names commits that no review covers (`unreviewed`), and `met`, which also
  * needs no unreviewed commit, so a review that met the rule stays met in its own record while
  * later behaviour-changing commits keep R-75 open.
  */
 export function exitRuleState(checkpoint) {
-  const reviews = listedReviews(checkpoint);
-  const latest = reviews.at(-1);
-  const checks = (count) => `## Checks of the ${reviewWords(count).ordinal}-review remediation\n`;
-  const covers = covered(checkpoint, reviews.length, latest.head);
-  const remediated = checkpoint.includes(checks(reviews.length));
+  const state = reviewState(checkpoint, listedReviews(checkpoint).at(-1).head);
   const unreviewed = UNREVIEWED.test(checkpoint);
-  const blocking = blockingFindings(latest);
-  const reviewMeets = blocking === 0 && covers && !remediated;
-  return {
-    head: latest.head,
-    blocking,
-    covers,
-    remediated,
-    unreviewed,
-    reviewMeets,
-    met: reviewMeets && !unreviewed,
-  };
+  return { ...state, unreviewed, met: state.reviewMeets && !unreviewed };
 }
