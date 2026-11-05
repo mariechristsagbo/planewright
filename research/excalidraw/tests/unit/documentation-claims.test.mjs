@@ -36,7 +36,7 @@ const LINKED_DOCS = [
 // Every committed research text: documents, evidence, investigation notes, tooling, scenarios,
 // fixtures and tests. Tests build their synthetic secret-shaped values at run time.
 const SCANNED_TREES = ['docs/reverse-engineering', 'docs/investigation', 'research/excalidraw'];
-const SCANNED = /\.(?:md|json|mjs|sh|html|yml)$/u;
+const SCANNED = /\.(?:md|json|mjs|sh|html|yml|txt)$/u;
 
 // GitHub heading anchors: lower case, punctuation removed, spaces to hyphens, -1 for repeats.
 function anchorsOf(markdown) {
