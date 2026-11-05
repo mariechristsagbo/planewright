@@ -37,6 +37,7 @@ it never writes raw third-party content into this repository. See
 | `build-evidence.mjs`     | Builds the committed, sanitized evidence index from external session directories.                                                                                                                           |
 | `rea-windows.mjs`        | Summarises each saved REA observation window (bounds, what the tool retains, event counts) against the driver steps that started inside it; pure logic in `lib/windows.mjs`.                                |
 | `netlog-steps.mjs`       | Sets every netlog entry against the timeline step that had started last when the driver wrote it, and summarises the drawing steps; pure logic in `lib/placement.mjs`.                                      |
+| `rea-bundle.mjs`         | Lays saved REA records (CLI output or MCP records) out as one canonical Evidence bundle for REA's own import to validate; pure logic in `lib/bundle.mjs`.                                                   |
 
 ## Checks that contact no website
 
