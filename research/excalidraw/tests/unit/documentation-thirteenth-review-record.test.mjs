@@ -1,8 +1,8 @@
 // Checks the record of the review of 6d5d264, found by its head: its counts, session, range,
 // verification, limits and verdict, its four suggestions left open, where the twelfth-review
 // remediation ends, that the review meets the exit rule on its own while the other criteria and
-// issue #1 stay open, and the checks of this record. R-75 after the later netlog placement is
-// checked in documentation-netlog-placement-record.test.mjs.
+// issue #1 stay open, and the checks of this record. R-75 after the later work is checked in the
+// records of the later reviews.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';

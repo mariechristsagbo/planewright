@@ -1,14 +1,14 @@
 // Checks the record of the netlog placement (R-64, R-66) in the checkpoint: its commits, checks
-// and limits, the commit message error it discloses, and that its behaviour-changing commits,
-// which no review covers yet, keep R-75 and the review-session requirement open while the
-// thirteenth review keeps its own verdict.
+// and limits, the commit message errors it discloses, and that the review of 620eccf covers its
+// behaviour-changing commits while the thirteenth review keeps its own verdict. R-75 after the
+// fourteenth-review remediation is checked in documentation-fourteenth-review-record.test.mjs.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState } from './review-list.mjs';
+import { reviewState } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -16,13 +16,6 @@ const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s
 const checkpoint = () => read('docs/reverse-engineering/checkpoint.md');
 const section = (title) => checkpoint().split(`## ${title}\n`)[1].split(/^## /mu)[0];
 const record = () => section('Netlog placement (R-64, R-66)');
-// The cells of a checkpoint status table row, by its name.
-const status = (title, name) =>
-  section(title)
-    .split('\n')
-    .find((line) => line.startsWith(`| ${name} `))
-    .split('|')
-    .map((cell) => flat(cell).trim());
 const r75 = () =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
@@ -60,7 +53,7 @@ describe('the record of the netlog placement', () => {
     expect(text).toMatch(/selftest\.sh were not run again/u);
   });
 
-  it('discloses the errors in the bodies of 545b97b, 3a1d1a3 and 0b2ebda', () => {
+  it('discloses the errors in the bodies of 545b97b, 3a1d1a3, e44ba19 and 0b2ebda', () => {
     expect(flat(record())).toContain(
       'The body of 545b97b says that the summary places 523 entries against 1,825 timeline ' +
         'rows; it is 1,815.',
@@ -68,6 +61,11 @@ describe('the record of the netlog placement', () => {
     expect(flat(record())).toContain(
       'The body of 3a1d1a3 names R-66 among the documents that said a request started; R-66 ' +
         'said only when requests came, and that commit added the finish-time limit to it.',
+    );
+    expect(flat(record())).toContain(
+      'The body of e44ba19 says that its new checks derive every count, gap and time from the ' +
+        'summary; the beacon split, the four desktop inputs and the socket closes were not ' +
+        'derived until 329bc50.',
     );
     expect(flat(record())).toContain(
       'The body of 0b2ebda says that the new record checks failed 6 tests; 5 were new and 1 was ' +
@@ -80,31 +78,23 @@ describe('the record of the netlog placement', () => {
   });
 });
 
-describe('R-75 after the netlog placement', () => {
-  it('names the placement commits as not covered by a review', () => {
-    expect(record()).toMatch(/^- \*\*Not covered by a review\.\*\*/mu);
+describe('the review that covers the netlog placement', () => {
+  it('is the review of 620eccf, at the commit where the work ends', () => {
+    expect(record()).not.toMatch(/^- \*\*Not covered by a review\.\*\*/mu);
     expect(flat(record())).toContain(
-      'Not covered by a review. The commits after c010f7e, from 6051fd5 to 0b2ebda, which adds ' +
-        'this section, and the commit after it that corrects two counts here, are ' +
-        'behaviour-changing',
+      'The work ends at 620eccf, the commit after 0b2ebda that corrects two counts here.',
     );
-    expect(exitRuleState(checkpoint())).toMatchObject({
-      head: '6d5d264',
-      reviewMeets: true,
-      unreviewed: true,
-      met: false,
-    });
+    expect(flat(record())).toContain(
+      'Covered by the review of 620eccf. The commits after c010f7e, from 6051fd5 to 620eccf, are ' +
+        'behaviour-changing.',
+    );
+    expect(reviewState(checkpoint(), '620eccf')).toMatchObject({ covers: true, blocking: 1 });
+    expect(reviewState(checkpoint(), '6d5d264').reviewMeets).toBe(true);
   });
 
-  it('sets R-75 and the review requirement open, with the reason, and keeps issue #1 open', () => {
+  it('leaves R-75 open and no longer calls the placement unreviewed', () => {
     expect([r75()[5], r75()[9]]).toEqual(['🟡', '1']);
-    expect(r75()[7]).toContain(
-      'but the behaviour-changing commits after it, the netlog placement from 6051fd5, are not ' +
-        'covered by a review yet',
-    );
-    expect(status('Testing requirements', 'Separate Claude Code review session')[2]).toBe(
-      'Partial',
-    );
+    expect(r75()[7]).not.toContain('the netlog placement from 6051fd5, are not covered');
     expect(flat(section('Blockers and residuals'))).toContain('Independent review (R-75), open.');
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
   });
