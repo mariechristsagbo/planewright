@@ -56,6 +56,25 @@ describe('the observation-batch scenarios', () => {
     expect(new Set(labels).size).toBe(labels.length);
   });
 
+  it('09 asks for a portrait-primary screen at angle 0 before its first navigation', () => {
+    const { steps } = scenario('09-mobile-initial');
+    expect(steps[0].do).toBe('emulate');
+    expect(steps[0].screenOrientation).toEqual({ type: 'portraitPrimary', angle: 0 });
+    expect(steps.findIndex((step) => step.do === 'goto')).toBeGreaterThan(0);
+  });
+
+  it.each(['09-mobile-initial', ...MOBILE])(
+    '%s expects a portrait-primary screen at angle 0 in every metrics assertion',
+    (name) => {
+      const asserts = flatSteps(name).filter((step) => step.do === 'assertMetrics');
+      expect(asserts.length).toBeGreaterThan(0);
+      for (const step of asserts) {
+        expect(step.expect.orientationType).toBe('portrait-primary');
+        expect(step.expect.orientationAngle).toBe(0);
+      }
+    },
+  );
+
   it.each(ALL)('%s never grants or reads the clipboard, picks a file or drops one', (name) => {
     const kinds = flatSteps(name).map((step) => step.do);
     for (const kind of ['grantClipboard', 'clipboard', 'fileChooser', 'dropFile', 'acceptDialog'])

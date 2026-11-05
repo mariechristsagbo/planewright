@@ -1,6 +1,6 @@
 // Viewport metrics read back from the page after emulation, and the comparison that makes a
 // run fail fast when the page does not report the requested CSS viewport, DPR, screen size,
-// touch support or canvas backing store.
+// screen orientation, touch support or canvas backing store.
 
 /** Runs in the page. Reads only layout metrics and canvas sizes. */
 export function readMetrics() {
@@ -10,6 +10,8 @@ export function readMetrics() {
     devicePixelRatio: window.devicePixelRatio,
     screenWidth: window.screen.width,
     screenHeight: window.screen.height,
+    orientationType: window.screen.orientation?.type ?? null,
+    orientationAngle: window.screen.orientation?.angle ?? null,
     maxTouchPoints: navigator.maxTouchPoints,
     coarsePointer: window.matchMedia('(pointer: coarse)').matches,
     canvases: [...document.querySelectorAll('canvas')].map((c) => ({
@@ -22,14 +24,43 @@ export function readMetrics() {
   };
 }
 
+// The CDP orientation types, with the form `screen.orientation.type` reports them in.
+const ORIENTATIONS = {
+  portraitPrimary: 'portrait-primary',
+  portraitSecondary: 'portrait-secondary',
+  landscapePrimary: 'landscape-primary',
+  landscapeSecondary: 'landscape-secondary',
+};
+
+/**
+ * The screen orientation an emulate step asks for, or undefined when it names none. Without one,
+ * headless Chromium keeps the orientation of its default 800x600 screen (landscape-primary) even
+ * for a portrait phone screen.
+ */
+export function screenOrientation(step) {
+  const value = step.screenOrientation;
+  if (value === undefined) return undefined;
+  if (!Object.hasOwn(ORIENTATIONS, value?.type) || ![0, 90, 180, 270].includes(value?.angle)) {
+    throw new FatalStepError(
+      `screenOrientation needs a type of ${Object.keys(ORIENTATIONS).join(', ')} and an angle of 0, 90, 180 or 270.`,
+    );
+  }
+  return { type: value.type, angle: value.angle };
+}
+
 /** The expectation implied by an emulate step, plus any explicit `expect` overrides. */
 export function expectedFromEmulation(step) {
   const touch = step.hasTouch === true;
+  const orientation = screenOrientation(step);
   const base = {
     devicePixelRatio: step.deviceScaleFactor ?? 1,
     screenWidth: step.width,
     screenHeight: step.height,
     maxTouchPoints: touch ? 5 : 0,
+    ...(orientation && {
+      orientationType: ORIENTATIONS[orientation.type],
+      orientationAngle: orientation.angle,
+    }),
   };
   // A mobile layout viewport only matches the device width once a page with a viewport meta tag
   // has loaded, so CSS viewport checks for mobile emulation belong to `assertMetrics` after load.
@@ -44,6 +75,8 @@ const SCALARS = [
   'devicePixelRatio',
   'screenWidth',
   'screenHeight',
+  'orientationType',
+  'orientationAngle',
   'maxTouchPoints',
   'coarsePointer',
 ];

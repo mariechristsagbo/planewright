@@ -16,7 +16,13 @@ import {
   safeDownloadName,
 } from './guard.mjs';
 import { inputHandlers, point, sleep } from './input.mjs';
-import { FatalStepError, assertMetrics, expectedFromEmulation, readMetrics } from './metrics.mjs';
+import {
+  FatalStepError,
+  assertMetrics,
+  expectedFromEmulation,
+  readMetrics,
+  screenOrientation,
+} from './metrics.mjs';
 import { redactSecrets } from './sanitise.mjs';
 
 const metrics = (ctx) => ctx.page.evaluate(readMetrics);
@@ -24,6 +30,8 @@ const metrics = (ctx) => ctx.page.evaluate(readMetrics);
 // Applies device metrics, touch and user agent, then fails the run if the page does not report
 // them back. Re-applying emulation on a loaded page has read back a wrong DPR (scenario 11).
 async function emulate(ctx, step) {
+  // Checked before any CDP call, so an invalid orientation changes nothing.
+  const orientation = screenOrientation(step);
   await ctx.cdp.send('Emulation.setDeviceMetricsOverride', {
     width: step.width,
     height: step.height,
@@ -32,6 +40,7 @@ async function emulate(ctx, step) {
     // Without these, desktop emulation keeps the headless default screen of 800x600.
     screenWidth: step.width,
     screenHeight: step.height,
+    ...(orientation && { screenOrientation: orientation }),
   });
   await ctx.cdp.send('Emulation.setTouchEmulationEnabled', {
     enabled: step.hasTouch ?? false,

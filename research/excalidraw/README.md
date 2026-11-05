@@ -109,8 +109,13 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
   must be plain file names. Screenshots, ARIA files and downloads are created with `O_EXCL`, so
   a used name fails with `EEXIST` and the earlier file stays intact.
 - **Emulation.** `emulate` sets the device metrics, screen, touch and user agent, then asserts the
-  read-back. `assertMetrics` checks a loaded page, including canvas backing store = CSS size ×
-  DPR. Any mismatch is fatal and stops the batch even with `continueOnError`.
+  read-back. A step may also name a `screenOrientation` (a CDP type and an angle of 0, 90, 180
+  or 270), which is checked before any CDP call and expected back; without one, headless
+  Chromium keeps the landscape-primary orientation of its 800×600 default screen even for a
+  portrait phone screen, so `09` asks for portrait-primary at angle 0 (from s15 on).
+  `assertMetrics` checks a loaded page, including the screen orientation when expected and
+  canvas backing store = CSS size × DPR. Any mismatch is fatal and stops the batch even with
+  `continueOnError`.
 - **Screenshots** use CDP `Page.captureScreenshot` on the driver's own session. Playwright's
   `page.screenshot()` was found to reset emulated DPR and screen until the next navigation.
   `mask` selectors are painted onto the decoded image before writing. Every requested mask must

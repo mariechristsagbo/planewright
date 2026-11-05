@@ -1,5 +1,5 @@
 {
-  "description": "Mobile emulation 390x844 CSS px, DPR 3, touch enabled, Android Chrome user agent, light scheme: initial load, metrics, ARIA and screenshot. From s6 on, an assertMetrics step aborts the run unless the loaded page reports exactly 390x844 CSS px, DPR 3, a 390x844 screen, 5 touch points, a coarse pointer and canvas backing stores of CSS size x DPR.",
+  "description": "Mobile emulation 390x844 CSS px, DPR 3, touch enabled, Android Chrome user agent, light scheme: initial load, metrics, ARIA and screenshot. From s6 on, an assertMetrics step aborts the run unless the loaded page reports exactly 390x844 CSS px, DPR 3, a 390x844 screen, 5 touch points, a coarse pointer and canvas backing stores of CSS size x DPR. From s15 on, emulate also asks for a portrait-primary screen at angle 0 and both assertions expect it: without it, headless Chromium keeps the landscape-primary orientation of its 800x600 default screen.",
   "continueOnError": true,
   "steps": [
     {
@@ -9,6 +9,10 @@
       "deviceScaleFactor": 3,
       "mobile": true,
       "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      },
       "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Mobile Safari/537.36"
     },
     {
@@ -34,6 +38,8 @@
         "devicePixelRatio": 3,
         "screenWidth": 390,
         "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
         "maxTouchPoints": 5,
         "coarsePointer": true,
         "canvasBacking": true

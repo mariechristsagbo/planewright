@@ -10,6 +10,8 @@
         "devicePixelRatio": 3,
         "screenWidth": 390,
         "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
         "maxTouchPoints": 5,
         "coarsePointer": true,
         "canvasBacking": true
@@ -157,6 +159,8 @@
         "devicePixelRatio": 3,
         "screenWidth": 390,
         "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
         "maxTouchPoints": 5,
         "coarsePointer": true,
         "canvasBacking": true

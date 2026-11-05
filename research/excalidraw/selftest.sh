@@ -48,11 +48,13 @@ check "desktop emulation passes its read-back assertion" \
   test "$(jq -r '.[0].result.screenWidth' <<<"$desktop")" = 1280
 
 mobile="$(run '{"continueOnError":true,"steps":[
-  {"do":"emulate","width":390,"height":844,"deviceScaleFactor":3,"mobile":true,"hasTouch":true},
+  {"do":"emulate","width":390,"height":844,"deviceScaleFactor":3,"mobile":true,"hasTouch":true,
+    "screenOrientation":{"type":"portraitPrimary","angle":0}},
   {"do":"fixture","name":"selftest.html"},
   {"do":"wait","ms":300},
   {"do":"assertMetrics","expect":{"innerWidth":390,"innerHeight":844,"devicePixelRatio":3,
-    "screenWidth":390,"maxTouchPoints":5,"coarsePointer":true,"canvasBacking":true}},
+    "screenWidth":390,"orientationType":"portrait-primary","orientationAngle":0,
+    "maxTouchPoints":5,"coarsePointer":true,"canvasBacking":true}},
   {"do":"goto","url":"https://example.com/"},
   {"do":"goto","url":"file:///etc/passwd"},
   {"do":"aria","save":"selftest-dialog"},
@@ -64,8 +66,9 @@ mobile="$(run '{"continueOnError":true,"steps":[
     "expect":{"devicePixelRatio":2}},
   {"do":"metrics"}
 ]}')"
-check "mobile fixture reads 390x844 at DPR 3 with a matching canvas backing store" \
-  test "$(jq -r '.[3].result.canvases[0].width' <<<"$mobile")" = 1170
+check "mobile fixture reads 390x844 portrait at DPR 3 with a matching canvas backing store" \
+  test "$(jq -r '[.[3].result.canvases[0].width, .[3].result.orientationType,
+    .[3].result.orientationAngle] | join(",")' <<<"$mobile")" = "1170,portrait-primary,0"
 check "navigation outside the reference origin is refused" \
   test "$(jq -r '[.[4].error, .[5].error] | map(startswith("Navigation refused")) | all' <<<"$mobile")" = true
 check "ARIA snapshot is redacted before it is written" \
