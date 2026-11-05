@@ -110,6 +110,44 @@ describe('orderSteps with triggers', () => {
   });
 });
 
+describe('the times of the rows and entries', () => {
+  const started = (value) => () => orderSteps([{ started: value, step: { do: 'key' } }]);
+
+  it('accept only the canonical UTC form, which is copied into the committed file', () => {
+    for (const value of ['0000-01-01T00:00:00.000Z', '9999-12-31T23:59:59.999Z'])
+      expect(started(value)()[0].started).toBe(value);
+    // Forms that Date.parse reads, some as another instant or another day, and invalid ones.
+    for (const value of [
+      '2026-01-01T00:00:00Z',
+      '2026-01-01T00:00:00.000+01:00',
+      '2026-01-01 00:00:00.000Z',
+      '2026-02-30T00:00:00.000Z',
+      '2026-01-01T24:00:00.000Z',
+      '2026-13-01T00:00:00.000Z',
+      '+010000-01-01T00:00:00.000Z',
+      ' 2026-01-01T00:00:00.000Z',
+    ])
+      expect(started(value), value).toThrow(/^timeline line 1: no valid time\.$/u);
+  });
+
+  it('refuse a netlog time in another form, naming its line and never quoting it', () => {
+    const messageOf = (entries) => {
+      try {
+        placeSession(rows, entries);
+      } catch (error) {
+        return error.message;
+      }
+      return '';
+    };
+    const offset = messageOf([request(11), { ...request(12), at: `${at(12).slice(0, -1)}+00:00` }]);
+    expect(offset).toBe('netlog line 2: no valid time.');
+    // Compared as a boolean first, so a failing run never prints the synthetic room value.
+    const room = messageOf([{ ...request(12), at: `${at(12)}#room=${ROOM},${KEY}` }]);
+    expect(room.includes(ROOM) || room.includes(KEY)).toBe(false);
+    expect(room).toBe('netlog line 1: no valid time.');
+  });
+});
+
 describe('latestStep', () => {
   const steps = orderSteps([row(1, { do: 'a' }), row(3, { do: 'b' }), row(3, { do: 'c' })]);
   const t = (seconds) => Date.parse(at(seconds));

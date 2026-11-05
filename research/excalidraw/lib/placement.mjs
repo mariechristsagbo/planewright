@@ -21,10 +21,15 @@ const EVENTS = new Set([
 ]);
 const KIND = /^[A-Za-z]{1,32}$/u;
 const TYPE = /^[a-z]{1,32}$/u;
+// The form Date#toISOString writes for a four-digit year, which is how the driver writes times.
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/u;
 
+// A start time is copied into the committed file as it is, so only that canonical form is read:
+// another form, even one that Date.parse reads, and a day or hour that rolls over are refused.
 const timeOf = (value, name) => {
-  const t = typeof value === 'string' ? Date.parse(value) : Number.NaN;
-  if (!Number.isFinite(t)) throw new Error(`${name}: no valid time.`);
+  const t = typeof value === 'string' && ISO.test(value) ? Date.parse(value) : Number.NaN;
+  if (!Number.isFinite(t) || new Date(t).toISOString() !== value)
+    throw new Error(`${name}: no valid time.`);
   return t;
 };
 
