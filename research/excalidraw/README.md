@@ -31,7 +31,7 @@ it never writes raw third-party content into this repository. See
 | `scenarios/*.json`       | Replayable step batches; coordinates assume the stated viewport and default zoom.                                                                                                                           |
 | `check-masks.mjs`        | Verifies, without displaying images, that every masked region of every masked capture is painted.                                                                                                           |
 | `secret-scan.mjs`        | Scans trees or stdin for secret-shaped values and prints only file names, shape names and counts.                                                                                                           |
-| `timeline-summary.mjs`   | Reduces labelled probes to geometry/selection/zoom rows.                                                                                                                                                    |
+| `timeline-summary.mjs`   | Reduces labelled probes to geometry/selection/zoom rows; `--points` adds the point count of lines, arrows and freehand strokes.                                                                             |
 | `rea-extract.mjs`        | Verifies saved REA screenshot Evidence (digest, bytes, PNG size) or reduces page inspections to names and keys.                                                                                             |
 | `api-surface.mjs`        | Counts standard web-platform identifiers in REA-exported shipped scripts; prints counts only.                                                                                                               |
 | `build-evidence.mjs`     | Builds the committed, sanitized evidence index from external session directories.                                                                                                                           |
@@ -232,6 +232,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
   - `25` and `26` run right after `09`, each in a fresh session, because their touch points
     assume zoom 1, scroll (0,0) and an empty canvas. `27` runs after `25`, whose rectangles stay
     above its pinch, and before `24`, so that 24 reloads with a selection at a zoom other than 1.
+  - `28`, `29` and `30` run right after `09`, each in a fresh session, for the same reason. `28`
+    saves the ARIA of every popover of the compact property bar that the later touch-control
+    scenarios name, so that they can click each control by its exact name.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

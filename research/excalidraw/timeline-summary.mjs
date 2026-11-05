@@ -2,15 +2,22 @@
 // label, selected count, active tool, and per-element type/geometry/style facts.
 // One scene and one appState read may share a label. When one label is read more than once by
 // the same probe, the row keeps the first read's time and the last read's values, so a warning
-// naming the label goes to stderr; the summary itself is unchanged.
+// naming the label goes to stderr; the summary itself is unchanged. With --points each element
+// that has points (a line, an arrow or a freehand stroke) keeps its point count too; the summaries
+// committed before the touch-control batch were built without it.
 //
 // Usage: node research/excalidraw/timeline-summary.mjs <timeline.jsonl> [--since ISO] [--json]
+//        [--points]
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 
 const { values, positionals } = parseArgs({
   allowPositionals: true,
-  options: { since: { type: 'string' }, json: { type: 'boolean', default: false } },
+  options: {
+    since: { type: 'string' },
+    json: { type: 'boolean', default: false },
+    points: { type: 'boolean', default: false },
+  },
 });
 const [file] = positionals;
 if (!file) throw new Error('Pass a timeline.jsonl path.');
@@ -42,6 +49,7 @@ const element = (e) => ({
     e.opacity,
     e.roundness,
   ],
+  ...(values.points && e.points !== undefined && { points: e.points }),
 });
 
 const summary = new Map();

@@ -23,10 +23,10 @@ const scene = (started, label) => ({
   result: { elements: [] },
 });
 
-function summarise(name, rows) {
+function summarise(name, rows, flags = []) {
   const file = join(dir, `${name}.jsonl`);
   writeFileSync(file, rows.map((r) => JSON.stringify(r)).join('\n'));
-  return spawnSync(process.execPath, [SCRIPT, file, '--json'], { encoding: 'utf8' });
+  return spawnSync(process.execPath, [SCRIPT, file, '--json', ...flags], { encoding: 'utf8' });
 }
 
 describe('timeline-summary.mjs repeated labels', () => {
@@ -52,5 +52,28 @@ describe('timeline-summary.mjs repeated labels', () => {
     ]);
     expect(run.status).toBe(0);
     expect(run.stderr).toBe('');
+  });
+});
+
+describe('timeline-summary.mjs point counts', () => {
+  const shapes = {
+    started: '2026-01-01T00:00:01.000Z',
+    step: { do: 'scene', label: 'shapes' },
+    result: { elements: [{ type: 'arrow', points: 3 }, { type: 'rectangle' }] },
+  };
+  const elementsOf = (run) => JSON.parse(run.stdout)[0].elements;
+
+  it('keeps the point count of an element that has points only with --points', () => {
+    const run = summarise('points', [shapes], ['--points']);
+    expect(run.status).toBe(0);
+    const [arrow, rectangle] = elementsOf(run);
+    expect(arrow.points).toBe(3);
+    expect('points' in rectangle).toBe(false);
+  });
+
+  it('leaves the point count out by default, as in the summaries built before it', () => {
+    const run = summarise('no-points', [shapes]);
+    expect(run.status).toBe(0);
+    for (const element of elementsOf(run)) expect('points' in element).toBe(false);
   });
 });
