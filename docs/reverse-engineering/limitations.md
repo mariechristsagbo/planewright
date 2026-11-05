@@ -48,7 +48,11 @@
    with the mobile user agent, loaded the app. Export to Link, the desktop generation features,
    the isolated exports of R-64 and the desktop all-origin window of R-66 wait for a session that
    loads the page without it. What the page depends on is unverified [U]. The mobile sessions s15
-   and s16 (17:56 and 17:59 UTC) loaded the app too; the desktop was not tried again.
+   and s16 (17:56 and 17:59 UTC) loaded the app too; the desktop was not tried again. The mobile
+   client met it too in s50 (23:26 UTC), after 13 mobile sessions in s37–s49 had loaded the app:
+   the document came with HTTP 403 and the challenge requests, after which the page navigated to
+   `/` itself and got the app with HTTP 200 [O, raw netlog]. The load gate stopped s50 before any
+   REA call or input, so its Export to Link upload never ran, and no later session ran.
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -71,7 +75,14 @@
     Redo buttons and the tool choices received mouse events while every canvas input was touch.
     That a finger's tap on these DOM buttons acts the same is [I]. The style popover's radios have
     no accessible name, so scenario 32 touched them at the button centres measured on s22's
-    capture; that layout held in s26 and s31, where every touch changed the intended value.
+    capture; that layout held in s26 and s31, where every touch changed the intended value. In
+    s37–s49 the same holds for the popover buttons, Diamond, Ellipse, Edit arrow and the dialogs'
+    Insert buttons; scenario 39 touched the unnamed Arrow type radios at the centres measured on
+    s34's capture, and each touch stored a different arrow type in s40 and s44.
+13. **The keyboard stands in for the phone's.** The word typed into new texts (s37, s41, s45–s47),
+    the hex code with Ctrl+A and Enter (s41, s45) and the generation prompt with Enter (s49) were
+    sent as CDP key events to the focused field. No virtual keyboard was shown or used, so its
+    layout, autocorrection and the view's reaction to it were not observed.
 
 ## Tooling limits
 
@@ -89,6 +100,7 @@
   selected were read from raw timelines or not recorded, and cannot be re-checked from Git. From
   s22 on the summaries are built with `--points` and keep each line's and arrow's point count; the
   points themselves and the angle beyond one decimal (the scene probe rounds it) are not kept.
+  From s38 on the scene probe also reads an arrow's elbowed flag, and the summaries keep it.
 - **Facts read only from raw records outside Git.** These are cited with that caveat and cannot
   be re-checked from the committed evidence:
   - the zen, grid, snap and view-mode keys of the saved app state (B-37);
@@ -128,7 +140,14 @@
   - the names and groups of the mobile popovers and tool choices in s22–s36 (feature inventory §6,
     B-21, B-40), the open Actions popover after Bring forward (B-24), the line's handles after a
     double tap (B-40) and the arrows in s23's and s28's captures (B-04): the committed index keeps
-    ARIA line counts and capture digests.
+    ARIA line counts and capture digests;
+  - in s37–s50, the names and groups of the popovers, tool choices and dialogs (feature inventory
+    §6; B-01, B-05, B-21, B-39, B-40), the Save to... dialog (R-56), the Text to diagram chat, its
+    result and its count of requests left (B-39), that Insert closed the Mermaid and Text to diagram
+    dialogs (B-38, B-39), the byte-identical ARIA of the replay pairs, the font family of the texts
+    and the default stroke colour (B-06, B-20), and the 2.8 s between the generation request and
+    its failure event (network analysis): the committed index keeps ARIA line counts, capture
+    digests and request metadata without times.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
@@ -137,6 +156,10 @@
   two of the three `02-tool-probe` reads run straight after a key press and a drag (B-01), and
   02b, 04b, 14 and 15 have probes after shorter waits (300–600 ms) or none; scenario 13 reads at
   fixed short delays on purpose.
+- **A streamed response reads as aborted.** The netlog wrote s49's one generation request as
+  failed (`net::ERR_ABORTED`) 2.8 s after it started, while the dialog went on to show the result,
+  so it keeps no status for that request. That the driver's request events report a completed
+  streamed response as aborted is a hypothesis [H].
 - **Page-started navigation is detected, not blocked.** The driver does not intercept requests,
   because interception changes caching and service-worker behaviour. A navigation the page starts
   itself (link, redirect, script, popup) has already been requested when the navigation watcher

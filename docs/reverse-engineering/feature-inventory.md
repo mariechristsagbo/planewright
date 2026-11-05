@@ -106,17 +106,24 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   link, no zoom controls and no visible Help button.
 - **Bottom toolbar (8):** Hand, Selection, Draw, Eraser, Rectangle, Arrow, Text, More tools.
   Undo and Redo float above it on the right.
-- **Main menu:** the same menu items as desktop.
+- **Main menu:** the same menu items as desktop. Save to... opens a dialog with three entries:
+  Save to file under Save to disk, Export to Link under Shareable link, and an Export button under
+  Excalidraw+ (s37, raw ARIA) [O, medium: one session]; none of them was used (R-46, R-56).
 - **More tools on mobile:** Insert image, Sticky note, Frame tool, Web Embed, Draw to shape,
   Laser pointer, Bucket fill, and the three generation entries. Unlike desktop, there is **no
   Lasso selection**. Mermaid to Excalidraw and Text to diagram open one dialog with a tab each;
-  Wireframe to code opens no dialog (B-38, B-39; s12 and s16, high).
+  Wireframe to code opens no dialog (B-38, B-39; s12 and s16, high). After one prompt, the Text
+  to diagram tab showed a chat with New Chat, Menu, Insert, View as Mermaid and Delete message
+  buttons, a box for refining the diagram and a count of the requests left for the day (B-39;
+  s49, raw ARIA) [O, medium: one session, by design].
 - **Diamond, Ellipse and Line** appear in neither the mobile toolbar nor More tools. A tap on
   the Rectangle tool opens a choice of Rectangle, Diamond and Ellipse: the ARIA saved after that
   tap lists it in s3, s7, s11, s12, s16 and s22, so the earlier statement that the access path was
   unknown missed it. A tap on the Arrow tool opens a choice of Arrow and Line, and after Line was
-  picked the toolbar button was named Line (s27, s32, s34, s36) [O, high; raw ARIA]. Only Line
-  was drawn from them (B-40, R-24).
+  picked the toolbar button was named Line (s27, s32, s34, s36) [O, high; raw ARIA]. Line,
+  Diamond and Ellipse were all drawn from them, and after Diamond was picked the Rectangle tool's
+  button was named Diamond (B-01, B-40; s39, s43) [O, high; R-24]. The Draw tool offers a choice
+  of Freedraw and Autoshape (s37, raw ARIA) [O, medium: one session].
 - **With an element selected,** a compact bar above the toolbar shows "Stroke", "Background",
   a second "Stroke" (properties) and "Actions" buttons instead of the desktop side panel. The
   Actions popover holds Add link, Duplicate and Delete (s7 and s11, `m17-dark-actions`,
@@ -125,8 +132,14 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   Stroke width, Stroke style, Sloppiness and Edges groups of unnamed radios and an Opacity slider,
   with a Fill group first once a background is set; and the Actions popover Layers, then Align
   and Group selection for two elements and Distribute for three. A selected arrow's bar adds
-  "Arrow type" and "Edit arrow" (B-21, B-40; raw ARIA) [O, high, but medium for the Stroke colour
-  popover, saved in s22 only].
+  "Arrow type" and "Edit arrow" (B-21, B-40; raw ARIA) [O, high]. Once a colour with shades is
+  picked, the shades row holds five buttons named Shade (s37, s41, s45). A text's bar holds
+  Stroke, a second Stroke with only Opacity, Show font picker, Text align (Font size and Text
+  align groups of unnamed radios) and, once selected, Actions; a selected freehand stroke's bar
+  holds Stroke, Background, a second Stroke with Stroke width, Pressure and Opacity, and Actions;
+  an elbow arrow's bar has no "Edit arrow" (B-21; s37, s40, s41, s44–s47, raw ARIA) [O, high:
+  the pairs' snapshots are identical]. The Draw tool's own bar, without Actions, was saved in s37
+  only [O, medium].
 - **Dark dialogs (s7, s11):** Help, Export image, Command palette (its search box only), the
   pre-session Live collaboration dialog and Clear canvas open from the main menu as dialogs
   with a Close button. Preferences opens as a submenu with the same items as on desktop, shown

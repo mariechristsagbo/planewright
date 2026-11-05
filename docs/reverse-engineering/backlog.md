@@ -47,11 +47,16 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
    - The desktop selection shows corner handles and a rotation handle above the top centre; the
      reference showed 8 handles on mobile [O]. What decides the count is open (R-35).
 4. **Transforms.** Ref: B-15 to B-18.
-   - Move applies the exact pointer delta [O]. A south-east resize keeps the opposite corner fixed
-     [O]; the other handles and modifiers are **open** (R-36).
+   - Move applies the exact pointer delta [O]. A resize moves only the dragged corner or side, by
+     the drag, and keeps the opposite one fixed, with a free aspect ratio [O: south-east on desktop,
+     all eight handles on mobile]. Several selected elements scale, with the gaps between them,
+     about the fixed corner by the drag's ratios [O, mobile, one case]. Modifiers are **open**
+     (R-36).
    - The rotation handle rotates around the centre [O].
-   - Duplicate offsets the copies by +10/+10 [O]; which elements end up selected is open (R-38).
-   - Move, rotation and duplicate are each one undo step [O]; resize is open (R-36).
+   - Duplicate offsets the copies by +10/+10 [O], from the mobile Actions popover too; which
+     elements end up selected is open (R-38).
+   - Move, rotation and duplicate are each one undo step [O]; so is a resize on mobile [O], while
+     the desktop resize undo is open (R-36).
 5. **Undo/redo.** Ref: B-25.
    - Each observed operation is one undo step [O]. On a fresh page both buttons were disabled,
      and Undo became enabled after the first change [O]; the buttons' state after everything is
@@ -74,11 +79,15 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 7. **Styles panel.** Ref: B-20, B-21.
    - Changes apply to the selection and become the defaults for new elements [O].
    - Fill options appear only with a background [O].
+   - A colour is picked from 15 named colours, five shades of the chosen one or a typed hex code
+     [O, mobile].
    - Every control has an accessible name (improving on the reference's unnamed radios).
 8. **Text and labels.** Ref: B-06, B-07, B-08.
    - Click-to-type text whose vertical centre is the click; Enter on a shape adds a centred label
      that moves with its container [O].
    - Sticky notes are centred on the click [O].
+   - The font is picked from a list, as one undo step, beside font size and alignment controls
+     [O, mobile]; re-editing, wrapping and the undo of typing are **open** (R-40).
 9. **Arrows and binding.** Ref: B-04.
    - An arrow end released near a shape (5 units outside, or 5 units inside) binds to it, and
      the binding is recorded on both elements [O, two cases].
@@ -136,9 +145,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 
 ## Pending observation: scope items without observed behaviour
 
-These issue #1 scope items have no observed behaviour yet. The first bullet of each item records
-only what was inventoried or seen [O]; every behaviour criterion after it is **open** until its
-residual row is observed. Their priority is set when the feature issue is written.
+These issue #1 scope items have no observed behaviour yet, apart from the mobile commands of
+item 20. The first bullet of each item records only what was inventoried or seen [O]; every other
+behaviour criterion is **open** until its residual row is observed. Their priority is set when the
+feature issue is written.
 
 19. **Libraries.** Ref: feature inventory §2 (Library sidebar), R-15.
     - The sidebar, its four unnamed tabs, an empty state and a link to an external library site
@@ -148,7 +158,10 @@ residual row is observed. Their priority is set when the feature issue is writte
 20. **Alignment and distribution.** Ref: B-23, R-51.
     - The Help dialog lists Ctrl+Shift+Arrow for alignment [O]. One press on two shapes that
       were already aligned changed nothing [O], which does not test alignment.
-    - What each align and distribute command does, and its undo, are **open** (R-51).
+    - On mobile each of the six align commands lined up the selected boxes' edges or centres
+      with the selection's, the two distribute commands equalised the gaps, and each was one undo
+      step [O, mobile, three elements; B-23].
+    - Desktop alignment and its undo, and aligning a group, are **open** (R-51).
 21. **Offline start and reconnection.** Ref: network analysis, R-57, R-55.
     - Reloads in a profile that had loaded the page were served by a service worker [O].
     - Starting offline, reconnecting a collaboration session and what the UI shows meanwhile

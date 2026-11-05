@@ -147,6 +147,40 @@ scenario of 28–35 inside one window, after 09 and before 16.
 | `s36-mobile-fill-line-2`     | `r01-targets.json`           | `ev_2f162273`     | `list_browser_targets`                                                                                                               |
 | `s36-mobile-fill-line-2`     | `r02-inspect-during-35.json` | `ev_36b20beb`     | `inspect_web_page`, 21:56:51.295–21:57:41.852, 7 origins. Armed 5694 ms before scenario 35's first step; all its 67 steps inside it  |
 
+**Mobile control records** (s37–s49, on 2026-11-05, times UTC). Each session ran one scenario
+of 36–42 inside one window, after 09 and before 16, and s49 ran 43 in a second window. s50 has
+no REA record: its load met the verification page and the session stopped before any REA call.
+
+| Session                       | File                         | Evidence (prefix) | Operation and window                                                                                                                 |
+| ----------------------------- | ---------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `s37-mobile-inventory-2`      | `r01-targets.json`           | `ev_092fa89b`     | `list_browser_targets`                                                                                                               |
+| `s37-mobile-inventory-2`      | `r02-inspect-during-36.json` | `ev_112a30b6`     | `inspect_web_page`, 22:52:20.388–22:53:20.959, 7 origins. Armed 3833 ms before scenario 36's first step; all its 86 steps inside it  |
+| `s38-mobile-handles-3`        | `r01-targets.json`           | `ev_68265c5c`     | `list_browser_targets`                                                                                                               |
+| `s38-mobile-handles-3`        | `r02-inspect-during-37.json` | `ev_7c56afba`     | `inspect_web_page`, 23:02:32.040–23:03:32.692, 7 origins. Armed 2934 ms before scenario 37's first step; all its 78 steps inside it  |
+| `s39-mobile-shapes-align`     | `r01-targets.json`           | `ev_ba05d355`     | `list_browser_targets`                                                                                                               |
+| `s39-mobile-shapes-align`     | `r02-inspect-during-38.json` | `ev_620aa40a`     | `inspect_web_page`, 23:04:08.589–23:05:09.318, 7 origins. Armed 3023 ms before scenario 38's first step; all its 75 steps inside it  |
+| `s40-mobile-arrow-types`      | `r01-targets.json`           | `ev_182b2e55`     | `list_browser_targets`                                                                                                               |
+| `s40-mobile-arrow-types`      | `r02-inspect-during-39.json` | `ev_d292891c`     | `inspect_web_page`, 23:05:50.770–23:06:51.370, 7 origins. Armed 3090 ms before scenario 39's first step; all its 80 steps inside it  |
+| `s41-mobile-colours`          | `r01-targets.json`           | `ev_159aea1e`     | `list_browser_targets`                                                                                                               |
+| `s41-mobile-colours`          | `r02-inspect-during-40.json` | `ev_d8318045`     | `inspect_web_page`, 23:07:26.684–23:08:37.330, 7 origins. Armed 3536 ms before scenario 40's first step; all its 101 steps inside it |
+| `s42-mobile-handles-4`        | `r01-targets.json`           | `ev_93d0bfda`     | `list_browser_targets`                                                                                                               |
+| `s42-mobile-handles-4`        | `r02-inspect-during-37.json` | `ev_cb597129`     | `inspect_web_page`, 23:10:45.249–23:11:45.860, 7 origins. Armed 3596 ms before scenario 37's first step; all its 78 steps inside it  |
+| `s43-mobile-shapes-align-2`   | `r01-targets.json`           | `ev_08effa56`     | `list_browser_targets`                                                                                                               |
+| `s43-mobile-shapes-align-2`   | `r02-inspect-during-38.json` | `ev_39c9a84a`     | `inspect_web_page`, 23:12:21.959–23:13:22.590, 7 origins. Armed 3193 ms before scenario 38's first step; all its 75 steps inside it  |
+| `s44-mobile-arrow-types-2`    | `r01-targets.json`           | `ev_b52eee1f`     | `list_browser_targets`                                                                                                               |
+| `s44-mobile-arrow-types-2`    | `r02-inspect-during-39.json` | `ev_c36fb1c6`     | `inspect_web_page`, 23:14:00.000–23:15:00.718, 7 origins. Armed 3665 ms before scenario 39's first step; all its 80 steps inside it  |
+| `s45-mobile-colours-2`        | `r01-targets.json`           | `ev_bf3ed93f`     | `list_browser_targets`                                                                                                               |
+| `s45-mobile-colours-2`        | `r02-inspect-during-40.json` | `ev_7d16733d`     | `inspect_web_page`, 23:15:38.154–23:16:48.759, 7 origins. Armed 3719 ms before scenario 40's first step; all its 101 steps inside it |
+| `s46-mobile-text-controls`    | `r01-targets.json`           | `ev_1cce3dc6`     | `list_browser_targets`                                                                                                               |
+| `s46-mobile-text-controls`    | `r02-inspect-during-41.json` | `ev_8330bf4b`     | `inspect_web_page`, 23:18:40.623–23:19:31.201, 7 origins. Armed 3657 ms before scenario 41's first step; all its 41 steps inside it  |
+| `s47-mobile-text-controls-2`  | `r01-targets.json`           | `ev_8dab7919`     | `list_browser_targets`                                                                                                               |
+| `s47-mobile-text-controls-2`  | `r02-inspect-during-41.json` | `ev_2b28c7be`     | `inspect_web_page`, 23:20:06.343–23:20:56.947, 7 origins. Armed 3240 ms before scenario 41's first step; all its 41 steps inside it  |
+| `s48-mobile-mermaid-undo`     | `r01-targets.json`           | `ev_506f9201`     | `list_browser_targets`                                                                                                               |
+| `s48-mobile-mermaid-undo`     | `r02-inspect-during-42.json` | `ev_2e0f3de8`     | `inspect_web_page`, 23:21:32.316–23:22:17.925, 7 origins. Armed 3546 ms before scenario 42's first step; all its 24 steps inside it  |
+| `s49-mobile-mermaid-generate` | `r01-targets.json`           | `ev_3f533e00`     | `list_browser_targets`                                                                                                               |
+| `s49-mobile-mermaid-generate` | `r02-inspect-during-42.json` | `ev_250c797f`     | `inspect_web_page`, 23:23:09.682–23:23:55.508, 7 origins. Armed 3470 ms before scenario 42's first step; all its 24 steps inside it  |
+| `s49-mobile-mermaid-generate` | `r03-inspect-during-43.json` | `ev_b0619a79`     | `inspect_web_page`, 23:23:59.397–23:25:14.645, 7 origins. Armed 3726 ms before scenario 43's first step; all its 30 steps inside it  |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
@@ -299,6 +333,9 @@ the committed index beyond their IDs.
     s15 and s16 the three windows kept 1, 67 and 18, as many as the netlog started inside each.
     In s17–s21 the 11 windows kept none, and the netlog started none inside them.
     In s22–s36 the 15 windows kept none, and the netlog started none inside them.
+    In s37–s49 the 14 windows kept as many requests as the netlog started on their 7 origins
+    inside them, 0 to 82; over scenario 43 the netlog started one more, the generation request,
+    on an origin outside the 7.
 12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
     `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
     Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that

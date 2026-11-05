@@ -173,6 +173,29 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   allowing 7 origins kept 0 requests, 0 WebSocket connections and 0 console events
   (`evidence/netlog-steps-s22-s36.json`, `evidence/rea-windows-s22-s36.json`).
 
+### Mobile control batch (s37–s50) [O]
+
+- **Loads.** Each of the 13 loads of s37–s49 got its document with HTTP 200 from the network, with
+  no request under `/.well-known/vercel/`. In s50 the document came with HTTP 403, followed by the
+  challenge script and WebAssembly file and a `request-challenge` POST (HTTP 204) under
+  `/.well-known/vercel/security/`, after which the page navigated to `/` itself and got the app
+  with HTTP 200; the load gate stopped the session there. The 14 netlogs hold no `.map` request
+  (`evidence/sessions-s37-s50.json`).
+- **No traffic during touch input.** No request started while a touch drag was the latest step
+  (`evidence/netlog-steps-s37-s50.json`), and the windows over scenarios 36–39 kept 0 requests.
+- **Font picker.** Opening it fetched the Lilita One font file from the font CDN origin, served by
+  the service worker, in each of s41, s45, s46 and s47 [I, raw netlog and timeline times]; REA kept
+  that one request in each window (`evidence/rea-windows-s37-s50.json`).
+- **Mermaid to Excalidraw.** Over scenario 42 the netlog started 82 requests on the 7 origins in
+  each of s48 and s49, and REA kept as many.
+- **Text to diagram.** The one prompt of s49 started one POST to
+  `https://oss-ai.excalidraw.com/v1/ai/text-to-diagram/chat-streaming`, an origin that no earlier
+  netlog recorded, with the Enter step; the netlog wrote it as failed (`net::ERR_ABORTED`) 2.8 s
+  later, although the dialog then showed the result ([limitations](limitations.md#tooling-limits)).
+  Three analytics beacons with an `event` query key started inside the same window, when the tab
+  opened, with the Enter step and after the failure event [I, raw netlog and timeline times]. The
+  REA window allowed the 7 earlier origins, so it kept the 3 beacons and not the generation request.
+
 ## 2. Storage [O]
 
 | Store          | Keys / names                                                                                                                                                                                                                                                         |
@@ -210,7 +233,7 @@ references `OffscreenCanvas` and `Path2D`.
 ## 5. Unverified
 
 These are tracked in the [residual matrix](residual-matrix.md): reconnection and offline
-behaviour, "Export to Link" traffic, library browsing traffic, Text to diagram and Wireframe to
-code traffic and Mermaid to Excalidraw on desktop,
+behaviour, "Export to Link" traffic, library browsing traffic, Text to diagram traffic beyond
+one mobile request, Wireframe to code traffic and Mermaid to Excalidraw on desktop,
 the precise trigger of each lazy chunk, and Sentry/analytics payload contents (deliberately not
 captured).

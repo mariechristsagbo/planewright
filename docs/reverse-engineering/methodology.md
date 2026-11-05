@@ -73,7 +73,11 @@ checks it; before, headless Chromium kept the landscape-primary orientation of i
 the service worker); it is indexed in `evidence/sessions-s17-s21.json`. The mobile touch-control
 batch s22–s36 ran at 21:25–21:58 UTC, each session loading the page once with no reload; it is
 indexed in `evidence/sessions-s22-s36.json`, and its probe summaries keep point counts
-(`timeline-summary.mjs --points`).
+(`timeline-summary.mjs --points`). The mobile control batch s37–s50 ran at 22:51–23:26 UTC, each
+session loading the page once with no reload; in s50 the document came with HTTP 403 and the
+verification page, after which the page navigated itself and got the app, and the load gate stopped
+the session. It is indexed in `evidence/sessions-s37-s50.json`, and its probe summaries also keep an
+arrow's elbowed flag.
 
 ## Division of labour
 
