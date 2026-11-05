@@ -2,6 +2,8 @@
 // finds a review by its head and takes counts and ordinals from the list, so recording a later
 // review does not break it. A list longer than the words below fails with a clear message instead
 // of matching `undefined`.
+const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s+/gu, ' ');
+
 export const NUMBERS = [
   'one',
   'two',
@@ -55,4 +57,36 @@ export function reviewWords(count) {
       `Add number and ordinal words for ${String(count)} reviews to review-list.mjs.`,
     );
   return { number: NUMBERS[count - 1], ordinal: ORDINALS[count - 1] };
+}
+
+/** The critical, major and minor findings a listed review reports, from its opening counts. */
+export function blockingFindings(review) {
+  const counts = /^\d+\. Review of [0-9a-f]{7}: (\d+) critical, (\d+) major, (\d+) minor/u.exec(
+    flat(review.text),
+  );
+  if (!counts) throw new Error(`The review of ${review.head} does not state its counts.`);
+  return counts.slice(1).reduce((sum, count) => sum + Number(count), 0);
+}
+
+/**
+ * How the latest listed review stands against the R-75 exit rule: its blocking findings, whether
+ * the checks of the remediation before it say that this remediation ends at its head (`covers`),
+ * and whether a remediation of its own is recorded, which would leave a later head unreviewed.
+ * `met` holds only with no blocking finding, the head covered and no remediation of its own.
+ */
+export function exitRuleState(checkpoint) {
+  const reviews = listedReviews(checkpoint);
+  const latest = reviews.at(-1);
+  const checks = (count) => `## Checks of the ${reviewWords(count).ordinal}-review remediation\n`;
+  const before = checkpoint.split(checks(reviews.length - 1))[1] ?? '';
+  const covers = flat(before.split(/^## /mu)[0]).includes(`The remediation ends at ${latest.head}`);
+  const remediated = checkpoint.includes(checks(reviews.length));
+  const blocking = blockingFindings(latest);
+  return {
+    head: latest.head,
+    blocking,
+    covers,
+    remediated,
+    met: blocking === 0 && covers && !remediated,
+  };
 }

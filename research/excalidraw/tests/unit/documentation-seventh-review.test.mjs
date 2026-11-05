@@ -9,19 +9,26 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { NUMBERS, listedReviews, reviewByHead, reviewWords } from './review-list.mjs';
+import {
+  NUMBERS,
+  exitRuleState,
+  listedReviews,
+  reviewByHead,
+  reviewWords,
+} from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s+/gu, ' ');
 const checkpoint = () => read('docs/reverse-engineering/checkpoint.md');
-const note = (criterion) =>
+const cell = (criterion, column) =>
   flat(
     checkpoint()
       .split('\n')
       .find((line) => line.startsWith(`| ${criterion} `))
-      .split('|')[3],
+      .split('|')[column],
   ).trim();
+const note = (criterion) => cell(criterion, 3);
 const section = (title) => checkpoint().split(`## ${title}\n`)[1].split(/^## /mu)[0];
 
 describe('the regeneration note', () => {
@@ -105,20 +112,23 @@ describe('the record of the review of a78a210', () => {
 });
 
 describe('the latest listed review', () => {
-  it('keeps R-75 and issue #1 open while its remediation is unreviewed', () => {
-    const reviews = listedReviews(checkpoint());
-    const { number, ordinal } = reviewWords(reviews.length);
+  it('sets R-75, the review note and the blocker from the exit rule, and keeps issue #1 open', () => {
+    const { number, ordinal } = reviewWords(listedReviews(checkpoint()).length);
+    const { head, met } = exitRuleState(checkpoint());
     const opening = `${number[0].toUpperCase()}${number.slice(1)} independent reviews ran`;
-    expect(row('R-75')[5].trim()).toBe('🟡');
+    const state = met
+      ? 'meets the R-75 exit rule'
+      : 'is remediated[^.]*; no review of that remediation has run yet';
+    expect(row('R-75')[5].trim()).toBe(met ? '✅' : '🟡');
+    expect(cell('Separate Claude Code review session', 2)).toBe(met ? 'Done' : 'Partial');
     expect(note('Separate Claude Code review session')).toMatch(
-      new RegExp(
-        `^${opening}\\. The ${ordinal} \\(of ${reviews.at(-1).head}\\) is remediated[^.]*; no review of that remediation has run yet`,
-        'u',
-      ),
+      new RegExp(`^${opening}\\. The ${ordinal} \\(of ${head}\\) ${state}`, 'u'),
     );
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
     expect(flat(section('Blockers and residuals'))).toContain(
-      `${ordinal}-review remediation is still to be run (R-75)`,
+      met
+        ? `The ${ordinal} review (of ${head}) meets the exit rule`
+        : `${ordinal}-review remediation is still to be run (R-75)`,
     );
   });
 });

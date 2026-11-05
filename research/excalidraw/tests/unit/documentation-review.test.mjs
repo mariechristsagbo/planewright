@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { listedReviews, reviewWords } from './review-list.mjs';
+import { exitRuleState, listedReviews, reviewWords } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -311,15 +311,22 @@ describe('checkpoint statuses', () => {
   });
 });
 
-describe('the open review row', () => {
-  it('names every listed review and the one whose remediation is still unreviewed', () => {
-    const heads = listedReviews(read('docs/reverse-engineering/checkpoint.md')).map((r) => r.head);
-    const last = heads.at(-1);
+describe('the review row', () => {
+  it('names every listed review and whether the latest one leaves a remediation unreviewed', () => {
+    const text = read('docs/reverse-engineering/checkpoint.md');
+    const heads = listedReviews(text).map((r) => r.head);
+    const { head: last, met } = exitRuleState(text);
     const r75 = row('R-75');
     expect(heads.length).toBeGreaterThan(5);
     for (const head of heads) expect(r75).toContain(`\`${head}\``);
-    expect(r75).toContain(`The remediation of the \`${last}\` review has not been reviewed`);
+    expect(r75).toContain(
+      met
+        ? `The review of \`${last}\` reported 0 critical, 0 major and 0 minor findings, so it meets the exit rule`
+        : `The remediation of the \`${last}\` review has not been reviewed`,
+    );
     const { ordinal } = reviewWords(heads.length);
-    expect(doc('checkpoint.md')).toContain(`The ${ordinal} (of ${last}) is remediated`);
+    expect(doc('checkpoint.md')).toContain(
+      `The ${ordinal} (of ${last}) ${met ? 'meets the R-75 exit rule' : 'is remediated'}`,
+    );
   });
 });
