@@ -278,3 +278,19 @@ describe('wording', () => {
     expect(doc('backlog.md')).not.toContain('so every criterion below is open');
   });
 });
+
+describe('the agent code map', () => {
+  it('lists the research area with its test projects, lint globals and dependency', () => {
+    const map = flat(read('AGENTS.md').split('## Code map')[1].split(/^## /mu)[0]);
+    const pkg = JSON.parse(read('package.json'));
+    expect(Object.keys(pkg.devDependencies)).toContain('playwright-core');
+    for (const text of [
+      'research/excalidraw',
+      'research:unit',
+      'research:integration',
+      'playwright-core',
+    ]) {
+      expect(map).toContain(text);
+    }
+  });
+});
