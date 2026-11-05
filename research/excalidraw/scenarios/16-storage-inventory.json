@@ -1,0 +1,9 @@
+{
+  "description": "Storage key inventory of the session so far: localStorage and sessionStorage key names, value lengths and value shapes, never the values. No input and no navigation, so it can run on desktop or mobile at any point before 08 (the runLast lock refuses it after). Added for R-76: its mobile session needs a storage read, and 09 has none.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "storage"
+    }
+  ]
+}

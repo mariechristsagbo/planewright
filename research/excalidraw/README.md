@@ -168,6 +168,11 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
   - `05` starts by undoing twice, to remove 04b's dots. When it runs straight after 03 (as in
     `s2`), those undos revert 03 steps instead, so its zoom-to-fit scroll differs.
   - `06` and `15` assume 05's scroll of (90,45).
+  - `07c` repeats only 07's dark-theme switch, with a read-back and no capture, so that 15 can
+    run in a fresh session straight after 00 (R-76). 15 then starts without the scene, scroll
+    and style defaults that 01–07b leave.
+  - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
+    input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
   earlier `07b` that overwrote 07's captures, and earlier emulate steps that `s6` replaced with
   assertions. `s3` ran an earlier `10` that re-emulated.

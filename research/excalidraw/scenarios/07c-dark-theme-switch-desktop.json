@@ -1,0 +1,37 @@
+{
+  "description": "Desktop 1280x720: the dark-theme switch of 07 alone (a click on an empty canvas point, then Alt+Shift+D) followed by a root-style and app-state read-back, with no capture. Added for R-76, so that a fresh session can run 15 straight after 00. 15 then does not start from the end state of 07b: the scene, scroll and style defaults that 01 to 07b leave are not set up. Requires 00 first in the session (the only emulate step).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "click",
+      "at": [1150, 650]
+    },
+    {
+      "do": "key",
+      "key": "Alt+Shift+d"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "rootStyle"
+    },
+    {
+      "do": "appState",
+      "label": "07c-dark"
+    }
+  ]
+}
