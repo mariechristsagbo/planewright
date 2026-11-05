@@ -17,6 +17,7 @@ export const NUMBERS = [
   'ten',
   'eleven',
   'twelve',
+  'thirteen',
 ];
 const ORDINALS = [
   'first',
@@ -31,6 +32,7 @@ const ORDINALS = [
   'tenth',
   'eleventh',
   'twelfth',
+  'thirteenth',
 ];
 
 /** The entries of the checkpoint's "Independent reviews" list, in order, as { head, text }. */
