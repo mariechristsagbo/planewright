@@ -1,5 +1,10 @@
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
 import { describe, expect, it } from 'vitest';
 
+import { createRunner } from '../../lib/server.mjs';
 import {
   driverOverlap,
   parseJson,
@@ -230,6 +235,23 @@ describe('REA window summaries of incomplete records', () => {
   });
 });
 
+// The timeline rows that the real runner writes for steps that are not objects. Its step record
+// is then { invalid: <type> }, which names no kind (lib/server.mjs).
+async function invalidStepRows(steps) {
+  const dir = mkdtempSync(join(tmpdir(), 'pw-windows-test-'));
+  try {
+    const timelineFile = join(dir, 'timeline.jsonl');
+    const ctx = createRunner({ steps: new Map(), timelineFile, base: {} });
+    for (const step of steps) await ctx.run(step).catch(() => undefined);
+    return readFileSync(timelineFile, 'utf8')
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 describe('REA window overlap with the driver timeline', () => {
   it('reports the driver steps inside the window and the step just before it', () => {
     const overlap = driverOverlap(rows, windowOf(observeRecord.normalized_result));
@@ -244,7 +266,29 @@ describe('REA window overlap with the driver timeline', () => {
     });
   });
 
-  it('counts a timeline row without a step under null, as the driver logs a null step', () => {
+  it('counts a step that is not an object under null, as the driver logs it', async () => {
+    const real = await invalidStepRows([null, 42, 'tap']);
+    expect(real.map((row) => row.step)).toEqual([
+      { invalid: 'object' },
+      { invalid: 'number' },
+      { invalid: 'string' },
+    ]);
+    const times = [
+      '2026-01-01T00:00:09.000Z',
+      '2026-01-01T00:00:11.000Z',
+      '2026-01-01T00:00:12.000Z',
+    ];
+    const timed = real.map((row, index) => ({ ...row, started: times[index] }));
+    expect(driverOverlap(timed, windowOf(observeRecord.normalized_result))).toMatchObject({
+      steps: 2,
+      failed: 2,
+      by_kind: { null: 2 },
+      probe_labels: [],
+      previous_step: { at: times[0], do: null },
+    });
+  });
+
+  it('counts a null or missing step under null too, which the driver never writes', () => {
     const bare = [
       { started: '2026-01-01T00:00:09.000Z', step: null, error: 'x' },
       { started: '2026-01-01T00:00:11.000Z', error: 'y' },
