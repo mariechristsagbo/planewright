@@ -253,6 +253,10 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     centres of s22's capture. `31` and `32` deselect and reselect before every popover they
     open, so no step depends on whether an action closes its popover. `34` and `35` cover what
     s25–s27 left open, with names that those sessions saved.
+  - `36` runs right after `09` in a fresh session too. It saves what the next mobile scenarios
+    need and s22 did not save: the Stroke colour popover once a colour with shades is picked, the
+    bar for a text, for the Draw tool and for a freehand stroke, the result of Edit arrow, and the
+    Save to... dialog, which it closes without touching any entry, so nothing is saved or uploaded.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
