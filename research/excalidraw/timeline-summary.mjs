@@ -4,7 +4,9 @@
 // the same probe, the row keeps the first read's time and the last read's values, so a warning
 // naming the label goes to stderr; the summary itself is unchanged. With --points each element
 // that has points (a line, an arrow or a freehand stroke) keeps its point count too; the summaries
-// committed before the touch-control batch were built without it.
+// committed before the touch-control batch were built without it. An arrow whose probe read its
+// elbowed flag keeps it; the scene probe reads it only in sessions run after s37, so the earlier
+// timelines, and the summaries built from them, have none.
 //
 // Usage: node research/excalidraw/timeline-summary.mjs <timeline.jsonl> [--since ISO] [--json]
 //        [--points]
@@ -50,6 +52,7 @@ const element = (e) => ({
     e.roundness,
   ],
   ...(values.points && e.points !== undefined && { points: e.points }),
+  ...(e.elbowed !== undefined && { elbowed: e.elbowed }),
 });
 
 const summary = new Map();

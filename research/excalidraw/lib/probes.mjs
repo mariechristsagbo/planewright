@@ -41,6 +41,8 @@ function summariseScene(key) {
     container: Boolean(e.containerId),
     textLength: typeof e.text === 'string' ? e.text.length : undefined,
     points: Array.isArray(e.points) ? e.points.length : undefined,
+    // Only arrows carry it; a sharp and an elbow arrow both have no roundness.
+    elbowed: e.elbowed,
     strokeColor: e.strokeColor,
     backgroundColor: e.backgroundColor,
     fillStyle: e.fillStyle,

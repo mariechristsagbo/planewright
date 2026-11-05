@@ -77,3 +77,33 @@ describe('timeline-summary.mjs point counts', () => {
     for (const element of elementsOf(run)) expect('points' in element).toBe(false);
   });
 });
+
+describe('timeline-summary.mjs elbowed flag', () => {
+  const arrows = (elbowed) => ({
+    started: '2026-01-01T00:00:01.000Z',
+    step: { do: 'scene', label: 'arrows' },
+    result: {
+      elements: [
+        { type: 'arrow', points: 2, roundness: null, elbowed },
+        { type: 'rectangle', roundness: 3 },
+      ],
+    },
+  });
+  const elementsOf = (run) => JSON.parse(run.stdout)[0].elements;
+
+  it('keeps an arrow’s elbowed flag, which tells an elbow arrow from a sharp one', () => {
+    for (const flag of [true, false]) {
+      const run = summarise(`elbowed-${String(flag)}`, [arrows(flag)]);
+      expect(run.status).toBe(0);
+      const [arrow, rectangle] = elementsOf(run);
+      expect(arrow.elbowed).toBe(flag);
+      expect('elbowed' in rectangle).toBe(false);
+    }
+  });
+
+  it('adds no elbowed key for a probe that did not read one, as in the earlier timelines', () => {
+    const run = summarise('elbowed-absent', [arrows(undefined)]);
+    expect(run.status).toBe(0);
+    for (const element of elementsOf(run)) expect('elbowed' in element).toBe(false);
+  });
+});
