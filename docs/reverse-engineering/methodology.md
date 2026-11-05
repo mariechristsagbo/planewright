@@ -93,7 +93,9 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
 - To rebuild the committed index, run:
   `node research/excalidraw/build-evidence.mjs <root> docs/reverse-engineering/evidence/sessions.json <sessions...>`
   and then `npx prettier --write` on the output. The REA window summary is rebuilt the same way
-  with `node research/excalidraw/rea-windows.mjs <root> docs/reverse-engineering/evidence/rea-windows.json <sessions...>`.
+  with `node research/excalidraw/rea-windows.mjs <root> docs/reverse-engineering/evidence/rea-windows.json <sessions...>`,
+  and the netlog placement with
+  `node research/excalidraw/netlog-steps.mjs <root> docs/reverse-engineering/evidence/netlog-steps.json <sessions...>`.
 - Coordinates assume the stated viewport and default zoom. Drags that create shapes must start
   at x ≥ 260 on desktop, because the properties panel covers x≈16–211 as soon as a drawing tool
   is active

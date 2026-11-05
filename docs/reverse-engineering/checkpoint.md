@@ -825,6 +825,7 @@ The issue cannot be completed from retained evidence. These rows of the
 4. Run `08`/`08b` last, at most once per session, and never during REA calls. The driver enforces
    the order and the single run; the REA rule stays manual.
 5. Give every probe its own label, or `timeline-summary.mjs` warns that it merged reads.
-6. Rebuild the index with `build-evidence.mjs` and the window summary with `rea-windows.mjs` for
-   every session directory (see the [research README](../../research/excalidraw/README.md)), then
-   update the documents until the documentation tests pass.
+6. Rebuild the index with `build-evidence.mjs`, the window summary with `rea-windows.mjs` and the
+   netlog placement with `netlog-steps.mjs` for every session directory (see the
+   [research README](../../research/excalidraw/README.md)), then update the documents until the
+   documentation tests pass.

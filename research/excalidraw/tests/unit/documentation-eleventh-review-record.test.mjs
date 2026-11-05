@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { blockingFindings, listedReviews, reviewByHead } from './review-list.mjs';
+import { COMMITTED_AFTER_6D5D264 } from './r76-evidence.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -86,7 +87,9 @@ describe('where the tenth-review remediation ends', () => {
 describe('the checks of the eleventh-review remediation', () => {
   const text = () => section('Checks of the eleventh-review remediation');
   const committed = () =>
-    readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter((n) => n.endsWith('.json'));
+    readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter(
+      (n) => n.endsWith('.json') && !COMMITTED_AFTER_6D5D264.includes(n),
+    );
 
   it('name its commits, where it ends and the checks that ran or did not', () => {
     const checks = flat(text());

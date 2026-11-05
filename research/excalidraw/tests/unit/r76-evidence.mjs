@@ -12,6 +12,9 @@ export const RE = 'docs/reverse-engineering';
 export const doc = (name) => flat(read(`${RE}/${name}`));
 export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
+// Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
+// records of the tenth to twelfth reviews cover only the files committed before them.
+export const COMMITTED_AFTER_6D5D264 = ['netlog-steps.json'];
 const DIR = 'research/excalidraw/scenarios';
 const FILES = readdirSync(join(ROOT, DIR)).map((file) => file.replace(/\.json$/u, ''));
 export const scenario = (id) => {
