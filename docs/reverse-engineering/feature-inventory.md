@@ -73,7 +73,9 @@ effects are in [behaviour](behavior-analysis.md#b-37-view-modes-and-toggles).
 
 `rectangle`, `ellipse`, `diamond`, `arrow`, `line`, `freedraw`, `text`, `stickynote` (with an
 auto-created bound `text`), and `image` (by file drop). Frame, embed, laser, bucket fill, lasso,
-draw-to-shape and the generation tools appear in the inventory but were **not exercised** [U].
+draw-to-shape and the generation tools appear in the inventory but were **not exercised** [U],
+except on mobile in s12: Mermaid to Excalidraw inserted its offered example as rectangles, a
+diamond, arrows and labels (B-38), and Wireframe to code switched to a frame tool (B-39).
 
 ## 5. Keyboard shortcuts listed by the Help dialog [O, high as listed; behaviour verified only where noted]
 
@@ -107,7 +109,8 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
 - **Main menu:** the same menu items as desktop.
 - **More tools on mobile:** Insert image, Sticky note, Frame tool, Web Embed, Draw to shape,
   Laser pointer, Bucket fill, and the three generation entries. Unlike desktop, there is **no
-  Lasso selection**.
+  Lasso selection**. Mermaid to Excalidraw and Text to diagram open one dialog with a tab each;
+  Wireframe to code opens no dialog (B-38, B-39; s12 only, medium).
 - **Diamond, Ellipse and Line** appear in neither the mobile toolbar nor More tools. How a
   mobile user reaches them is [U].
 - **With an element selected,** a compact bar above the toolbar shows "Stroke", "Background",

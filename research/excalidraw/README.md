@@ -69,7 +69,11 @@ example `node ../rea-build/scripts/rea.mjs observe-web-session http://127.0.0.1:
 `--allowed-origins https://excalidraw.com --observation-ms 40000 --include-storage-keys` (45000
 in s11), started 5 s before the batch (8 s in s11). The initial-page inspections of s8–s11 used
 `--observation-ms 2000` with accessibility, console and WebSocket-shape text approved, as s1's
-did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
+did. In s12–s14 `inspect-web-page` ran with one `--allowed-origins` flag for each of the 7
+HTTP(S) origins of the s1–s11 netlogs and `--include-storage-keys`, started 6–8 s before the
+batch. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
+`rea-bundle.mjs` lays saved records out as a bundle for REA's own import (`rea evidence-import`,
+or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
 
 ## Driver protocol and safety
 
@@ -158,7 +162,9 @@ did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
   the rows of its trigger, which the driver writes before it, and other rows keep their line
   order. A missing file, or a line that is not valid JSON or has no time in the canonical form
   that the driver writes (`toISOString`, with milliseconds and `Z`), stops the build and is
-  named, never quoted.
+  named, never quoted. Netlogs written from s12 on also carry each request's start (`startedAt`,
+  null when the driver did not see it); a placed entry then ends with its start offset from the
+  same step start, and the drawing summary counts the request starts that fell in a drawing step.
 
 ## Scenario order and dependencies
 
@@ -181,6 +187,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Desktop R-76 (`s9`)  | 00 → 13 → 16                                                                                                                                                                                                                                           |
 | Desktop R-76 (`s10`) | 00 → 07c → 15 → 16                                                                                                                                                                                                                                     |
 | Mobile R-76 (`s11`)  | 09 → 16 → 10 → 14 → 16                                                                                                                                                                                                                                 |
+| Observation (`s12`)  | 09 → 10 → 22 → 16                                                                                                                                                                                                                                      |
+| Observation (`s13`)  | 00 → 12✗ → 23✗ → 16 (✗ = stopped at its first step, the metrics assertion, on the verification page)                                                                                                                                                   |
+| Observation (`s14`)  | 00 → 17✗                                                                                                                                                                                                                                               |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
@@ -203,6 +212,8 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
   - `07c` repeats only 07's dark-theme switch, with a read-back and no capture, so that 15 can
     run in a fresh session straight after 00 (R-76). 15 then starts without the scene, scroll
     and style defaults that 01–07b leave.
+  - `17`, `18`, `20`, `21` and `23` run after `00`, and `19` and `22` after `09`, each in a fresh
+    session (17–19 keep each export alone in its session; 20 publishes the scene once).
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

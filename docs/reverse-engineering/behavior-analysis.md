@@ -56,6 +56,8 @@ value is a value the page had saved locally.
   (−135 in s11, −132 in s7), set by the pinch in scenario 10 and carried into 14's labels. s11
   shares 6 labels with s3, and 6 of 6 are identical. s7 and s11 both ran at DPR 3, so the
   scrollX difference does not follow the DPR [I].
+- s12 shares 6 labels with s11, and 6 of 6 are identical, as are the 6 it shares with s3; with
+  s7, 2 of 6 are identical, the other 4 differing only in that scrollX.
 
 ## Creation
 
@@ -867,6 +869,55 @@ value is a value the page had saved locally.
   comparison) and byte-identical captures, and `14-end` keeps the element in both; s11 ran a
   later build.
 - **Limitations:** mobile dark only (R-13).
+
+## Generation features
+
+### B-38 Mermaid to Excalidraw
+
+- **Initial state:** mobile dark, the rectangle of scenario 10, zoom 2.11 after its pinch
+  (`m-dark-via-menu`).
+- **Action:** More tools → "Mermaid to Excalidraw", then Insert with the definition the dialog
+  offered.
+- **Immediate result:** a dialog with two tabs, "Text to diagram" (marked AI and Beta) and
+  "Mermaid", selected. The Mermaid tab names the diagram types it converts, with links to their
+  syntax pages, says that other types are inserted as an image, and offers an example flowchart
+  in a textbox, an Insert button and a Ctrl+Enter hint (`m22-01-mermaid`) [O]. Opening it wrote
+  2 aborted script requests and then 14 scripts [I, raw netlog and timeline times].
+- **State and related effects:** after Insert the scene held 22 elements: the rectangle and 21
+  new ones, 5 rectangles, 1 diamond, 5 arrows with bindings and 10 text labels in containers,
+  none in a group (`22-mermaid-inserted`) [O]. The next probe read zoom 0.875; which step
+  changed it is [U].
+- **Persistence:** read from local storage [O]; a reload was not observed (R-63).
+- **Undo/redo:** Not observed (R-63).
+- **Edge cases:** Not observed (R-63): an own definition, an invalid one, a type inserted as an
+  image.
+- **Desktop/mobile:** desktop: Not observed (R-63; scenario 21 did not run).
+- **Reproduction:** scenario 22 after 09 and 10 (s12).
+- **Confidence:** [O] medium: one session.
+- **Limitations:** one mobile session in dark theme; the dialog's links were not followed (R-63).
+
+### B-39 Text to diagram and Wireframe to code
+
+- **Initial state:** mobile dark, after B-38's insert.
+- **Action:** More tools → "Text to diagram", then Escape; More tools → "Wireframe to code", then
+  Escape.
+- **Immediate result:** Text to diagram opened B-38's dialog on its own tab: a heading, two
+  paragraphs naming the diagram kinds it knows, a prompt textbox and an unnamed button that was
+  disabled while the box was empty (`m22-02-ttd`) [O]. Wireframe to code opened no dialog; the
+  tool became `magicframe`, and Selection was no longer pressed (`m22-03-wireframe`,
+  `22-wireframe`) [O].
+- **State and related effects:** opening Text to diagram wrote one analytics beacon [I, raw
+  netlog and timeline times]; nothing was typed, so nothing was generated or sent.
+- **Persistence:** the `magicframe` tool was read from local storage [O]; a reload was not
+  observed (R-63).
+- **Undo/redo:** Not observed (R-63).
+- **Edge cases:** Not observed (R-63): a prompt, a limit or sign-in that generation may ask for,
+  and a frame drawn with the Wireframe to code tool.
+- **Desktop/mobile:** desktop: Not observed (R-63; scenario 21 did not run).
+- **Reproduction:** scenario 22 (s12).
+- **Confidence:** [O] medium: one session.
+- **Limitations:** nothing was generated, by design of scenario 22; the unnamed button has no
+  accessible name (R-63).
 
 ## Desktop and mobile differences (summary)
 

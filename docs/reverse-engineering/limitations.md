@@ -3,11 +3,12 @@
 ## Out of scope by policy
 
 - Anything that needs an account: Excalidraw+, sign-up, persistent cloud scenes.
-- The generation features (Text to diagram, Mermaid to Excalidraw, Wireframe to code). They may
-  call external services and were not opened. Issue #1 does not exclude them explicitly, so this
-  exclusion is **pending a maintainer decision**.
-- "Export to Link". It uploads the scene and creates a shareable link with a key, so it was
-  inventoried but not clicked.
+- Nothing guest-accessible: on 2026-11-05 the maintainer placed every guest-accessible feature in
+  scope, the generation features and "Export to Link" included. "Export to Link" uploads the
+  scene and creates a link with a key, so its scenario (20) treats the link as a secret; it has
+  not run, because of environment limit 8.
+- Verification pages: a page that checks whether a human or an ordinary browser is present is
+  never bypassed (no user-agent change, retry or waiting it out).
 - The reference source repository, its packages, source maps, and copied assets or text.
 - Server internals: everything about the collaboration relay, Firebase rules and analytics
   processing is hypothesis (see [network analysis](network-analysis.md#4-backend-hypotheses-not-verified)).
@@ -41,6 +42,15 @@
    reference breaks replay (B-21 shows how a reflow redirected clicks).
 7. **Single collaboration client.** Only one guest client was used per room, so multi-user
    behaviour is unverified.
+8. **Verification page for the headless desktop client.** From s13 (2026-11-05, 16:53 UTC) the
+   reference answered the desktop load with HTTP 403 and a hosting-provider verification page
+   (requests under `/.well-known/vercel/security/`) instead of the app; s12, two minutes earlier
+   with the mobile user agent, loaded the app. Export to Link, the desktop generation features,
+   the isolated exports of R-64 and the desktop all-origin window of R-66 wait for a session that
+   loads the page without it. What the page depends on is unverified [U].
+9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
+   cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
+   a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
 
 ## Tooling limits
 

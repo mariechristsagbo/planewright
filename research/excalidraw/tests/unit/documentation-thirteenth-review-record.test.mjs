@@ -9,22 +9,13 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState, listedReviews, reviewByHead, reviewState } from './review-list.mjs';
+import { listedReviews, reviewByHead, reviewState } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s+/gu, ' ');
 const checkpoint = () => read('docs/reverse-engineering/checkpoint.md');
 const section = (title) => checkpoint().split(`## ${title}\n`)[1].split(/^## /mu)[0];
-// The names of the rows of a checkpoint status table whose status is `status`, in table order.
-const withStatus = (title, status) =>
-  section(title)
-    .split('\n')
-    .filter((line) => /^\| [^-]/u.test(line))
-    .slice(1)
-    .map((line) => line.split('|').map((cell) => flat(cell).trim()))
-    .filter((cells) => cells[2] === status)
-    .map((cells) => cells[1]);
 const r75 = () =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
@@ -113,25 +104,12 @@ describe('the review of 6d5d264 against the exit rule', () => {
     });
   });
 
-  it('keeps its suggestions in the R-75 row, and leaves the other criteria and issue #1 open', () => {
+  it('keeps its suggestions in the R-75 row and leaves issue #1 open', () => {
     expect(r75()[6]).toContain('6d5d264');
     expect(r75()[7]).toContain(
       'Its 4 suggestions stay open, with their handling in the checkpoint',
     );
-    expect(withStatus('Acceptance criteria', 'Partial')).toEqual([
-      'feature-inventory.md covers all discovered features',
-      'behavior-analysis.md',
-      'limitations.md',
-      'Desktop light/dark and mobile evidence sets',
-      'Canvas interactions through the external driver while REA observes',
-      'Prioritised backlog with acceptance criteria',
-    ]);
-    // The review requirement stays open only while R-75 does, under the exit rule.
-    expect(withStatus('Testing requirements', 'Partial')).toEqual([
-      'Re-run each documented interaction from a fresh profile',
-      'Generated JSON and REA bundles validated',
-      ...(exitRuleState(checkpoint()).met ? [] : ['Separate Claude Code review session']),
-    ]);
+    // The live criteria lists are checked with the observation batch, which changed them.
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
   });
 });

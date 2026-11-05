@@ -123,6 +123,25 @@ are not sent in HTTP requests, and no room value appeared in any recorded reques
 high]. Tools that read the page URL do see it: REA target listings keep fragments, which is how
 s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remediation)).
 
+### Observation batch (s12–s14) [O]
+
+- **Request start times.** From s12 on, the netlog records when each request started. s12 has
+  104 requests, every one with its start; none fell while one of scenario 10's 3 touch drags was
+  the latest step to start (`evidence/netlog-steps-s12-s14.json`) [I, raw netlog and timeline times].
+- **Service worker in scenario 10.** As in s11, the service worker served 63 `fetch` requests for
+  `/assets/*.js` in scenario 10. In s12 they began 0.5 to 0.7 s after the tap that closed the main
+  menu after the Dark mode switch [I, raw netlog and timeline times]; what starts them is [H].
+- **REA beside the netlog.** The s12 window over scenario 10 allowed the 7 HTTP(S) origins of the
+  s1–s11 netlogs and retained 67 requests, 0 WebSocket connections and 0 console events; the
+  netlog has 67 requests with a start inside the window's network coverage, on 3 origins.
+- **Mermaid to Excalidraw on mobile.** Clicking it wrote 2 aborted script requests, then 14
+  scripts in the next wait [I, raw netlog and timeline times]. Opening Text to diagram wrote one
+  analytics beacon and nothing else; nothing was generated.
+- **Verification page.** In s13 and s14 the desktop document `/` returned 403, and the page then
+  requested a script, a worker and a fetch under `/.well-known/vercel/security/`, with one POST
+  to it that failed (`evidence/sessions-s12-s14.json`). No app script, font or analytics request
+  followed.
+
 ## 2. Storage [O]
 
 | Store          | Keys / names                                                                                                                                                                                                                                                         |
@@ -160,6 +179,7 @@ references `OffscreenCanvas` and `Path2D`.
 ## 5. Unverified
 
 These are tracked in the [residual matrix](residual-matrix.md): reconnection and offline
-behaviour, "Export to Link" traffic, library browsing traffic, the generation (AI) features,
+behaviour, "Export to Link" traffic, library browsing traffic, Text to diagram and Wireframe to
+code traffic and Mermaid to Excalidraw on desktop,
 the precise trigger of each lazy chunk, and Sentry/analytics payload contents (deliberately not
 captured).

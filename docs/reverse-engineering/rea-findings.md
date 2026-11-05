@@ -42,35 +42,43 @@ holds them. Facts that rested only on them are narrowed in the other documents.
 Times are UTC, on 2026-11-04 for s5–s7 and on 2026-11-05 for s8–s11. Each s8–s11 initial-page
 inspection is summarised in `evidence/rea-inspect-initial-<session>.summary.json`.
 
-| Session              | File                                | Evidence (prefix) | Operation and window                                                                                                                                                                  |
-| -------------------- | ----------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `s5-desktop-aborted` | `r00-targets.json`                  | `ev_7c91d27d`     | `list_browser_targets` (about:blank only, no target listed)                                                                                                                           |
-| `s5-desktop-aborted` | `r01-targets.json`                  | `ev_22ee443f`     | `list_browser_targets`                                                                                                                                                                |
-| `s5-desktop-aborted` | `r02-observe-idle-after-abort.json` | `ev_20da5d79`     | `observe_web_session`, 16:01:18.285–16:01:58.385; no driver step started inside it and it retained no timeline event                                                                  |
-| `s6-desktop-fresh`   | `r01-targets.json`                  | `ev_e046d91c`     | `list_browser_targets`                                                                                                                                                                |
-| `s6-desktop-fresh`   | `r02-observe-during-02.json`        | `ev_58bb47ed`     | `observe_web_session`, 16:03:51.196–16:04:31.229. All 40 steps of scenario 02 started inside it, from its `goto` to its last probe                                                    |
-| `s6-desktop-fresh`   | `r03-screenshot-unpaired.json`      | `ev_650ac393`     | `capture_web_screenshot`; its Playwright half did not run                                                                                                                             |
-| `s6-desktop-fresh`   | `r04-screenshot-02-shapes.json`     | `ev_543d870c`     | `capture_web_screenshot`, paired with `rea-pair-02-shapes`                                                                                                                            |
-| `s6-desktop-fresh`   | `r05-inspect-during-13.json`        | `ev_13a4756f`     | `inspect_web_page`, 16:11:06.445–16:11:32.276; network coverage from 16:11:07.044. Scenario 13's first three steps started before the window, its fourth before network coverage      |
-| `s7-mobile-fresh`    | `r01-targets.json`                  | `ev_b80d011f`     | `list_browser_targets`                                                                                                                                                                |
-| `s7-mobile-fresh`    | `r02-observe-during-10.json`        | `ev_73a3c3b4`     | `observe_web_session`, 16:15:56.409–16:16:36.448. Armed 81 ms after scenario 10's first tap (16:15:56.328); its remaining 61 steps started inside it                                  |
-| `s7-mobile-fresh`    | `r03-screenshot-mobile.json`        | `ev_0a8e2815`     | `capture_web_screenshot`, beside `m10-dark-for-rea`                                                                                                                                   |
-| `s8-desktop-r76-12`  | `r01-targets.json`                  | `ev_6afbff52`     | `list_browser_targets`                                                                                                                                                                |
-| `s8-desktop-r76-12`  | `r02-inspect-initial.json`          | `ev_4edb7fc0`     | `inspect_web_page`, 04:49:15.462–04:49:18.199; the initial page after 00, 2 s, as s1's `ev_e87d6771`                                                                                  |
-| `s8-desktop-r76-12`  | `r03-inspect-during-12.json`        | `ev_6ea5d82c`     | `inspect_web_page`, 04:49:35.192–04:50:15.449. Armed 1918 ms before scenario 12's first step; all its 30 steps started inside it, and network coverage began 1867 ms before the first |
-| `s9-desktop-r76-13`  | `r01-targets.json`                  | `ev_58a141ab`     | `list_browser_targets`                                                                                                                                                                |
-| `s9-desktop-r76-13`  | `r02-inspect-initial.json`          | `ev_67bd5eaa`     | `inspect_web_page`, 04:50:49.477–04:50:52.152; the initial page after 00, 2 s                                                                                                         |
-| `s9-desktop-r76-13`  | `r03-inspect-during-13.json`        | `ev_0c27e2a4`     | `inspect_web_page`, 04:51:02.478–04:51:42.808. Armed 1473 ms before scenario 13's first step; all its 58 steps started inside it, and network coverage began 1383 ms before the first |
-| `s10-desktop-r76-15` | `r01-targets.json`                  | `ev_8076d7fe`     | `list_browser_targets`                                                                                                                                                                |
-| `s10-desktop-r76-15` | `r02-inspect-initial.json`          | `ev_76038779`     | `inspect_web_page`, 04:52:25.171–04:52:27.579; the initial page after 00, 2 s                                                                                                         |
-| `s10-desktop-r76-15` | `r03-inspect-during-15.json`        | `ev_d9bdbc1d`     | `inspect_web_page`, 04:52:45.722–04:53:26.088. Armed 451 ms before scenario 15's first step; all its 53 steps started inside it, and network coverage began 225 ms before the first   |
-| `s11-mobile-r76-14`  | `r01-targets.json`                  | `ev_a3ab238c`     | `list_browser_targets`                                                                                                                                                                |
-| `s11-mobile-r76-14`  | `r02-inspect-initial.json`          | `ev_2f523939`     | `inspect_web_page`, 04:53:57.949–04:54:00.595; the initial mobile page after 09, 2 s                                                                                                  |
-| `s11-mobile-r76-14`  | `r03-inspect-during-14.json`        | `ev_c6951458`     | `inspect_web_page`, 04:54:29.942–04:55:15.310. Armed 4961 ms before scenario 14's first step; all its 63 steps started inside it, and network coverage began 4724 ms before the first |
+| Session                | File                                | Evidence (prefix) | Operation and window                                                                                                                                                                                     |
+| ---------------------- | ----------------------------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `s5-desktop-aborted`   | `r00-targets.json`                  | `ev_7c91d27d`     | `list_browser_targets` (about:blank only, no target listed)                                                                                                                                              |
+| `s5-desktop-aborted`   | `r01-targets.json`                  | `ev_22ee443f`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s5-desktop-aborted`   | `r02-observe-idle-after-abort.json` | `ev_20da5d79`     | `observe_web_session`, 16:01:18.285–16:01:58.385; no driver step started inside it and it retained no timeline event                                                                                     |
+| `s6-desktop-fresh`     | `r01-targets.json`                  | `ev_e046d91c`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s6-desktop-fresh`     | `r02-observe-during-02.json`        | `ev_58bb47ed`     | `observe_web_session`, 16:03:51.196–16:04:31.229. All 40 steps of scenario 02 started inside it, from its `goto` to its last probe                                                                       |
+| `s6-desktop-fresh`     | `r03-screenshot-unpaired.json`      | `ev_650ac393`     | `capture_web_screenshot`; its Playwright half did not run                                                                                                                                                |
+| `s6-desktop-fresh`     | `r04-screenshot-02-shapes.json`     | `ev_543d870c`     | `capture_web_screenshot`, paired with `rea-pair-02-shapes`                                                                                                                                               |
+| `s6-desktop-fresh`     | `r05-inspect-during-13.json`        | `ev_13a4756f`     | `inspect_web_page`, 16:11:06.445–16:11:32.276; network coverage from 16:11:07.044. Scenario 13's first three steps started before the window, its fourth before network coverage                         |
+| `s7-mobile-fresh`      | `r01-targets.json`                  | `ev_b80d011f`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s7-mobile-fresh`      | `r02-observe-during-10.json`        | `ev_73a3c3b4`     | `observe_web_session`, 16:15:56.409–16:16:36.448. Armed 81 ms after scenario 10's first tap (16:15:56.328); its remaining 61 steps started inside it                                                     |
+| `s7-mobile-fresh`      | `r03-screenshot-mobile.json`        | `ev_0a8e2815`     | `capture_web_screenshot`, beside `m10-dark-for-rea`                                                                                                                                                      |
+| `s8-desktop-r76-12`    | `r01-targets.json`                  | `ev_6afbff52`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s8-desktop-r76-12`    | `r02-inspect-initial.json`          | `ev_4edb7fc0`     | `inspect_web_page`, 04:49:15.462–04:49:18.199; the initial page after 00, 2 s, as s1's `ev_e87d6771`                                                                                                     |
+| `s8-desktop-r76-12`    | `r03-inspect-during-12.json`        | `ev_6ea5d82c`     | `inspect_web_page`, 04:49:35.192–04:50:15.449. Armed 1918 ms before scenario 12's first step; all its 30 steps started inside it, and network coverage began 1867 ms before the first                    |
+| `s9-desktop-r76-13`    | `r01-targets.json`                  | `ev_58a141ab`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s9-desktop-r76-13`    | `r02-inspect-initial.json`          | `ev_67bd5eaa`     | `inspect_web_page`, 04:50:49.477–04:50:52.152; the initial page after 00, 2 s                                                                                                                            |
+| `s9-desktop-r76-13`    | `r03-inspect-during-13.json`        | `ev_0c27e2a4`     | `inspect_web_page`, 04:51:02.478–04:51:42.808. Armed 1473 ms before scenario 13's first step; all its 58 steps started inside it, and network coverage began 1383 ms before the first                    |
+| `s10-desktop-r76-15`   | `r01-targets.json`                  | `ev_8076d7fe`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s10-desktop-r76-15`   | `r02-inspect-initial.json`          | `ev_76038779`     | `inspect_web_page`, 04:52:25.171–04:52:27.579; the initial page after 00, 2 s                                                                                                                            |
+| `s10-desktop-r76-15`   | `r03-inspect-during-15.json`        | `ev_d9bdbc1d`     | `inspect_web_page`, 04:52:45.722–04:53:26.088. Armed 451 ms before scenario 15's first step; all its 53 steps started inside it, and network coverage began 225 ms before the first                      |
+| `s11-mobile-r76-14`    | `r01-targets.json`                  | `ev_a3ab238c`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s11-mobile-r76-14`    | `r02-inspect-initial.json`          | `ev_2f523939`     | `inspect_web_page`, 04:53:57.949–04:54:00.595; the initial mobile page after 09, 2 s                                                                                                                     |
+| `s11-mobile-r76-14`    | `r03-inspect-during-14.json`        | `ev_c6951458`     | `inspect_web_page`, 04:54:29.942–04:55:15.310. Armed 4961 ms before scenario 14's first step; all its 63 steps started inside it, and network coverage began 4724 ms before the first                    |
+| `s12-mobile-draw-rea`  | `r01-targets.json`                  | `ev_c68bda39`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s12-mobile-draw-rea`  | `r02-inspect-during-10.json`        | `ev_8f4584f5`     | `inspect_web_page`, 16:51:23.384–16:52:09.675, 7 HTTP(S) origins. Armed 4127 ms before scenario 10's first step; all its 63 steps started inside it, and network coverage began 3472 ms before the first |
+| `s13-desktop-draw-rea` | `r01-targets.json`                  | `ev_620d5b8f`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s13-desktop-draw-rea` | `r02-inspect-during-12.json`        | `ev_09d976c6`     | `inspect_web_page`, 16:53:20.985–16:54:01.159, 7 origins, over the verification page; scenario 12 stopped at its first step                                                                              |
+| `s13-desktop-draw-rea` | `r03-inspect-during-23.json`        | `ev_0fb0840d`     | `inspect_web_page`, 16:54:04.820–16:54:44.965, 7 origins, over the verification page; scenario 23 stopped at its first step                                                                              |
+| `s14-desktop-svg-only` | `r01-targets.json`                  | `ev_11fa40c9`     | `list_browser_targets`                                                                                                                                                                                   |
+| `s14-desktop-svg-only` | `r02-inspect-during-17.json`        | `ev_0b415085`     | `inspect_web_page`, 16:55:36.612–16:56:12.089, 7 origins, over the verification page; scenario 17 stopped at its first step                                                                              |
 
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
-(`rea-extract.mjs`). They could not be exported as a bundle, because bundle export exists only
-as the MCP `export_evidence_bundle` tool. The target listings of s5–s11 are not summarised in
+(`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
+were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
+below). The target listings of s5–s11 are not summarised in
 the committed index beyond their IDs.
 
 ## 1. Established directly by REA [O]
@@ -194,8 +202,9 @@ the committed index beyond their IDs.
 
 1. Network and console capture start at attach (`attach_limited`). Page-load request metadata
    came from the driver netlog.
-2. Third-party origins are policy-filtered unless listed explicitly. Every retained window
-   allowed only `https://excalidraw.com`.
+2. Third-party origins are policy-filtered unless listed explicitly. Every window before s12
+   allowed only `https://excalidraw.com`; the s12–s14 windows allowed 7 HTTP(S) origins. REA
+   accepts exact HTTP(S) origins only, so a WebSocket origin or a wildcard cannot be listed.
 3. `observe_web_session` retains navigation and lifecycle metadata only; it cannot show requests,
    WebSocket traffic or console output.
 4. Large results (84–91 KB [O, raw only]; 2 MB with script sources) exceed the client's inline limit and were
@@ -207,5 +216,11 @@ the committed index beyond their IDs.
    platform and architecture as unknown.
 8. `list_browser_targets` keeps URL fragments, so REA must not run while a collaboration room is
    open; REA records from s1 retained the room key that way.
-9. Without the MCP server, records cannot be assembled into a validated bundle.
+9. Without the MCP server, records could not be exported as a validated bundle. In the
+   observation batch the project-local MCP tools were allowed: `rea-bundle.mjs` laid the 23 CLI
+   records of s5–s11 and the 7 of s12–s14 out as two bundles, `import_evidence_bundle` validated
+   each (23 and 7 records), `export_evidence_bundle` wrote it and `rea evidence-import` read the
+   export back with the same records in the same order (R-73). The bundles stay outside Git.
 10. `capture_browser_scenario` (REA-driven locator flows) was not used.
+11. REA keeps no time per retained request, so a window bounds a scenario, not a step. In s12 its
+    67 requests match, in number, the 67 that the driver netlog started inside the window.
