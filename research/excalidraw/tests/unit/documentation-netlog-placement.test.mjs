@@ -200,10 +200,15 @@ describe('R-66 and the other documents', () => {
   it('no longer say that the netlog was not set against the drawing steps', () => {
     expect(doc('rea-findings.md')).not.toContain('that has not been done');
     expect(doc('rea-findings.md')).toContain('set against every drawing step of s1–s11');
+    const idle = sessions()
+      .filter((s) => drawn(s) === 0)
+      .map(short);
+    expect(idle).toEqual(['s4', 's5']);
     expect(doc('limitations.md')).toContain(
-      'the netlog of every session covered drawing. No netlog entry was written during any ' +
-        'drawing step',
+      `the netlogs of the sessions that drew, all but ${joined(idle)}, covered drawing. No ` +
+        'netlog entry was written during any drawing step',
     );
+    expect(doc('limitations.md')).not.toContain('every session covered drawing');
     expect(doc('checkpoint.md')).not.toMatch(/drawing steps for drawing-time traffic \(R-66\)/u);
   });
 });
@@ -213,10 +218,9 @@ const workerStep = (s) => s.placements.find((p) => p.entries.some((e) => / worke
 const offset = (p, pattern) =>
   p.entries.filter((e) => pattern.test(e)).map((e) => Number(e.split(' ')[0]));
 const named = (s, name) => s.placements.find((p) => p.do === 'role' && p.name === name);
+const dedicated = () => sessions().filter(workerStep);
 
 describe('the step in which the dedicated worker started (R-64)', () => {
-  const dedicated = () => sessions().filter(workerStep);
-
   it('is the Export to SVG click in both sessions, between two fetches of both chunks', () => {
     expect(dedicated().map(short)).toEqual(['s1', 's6']);
     const ms = [];
@@ -253,7 +257,9 @@ describe('the step in which the dedicated worker started (R-64)', () => {
     expect(mobile.some((text) => text.includes('Export to SVG'))).toBe(false);
     expect(network()).toContain('No mobile scenario clicks Export to SVG.');
   });
+});
 
+describe('R-64 and the subset-worker hypothesis', () => {
   it('is cited by R-64, whose trigger stays open, and by the subset-worker hypothesis', () => {
     const row = cells('R-64').map(flat);
     expect(row[5]).toBe('🟡');
@@ -265,10 +271,23 @@ describe('the step in which the dedicated worker started (R-64)', () => {
         `${String(s6)} ms after it started ${PLACEMENT}`,
     );
     expect(row[7]).toContain('no mobile scenario clicks Export to SVG');
-    expect(row[7]).toMatch(/cannot tell the two exports or the dialog apart \[H\]/u);
+    // The times are an inference; the hypothesis is the trigger.
+    const [s] = dedicated();
+    const png = seconds(
+      Date.parse(workerStep(s).started) - Date.parse(named(s, 'Export to PNG').started),
+    );
+    expect(row[7]).toContain(
+      `both desktop sessions clicked Export to PNG ${png} s before Export to SVG, so the times ` +
+        'cannot tell the two exports or the dialog apart, and that the SVG export starts the ' +
+        'worker is a hypothesis [H]',
+    );
+    expect(row[7]).not.toMatch(/dialog apart \[H\]/u);
     expect(row[8]).not.toContain('no live session needed');
     const h6 = network().split(' | N-H6 | ')[1].split(' | N-')[0];
-    expect(h6).toContain('its event written during the Export to SVG step in s1 and s6 [I]');
+    expect(h6).toContain(
+      `its event written during the Export to SVG step in s1 and s6 ${PLACEMENT}`,
+    );
+    expect(h6).not.toContain('[I]');
     expect(h6).toMatch(/\| low \|/u);
     expect(doc('checkpoint.md')).not.toContain('for the worker trigger (R-64)');
   });
