@@ -30,16 +30,18 @@ const r75 = () =>
     .split('|')
     .map((cell) => flat(cell).trim());
 
-// The commits of the netlog placement before the one that records it, in order.
-const COMMITS = ['6051fd5', '545b97b', '3a1d1a3', 'e44ba19', 'a078f83', 'eff8534'];
+// The commits of the netlog placement up to the one that records it, in order.
+const COMMITS = ['6051fd5', '545b97b', '3a1d1a3', 'e44ba19', 'a078f83', 'eff8534', '0b2ebda'];
 
 describe('the record of the netlog placement', () => {
   it('names its commits and says that it used retained evidence only', () => {
     const text = flat(record());
+    // The Commits bullet names every commit, in order.
+    const commits = text.split(' - Commits. ')[1].split(' - What the times show.')[0];
     let at = -1;
     for (const commit of COMMITS) {
-      expect(text.indexOf(commit), commit).toBeGreaterThan(at);
-      at = text.indexOf(commit);
+      expect(commits.indexOf(commit), commit).toBeGreaterThan(at);
+      at = commits.indexOf(commit);
     }
     expect(text).toContain('no live session ran, no site was contacted');
     expect(text).toContain('It is not a review remediation');
@@ -58,10 +60,18 @@ describe('the record of the netlog placement', () => {
     expect(text).toMatch(/selftest\.sh were not run again/u);
   });
 
-  it('discloses the wrong row count in the body of 545b97b', () => {
+  it('discloses the wrong counts in the bodies of 545b97b and 0b2ebda', () => {
     expect(flat(record())).toContain(
       'The body of 545b97b says that the summary places 523 entries against 1,825 timeline ' +
         'rows; it is 1,815.',
+    );
+    expect(flat(record())).toContain(
+      'The body of 0b2ebda says that the new record checks failed 6 tests; 5 were new and 1 was ' +
+        'the rewritten entry check of the thirteenth review.',
+    );
+    expect(flat(record())).toContain(
+      'the record checks of this section (5) and the rewritten entry check of the thirteenth ' +
+        'review (1)',
     );
   });
 });
@@ -70,8 +80,9 @@ describe('R-75 after the netlog placement', () => {
   it('names the placement commits as not covered by a review', () => {
     expect(record()).toMatch(/^- \*\*Not covered by a review\.\*\*/mu);
     expect(flat(record())).toContain(
-      'Not covered by a review. c010f7e..the commit that adds this section, from 6051fd5 to that ' +
-        'commit, is behaviour-changing',
+      'Not covered by a review. The commits after c010f7e, from 6051fd5 to 0b2ebda, which adds ' +
+        'this section, and the commit after it that corrects two counts here, are ' +
+        'behaviour-changing',
     );
     expect(exitRuleState(checkpoint())).toMatchObject({
       head: '6d5d264',

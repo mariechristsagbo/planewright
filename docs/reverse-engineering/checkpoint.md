@@ -374,7 +374,8 @@ the four suggestions of the review of `6d5d264` is addressed.
   wrote the entry, once the request had finished or failed, not when the request started;
   `e44ba19` sets every drawing step against the netlog (R-66); `a078f83` places the dedicated
   worker event (R-64); `eff8534` keeps the latest review's own verdict apart from later commits in
-  the record checks; and the commit that adds this section records the work and reopens R-75.
+  the record checks; `0b2ebda` adds this section, records the work and reopens R-75; and the
+  commit after it corrects two counts in this section.
   They change research tooling, its tests and documented claims; nothing under `apps/` or
   `packages/` changed.
 - **What the times show.** Both raw files take their times from the driver process's clock. The
@@ -396,10 +397,13 @@ the four suggestions of the review of `6d5d264` is addressed.
 - **Tests first.** Each commit's new or rewritten checks ran on its tree before the change and
   failed: the tooling tests while the code was missing, the evidence checks while the summary was
   missing (4), the timing checks (4), the R-66 checks (6), the R-64 checks (3), the verdict checks
-  (2) and the record checks of this section (6).
-- **Sabotage.** Each new or rewritten check failed under at least one of 86 mutations,
-  each in a temporary copy outside the repository, after an unchanged copy passed (7 control
-  copies, all passed).
+  (2), and the record checks of this section (5) and the rewritten entry check of the thirteenth
+  review (1).
+- **Sabotage.** Each new or rewritten check failed under at least one of 91 mutations,
+  each in a temporary copy outside the repository, after an unchanged copy passed (9 control
+  copies, all passed). One more mutation, which took `0b2ebda` out of the Commits bullet, first
+  passed, because the check read the whole section; the check now reads that bullet only and
+  fails under it.
 - **Reproducibility.** With the tools at `eff8534`, all 18 committed evidence files regenerate byte
   for byte from the retained records: the 17 listed in the regeneration note and
   `netlog-steps.json`, whose two runs before its commit were also byte-identical.
@@ -411,13 +415,16 @@ the four suggestions of the review of `6d5d264` is addressed.
 - **Commit message errors.** The body of `545b97b` says that the summary places 523 entries against
   1,825 timeline rows; it is 1,815. The body of `3a1d1a3` names R-66 among the documents that said
   a request started; R-66 said only when requests came, and that commit added the finish-time
-  limit to it. Both commits are kept, because no commit is rewritten.
+  limit to it. The body of `0b2ebda` says that the new record checks failed 6 tests; 5 were new
+  and 1 was the rewritten entry check of the thirteenth review. The commits are kept, because no
+  commit is rewritten.
 - **The next record.** `exitRuleState` reads where reviewed work ends only from the checks of a
   review remediation, so the record of the review that covers this work needs the record checks
   to accept this section in their place.
-- **Not covered by a review.** `c010f7e`..the commit that adds this section, from `6051fd5` to
-  that commit, is behaviour-changing, and no listed review covers it, so R-75 is 🟡 until a fresh
-  review of its latest commit reports 0 critical, 0 major and 0 minor findings.
+- **Not covered by a review.** The commits after `c010f7e`, from `6051fd5` to `0b2ebda`, which
+  adds this section, and the commit after it that corrects two counts here, are
+  behaviour-changing, and no listed review covers them, so R-75 is 🟡 until a fresh review of the
+  latest of them reports 0 critical, 0 major and 0 minor findings.
 
 ## Independent reviews
 
