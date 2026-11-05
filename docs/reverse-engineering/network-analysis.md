@@ -71,7 +71,7 @@ in an MCP restart and are withdrawn.
 ### Lazily loaded chunks [O]
 
 - `subset-worker.chunk-*.js` and `subset-shared.chunk-*.js`. A **dedicated worker** was created
-  from the subset-worker chunk (netlog `worker` event). Which action triggered it was not
+  from the subset-worker chunk (netlog `worker` event, s1 and s6 only; no mobile netlog has one). Which action triggered it was not
   isolated [U].
 - On collaboration start: `firebaseSDK-*.js`, `qrcode.chunk-*.js`, `random-username.esm-*.js`.
 - Other `index-*.js` chunks with different hashes were also loaded. What they contain is [U].

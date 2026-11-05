@@ -2,7 +2,7 @@
 // methodology and the committed evidence.
 import { describe, expect, it } from 'vitest';
 
-import { cells, doc, flat } from './r76-evidence.mjs';
+import { cells, doc, evidence, flat } from './r76-evidence.mjs';
 
 // Placing a netlog request in a scenario sets the netlog's request times against the timeline's
 // step times, so it is an inference from two raw records, never an observation of its own.
@@ -40,5 +40,38 @@ describe('the netlog placement label', () => {
       for (const label of timingLabels(row.join(' | '))) expect(label, id).toBe(PLACEMENT);
       expect(row.join(' | '), id).not.toContain('(raw log)');
     }
+  });
+});
+
+// "a, b and c", as the documents join a list.
+const joined = (items) =>
+  items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} and ${items.at(-1)}`;
+const sessions = () => evidence('sessions.json').sessions;
+const short = (s) => s.session.split('-')[0];
+const workerEvents = (s) => s.network.filter((e) => e.event === 'worker').length;
+const servedByWorker = (s) =>
+  s.network.filter((e) => e.event === 'request' && e.fromServiceWorker === true).length;
+
+describe("R-64's mobile column", () => {
+  it('is partial: the service worker served requests on mobile, a dedicated worker never ran', () => {
+    const mobile = sessions().filter((s) => s.session.includes('-mobile'));
+    // A dedicated worker on mobile would call for another rating, not this wording.
+    expect(mobile.filter(workerEvents).map(short)).toEqual([]);
+    const served = mobile.filter(servedByWorker).map(short);
+    expect(served.length).toBeGreaterThan(0);
+    const dedicated = sessions().filter(workerEvents).map(short);
+    const row = cells('R-64').map(flat);
+    expect(row[4].split('/')[2]).toBe('🟡');
+    expect(row[6]).toContain(
+      `A dedicated worker from the subset-worker chunk (netlog worker event, ${joined(dedicated)})`,
+    );
+    expect(row[6]).toContain(`On mobile, the service worker served requests in ${joined(served)}`);
+    expect(row[7]).toContain(
+      'No mobile netlog has a dedicated worker event, so the mobile column rests on the service ' +
+        'worker alone',
+    );
+    expect(doc('network-analysis.md')).toContain(
+      `(netlog worker event, ${joined(dedicated)} only; no mobile netlog has one)`,
+    );
   });
 });
