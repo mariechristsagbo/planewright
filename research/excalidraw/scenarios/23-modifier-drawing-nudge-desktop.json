@@ -1,0 +1,176 @@
+{
+  "description": "Desktop 1280x720 light, R-31 and R-37: on a cleared canvas, a rectangle drag with Shift, a rectangle drag with Alt, and a line drag with Shift, each probed; then ArrowRight and Shift+ArrowRight on the selected element, each probed, and Ctrl+Z after them. Clears the canvas first and at the end. Requires 00 first; in s13 it runs after 12 and 16.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [640, 600]
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "scene",
+      "label": "23-cleared"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [400, 200],
+      "to": [560, 280],
+      "modifiers": ["Shift"]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "23-shift-rect"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [800, 300],
+      "to": [880, 360],
+      "modifiers": ["Alt"]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "23-alt-rect"
+    },
+    {
+      "do": "key",
+      "key": "ArrowRight"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "scene",
+      "label": "23-nudge"
+    },
+    {
+      "do": "key",
+      "key": "Shift+ArrowRight"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "scene",
+      "label": "23-nudge-shift"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "23-nudge-undo"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "l"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [300, 500],
+      "to": [420, 560],
+      "modifiers": ["Shift"]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "23-shift-line"
+    },
+    {
+      "do": "appState",
+      "label": "23-shift-line"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "23-end"
+    }
+  ]
+}

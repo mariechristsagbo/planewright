@@ -1,0 +1,302 @@
+{
+  "description": "Desktop 1280x720 light, R-63: open the three generation entries of More tools. Mermaid to Excalidraw: replace the definition with a synthetic three-node flowchart, insert it, then undo and redo. Text to diagram: type one synthetic prompt and press Generate once, wait 20 s, and insert a result if one is offered, then undo. Wireframe to code: open it and record what it asks for, without entering anything. Then read storage and reload. Every step that needs a control the guest UI may not offer is allowed to fail; nothing here signs in, enters a key, accepts a consent or follows a link off the site. Requires 00 first in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "gen-00-more-tools"
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Mermaid to Excalidraw",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 2000
+    },
+    {
+      "do": "aria",
+      "save": "gen-01-mermaid-dialog"
+    },
+    {
+      "do": "screenshot",
+      "name": "gen-01-mermaid-dialog"
+    },
+    {
+      "do": "selector",
+      "selector": "[role=dialog] textarea"
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "type",
+      "text": "flowchart LR\n  plan --> build --> test"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "aria",
+      "save": "gen-02-mermaid-typed"
+    },
+    {
+      "do": "screenshot",
+      "name": "gen-02-mermaid-typed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Insert",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "scene",
+      "label": "21-mermaid-inserted"
+    },
+    {
+      "do": "appState",
+      "label": "21-mermaid-inserted"
+    },
+    {
+      "do": "screenshot",
+      "name": "gen-03-mermaid-inserted"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "21-mermaid-undo"
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+z"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "21-mermaid-redo"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [1100, 650]
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Text to diagram",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 2000
+    },
+    {
+      "do": "aria",
+      "save": "gen-04-ttd-dialog"
+    },
+    {
+      "do": "screenshot",
+      "name": "gen-04-ttd-dialog"
+    },
+    {
+      "do": "selector",
+      "selector": "[role=dialog] textarea"
+    },
+    {
+      "do": "type",
+      "text": "A flowchart with three steps: plan, build, test"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "gen-05-ttd-typed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Generate",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 20000
+    },
+    {
+      "do": "aria",
+      "save": "gen-06-ttd-result"
+    },
+    {
+      "do": "screenshot",
+      "name": "gen-06-ttd-result"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Insert",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "scene",
+      "label": "21-ttd-inserted"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "21-ttd-undo"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Wireframe to code",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "aria",
+      "save": "gen-07-wireframe"
+    },
+    {
+      "do": "screenshot",
+      "name": "gen-07-wireframe"
+    },
+    {
+      "do": "appState",
+      "label": "21-wireframe"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "gen-08-after-escape"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "scene",
+      "label": "21-after-reload"
+    },
+    {
+      "do": "appState",
+      "label": "21-after-reload"
+    }
+  ]
+}
