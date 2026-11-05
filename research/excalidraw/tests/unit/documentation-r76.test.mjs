@@ -192,5 +192,12 @@ describe('the R-76 record', () => {
     expect(text).toContain('no independent review covers them yet');
     expect(flat(checkpoint)).toContain('(R-76 ✅)');
     expect(flat(checkpoint)).toContain('No review covers the R-76 commits after 935f2fc');
+    expect(text).toMatch(
+      /npm run validate passed on [0-9a-f]{7}[^.]*\d+ test files and \d+ tests/u,
+    );
+    expect(text).toContain('in a temporary copy outside the repository');
+    expect(text).toContain(
+      'test:e2e was not run locally: nothing under apps/ or packages/ changed',
+    );
   });
 });

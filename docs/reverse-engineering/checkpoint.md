@@ -209,6 +209,15 @@ profile, with a storage inventory and a REA initial-page inspection in that sess
   review set it, but no independent review covers them yet.
 - **Commit message warning.** commitlint reported `footer-leading-blank` (a warning, 0 problems)
   on `f9dc3db`, whose body has a line that starts like a footer token; the commit is kept.
+- **Checks of the record.** `npm run validate` passed on `7bec65f` (2026-11-05, 05:44–05:46 UTC:
+  format, lint, typecheck, guardrails, secretlint, coverage and build; 36 test files and 507
+  tests; coverage 98.17% statements, 95.27% branches, 96.91% functions and 98.79% lines). Each
+  commit's tests ran first on exactly its staged tree, and each new or rewritten check failed
+  under a mutation in a temporary copy outside the repository, after an unchanged copy passed.
+  `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
+  bodies and patches of the new commits are checked before the push (trailers, tool
+  attribution and `secret-scan.mjs`); those results, the push and the GitHub checks are in the
+  PR description.
 
 ## Independent reviews
 
