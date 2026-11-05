@@ -128,9 +128,9 @@ the committed index beyond their IDs.
     other origins and worker traffic are not represented.
   - **Not established by REA:** whether drawing causes any request, WebSocket frame or console
     output in general, on another origin, or in scenarios 02 and 10. No causal statement is made
-    either way. The driver netlog has timestamps that could be correlated with these windows
-    without a new live session; that has not been done (see the
-    [residual matrix](residual-matrix.md)).
+    either way. The driver netlog, set against every drawing step of s1–s11
+    (`evidence/netlog-steps.json`), has no entry on any origin written during one; it gives when
+    a request ended, not when it started, and keeps no console output (network analysis, R-66).
 - **Load lifecycle** (`ev_58bb47ed`, s6, warm service worker). Relative to the `init` lifecycle
   event: DOMContentLoaded 0.314 s, load 0.381 s, first contentful paint 0.594 s, network idle
   0.666 s, first image paint 3.397 s, and Chrome's `interactivetime` lifecycle event 9.973 s.

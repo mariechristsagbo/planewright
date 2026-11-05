@@ -78,7 +78,8 @@
   - the 84–91 KB sizes of the large REA results (REA findings, limitation 4);
   - the step before a wait or probe in which a netlog entry was written, such as the two taps
     before `m06-more-tools` in s11 (network analysis): `evidence/netlog-steps.json` names the step
-    in effect and the entry's offset from it, not the steps before it;
+    in effect and the entry's offset from it, not the steps before it, and the inputs before the
+    24-key beacons;
   - the s1 and s6 ARIA snapshot comparison behind the medium rating of the secondary surfaces
     (feature inventory §2); the committed index keeps line counts only;
   - the s6 and s10 (scenario 15) and s7 and s11 (scenarios 09, 10 and 14) ARIA snapshot
@@ -137,8 +138,11 @@
   palette, help, panels and context menus of an empty or simple scene.
 - That bundle identifiers execute.
 - That drawing causes, or does not cause, network, WebSocket or console activity. Only
-  same-origin REA windows (scenario 13 in s6 and s9, 12 in s8 and 15 in s10) and the s8–s11
-  netlog times (those scenarios and the mobile scenario 10 in s11) covered drawing.
+  same-origin REA windows (scenario 13 in s6 and s9, 12 in s8 and 15 in s10) and the netlog of
+  every session covered drawing. No netlog entry was written during any drawing step, but the
+  netlog writes a request only once it has finished or failed, keeps no console output and
+  counts WebSocket frames only when a socket closes, and no drawing ran in a collaboration room
+  (R-66).
 - That Ctrl+wheel zoom is anchored at the pointer, that a bound arrow end snaps to the outline,
   or that the local save delay is measured from pointer-up. See B-36, B-04 and B-30.
 - That every behaviour entry covers all issue #1 dimensions. Entries mark each dimension that was

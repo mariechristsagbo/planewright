@@ -21,7 +21,7 @@ parameters appear below by key name only.
 | `https://excalidraw.com`                             | document `/`, one stylesheet, module scripts (`index-*.js` ≈1.9 MB, `bundler-helpers`, `roundRect`, `workbox-window`), manifest, icons                                                                                               | On this origin, the first load in a fresh profile came from the network (9 requests with `fromServiceWorker: false` in each of s2–s10; s11 had 10, the 9 plus one page fetch of `/assets/mermaid-chunks-*.json`, which the netlog wrote during scenario 10, not with the load [I, raw netlog and timeline times]); later loads were served by a Workbox service worker (79 `true` in s6; all 26 of s1's requests to this origin). s11, with one load, also had 64 `true`: 63 `fetch` requests for `/assets/` chunks and 1 script, all during scenario 10 (see below); their trigger is not isolated [U], and a precache install is [H] |
 | `https://excalidraw.nyc3.cdn.digitaloceanspaces.com` | 7 distinct WOFF2 files under `/oss/fonts/` in every session (Nunito, Excalifont, Comic Shanns, and 4 Assistant files), plus an 8th, Cascadia Code, in s1, s3, s6, s7 and s11 (not s2, s4, s5 or s8–s10). Its trigger is not isolated | Also served through the service worker                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `https://scripts.simpleanalyticscdn.com`             | `GET /latest.js`                                                                                                                                                                                                                     | Third-party analytics script                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| `https://queue.simpleanalyticscdn.com`               | `GET /simple.gif` → 202, in two key sets: 23 query keys (names include viewport/screen size, language, timezone, OS, user agent, page id, session id and `src`), and 24 keys with `event` and `metadata` instead of `src`            | The 23-key beacon came once per document load in s6 (9 for 9 loads). The 24-key variant came 4 more times in s6 (13 beacons in all) and also in s1, s3, s7 and s11; it reads as an event beacon [I], and its trigger is not isolated (R-66)                                                                                                                                                                                                                                                                                                                                                                                            |
+| `https://queue.simpleanalyticscdn.com`               | `GET /simple.gif` → 202, in two key sets: 23 query keys (names include viewport/screen size, language, timezone, OS, user agent, page id, session id and `src`), and 24 keys with `event` and `metadata` instead of `src`            | The 23-key beacon came once per document load in s6 (9 for 9 loads). The 24-key variant came 4 more times in s6 (13 beacons in all) and also in s1, s3, s7 and s11; it reads as an event beacon [I]; each followed one of five inputs (below), but its trigger is not isolated (R-66)                                                                                                                                                                                                                                                                                                                                                  |
 | `https://sentry.io`                                  | `POST /api/<project>/envelope/` with 3 query keys                                                                                                                                                                                    | Error/session telemetry on every page load (9 in s6, which had 9 document loads)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 REA lifecycle (`observe_web_session`, `ev_58bb47ed`, s6 scenario 02, service worker warm):
@@ -47,12 +47,35 @@ in an MCP restart and are withdrawn.
   navigation and lifecycle metadata only. They show no navigation other than 02's own load;
   they cannot show requests, WebSocket traffic or console output.
 - Whether drawing causes traffic on any origin is therefore **not established** [U]. The driver
-  netlog has a time for every entry, which can be set against the drawing steps without a new
-  live session; the netlog writes a request once it has finished or failed, so that time bounds
-  when the request started but is not that start. For s8–s11 this was done: no entry on any
+  netlog has a time for every entry, which `evidence/netlog-steps.json` sets against the steps
+  without a new live session; the netlog writes a request once it has finished or failed, so
+  that time bounds when the request started but is not that start. In s8–s11 no entry on any
   origin was written during scenarios 12, 13 or 15, and one, to
-  `https://queue.simpleanalyticscdn.com`, during 14 [I, raw netlog and timeline times]. For
-  s1–s7 it has not been done (R-66).
+  `https://queue.simpleanalyticscdn.com`, during 14 [I, raw netlog and timeline times].
+- **Every drawing step, every origin** [I, raw netlog and timeline times]. A drawing step is a
+  `drag`, `path` or `touchDrag`, from its start to the next step's start. In s1–s7 there were 71
+  (s1 22, s2 14, s3 3, s6 29 and s7 3; s4 and s5 drew nothing), and with s8–s11 82, on desktop in
+  light and dark theme (s6's last two are scenario 15's) and on mobile (scenario 10's touch
+  drawing, pinch and pan in s3, s7 and s11). No netlog entry was written during any of them.
+  - After a drawing step, the next entry came at least 59.0 s later in s1, 2.6 s in s3, 5.1 s in
+    s6, 3.3 s in s7 and 2.8 s in s11. In s2 and s8–s10 the netlog wrote nothing after the first
+    drawing step. So a request on any origin that a drawing step started finished no sooner than
+    that, or did not finish while the driver ran. Each of those next entries was written during
+    a later step that does not draw; whether a drawing step started one of them cannot be told
+    from the netlog [U].
+  - The netlog keeps no console output, and it counts WebSocket frames only when a socket
+    closes, which neither collaboration socket did. No drawing step ran after a collaboration
+    socket opened: s1 and s6 last drew at 13:39:36 and 16:14:05 UTC, and their sockets opened at
+    13:43:47 and 16:14:22 UTC.
+  - So no session wrote a netlog entry while it drew. Whether drawing starts a request that ends
+    later, or causes console output on mobile or WebSocket traffic in a room, is not
+    established [U].
+- **The 24-key beacons** [I, raw netlog and timeline times]. Each of the 13 (4 in s1 and s6, 1 in
+  s3, 2 in s7 and s11) was written 42–599 ms after one of five inputs and before the next input:
+  the Command palette (Ctrl+/ in scenario 01 on desktop, the Command palette control in 14 on
+  mobile), Export to PNG, Export to SVG, Ctrl+S, and the tap before `m07-library` on mobile. s1
+  and s6 each wrote one after each of the four desktop inputs, and none followed a drawing step.
+  That these inputs send an analytics event is a hypothesis [H].
 - **s11's requests after its load** [I, raw netlog and timeline times]. Of its 87
   requests, the netlog wrote 19 during 09's load, 67 during scenario 10 and 1 during 14, and none
   in the rest of 09 or during the two storage reads (16). `evidence/netlog-steps.json` keeps each

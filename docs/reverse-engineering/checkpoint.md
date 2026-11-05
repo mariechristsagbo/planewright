@@ -771,15 +771,16 @@ The issue cannot be completed from retained evidence. These rows of the
 [residual matrix](residual-matrix.md) need work before the behaviour contract is met:
 
 - **Without a live session** (retained raw evidence only): set the s1–s7 driver netlog
-  timestamps against the drawing steps for drawing-time traffic (R-66) and the worker trigger
-  (R-64); re-export the s5–s11 REA records once the MCP tools are granted (R-73).
+  timestamps against the driver steps for the worker trigger (R-64); re-export the s5–s11 REA
+  records once the MCP tools are granted (R-73).
 - **New live observation, priority 1:** keyboard accessibility (R-27); multi-point and modifier
   drawing (R-30, R-31); hit-testing (R-34); other handles, modifiers and nudging (R-36, R-37); named style controls
   (R-10, R-39); text editing and its undo (R-40); arrow endpoint placement, binding rules and
   undo (R-42); file flows in a headed browser (R-16, R-18, R-46, R-47); Ctrl+wheel at an
   off-centre pointer, zoom limits and pinch ratios (R-48); grouping, layers and alignment with
   their undo (R-49–R-51); zoom and selection across a reload, and scenario 09b run on a drawn
-  scene with a scene probe after the reload (R-54).
+  scene with a scene probe after the reload (R-54); REA inspection allowing every page origin
+  while the driver draws, mobile included (R-66).
 - **New live observation, priority 2:** the tool and selection after a drag, read after a wait
   (R-02, R-29); a reload while dark and with zen, grid and snap on, and
   Ctrl+Z after a toggle or theme change (R-19); responsive breakpoints, a tablet viewport and
