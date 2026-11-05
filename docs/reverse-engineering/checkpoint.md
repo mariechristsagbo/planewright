@@ -1,7 +1,7 @@
 # Checkpoint: issue #1 status
 
-Last updated: 2026-11-05 (eighth-review remediation, from retained evidence and local checks
-only; no reference session ran after s7). Branch: `docs/1-excalidraw-research`. Issue #1 stays
+Last updated: 2026-11-05 (ninth-review record, from retained evidence and local checks only; no
+reference session ran after s7). Branch: `docs/1-excalidraw-research`. Issue #1 stays
 open: the Draft PR refers to it (`Refs #1`) and does not close it.
 
 ## Acceptance criteria
@@ -30,7 +30,7 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
 | Generated JSON and REA bundles validated                | Partial | All committed JSON parses. With the current tools, `sessions.json`, `rea-windows.json`, the five probe summaries and `rea-inspect-initial.summary.json` regenerate byte for byte from the retained records. This was checked in the fifth-review remediation on 2026-11-04, by the sixth review on `46b2b01` and by the review of `a78a210` on that head; the builders and the libraries they import are unchanged since `46b2b01`, and no later remediation regenerated the files. `bundle-01-desktop.json` passed `rea evidence-export` earlier on 2026-11-04. The REA CLI records of s5–s7 cannot be exported as a bundle without the MCP `export_evidence_bundle` tool (R-73) |
 | CDP and driver ports loopback-only                      | Done    | With the sixth-review tooling, `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 against real local containers on 2026-11-05 at 00:15–00:16 UTC, on `e38955a`, contacting no website; their output is committed in [local-checks/](local-checks/). The earlier runs on `dc6eef1` (2026-11-04, 22:18 and 22:19 UTC) kept no output. This holds from s5 on: s1–s4 ran on the default Docker bridge, where the DevTools forwarder was reachable from other containers (see the methodology). A probe that cannot run, and a failed docker listing during cleanup, count as FAIL                                                                                        |
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs. The removal checks of the `e38955a` runs are in local-checks                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Separate Claude Code review session                     | Partial | Eight independent reviews ran. The eighth (of `8029c1e`) is remediated in the current tree; no review of that remediation has run yet (R-75). R-75 closes only under the exit rule in [Independent reviews](#independent-reviews), which the eighth review does not meet: it reports one minor finding                                                                                                                                                                                                                                                                                                                                                                            |
+| Separate Claude Code review session                     | Done    | Nine independent reviews ran. The ninth (of `a85eb82`) meets the R-75 exit rule: 0 critical, 0 major and 0 minor findings, and its 10 suggestions are listed with their handling. R-75 closes only under the exit rule in [Independent reviews](#independent-reviews), so it is ✅ until a behaviour-changing remediation follows `a85eb82`. This closes R-75 only; the other Partial criteria and the maintainer decisions keep issue #1 open                                                                                                                                                                                                                                    |
 
 ## Checks of the fifth-review remediation
 
@@ -133,6 +133,39 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
 - The committed index and summaries were not regenerated: the builders and the libraries they
   import are unchanged since `46b2b01`, and the review of `8029c1e` regenerated all 8 files byte
   for byte on that head.
+- The bodies and patches of the new commits are checked before the push (trailers, tool
+  attribution and `secret-scan.mjs`); those results, the push and the GitHub checks are in the PR
+  description.
+- The remediation ends at `a85eb82`, the commit that records it; the review of `a85eb82` covers
+  all of it.
+
+## Checks of the ninth-review record
+
+- This record changes only the checkpoint, the residual matrix and the record checks. `407b28c`
+  adds to the exit rule that updating the record checks counts as recording, `306c35c` takes the
+  R-75 status from the latest review, and the commit that adds this section records the review.
+  No research tooling, tooling test or research claim outside this record changed after
+  `a85eb82`.
+- `npm run validate` passed on `306c35c` (2026-11-05, 03:44–03:45 UTC: format, lint, typecheck,
+  guardrails, secretlint, coverage and build; 31 test files and 471 tests; coverage 98.17%
+  statements, 95.27% branches, 96.91% functions and 98.79% lines).
+- Sabotage checks, each in a temporary copy outside the repository, after an unchanged control
+  copy passed:
+  - with the `a85eb82` record checks and `review-list.mjs` put back and this record kept, 4 of
+    the 419 research tests failed: the exit-rule statement, the record of the review of
+    `8029c1e`, the open review row and the latest listed review;
+  - with this record and R-75 left 🟡, 2 checks failed; with the review said to report one
+    minor finding, 5; without the bullet that ends the eighth-review remediation at `a85eb82`,
+    5; with this section named as a ninth-review remediation, 6; with the review listed under
+    `080e238`, 6;
+  - with the `407b28c` documents, the derived checks passed and only the 4 checks of this
+    record failed. With the `306c35c` checks and those documents, R-75 marked ✅ while the eighth
+    review reports a minor finding failed 2 checks, and the `a85eb82` checkpoint failed the
+    exit-rule check of `407b28c`.
+- `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed.
+- `isolation-check.sh` and `selftest.sh` were not run again, and the committed index and
+  summaries were not regenerated: no tooling changed after `a85eb82`, where the review of
+  `a85eb82` regenerated all 9 committed evidence files byte for byte.
 - The bodies and patches of the new commits are checked before the push (trailers, tool
   attribution and `secret-scan.mjs`); those results, the push and the GitHub checks are in the PR
   description.
@@ -258,6 +291,43 @@ decisions.
    - **Suggestion 4, no exit rule for R-75:** the rule above (`080e238`).
    - Suggestion 2 of the review of `a78a210` stays open: the seven corrections of `4a43c1a` are
      to be listed in the squash-merge body by whoever merges.
+9. **Review of `a85eb82`**: 0 critical, 0 major, 0 minor findings and 10 suggestions. It meets the
+   R-75 exit rule: it covers `a85eb82`, where the eighth-review remediation ends, and the commits
+   after it only record this review, update the record checks and say in the rule that doing so
+   counts as recording. R-75 is ✅; issue #1 stays open. Handled as follows:
+   - **Suggestion 1, record checks that never let R-75 become ✅:** the exit rule says that
+     updating the record checks counts as recording (`407b28c`). The checks of R-75, the review
+     note, the blocker and the review row take their wording from the latest review: R-75 is ✅
+     only if that review reports no critical, major or minor finding, the checks of the
+     remediation before it say that this remediation ends at its head, and no remediation of its
+     own is recorded (`306c35c`).
+   - **Suggestions 2–10 are not addressed in this record.** None of them is a critical, major or
+     minor finding, so they stay open as listed here:
+     - **Suggestion 2,** a failed step's `do` value comes back unredacted in the HTTP reply. It is
+       the client's own input, and the documents claim redaction for handler results only.
+     - **Suggestion 3,** when an escape's hex digits are themselves encoded, `redactSecrets`
+       leaves the text as it is, although detection flags it; the research README's "however it
+       is encoded" says more than the code does.
+     - **Suggestion 4,** a step nested deeply enough to overflow the stack while its redacted copy
+       is built gets no timeline row. It does not run, but the research README says that every
+       step is appended.
+     - **Suggestion 5,** `selftest.sh` does not stop its driver if it aborts.
+     - **Suggestion 6,** the DevTools isolation claim of `browser.sh` and the research README does
+       not hold for a `--network host` container, which shares the host's loopback.
+     - **Suggestion 7,** the screenshot room check is triggered by the URL only, so a view that
+       shows a generated link would not be covered; this is not documented yet.
+     - **Suggestion 8,** wording: the eighth-review checks say "stub handlers" where the test uses
+       the real `selector` and `role` handlers, the regeneration note does not list the review of
+       `8029c1e`, and the research README does not say that s5 ran an earlier version of scenario
+       01 or mention its final `metrics` read.
+     - **Suggestion 9,** hardening: the cost of `decodeAscii` on long `%25` chains, the token
+       written before the driver listens, the default umask of raw output files, symlinks and
+       files over 200 MB skipped by `secret-scan.mjs`, storage names copied unredacted by
+       `rea-extract.mjs`, and short body excerpts in JSON parse errors.
+     - **Suggestion 10,** Suggestions 2 and 3 of the review of `a78a210` stay open (see that
+       entry).
+   - A remediation of any of them would change the tooling, its tests or a documented research
+     claim, so it would be behaviour-changing, and R-75 would need a fresh review under the rule.
 
 ## Privacy remediation
 
@@ -302,9 +372,10 @@ Values were never printed; only counts and file names were recorded.
   and R-46 plan them in a headed browser.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client
   collaboration (R-55), and offline start and reconnection (R-57).
-- **Review of the remediation.** A fresh independent review of the eighth-review remediation
-  is still to be run (R-75). R-75 closes only under the exit rule in
-  [Independent reviews](#independent-reviews).
+- **Independent review (R-75), done.** The ninth review (of `a85eb82`) meets the exit rule, so
+  no further review is due for R-75. R-75 closes only under the exit rule in
+  [Independent reviews](#independent-reviews): a behaviour-changing remediation after `a85eb82`,
+  such as one for the open suggestions, would need a fresh review under it.
 
 ## Remaining observation work
 
