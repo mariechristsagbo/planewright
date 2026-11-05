@@ -68,7 +68,9 @@ once, from the service worker). They are indexed in their own evidence files
 (`evidence/sessions-s12-s14.json`, `evidence/sessions-s15-s16.json`). From s15 on, the mobile
 emulation also asks for a portrait-primary screen at angle 0 and every mobile metrics assertion
 checks it; before, headless Chromium kept the landscape-primary orientation of its default screen
-([limitations](limitations.md#environment-limits)).
+([limitations](limitations.md#environment-limits)). The mobile priority-1 batch s17–s21 ran at
+19:55–20:11 UTC, each session loading the page once (s17, s19 and s21 also reloaded it once, from
+the service worker); it is indexed in `evidence/sessions-s17-s21.json`.
 
 ## Division of labour
 

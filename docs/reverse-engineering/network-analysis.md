@@ -154,6 +154,16 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
 - **REA beside the netlog.** The three s15 and s16 windows kept 1, 67 and 18 requests, as many as
   the netlog started inside each (`evidence/rea-windows-s15-s16.json`).
 
+### Mobile priority-1 batch (s17–s21) [O]
+
+- **Loads and reloads.** Each of the five loads got its document with HTTP 200 from the network,
+  with no request under `/.well-known/vercel/`, and each of the three reloads (s17, s19, s21) got it
+  from the service worker (`evidence/sessions-s17-s21.json`).
+- **No traffic during touch input.** The netlog placed every entry in a load or a reload and the
+  wait after it, none in scenarios 25, 26 or 27, and the 11 REA windows allowing 7 origins kept 0
+  requests, 0 WebSocket connections and 0 console events (`evidence/netlog-steps-s17-s21.json`,
+  `evidence/rea-windows-s17-s21.json`).
+
 ## 2. Storage [O]
 
 | Store          | Keys / names                                                                                                                                                                                                                                                         |

@@ -197,6 +197,11 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Observation (`s14`)  | 00 → 17✗                                                                                                                                                                                                                                               |
 | Follow-up (`s15`)    | 09 → 19                                                                                                                                                                                                                                                |
 | Follow-up (`s16`)    | 09 → 10 → 22 → 16 → 24                                                                                                                                                                                                                                 |
+| Priority-1 (`s17`)   | 09 → 25 → 27 → 24 → 16                                                                                                                                                                                                                                 |
+| Priority-1 (`s18`)   | 09 → 26 → 16                                                                                                                                                                                                                                           |
+| Priority-1 (`s19`)   | 09 → 25 → 27 → 24 → 16                                                                                                                                                                                                                                 |
+| Priority-1 (`s20`)   | 09 → 26 → 16                                                                                                                                                                                                                                           |
+| Priority-1 (`s21`)   | 09 → 25 → 27 → 24 → 16                                                                                                                                                                                                                                 |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
@@ -223,7 +228,7 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     session (17–19 keep each export alone in its session; 20 publishes the scene once).
   - `24` sends no input: it reads and captures a drawn scene, reloads with 09b's reload, wait and
     assertion, and reads and captures again, so it runs after a scenario that leaves a drawn
-    scene (after 22 and 16 in s16; planned after 27).
+    scene (after 22 and 16 in s16, and after 27 in s17, s19 and s21).
   - `25` and `26` run right after `09`, each in a fresh session, because their touch points
     assume zoom 1, scroll (0,0) and an empty canvas. `27` runs after `25`, whose rectangles stay
     above its pinch, and before `24`, so that 24 reloads with a selection at a zoom other than 1.

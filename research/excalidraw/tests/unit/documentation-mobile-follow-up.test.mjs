@@ -102,7 +102,8 @@ describe('the observations of the mobile follow-up', () => {
     expect(documents.map((e) => e.fromServiceWorker === true).sort()).toEqual([false, true]);
     expect(section()).toContain("The reload's document came from the service worker");
     expect(section()).toContain('read the same before and after');
-    expect(cells('R-54').map(flat)[4]).toBe('✅/🟡/🟡');
+    // The mobile column became ✅ with the reloads of a selection at zoom 1.5 in s17, s19 and s21.
+    expect(cells('R-54').map(flat)[4]).toBe('✅/🟡/✅');
   });
 
   it('R-63: the second insert matches s12 but for a shift in x, and the tool is the same', () => {

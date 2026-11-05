@@ -58,6 +58,11 @@ value is a value the page had saved locally.
   scrollX difference does not follow the DPR [I].
 - s12 shares 6 labels with s11, and 6 of 6 are identical, as are the 6 it shares with s3; with
   s7, 2 of 6 are identical, the other 4 differing only in that scrollX.
+- s21 shares 34 labels with s19, and 34 of 34 are identical (scenarios 25, 27 and 24); s17 shares 34
+  with s19, and 23 of 34 are identical, the other 11 differing only in the background colours and in
+  the taps inside the second rectangle, because s17's 25 left it transparent.
+- s20 shares 14 labels with s18 (scenario 26), and 1 of 14 is identical, `26-start`; the other 13
+  differ only in scroll (B-36).
 
 ## Creation
 
@@ -275,15 +280,22 @@ value is a value the page had saved locally.
 - **Immediate result:** inside: 0 selected; on the stroke: 1 selected [O].
 - **State and related effects:** selection is part of the saved app state
   (`selectedElementIds`) [O].
-- **Persistence:** whether a selection survives a reload: Not observed (R-54).
+- **Persistence:** on mobile a selection survived a reload at zoom 1.5 (B-30; s17, s19, s21) [O]; on
+  desktop: Not observed (R-54).
 - **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
-- **Edge cases:** filled shapes and hit tolerance: Not observed (R-34).
-- **Desktop/mobile:** a tap on the stroke of the rectangle selects it (`m-tap-select-stroke`,
-  s3, s7 and s11) [O]; a tap inside: Not observed (R-33).
-- **Reproduction:** scenario 03 (s1, s2, s6: `click-inside-transparent-rect`,
-  `click-rect-stroke`); scenario 10 (s3, s7, s11).
-- **Confidence:** [O] high.
-- **Limitations:** one shape type and one stroke width (R-34).
+- **Edge cases:** on mobile at zoom 1 with the 2 px stroke, a tap selected a transparent rectangle
+  only within 4 px of its stroke, on either side (8 px or more away, and the centre, missed), and a
+  filled one also from anywhere inside, but not from 8 px or more outside (`25-transparent-*`,
+  `25-filled-*`; s17, s19, s21) [O]; with a mouse on desktop: Not observed (R-34).
+- **Desktop/mobile:** a tap on the stroke of the rectangle selects it (`m-tap-select-stroke`, s3, s7
+  and s11) [O]; a tap inside a transparent rectangle does not, and a tap inside a filled one does
+  (scenario 25; s17, s19, s21) [O].
+- **Reproduction:** scenario 03 (s1, s2, s6: `click-inside-transparent-rect`, `click-rect-stroke`);
+  scenario 10 (s3, s7, s11); scenario 25 (s17, s19, s21).
+- **Confidence:** [O] high; on mobile, [O] high for the transparent ladder (three sessions) and for
+  the filled one (s19, s21).
+- **Limitations:** one shape type and one stroke width, and on mobile one zoom; the tolerance lies
+  between 4 and 8 px, not finer (R-34).
 
 ### B-11 Add to selection
 
@@ -609,8 +621,9 @@ value is a value the page had saved locally.
 
 - **State and related effects:** zoom and scroll are saved in the app state [O]. No element
   changes [O].
-- **Persistence:** scroll (90,45) survived a reload (B-30) [O]. Zoom across a reload: Not
-  observed, because zoom was 1 before the reload (R-54).
+- **Persistence:** scroll (90,45) survived a reload (B-30) [O]. On mobile, zoom 0.875 (s16) and 1.5
+  (s17, s19, s21) survived a reload (B-30) [O]; zoom across a desktop reload: Not observed, because
+  zoom was 1 before the reload (R-54).
 - **Undo/redo:** viewport changes are not elements; whether undo touches them: Not observed
   (R-52).
 - **Edge cases:**
@@ -619,16 +632,26 @@ value is a value the page had saved locally.
     numbers. An earlier version of this entry and of the backlog said Ctrl+wheel zooms around
     the pointer; that is [U] (R-48).
   - Shift+1's vertical rule and whether it ever zooms above 100%: [U]; one scene only (R-48).
-  - That pinch zoom always follows the finger-distance ratio, and that two-finger pan always
-    moves by delta / zoom, is [H] from one input each, repeated in three sessions (R-48).
-  - Zoom limits, step sizes outside 0.9–1.1, PgUp/PgDn, the zoom buttons and the exact pinch
-    anchor (scrollX −135 in s3 and s11 vs −132 in s7): Not observed (R-48).
+  - Pinch zoom followed the finger-distance ratio for six more ratios (2, 0.5, 1.5, 1/3, 0.2 and 5)
+    in scenario 26 (s18, s20: `26-p01` … `26-p13`) [O], within limits of 0.1 and 30, which held in
+    both sessions [O]. That two-finger pan always moves by delta / zoom is [H] from one input,
+    repeated in three sessions (R-48).
+  - The pinch anchor: across the pinch axis the fixed point was the finger midpoint within 2.2 px;
+    along it, 34.5 to 111.5 px from the midpoint toward the second finger, up to 9.3 px apart
+    between s18 and s20 for the same pinch [I, from the committed scroll], which fits the spread of
+    scrollX after scenario 10's pinch (−135 in s3 and s11, −132 in s7). At a limit a pinch still
+    moved the scroll along its axis, by 180 or 200 px of the view at zoom 0.1 [O]. The cause is [H]
+    ([limitations](limitations.md#environment-limits)).
+  - Desktop zoom limits, step sizes outside 0.9–1.1, PgUp/PgDn and the zoom buttons: Not observed
+    (R-48).
 - **Desktop/mobile:** as in the table; mobile has no zoom buttons (F-28).
-- **Reproduction:** scenario 05 (s1, s2, s6) and scenario 10 (s3, s7, s11).
+- **Reproduction:** scenario 05 (s1, s2, s6), scenario 10 (s3, s7, s11) and scenario 26 (s18, s20).
 - **Confidence:** desktop rows [O] high (s1 and s6 identical; s2 differs from Shift+1 on because
   05 ran straight after 03 there, see the [research README](../../research/excalidraw/README.md#scenario-order-and-dependencies)).
-  Mobile rows [O] high for zoom and the pan delta (s3, s7 and s11); scrollX after the pinch
-  differs between sessions (see the cross-session replay above).
+  Mobile rows [O] high for zoom and the pan delta (s3, s7 and s11); scrollX after the pinch differs
+  between sessions (see the cross-session replay above). The scenario 26 ratios and limits are [O]
+  high (s18 and s20 agree in every zoom); the anchor along the pinch axis is [O] medium, because the
+  two sessions differ.
 - **Limitations:** the "scene point stays put" reading uses the convention
   scene = viewport / zoom − scroll, which also makes the wheel rows consistent [I] (R-48).
 
@@ -741,22 +764,28 @@ value is a value the page had saved locally.
   and s9): the
   probe counts every stored element, including flagged ones, so deleted elements are dropped
   from storage [O].
-- **Undo/redo:** on mobile, the Undo button was enabled before s16's reload and disabled after it,
-  so the history was not kept [O, raw ARIA]; on desktop, history across a reload: Not observed
+- **Undo/redo:** on mobile, the Undo button was enabled before the reloads of s16, s17, s19 and
+  s21 and disabled after them, so the history was not kept [O, raw ARIA]; on desktop, history across a reload: Not observed
   (R-52).
-- **Edge cases:** zoom across a desktop reload (zoom was 1), selection across a reload, several tabs
-  and storage quota: Not observed (R-54).
+- **Edge cases:** zoom and selection across a desktop reload (zoom was 1, nothing selected),
+  several tabs and storage quota: Not observed (R-54).
 - **Desktop/mobile:** mobile reload (s16, scenario 24 after 10, 22 and 16): the document came from
   the service worker, the stored scene (22 elements) and app state (60 keys: dark, zoom 0.875, the
   same scroll and tool, nothing selected) read the same before and after (`24-before-reload`,
   `24-after-reload`) [O], and the two captures show the same view but for the Undo button
-  [O, raw captures and ARIA]. Scenario `09b` itself never ran (R-54).
+  [O, raw captures and ARIA]. In s17, s19 and s21, 24 ran after 27, which pinched to zoom 1.5 and
+  left a newly drawn rectangle selected: the stored scene (3 elements), the selection (1 element,
+  with the same id on both sides [O, raw timeline]), zoom 1.5 and the scroll read the same after the
+  reload, whose document again came from the service worker [O], and the captures show the same view
+  with the selection's handles but for the Undo button [O, raw captures and ARIA]. Scenario `09b`
+  itself never ran (R-54).
 - **Reproduction:** scenario 13 (s6, s9: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1,
-  s6); scenario 24 (s16).
-- **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6; deletion also
-  in s8 and s9); [O] medium for the timing: s6 and s9 differ at the third read of one of six
-  trials, and an s1 timing reading is not in the committed index; [O] medium for the mobile
-  reload: one session.
+  s6); scenario 24 (s16; after 27 in s17, s19 and s21).
+- **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6; deletion also in
+  s8 and s9); [O] medium for the timing: s6 and s9 differ at the third read of one of six trials,
+  and an s1 timing reading is not in the committed index; [O] high for the mobile reload with a
+  selection at zoom 1.5 (s17, s19 and s21) and medium for s16's reload of a larger scene (one
+  session).
 - **Limitations:** `excalidraw-state` keeps 60 keys (raw count); the read cadence bounds the save
   time only to the 100–150 ms gaps between reads (R-54).
 

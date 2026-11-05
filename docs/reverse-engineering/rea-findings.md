@@ -86,6 +86,31 @@ scenario 24 in s16 returned no record (limitation 12).
 | `s16-mobile-generation-reload` | `r02-inspect-during-10.json` | `ev_0d96dd39`     | `inspect_web_page`, 17:59:30.865–18:00:16.692, 7 origins. Armed 4300 ms before scenario 10's first step; all its 63 steps inside it |
 | `s16-mobile-generation-reload` | `r03-inspect-during-22.json` | `ev_c1deacac`     | `inspect_web_page`, 18:00:21.114–18:00:56.748, 7 origins. Armed 4637 ms before scenario 22's first step; all its 32 steps inside it |
 
+**Mobile priority-1 records** (s17–s21, on 2026-11-05, times UTC). Scenario 24 ran outside any
+window in s17, s19 and s21, because a window cannot span its reload (limitation 12).
+
+| Session                   | File                            | Evidence (prefix) | Operation and window                                                                                                                 |
+| ------------------------- | ------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `s17-mobile-hit-reload`   | `r01-targets.json`              | `ev_213ad6af`     | `list_browser_targets`                                                                                                               |
+| `s17-mobile-hit-reload`   | `r02-inspect-during-25.json`    | `ev_f3198f6c`     | `inspect_web_page`, 19:56:37.060–19:57:58.157, 7 origins. Armed 5282 ms before scenario 25's first step; all its 170 steps inside it |
+| `s17-mobile-hit-reload`   | `r03-inspect-during-27.json`    | `ev_fdcf8ae0`     | `inspect_web_page`, 19:58:03.739–19:58:24.017, 7 origins. Armed 3904 ms before scenario 27's first step; all its 15 steps inside it  |
+| `s17-mobile-hit-reload`   | `r04-targets-after-reload.json` | `ev_213ad6af`     | `list_browser_targets`, after 24's reload, with the same Evidence id as the listing after 09                                         |
+| `s17-mobile-hit-reload`   | `r05-inspect-after-reload.json` | `ev_04b74ba2`     | `inspect_web_page`, 19:58:39.625–19:58:43.746, 7 origins, of the reloaded page after 24; no step inside it                           |
+| `s18-mobile-pinch`        | `r01-targets.json`              | `ev_c48ce862`     | `list_browser_targets`                                                                                                               |
+| `s18-mobile-pinch`        | `r02-inspect-during-26.json`    | `ev_84bf5ee2`     | `inspect_web_page`, 20:02:06.355–20:02:41.956, 7 origins. Armed 1205 ms before scenario 26's first step; all its 64 steps inside it  |
+| `s19-mobile-hit-reload-2` | `r01-targets.json`              | `ev_6d1ae086`     | `list_browser_targets`                                                                                                               |
+| `s19-mobile-hit-reload-2` | `r02-inspect-during-25.json`    | `ev_3167d619`     | `inspect_web_page`, 20:04:06.665–20:05:27.392, 7 origins. Armed 4153 ms before scenario 25's first step; all its 170 steps inside it |
+| `s19-mobile-hit-reload-2` | `r03-inspect-during-27.json`    | `ev_3cbca9b5`     | `inspect_web_page`, 20:05:32.444–20:05:53.042, 7 origins. Armed 4078 ms before scenario 27's first step; all its 15 steps inside it  |
+| `s19-mobile-hit-reload-2` | `r04-targets-after-reload.json` | `ev_6d1ae086`     | `list_browser_targets`, after 24's reload, with the same Evidence id as the listing after 09                                         |
+| `s19-mobile-hit-reload-2` | `r05-inspect-after-reload.json` | `ev_9dff899b`     | `inspect_web_page`, 20:06:08.703–20:06:12.778, 7 origins, of the reloaded page after 24; no step inside it                           |
+| `s20-mobile-pinch-2`      | `r01-targets.json`              | `ev_d8a43a16`     | `list_browser_targets`                                                                                                               |
+| `s20-mobile-pinch-2`      | `r02-inspect-during-26.json`    | `ev_c7c37585`     | `inspect_web_page`, 20:07:35.663–20:08:11.453, 7 origins. Armed 1947 ms before scenario 26's first step; all its 64 steps inside it  |
+| `s21-mobile-hit-reload-3` | `r01-targets.json`              | `ev_bb4c5dbc`     | `list_browser_targets`                                                                                                               |
+| `s21-mobile-hit-reload-3` | `r02-inspect-during-25.json`    | `ev_88fd03f0`     | `inspect_web_page`, 20:09:27.772–20:10:48.626, 7 origins. Armed 4246 ms before scenario 25's first step; all its 170 steps inside it |
+| `s21-mobile-hit-reload-3` | `r03-inspect-during-27.json`    | `ev_f232cef1`     | `inspect_web_page`, 20:10:53.880–20:11:14.098, 7 origins. Armed 3987 ms before scenario 27's first step; all its 15 steps inside it  |
+| `s21-mobile-hit-reload-3` | `r04-targets-after-reload.json` | `ev_bb4c5dbc`     | `list_browser_targets`, after 24's reload, with the same Evidence id as the listing after 09                                         |
+| `s21-mobile-hit-reload-3` | `r05-inspect-after-reload.json` | `ev_c9cae86f`     | `inspect_web_page`, 20:11:27.584–20:11:31.205, 7 origins, of the reloaded page after 24; no step inside it                           |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
@@ -236,8 +261,10 @@ the committed index beyond their IDs.
 11. REA keeps no time per retained request, so a window bounds a scenario, not a step. In s12 its
     67 requests match, in number, the 67 that the driver netlog started inside the window, and in
     s15 and s16 the three windows kept 1, 67 and 18, as many as the netlog started inside each.
+    In s17–s21 the 11 windows kept none, and the netlog started none inside them.
 12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
     `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
     Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that
     ends before it and one that starts after it, or `observe_web_session` for the navigation
-    metadata alone.
+    metadata alone. In s17, s19 and s21, 24 ran outside any window and a 3 s inspection followed
+    its reload.

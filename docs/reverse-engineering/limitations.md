@@ -60,6 +60,12 @@
     portrait-primary at angle 0 and every mobile assertion checks it. s16 repeated s12's 10 and 22
     that way, and their 13 shared ARIA snapshots are identical byte for byte, so no effect of the
     change was seen there.
+11. **Emulated touch.** The driver's touch input goes through CDP `Input.dispatchTouchEvent` with
+    the default 1 px contact radius, so the hit-testing ladder of R-34 is for a point contact, not a
+    finger's area. In the pinches of s18 and s20 the zoom followed the finger-distance ratio
+    exactly, but the fixed point along the pinch axis lay 34.5–111.5 px from the midpoint and
+    differed between the sessions; that this comes from the order in which the fingers' moves reach
+    the page, one finger after the other in each move, is a hypothesis [H]. No real device was used.
 
 ## Tooling limits
 
@@ -107,7 +113,10 @@
   - the s12 and s16 ARIA snapshot comparison behind the high ratings of B-38 and B-39, the s15
     export dialog read the same before and after the Export to SVG click (R-64), and the Undo
     button's state and the view before and after s16's reload (B-30): the committed index keeps ARIA
-    line counts and capture digests only.
+    line counts and capture digests only;
+  - the selected element's id on both sides of the s17, s19 and s21 reloads, the Undo button's state
+    and the selection's handles in their captures (B-30), and the Background popover's ARIA (R-11):
+    the committed probes keep a selection count, and the index ARIA line counts and capture digests.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
