@@ -7,6 +7,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
+  R76,
   RE,
   ROOT,
   cells,
@@ -16,7 +17,10 @@ import {
   evidence,
   field,
   flat,
+  lines,
   probe,
+  read,
+  session,
   strip,
 } from './r76-evidence.mjs';
 
@@ -104,5 +108,132 @@ describe("B-06's dark text box", () => {
         'styles) differ, as B-06 and B-34 show',
     );
     expect(field(entry('B-34'), 'Confidence')).toMatch(/^\[O\] medium\./u);
+  });
+});
+
+const PAGE = 'https://excalidraw.com';
+const requests = (name, pick) =>
+  session(name).network.filter((e) => e.event === 'request' && pick(e));
+const count = (list) => list.reduce((sum, e) => sum + e.count, 0);
+const short = (name) => name.split('-')[0];
+// Session names as the documents list them: runs of three or more as a range ("s8–s10").
+const sessionList = (names, last = 'and') => {
+  const numbers = names.map((name) => Number(name.slice(1)));
+  const parts = [];
+  let start = 0;
+  while (start < numbers.length) {
+    let end = start;
+    while (numbers[end + 1] === numbers[end] + 1) end += 1;
+    if (end - start >= 2) {
+      parts.push(`s${String(numbers[start])}–s${String(numbers[end])}`);
+    } else {
+      for (const n of numbers.slice(start, end + 1)) parts.push(`s${String(n)}`);
+    }
+    start = end + 1;
+  }
+  return parts.length < 2
+    ? parts.join('')
+    : `${parts.slice(0, -1).join(', ')} ${last} ${parts.at(-1)}`;
+};
+
+describe('the s11 page-origin requests', () => {
+  const s11 = 's11-mobile-r76-14';
+  const network = (name) =>
+    requests(name, (e) => e.origin === PAGE && e.fromServiceWorker === false);
+
+  it('split the service-worker requests by type, as the network analysis says', () => {
+    const worker = requests(s11, (e) => e.origin === PAGE && e.fromServiceWorker === true);
+    const byType = {};
+    for (const e of worker) byType[e.type] = (byType[e.type] ?? 0) + e.count;
+    expect(Object.keys(byType).sort()).toEqual(['fetch', 'script']);
+    for (const e of worker.filter((w) => w.type === 'fetch'))
+      expect(e.path).toMatch(/^\/assets\//u);
+    expect(doc('network-analysis.md')).toContain(
+      `also had ${String(count(worker))} true: ${String(byType.fetch)} fetch requests for ` +
+        `/assets/ chunks and ${String(byType.script)} script`,
+    );
+  });
+
+  it('name the one network fetch that s11 had beyond the desktop first load', () => {
+    const desktop = new Set(network('s10-desktop-r76-15').map((e) => e.path));
+    const extra = network(s11).filter((e) => !desktop.has(e.path));
+    expect(extra.map(({ type, count: n }) => [type, n])).toEqual([['fetch', 1]]);
+    const shape = extra[0].path.replace(/-[\w-]{8}\.json$/u, '-*.json');
+    const text = doc('network-analysis.md');
+    expect(text).toContain(`each of s2–s10; s11 had ${String(count(network(s11)))}`);
+    expect(text).toContain(`one page fetch of ${shape}`);
+  });
+});
+
+describe('the session lists of the network analysis', () => {
+  const all = () => evidence('sessions.json').sessions.map((s) => s.session);
+  const fontIn = (name) =>
+    requests(name, (e) => e.path?.startsWith('/oss/fonts/CascadiaCode/')).length;
+  const beacons = (name, keys) =>
+    count(
+      requests(
+        name,
+        (e) => e.origin === 'https://queue.simpleanalyticscdn.com' && e.queryKeys.length === keys,
+      ),
+    );
+
+  it('name the sessions that loaded the Cascadia Code font, and those that did not', () => {
+    const [loaded, not] = [all().filter(fontIn), all().filter((n) => !fontIn(n))].map((list) =>
+      list.map(short),
+    );
+    expect(doc('network-analysis.md')).toContain(
+      `plus an 8th, Cascadia Code, in ${sessionList(loaded)} (not ${sessionList(not, 'or')})`,
+    );
+  });
+
+  it('name the sessions with the 24-key beacon besides s6', () => {
+    const others = all()
+      .filter((name) => name !== 's6-desktop-fresh' && beacons(name, 24) > 0)
+      .map(short);
+    const s6 = ['s6-desktop-fresh', 24];
+    expect(doc('network-analysis.md')).toContain(
+      `came ${String(beacons(...s6))} more times in s6 (${String(beacons(s6[0], 23) + beacons(...s6))} ` +
+        `beacons in all) and also in ${sessionList(others)}`,
+    );
+  });
+});
+
+describe('the R-76 initial-page inspections', () => {
+  const initial = (name) =>
+    evidence(
+      name === 's1-desktop'
+        ? 'rea-inspect-initial.summary.json'
+        : `rea-inspect-initial-${name}.summary.json`,
+    );
+  const other = (summary) => summary.scripts.filter((s) => !/\/index-[^/]+\.js$/u.test(s.url));
+
+  it('list the scripts of s1 in every R-76 session, mobile included, except the main chunk', () => {
+    const s1 = initial('s1-desktop');
+    for (const run of R76) {
+      expect(other(initial(run.name)), run.name).toEqual(other(s1));
+      expect(initial(run.name).scripts, run.name).toHaveLength(s1.scripts.length);
+    }
+    expect(doc('limitations.md')).toContain(
+      `list the same ${String(s1.scripts.length)} scripts in s1 and in s8–s11 except the main ` +
+        'index-*.js chunk',
+    );
+  });
+});
+
+describe('the Clear canvas dialog in the feature inventory', () => {
+  it('is rated high only while s7 and s11 give the same snapshot size and capture', () => {
+    const shot = 'm15-dark-reset-confirm';
+    const [s7, s11] = ['s7-mobile-fresh', 's11-mobile-r76-14'];
+    const same =
+      digests(s7).get(`${shot}.png`) === digests(s11).get(`${shot}.png`) &&
+      lines(s7, `${shot}.yml`) === lines(s11, `${shot}.yml`);
+    const row = read(`${RE}/feature-inventory.md`)
+      .split('\n')
+      .find((line) => line.startsWith('| Clear canvas dialog '));
+    expect(flat(row)).toContain(
+      same
+        ? '[O, high], mobile dark in s7 and s11: identical snapshots and byte-identical captures'
+        : '[O, medium]',
+    );
   });
 });
