@@ -182,7 +182,16 @@ describe('REA window summaries of incomplete records', () => {
       websocket_connections: null,
       workers: null,
     });
-    expect(summariseRecord({ operation: 'observe_web_session', evidence_id: 'ev' })).toMatchObject({
+  });
+
+  it('reports a session observation without a timeline list as null, an empty list as zero', () => {
+    const observe = (normalized_result) =>
+      summariseRecord({ operation: 'observe_web_session', evidence_id: 'ev', normalized_result });
+    const unknown = { timeline_events: null, timeline_events_without_timestamp: null };
+    expect(observe(undefined)).toMatchObject(unknown);
+    for (const timeline of [null, {}, 'x', 3])
+      expect(observe({ timeline }), JSON.stringify(timeline)).toMatchObject(unknown);
+    expect(observe({ timeline: [] })).toMatchObject({
       timeline_events: {},
       timeline_events_without_timestamp: 0,
     });

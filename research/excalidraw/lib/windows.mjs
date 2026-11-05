@@ -56,12 +56,16 @@ export function windowOf(result) {
   return null;
 }
 
+// A record without a timeline list leaves both counts unknown (null): a zero would claim that the
+// window retained no event. Only an empty list counts as zero events.
 function observed(result) {
-  const timeline = result.timeline ?? [];
+  const timeline = Array.isArray(result.timeline) ? result.timeline : null;
   return {
     retains: 'navigation and lifecycle metadata only',
-    timeline_events: tally(timeline, (e) => (e.detail ? `${e.type}:${e.detail}` : e.type)),
-    timeline_events_without_timestamp: timeline.filter((e) => e.timestamp === null).length,
+    timeline_events:
+      timeline && tally(timeline, (e) => (e.detail ? `${e.type}:${e.detail}` : e.type)),
+    timeline_events_without_timestamp:
+      timeline && timeline.filter((e) => e.timestamp === null).length,
   };
 }
 
