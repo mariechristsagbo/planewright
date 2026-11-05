@@ -153,6 +153,42 @@ describe('REA window summaries', () => {
   });
 });
 
+describe('REA window summaries of incomplete records', () => {
+  it('reports what a record lacks as null or empty, never as a count of zero', () => {
+    const inspect = { operation: 'inspect_web_page', evidence_id: 'ev_bare' };
+    expect(summariseRecord(inspect)).toEqual({
+      evidence_id: 'ev_bare',
+      operation: 'inspect_web_page',
+      allowed_origins: [],
+      window: null,
+      completeness: null,
+      conditions: [],
+      attach_limited_sections: [],
+      policy_filtered_sections: [],
+      unavailable_sections: [],
+      retains: 'page inventory plus request, WebSocket and console metadata',
+      network_coverage_started_at: null,
+      console_coverage_started_at: null,
+      network_requests: null,
+      websocket_connections: null,
+      console_events: null,
+      workers: null,
+      cache_names: null,
+      limitations: [],
+    });
+    const notLists = { network: { requests: {}, websocket_connections: 'x' }, workers: 3 };
+    expect(summariseRecord({ ...inspect, normalized_result: notLists })).toMatchObject({
+      network_requests: null,
+      websocket_connections: null,
+      workers: null,
+    });
+    expect(summariseRecord({ operation: 'observe_web_session', evidence_id: 'ev' })).toMatchObject({
+      timeline_events: {},
+      timeline_events_without_timestamp: 0,
+    });
+  });
+});
+
 describe('REA window overlap with the driver timeline', () => {
   it('reports the driver steps inside the window and the step just before it', () => {
     const overlap = driverOverlap(rows, windowOf(observeRecord.normalized_result));
@@ -164,6 +200,20 @@ describe('REA window overlap with the driver timeline', () => {
       first_step_at: '2026-01-01T00:00:10.000Z',
       last_step_at: '2026-01-01T00:00:13.000Z',
       previous_step: { at: '2026-01-01T00:00:09.900Z', do: 'tap' },
+    });
+  });
+
+  it('counts a timeline row without a step under null, as the driver logs a null step', () => {
+    const bare = [
+      { started: '2026-01-01T00:00:09.000Z', step: null, error: 'x' },
+      { started: '2026-01-01T00:00:11.000Z', error: 'y' },
+    ];
+    expect(driverOverlap(bare, windowOf(observeRecord.normalized_result))).toMatchObject({
+      steps: 1,
+      failed: 1,
+      by_kind: { null: 1 },
+      probe_labels: [],
+      previous_step: { at: '2026-01-01T00:00:09.000Z', do: null },
     });
   });
 
