@@ -102,7 +102,8 @@
   20:03 UTC and again on `75f8eae` at 20:22 and 20:23 UTC. With the fifth-review fixes they
   passed again on `dc6eef1`, at 22:18 and 22:19 UTC, without retained output. With the
   sixth-review fixes they passed on `e38955a` on 2026-11-05 at 00:15–00:16 UTC; that output is in
-  [local-checks/](local-checks/). Each run loaded only `about:blank` and the
+  [local-checks/](local-checks/). Before the R-76 sessions they passed on `0b4fb19` at
+  04:45–04:46 UTC, with that output beside it. Each run loaded only `about:blank` and the
   self-authored fixture. The self-test cannot reach a room view, so the room-view capture and
   halt rules are tested with stubs only. No reference session has run with the remediated
   driver.

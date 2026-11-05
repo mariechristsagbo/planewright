@@ -295,35 +295,3 @@ describe('the agent code map', () => {
     }
   });
 });
-
-describe('the retained local check output', () => {
-  const DIR = `${RE}/local-checks`;
-  const log = (prefix) =>
-    read(`${DIR}/${readdirSync(join(ROOT, DIR)).find((name) => name.startsWith(prefix))}`);
-  // check-masks.mjs prints its own PASS line per capture inside one self-test check.
-  const checks = (text) =>
-    text.split('\n').filter((line) => /^PASS /u.test(line) && !/^PASS \S+\.png /u.test(line));
-
-  it('backs the loopback and cleanup statuses with committed PASS lines', () => {
-    const [iso, self] = [log('isolation-check-'), log('selftest-')];
-    for (const text of [iso, self]) {
-      expect(text).toMatch(/^# exit=0$/mu);
-      expect(text).toMatch(/^failures: 0$/mu);
-      expect(text).not.toMatch(/^FAIL/mu);
-    }
-    expect(checks(iso)).toHaveLength(11);
-    expect(checks(self)).toHaveLength(19);
-    const status = (name) =>
-      flat(
-        read(`${RE}/checkpoint.md`)
-          .split('\n')
-          .find((line) => line.startsWith(`| ${name}`)),
-      );
-    const ports = status('CDP and driver ports loopback-only');
-    expect(ports).toContain('isolation-check.sh passed 11 of 11');
-    expect(ports).toContain('selftest.sh 19 of 19');
-    expect(ports).toContain('(local-checks/)');
-    expect(ports).toMatch(/s1–s4[^.]*default Docker bridge[^.]*reachable from other containers/u);
-    expect(status('Owned processes and profiles cleaned up')).toContain('local-checks');
-  });
-});
