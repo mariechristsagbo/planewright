@@ -237,3 +237,46 @@ describe('the Clear canvas dialog in the feature inventory', () => {
     );
   });
 });
+
+describe('the s11 requests set against its scenarios', () => {
+  const s11 = 's11-mobile-r76-14';
+  const rawOnly = () =>
+    flat(read(`${RE}/limitations.md`).split('Facts read only from raw records')[1]).split(
+      ' - REA MCP denied.',
+    )[0];
+
+  it('state the committed counts and label the placement as an inference from raw times', () => {
+    const worker = requests(s11, (e) => e.fromServiceWorker === true);
+    const page = count(worker.filter((e) => e.origin === PAGE));
+    const font = worker.filter((e) => e.path?.startsWith('/oss/fonts/CascadiaCode/'));
+    expect(count(worker)).toBe(page + count(font));
+    const beacons = count(
+      requests(s11, (e) => e.path === '/simple.gif' && e.queryKeys.length === 24),
+    );
+    const text = doc('network-analysis.md');
+    expect(text).toContain(
+      `s11's requests after its load [I, from the raw netlog and timeline times]. Of its ` +
+        `${String(count(requests(s11, () => true)))} requests`,
+    );
+    expect(text).toContain(
+      `every request that the service worker served, the ${String(page)} on the page origin ` +
+        `and the Cascadia Code font, started between 04:54:12.0 and 04:54:19.7 UTC`,
+    );
+    expect(text).toContain(`The 24-key beacon came ${beacons === 2 ? 'twice' : String(beacons)}`);
+    expect(text).toMatch(/This narrows R-64 and R-66 without isolating a trigger[^.]*\[U\]/u);
+  });
+
+  it('list the placement as raw-only and narrow R-64 and R-66 to it', () => {
+    expect(rawOnly()).toContain('the driver netlog requests set against scenarios 12, 13, 15');
+    expect(rawOnly()).toContain("and against 09, 10 and 14 in s11, s11's service-worker requests");
+    const [r64, r66] = [cells('R-64'), cells('R-66')].map((row) => row.map(flat));
+    expect(r64[6]).toContain('in s11 every request the service worker served started during');
+    expect(r64[7]).toMatch(/a step of scenario 10 or a delay since the load/u);
+    expect(r66[6]).toContain(
+      "netlog request on any origin during 12, 13, 15 or s11's drawing in 10",
+    );
+    expect(r66[7]).toContain(
+      "only the raw s11 netlog covers it: no request during scenario 10's touch drawing, pinch",
+    );
+  });
+});
