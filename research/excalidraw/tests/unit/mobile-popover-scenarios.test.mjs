@@ -1,4 +1,5 @@
-// Checks the mobile popover scenarios (31-33), written from the controls that s22 saved: they name
+// Checks the mobile popover scenarios (31-35), written from the controls that s22 and, for 34 and
+// 35, s25-s27 saved: they name
 // only driver steps, assert the portrait metrics first and last, never navigate, emulate or reload,
 // send touch input only, click only buttons by an exact name that s22's popovers or toolbar list,
 // start every Actions and style change from a fresh selection, and lay out the layer, alignment
@@ -20,7 +21,9 @@ const stepsOf = (name) => scenario(name).steps;
 const ACTIONS = '31-actions-popover-mobile';
 const STYLES = '32-style-controls-mobile';
 const LINES = '33-multi-point-taps-mobile';
-const ALL = [ACTIONS, STYLES, LINES];
+const DISTRIBUTE = '34-distribute-group-undo-mobile';
+const FILL = '35-fill-line-arrow-type-mobile';
+const ALL = [ACTIONS, STYLES, LINES, DISTRIBUTE, FILL];
 const PORTRAIT = {
   innerWidth: 390,
   innerHeight: 844,
@@ -47,6 +50,17 @@ const BUTTONS = {
   [ACTIONS]: ['Actions', ...LAYERS, ...ALIGN, 'Group selection', 'Ungroup selection'],
   [STYLES]: ['Stroke', 'Background', 'Red — b', 'Yellow — c'],
   [LINES]: ['Line'],
+  [DISTRIBUTE]: ['Actions', 'Distribute horizontally', 'Distribute vertically', 'Group selection'],
+  [FILL]: [
+    'Background',
+    'Yellow — c',
+    'Stroke',
+    'Hachure (Alt-Click)',
+    'Cross-hatch',
+    'Line',
+    'Arrow',
+    'Arrow type',
+  ],
 };
 const named = (name) => stepsOf(name).filter((step) => step.do === 'role');
 
@@ -206,5 +220,51 @@ describe('the line-tap scenario (R-30)', () => {
     expect(double[2].at).toEqual(middle);
     const midpoint = steps.findLast((s) => s.do === 'touchDrag');
     expect(midpoint.from[0]).toEqual(middle);
+  });
+});
+
+// The one-finger drags of a scenario as boxes [x, y, width, height].
+const boxes = (name) =>
+  stepsOf(name)
+    .filter((s) => s.do === 'touchDrag')
+    .map(({ from: [[x, y]], to: [[x2, y2]] }) => [x, y, x2 - x, y2 - y]);
+// The gaps between neighbouring boxes along one axis (0 for x, 1 for y).
+const gaps = (list, axis) =>
+  list.slice(1).map((b, i) => b[axis] - (list[i][axis] + list[i][axis + 2]));
+
+describe('the distribution and grouping-undo scenario (R-49, R-51, R-52)', () => {
+  const steps = stepsOf(DISTRIBUTE);
+  const [a, b, c, rowBox, d, e, f, columnBox, rowAgain] = boxes(DISTRIBUTE);
+
+  it('spaces each triple unevenly and box-selects only that triple before distributing it', () => {
+    expect(gaps([a, b, c], 0)).toEqual([20, 140]);
+    expect(gaps([d, e, f], 1)).toEqual([20, 160]);
+    const inside = (box, [x, y, w, h]) =>
+      x > box[0] && y > box[1] && x + w < box[0] + box[2] && y + h < box[1] + box[3];
+    expect([a, b, c, d, e, f].map((shape) => inside(rowBox, shape))).toEqual([
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+    ]);
+    expect([a, b, c, d, e, f].map((shape) => inside(columnBox, shape))).toEqual([
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+    ]);
+    expect(rowAgain).toEqual(rowBox);
+  });
+
+  it('presses Undo straight after grouping, and after a deselecting tap', () => {
+    const group = steps.findIndex((s) => s.name === 'Group selection');
+    expect(nextInput(steps, group + 1)).toMatchObject({ do: 'role', name: 'Undo' });
+    const last = steps.findLastIndex((s) => s.name === 'Undo');
+    const before = steps.slice(0, last).findLast((s) => s.do === 'tap');
+    expect(before.at).toEqual([350, 600]);
   });
 });
