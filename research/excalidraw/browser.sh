@@ -18,8 +18,13 @@
 # Cleanup ownership: start removes, on any failure or interruption, exactly the network and
 # container it created itself, by ID. stop removes only a container and network that carry both
 # this run's name and the research label. A same-named resource from another tool is never touched.
-# stop reports each removal, or that nothing labelled was found, and fails if a removal fails.
+# stop reports each removal, or that nothing labelled was found, and fails if a removal fails or
+# if docker cannot list the resource at all (state UNKNOWN), which is never reported as "none".
 set -euo pipefail
+
+HERE="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=lib/resource-state.sh
+. "$HERE/lib/resource-state.sh"
 
 # Pinned by digest: the tag v1.64.1-noble resolved to this image when the baseline was recorded.
 IMAGE="mcr.microsoft.com/playwright:v1.64.1-noble@sha256:2f05f8a734509a7b3f26a912639488ee08f58a7b292d14d62271bcff9038768f"
@@ -116,6 +121,11 @@ remove_labelled() { # remove_labelled <container|network> <name> <labels field>
   local remove=(docker network rm)
   id="$(labelled_id "$1" "$2" "$3")"
   if [[ -z "$id" ]]; then
+    # A failed inspect also means "no ID": only a listing that worked can show there is none.
+    if [[ "$(resource_state "$1" "$2")" == UNKNOWN ]]; then
+      echo "could not list docker resources: $1 $2: state UNKNOWN" >&2
+      return 1
+    fi
     echo "no $1 $2 with the research label"
     return 0
   fi

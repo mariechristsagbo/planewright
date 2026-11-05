@@ -118,6 +118,20 @@ describe('browser.sh stop report', () => {
   });
 
   it.each([
+    ['container', 'pw-t'],
+    ['network', 'pw-t-net'],
+  ])('fails, claiming nothing, when docker cannot say whether the %s exists', (kind, name) => {
+    // No daemon or no permission: inspect and the listing both fail.
+    const { status, stdout, stderr, removals } = sh('browser.sh', ['stop', 'pw-t'], {
+      FAKE_LIST: 'fail',
+    });
+    expect(status).not.toBe(0);
+    expect(removals).toEqual([]);
+    expect(stderr).toContain(`${kind} ${name}: state UNKNOWN`);
+    expect(stdout).not.toContain(`no ${kind} ${name}`);
+  });
+
+  it.each([
     ['container', { FAKE_RM: 'fail' }, 'could not remove container pw-t'],
     ['network', { FAKE_NET_RM: 'fail' }, 'could not remove network pw-t-net'],
   ])('fails, without claiming it, when the %s cannot be removed', (kind, env, message) => {
