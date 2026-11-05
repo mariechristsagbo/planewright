@@ -86,6 +86,39 @@ describe('rea-extract.mjs summary output', () => {
   });
 });
 
+describe('rea-extract.mjs REA CLI output', () => {
+  it('reads the Evidence record inside a CLI { ok, data } envelope like a bare record', () => {
+    const record = {
+      operation: 'inspect_web_page',
+      evidence_id: 'ev-cli',
+      normalized_result: {
+        target: { url: 'https://excalidraw.com/?x=1' },
+        accessibility: { total_nodes: 1, nodes: [{ role: 'button', name: 'Help' }] },
+        storage: {
+          local_storage_keys: ['b', 'a'],
+          session_storage_keys: [],
+          indexed_db_names: ['files-db'],
+          cache_names: ['precache'],
+          values_redacted: true,
+        },
+      },
+    };
+    const [bare, wrapped] = [join(dir, 'cli-bare.json'), join(dir, 'cli-wrapped.json')];
+    writeFileSync(bare, JSON.stringify(record));
+    writeFileSync(wrapped, JSON.stringify({ ok: true, data: record, meta: { command: 'x' } }));
+    const run = extract(wrapped);
+    expect(run.status, run.stderr).toBe(0);
+    expect(run.stdout).toBe(extract(bare).stdout);
+    expect(JSON.parse(run.stdout)).toMatchObject({
+      kind: 'rea-inspect-web-page',
+      evidence_id: 'ev-cli',
+      url: 'https://excalidraw.com/',
+      controls: [{ role: 'button', name: 'Help' }],
+      storage: { local_storage_keys: ['a', 'b'], indexed_db_names: ['files-db'] },
+    });
+  });
+});
+
 // Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).
 const ROOM = 'a1B2'.repeat(5);
 const KEY = `${'k_L-'.repeat(5)}m1`;

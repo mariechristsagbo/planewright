@@ -131,7 +131,8 @@ the background just before a driver batch.
   successful docker listing omits the name; a failed listing is a FAIL. `browser.sh stop` reports
   "no … with the research label" only after a listing that worked, and otherwise fails with
   state UNKNOWN.
-- **REA extraction.** `rea-extract.mjs` needs an input ending in `.json` and never replaces an
+- **REA extraction.** `rea-extract.mjs` reads an Evidence record saved by the MCP server or the
+  `{ ok, data }` output of the REA CLI. It needs an input ending in `.json` and never replaces an
   existing PNG with different bytes. The optional summary file is created exclusively, so an
   existing file, the input included, is never replaced. Accessible names and descriptions, and
   REA's own condition and limitation text, are redacted before they are copied into a summary.

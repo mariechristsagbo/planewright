@@ -7,11 +7,14 @@
 //   names, descriptions and REA condition and limitation text are redacted.
 //
 // Usage: node research/excalidraw/rea-extract.mjs <rea-result.json> [summary-out.json]
-// The optional summary file must not exist yet; nothing that exists is ever replaced.
+// The input is an Evidence record saved by the MCP server or REA CLI output, which wraps one
+// record as { ok, data }. The optional summary file must not exist yet; nothing that exists is
+// ever replaced.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
 import { redactSecrets, stripQuery } from './lib/sanitise.mjs';
+import { recordOf } from './lib/windows.mjs';
 
 const INTERACTIVE = new Set([
   'button',
@@ -172,7 +175,7 @@ function inspection(evidence) {
 
 const [input, output] = process.argv.slice(2);
 if (!input) throw new Error('Pass a saved REA result JSON file.');
-const evidence = JSON.parse(readFileSync(input, 'utf8'));
+const evidence = recordOf(JSON.parse(readFileSync(input, 'utf8')));
 const summaries = { capture_web_screenshot: screenshot, inspect_web_page: inspection };
 const summarise = summaries[evidence.operation];
 if (!summarise) throw new Error(`Unsupported REA operation "${String(evidence.operation)}".`);
