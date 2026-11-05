@@ -36,6 +36,7 @@ it never writes raw third-party content into this repository. See
 | `api-surface.mjs`        | Counts standard web-platform identifiers in REA-exported shipped scripts; prints counts only.                                                                                                               |
 | `build-evidence.mjs`     | Builds the committed, sanitized evidence index from external session directories.                                                                                                                           |
 | `rea-windows.mjs`        | Summarises each saved REA observation window (bounds, what the tool retains, event counts) against the driver steps that started inside it; pure logic in `lib/windows.mjs`.                                |
+| `netlog-steps.mjs`       | Sets every netlog entry against the timeline step that had started last when the driver wrote it, and summarises the drawing steps; pure logic in `lib/placement.mjs`.                                      |
 
 ## Checks that contact no website
 
@@ -147,6 +148,12 @@ did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
   is created exclusively, so an existing file, the input included, is never replaced.
   Accessible names and descriptions, and REA's own condition and limitation text, are redacted
   before they are copied into a summary.
+- **Netlog placement.** `netlog-steps.mjs` sets every netlog entry against the timeline step
+  that had started last when the driver wrote it, with its offset from that step's start. Both
+  files take their times from the driver process's clock. The netlog writes a request once it has
+  finished or failed, so a placement bounds when the request started but never gives that time,
+  and the timeline records when each step started, not when it ended. A missing file, or a line
+  that is not valid JSON or has no valid time, stops the build and is named, never quoted.
 
 ## Scenario order and dependencies
 
