@@ -77,6 +77,30 @@ describe('REA CLI envelopes', () => {
     );
   });
 
+  it('names only error codes shaped like REA identifiers, never one of a room value length', () => {
+    const named = (code) => () => recordOf({ ok: false, error: { code } });
+    for (const code of ['target_not_found', 'INVALID_OUTPUT_FILTER', 'invalid-row', 'ENOENT'])
+      expect(named(code), code).toThrow(`(error code ${code})`);
+    // Room ids are 20 characters and keys 22, from [A-Za-z0-9_-]; every one of these matched the
+    // earlier filter. A real REA code of either length (INVALID_OUTPUT_VALUE) is left out too, and
+    // so are codes with digits or mixed case, which REA's own codes do not have.
+    for (const code of [
+      'a1B2c3D4e5F6g7H8i9J0',
+      '0f3a9c1d7e5b2a8c4d6e',
+      'abcdefghijklmnopqrst',
+      'Q2xlYW4tcm9vbS1rZXk_AB',
+      'abcdefghij_klmnopqrstu',
+      'ABCDEFGHIJK-LMNOPQRSTU',
+      'INVALID_OUTPUT_VALUE',
+      'http_404',
+      'Target_Not_Found',
+    ]) {
+      expect(named(code), code).toThrow(
+        /^The REA CLI output does not report ok: true, so it holds no Evidence record to read\.$/u,
+      );
+    }
+  });
+
   it('refuses a CLI envelope that reports ok: true without an Evidence record', () => {
     for (const data of [undefined, null, {}, { operation: 'inspect_web_page' }]) {
       expect(() => recordOf({ ok: true, data }), JSON.stringify(data)).toThrow(

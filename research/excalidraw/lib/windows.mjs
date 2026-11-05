@@ -10,12 +10,20 @@ const tally = (items, keyOf) => {
   return out;
 };
 
-// The CLI's own error code is named in the message only when it is a short identifier, so no
-// page text (a URL with a room value) can reach the output.
-const SAFE_CODE = /^[\w.-]{1,64}$/u;
+// The CLI's error code is named in the message only when it has the shape of REA's own codes
+// (target_not_found, INVALID_OUTPUT_FILTER, invalid-row, ENOENT): letters of one case in words
+// joined by `_` or `-`, at most 64 characters. A code as long as a room id (20) or key (22) is
+// never named, even a real one, and page text such as a URL never has that shape.
+const IDENTIFIER = /^(?:[a-z]+(?:[_-][a-z]+)*|[A-Z]+(?:[_-][A-Z]+)*)$/u;
+const ROOM_VALUE_LENGTHS = new Set([20, 22]);
 const failureCode = (envelope) => {
   const code = envelope.error?.code;
-  return typeof code === 'string' && SAFE_CODE.test(code) ? ` (error code ${code})` : '';
+  const named =
+    typeof code === 'string' &&
+    code.length <= 64 &&
+    !ROOM_VALUE_LENGTHS.has(code.length) &&
+    IDENTIFIER.test(code);
+  return named ? ` (error code ${code})` : '';
 };
 
 // REA CLI output wraps one Evidence record as { ok, data }; the MCP server saves the bare record.
