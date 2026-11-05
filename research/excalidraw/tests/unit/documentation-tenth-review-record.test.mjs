@@ -1,29 +1,19 @@
 // Checks the record of the review of f1562ed, found by its head: its counts, session, range and
 // verdict, the handling of each finding, the exit rule that now covers every behaviour-changing
-// commit, and R-75, the review-session requirement and issue #1 left open while the remediation
-// of that review is not covered by a review.
+// commit, and that the review of 79fc538 covers the remediation of that review.
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState, listedReviews, reviewByHead } from './review-list.mjs';
+import { blockingFindings, exitRuleState, listedReviews, reviewByHead } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
 const flat = (text) => text.replaceAll('**', '').replaceAll('`', '').replace(/\s+/gu, ' ');
 const checkpoint = () => read('docs/reverse-engineering/checkpoint.md');
 const section = (title) => checkpoint().split(`## ${title}\n`)[1].split(/^## /mu)[0];
-// The names of the rows of a checkpoint status table whose status is `status`, in table order.
-const withStatus = (title, status) =>
-  section(title)
-    .split('\n')
-    .filter((line) => /^\| [^-]/u.test(line))
-    .slice(1)
-    .map((line) => line.split('|').map((cell) => flat(cell).trim()))
-    .filter((cells) => cells[2] === status)
-    .map((cells) => cells[1]);
 const r75 = () =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
@@ -37,8 +27,12 @@ const COMMITS = ['8bfdfe3', '38b973e', '42c0664', '19bfa5d', '52523e0', 'f0eac4f
 describe('the record of the review of f1562ed', () => {
   const entry = () => flat(reviewByHead(checkpoint(), 'f1562ed').text);
 
-  it('lists it last, with its counts, verdict, session and range', () => {
-    expect(listedReviews(checkpoint()).at(-1).head).toBe('f1562ed');
+  it('lists it tenth, with its counts, verdict, session and range', () => {
+    expect(
+      listedReviews(checkpoint())
+        .map((r) => r.head)
+        .indexOf('f1562ed'),
+    ).toBe(9);
     expect(entry()).toMatch(
       /^10\. Review of f1562ed: 0 critical, 0 major, 4 minor findings and 5 suggestions\. It does not meet the R-75 exit rule, because it reports four minor findings\./u,
     );
@@ -56,38 +50,15 @@ describe('the record of the review of f1562ed', () => {
     expect(entry()).toContain('Suggestions 2–10 of the review of a85eb82 stay open');
   });
 
-  it('names the remediation as not covered by a review, with a finite next review', () => {
+  it('records that the review of 79fc538 covers the remediation, which keeps R-75 open', () => {
     const text = reviewByHead(checkpoint(), 'f1562ed').text;
-    expect(text).toMatch(/^ +- \*\*Not covered by a review\.\*\*/mu);
+    expect(text).not.toMatch(/^ +- \*\*Not covered by a review\.\*\*/mu);
+    expect(text).toMatch(/^ +- \*\*Covered by the review of `79fc538`\.\*\*/mu);
     expect(entry()).toMatch(
-      /Not covered by a review\. The tenth-review remediation, from 8bfdfe3 to the commit that records its checks, is behaviour-changing\. R-75 stays 🟡 until one fresh independent read-only review of the head where it ends, covering f1562ed to that head, reports 0 critical, 0 major and 0 minor findings\./u,
+      /Covered by the review of 79fc538\. The tenth-review remediation, f1562ed\.\.79fc538, from 8bfdfe3 to 79fc538, is behaviour-changing\. The review of 79fc538 covers it and reports one minor finding, so it does not meet the exit rule/u,
     );
-  });
-
-  it('leaves R-75, the review requirement and issue #1 open', () => {
-    expect(exitRuleState(checkpoint())).toMatchObject({
-      head: 'f1562ed',
-      blocking: 4,
-      remediated: true,
-      unreviewed: true,
-      met: false,
-    });
-    expect([r75()[5], r75()[9]]).toEqual(['🟡', '1']);
-    expect(withStatus('Acceptance criteria', 'Partial')).toEqual([
-      'feature-inventory.md covers all discovered features',
-      'behavior-analysis.md',
-      'limitations.md',
-      'Desktop light/dark and mobile evidence sets',
-      'Canvas interactions through the external driver while REA observes',
-      'Prioritised backlog with acceptance criteria',
-    ]);
-    expect(withStatus('Testing requirements', 'Partial')).toEqual([
-      'Re-run each documented interaction from a fresh profile',
-      'Generated JSON and REA bundles validated',
-      'Separate Claude Code review session',
-    ]);
-    expect(flat(checkpoint())).toContain('Issue #1 stays open');
-    expect(flat(section('Blockers and residuals'))).toContain('Independent review (R-75), open.');
+    expect(blockingFindings(reviewByHead(checkpoint(), 'f1562ed'))).toBe(4);
+    expect(r75()[6]).toContain('f1562ed');
   });
 });
 
@@ -98,7 +69,9 @@ describe('the checks of the tenth-review remediation', () => {
 
   it('name its commits, where it ends and the checks that ran or did not', () => {
     for (const commit of [...COMMITS, '5f955a6']) expect(checks()).toContain(commit);
-    expect(checks()).toContain('The remediation ends at the commit that adds this section');
+    expect(checks()).toContain(
+      'The remediation ends at 79fc538, the commit that adds this section',
+    );
     expect(checks()).toMatch(/npm run validate passed on 5f955a6[^.]*39 test files and 528 tests/u);
     expect(checks()).toContain(
       `all ${String(committed().length)} committed evidence files regenerate byte for byte`,
