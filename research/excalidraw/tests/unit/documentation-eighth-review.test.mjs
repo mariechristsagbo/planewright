@@ -1,13 +1,14 @@
 // Checks what the review of 8029c1e asked of the record: a finite exit rule for R-75, which the
-// residual matrix and the checkpoint state the same way, and R-75 kept open while the latest
-// listed review reports a critical, major or minor finding.
+// residual matrix and the checkpoint state the same way, R-75 kept open while the latest listed
+// review reports a critical, major or minor finding, and the record of that review, found by its
+// head.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { listedReviews } from './review-list.mjs';
+import { listedReviews, reviewByHead } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -50,5 +51,34 @@ describe('the R-75 exit rule', () => {
     const blocking = blockingFindings(latest);
     expect(['🟡', '✅']).toContain(r75()[5]);
     expect(r75()[5] !== '✅' || blocking === 0, `review of ${latest.head}`).toBe(true);
+  });
+
+  it('is applied to the latest listed review, which states whether it meets it', () => {
+    const latest = listedReviews(checkpoint()).at(-1);
+    const verdict = blockingFindings(latest) > 0 ? 'does not meet' : 'meets';
+    expect(flat(latest.text)).toContain(`It ${verdict} the R-75 exit rule`);
+  });
+});
+
+describe('the record of the review of 8029c1e', () => {
+  const entry = () => flat(reviewByHead(checkpoint(), '8029c1e').text);
+
+  it('lists its findings, their handling and why it does not meet the exit rule', () => {
+    expect(entry()).toMatch(
+      /^8\. Review of 8029c1e: 0 critical, 0 major, 1 minor finding and 4 suggestions\. It does not meet the R-75 exit rule, because it reports one minor finding\./u,
+    );
+    for (const commit of ['ff04c79', '0e847d2', '8620915', '080e238'])
+      expect(entry()).toContain(commit);
+    expect(entry()).toMatch(/Suggestion 2[^.]*outside the tree/u);
+    expect(r75()[6]).toContain('8029c1e');
+    expect(r75()[7]).toMatch(/review of 8029c1e reported 1 minor finding/u);
+  });
+
+  it('records the checks of its remediation', () => {
+    const checks = flat(section('Checks of the eighth-review remediation'));
+    expect(checks).toMatch(/npm run validate passed on 080e238[^.]*31 test files and 468 tests/u);
+    expect(checks).toContain('in a temporary copy outside the repository');
+    expect(checks).toMatch(/test:e2e was not run locally/u);
+    expect(checks).toMatch(/selftest\.sh were not run again/u);
   });
 });
