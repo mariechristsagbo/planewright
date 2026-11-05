@@ -1,7 +1,8 @@
 # Checkpoint: issue #1 status
 
-Last updated: 2026-11-05 (R-76 record: the second fresh-profile sessions s8–s11 ran on
-2026-11-05 at 04:48–04:55 UTC; everything else comes from retained evidence and local checks).
+Last updated: 2026-11-05 (tenth-review record and remediation, with no new live session: the
+latest sessions are still the R-76 runs s8–s11, on 2026-11-05 at 04:48–04:55 UTC; everything else
+comes from retained evidence and local checks).
 Branch: `docs/1-excalidraw-research`. Issue #1 stays
 open: the Draft PR refers to it (`Refs #1`) and does not close it.
 
@@ -31,7 +32,7 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
 | Generated JSON and REA bundles validated                | Partial | All committed JSON parses. With the current tools, `sessions.json`, `rea-windows.json`, the nine probe summaries, the five initial-inspection summaries and `static-api-surface.json` regenerate byte for byte from the retained records. This was checked in the fifth-review remediation on 2026-11-04, by the sixth review on `46b2b01`, by the review of `a78a210` on that head and, for R-76, on `f0aa21b` on 2026-11-05: first the nine files committed before R-76, then the s1–s11 files built after it. `rea-extract.mjs` changed in `f0aa21b`, to read REA CLI envelopes; the other builders and the libraries they import are unchanged since `46b2b01`. `bundle-01-desktop.json` passed `rea evidence-export` earlier on 2026-11-04. The REA CLI records of s5–s11 cannot be exported as a bundle without the MCP `export_evidence_bundle` tool (R-73) |
 | CDP and driver ports loopback-only                      | Done    | With the sixth-review tooling, `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 against real local containers on 2026-11-05 at 00:15–00:16 UTC, on `e38955a`, contacting no website; their output is committed in [local-checks/](local-checks/). Before the R-76 sessions they passed again, 11 of 11 and 19 of 19, on `0b4fb19` on 2026-11-05 at 04:45–04:46 UTC; that output is committed there too. The earlier runs on `dc6eef1` (2026-11-04, 22:18 and 22:19 UTC) kept no output. This holds from s5 on: s1–s4 ran on the default Docker bridge, where the DevTools forwarder was reachable from other containers (see the methodology). A probe that cannot run, and a failed docker listing during cleanup, count as FAIL                                                                                                                   |
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs. The removal checks of the `e38955a` and `0b4fb19` runs are in local-checks. After each of s8–s11 the container, its network, the driver, the listeners on 9222 and 9333, the token file and any REA CLI process were checked gone                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| Separate Claude Code review session                     | Done    | Nine independent reviews ran. The ninth (of `a85eb82`) meets the R-75 exit rule: 0 critical, 0 major and 0 minor findings, and its 10 suggestions are listed with their handling. R-75 closes only under the exit rule in [Independent reviews](#independent-reviews), so it is ✅ until a behaviour-changing remediation follows `a85eb82`. This closes R-75 only; the other Partial criteria and the maintainer decisions keep issue #1 open. No review covers the R-76 commits after `935f2fc` (see [R-76 runs](#r-76-runs-s8s11))                                                                                                                                                                                                                                                                                                                              |
+| Separate Claude Code review session                     | Partial | Ten independent reviews ran. The tenth (of `f1562ed`) is remediated (its 4 minor findings and 5 suggestions, from `8bfdfe3` on); no review of that remediation has run yet. R-75 closes only under the exit rule in [Independent reviews](#independent-reviews), which applies to every behaviour-changing commit: the ninth review met it on `a85eb82`, but the R-76 commits after `935f2fc` were behaviour-changing and no review covered them until the tenth (see [R-76 runs](#r-76-runs-s8s11)). The tenth is an automated Claude Code review, not human approval. The other Partial criteria and the maintainer decisions keep issue #1 open                                                                                                                                                                                                                 |
 
 ## Checks of the fifth-review remediation
 
@@ -207,9 +208,11 @@ profile, with a storage inventory and a REA initial-page inspection in that sess
   s8–s11 ran a later build than s1–s7: the one `index-*.js` script that every s1–s7 netlog
   requests is requested in no s8–s11 netlog, and every s8–s11 netlog requests another one
   (`evidence/sessions.json`); the REA initial-page inspections list it as the main chunk.
-- **Not covered by a review.** These commits change research tooling, tests and claims. The R-75
-  exit rule speaks of review remediations and none of them is one, so R-75 is left as the ninth
-  review set it, but no independent review covers them yet.
+- **Reviewed by the tenth review.** The review of `f1562ed` covers these commits
+  (`935f2fc`..`f1562ed`). They change research tooling, tests and claims, so they are
+  behaviour-changing. When they were pushed, the R-75 exit rule spoke only of review
+  remediations, so R-75 stayed as the ninth review had set it; the tenth review reported that
+  gap (its Minor 4), and the rule now covers every behaviour-changing commit.
 - **Commit message warning.** commitlint reported `footer-leading-blank` (a warning, 0 problems)
   on `f9dc3db`, whose body has a line that starts like a footer token; the commit is kept.
 - **Checks of the record.** `npm run validate` passed on `7bec65f` (2026-11-05, 05:44–05:46 UTC:
@@ -225,15 +228,16 @@ profile, with a storage inventory and a REA initial-page inspection in that sess
 ## Independent reviews
 
 **R-75 exit rule.** R-75 may become ✅ only after a fresh independent review of the latest
-behaviour-changing remediation reports 0 critical, 0 major and 0 minor findings. Suggestions
-that do not block may stay open if they are listed here with their handling. A remediation is
-behaviour-changing when it changes the research tooling, its tests or a documented research
-claim. Commits that only record a review, its checks or the PR description are not, so a review
-that meets the rule does not call for another one. Updating the record checks (the
-documentation checks that read the review list, R-75 and the review records) so that they accept
-a new record also counts as recording. Until then R-75 stays 🟡. Meeting the rule
-closes R-75 only: issue #1 also needs the remaining observation work and the maintainer
-decisions.
+behaviour-changing commit reports 0 critical, 0 major and 0 minor findings. Suggestions that do not
+block may stay open if they are listed here with their handling. A commit is behaviour-changing when
+it changes the research tooling, its tests or a documented research claim, whether or not it
+remediates a review; the R-76 commits `0b4fb19`..`f1562ed` were. A behaviour-changing commit that no
+listed review covers is named under a **Not covered by a review.** bullet in this checkpoint, and
+R-75 stays 🟡 while such a bullet remains. Commits that only record a review, its checks or the PR
+description are not, so a review that meets the rule does not call for another one. Updating the
+record checks (the documentation checks that read the review list, R-75 and the review records) so
+that they accept a new record also counts as recording. Until then R-75 stays 🟡. Meeting the rule
+closes R-75 only: issue #1 also needs the remaining observation work and the maintainer decisions.
 
 1. **Review of `3f9fc06`** (posted on PR #2): 7 major findings, 8 minor findings and 5
    suggestions.
@@ -343,10 +347,12 @@ decisions.
    - **Suggestion 4, no exit rule for R-75:** the rule above (`080e238`).
    - Suggestion 2 of the review of `a78a210` stays open: the seven corrections of `4a43c1a` are
      to be listed in the squash-merge body by whoever merges.
-9. **Review of `a85eb82`**: 0 critical, 0 major, 0 minor findings and 10 suggestions. It meets the
-   R-75 exit rule: it covers `a85eb82`, where the eighth-review remediation ends, and the commits
-   after it only record this review, update the record checks and say in the rule that doing so
-   counts as recording. R-75 is ✅; issue #1 stays open. Handled as follows:
+9. **Review of `a85eb82`**: 0 critical, 0 major, 0 minor findings and 10 suggestions. It met the
+   R-75 exit rule as the rule then stood: it covered `a85eb82`, where the eighth-review
+   remediation ends, and the commits after it only recorded this review, updated the record
+   checks and said in the rule that doing so counts as recording. R-75 was ✅ until the R-76
+   commits after `935f2fc`, which are behaviour-changing; the review of `f1562ed` found that the
+   rule did not cover them, and R-75 is 🟡 again. Handled as follows:
    - **Suggestion 1, record checks that never let R-75 become ✅:** the exit rule says that
      updating the record checks counts as recording (`407b28c`). The checks of R-75, the review
      note, the blocker and the review row take their wording from the latest review: R-75 is ✅
@@ -380,6 +386,50 @@ decisions.
        entry).
    - A remediation of any of them would change the tooling, its tests or a documented research
      claim, so it would be behaviour-changing, and R-75 would need a fresh review under the rule.
+10. **Review of `f1562ed`**: 0 critical, 0 major, 4 minor findings and 5 suggestions. It does not
+    meet the R-75 exit rule, because it reports four minor findings. It reviewed the R-76 commits
+    `935f2fc`..`f1562ed` read-only, in a separate Claude Code session
+    (`c599db1b-0236-4cb5-b0d9-b74e60fdffaf`, Claude Opus 5.5 at xhigh effort), without reading
+    earlier review outputs. It is an automated Claude Code review, not human approval. It ran
+    `npm run validate` on `f1562ed` (36 test files and 507 tests, with the coverage recorded in
+    the R-76 checks), the research tests on each of the 10 commits (431 to 455 tests), a byte for
+    byte regeneration of every committed evidence file from the retained records, and
+    secret-shape scans of the raw s8–s11 trees, the documents, the diff, the commit bodies, the
+    PR description and the branch history (0 shapes, 0 token files). It found PR #2 a Draft
+    with all 8 checks passed on `f1562ed`, 0 open code-scanning and secret-scanning alerts, and
+    no leftover container, network, listener, token file or process. Of its 12 sabotage
+    mutations, 5 failed a test and 7 did not (Suggestion 1). It did not run `test:e2e` or
+    `audit:deps` locally, ran no live session and called no REA tool. Handled as follows; each
+    fix has a check that failed under a sabotage in a temporary copy outside the repository:
+    - **Minor 1, stale page-load count:** the methodology row said 17; it says 21, and the loads
+      check reads it (`38b973e`).
+    - **Minor 2, R-25 overstated the identical captures:** 3 of the 5 dark dialog captures are
+      byte-identical, not 5 (`42c0664`). The PR description said the same; it is corrected
+      outside the tree.
+    - **Minor 3, the confidence rule applied two ways:** B-06's dark text box is medium, and the
+      methodology says that results matching only once a setup difference is allowed for count
+      as different (`19bfa5d`).
+    - **Minor 4, Done over unreviewed changes:** the exit rule above applies to every
+      behaviour-changing commit, a **Not covered by a review.** bullet keeps R-75 🟡, and this
+      record sets R-75 and the review-session requirement back to open.
+    - **Suggestion 1, unguarded claims:** checks for R-25 (`42c0664`), for B-06 (`19bfa5d`), and
+      for the s11 service-worker split and fetch path, the Cascadia and beacon session lists, the
+      s11 script list and the Clear canvas rating (`52523e0`).
+    - **Suggestion 2, `rea-extract` ignored the `ok` flag:** a failed REA CLI envelope is refused
+      with a message, and nothing is written (`8bfdfe3`).
+    - **Suggestion 3, the s11 timing:** placed in its scenarios as an inference from the raw
+      times, narrowing R-64 and R-66 (`f0eac4f`). The raw records refine the review's summary:
+      the first request of 04:54:12.0–19.7 is the Cascadia font, and the 64 page-origin
+      requests started from 04:54:13.3.
+    - **Suggestion 4, the scroll wording:** s10's box minus (90,45) equals s6's box (`19bfa5d`).
+    - **Suggestion 5, the build change cited from REA alone:** cited from the netlog (`5eb8852`).
+    - Suggestions 2–10 of the review of `a85eb82` stay open as listed there; this remediation
+      addresses none of them.
+    - **Not covered by a review.** The tenth-review remediation, from `8bfdfe3` to the commit that
+      records its checks, is behaviour-changing. R-75 stays 🟡 until one fresh independent
+      read-only review of the head where it ends, covering `f1562ed` to that head, reports 0
+      critical, 0 major and 0 minor findings. If it reports any, they are remediated and the new
+      head is reviewed the same way; recording a review that meets the rule replaces this bullet.
 
 ## Privacy remediation
 
@@ -424,10 +474,11 @@ Values were never printed; only counts and file names were recorded.
   and R-46 plan them in a headed browser.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client
   collaboration (R-55), and offline start and reconnection (R-57).
-- **Independent review (R-75), done.** The ninth review (of `a85eb82`) meets the exit rule, so
-  no further review is due for R-75. R-75 closes only under the exit rule in
-  [Independent reviews](#independent-reviews): a behaviour-changing remediation after `a85eb82`,
-  such as one for the open suggestions, would need a fresh review under it.
+- **Independent review (R-75), open.** The tenth review (of `f1562ed`) reported four minor
+  findings, all remediated, and a review of the tenth-review remediation is still to be run
+  (R-75). R-75 closes only under the exit rule in [Independent reviews](#independent-reviews):
+  one fresh independent read-only review of the head where that remediation ends must report 0
+  critical, 0 major and 0 minor findings.
 
 ## Remaining observation work
 

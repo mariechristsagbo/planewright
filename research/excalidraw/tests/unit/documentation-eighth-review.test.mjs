@@ -26,9 +26,13 @@ describe('the R-75 exit rule', () => {
   it('is stated in the checkpoint, and R-75, the review note and the blocker point to it', () => {
     const rule = flat(section('Independent reviews').split(/\n\d+\. /u)[0]);
     expect(rule).toMatch(
-      /R-75 exit rule\. R-75 may become ✅ only after a fresh independent review of the latest behaviour-changing remediation reports 0 critical, 0 major and 0 minor findings\./u,
+      /R-75 exit rule\. R-75 may become ✅ only after a fresh independent review of the latest behaviour-changing commit reports 0 critical, 0 major and 0 minor findings\./u,
     );
     expect(rule).toMatch(/Suggestions that do not block may stay open if they are listed/u);
+    expect(rule).toMatch(
+      /A commit is behaviour-changing when it changes the research tooling, its tests or a documented research claim, whether or not it remediates a review/u,
+    );
+    expect(rule).toMatch(/Not covered by a review\. bullet[^.]*R-75 stays 🟡/u);
     expect(rule).toMatch(/Commits that only record a review, its checks or the PR description/u);
     expect(rule).toMatch(/Updating the record checks [^.]* also counts as recording\./u);
     expect(rule).toMatch(/issue #1 also needs/u);
@@ -46,8 +50,8 @@ describe('the R-75 exit rule', () => {
     );
     expect(r75()[8]).toMatch(
       state.met
-        ? new RegExp(`^None while no behaviour-changing remediation follows ${state.head};`, 'u')
-        : /^A fresh independent review of the latest behaviour-changing remediation that reports 0 critical, 0 major and 0 minor findings/u,
+        ? new RegExp(`^None while no behaviour-changing commit follows ${state.head};`, 'u')
+        : /^A fresh independent review of the latest behaviour-changing commit that reports 0 critical, 0 major and 0 minor findings/u,
     );
     expect(r75()[9]).toBe(state.met ? '—' : '1');
   });

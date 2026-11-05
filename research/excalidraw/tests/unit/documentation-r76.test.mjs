@@ -189,9 +189,11 @@ describe('the R-76 record', () => {
     );
     expect(text).toContain('the netlogs hold 0 .map requests');
     expect(text).toMatch(/Cleanup, checked after each session/u);
-    expect(text).toContain('no independent review covers them yet');
+    expect(text).toContain('The review of f1562ed covers these commits (935f2fc..f1562ed)');
     expect(flat(checkpoint)).toContain('(R-76 ✅)');
-    expect(flat(checkpoint)).toContain('No review covers the R-76 commits after 935f2fc');
+    expect(flat(checkpoint)).toContain(
+      'the R-76 commits after 935f2fc were behaviour-changing and no review covered them until the tenth',
+    );
     expect(text).toMatch(
       /npm run validate passed on [0-9a-f]{7}[^.]*\d+ test files and \d+ tests/u,
     );

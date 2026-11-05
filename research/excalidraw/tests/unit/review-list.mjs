@@ -68,11 +68,15 @@ export function blockingFindings(review) {
   return counts.slice(1).reduce((sum, count) => sum + Number(count), 0);
 }
 
+// A bullet, at any depth, that names behaviour-changing commits no listed review covers yet.
+const UNREVIEWED = /^\s*- \*\*Not covered by a review\.\*\*/mu;
+
 /**
  * How the latest listed review stands against the R-75 exit rule: its blocking findings, whether
  * the checks of the remediation before it say that this remediation ends at its head (`covers`),
- * and whether a remediation of its own is recorded, which would leave a later head unreviewed.
- * `met` holds only with no blocking finding, the head covered and no remediation of its own.
+ * whether a remediation of its own is recorded, which would leave a later head unreviewed, and
+ * whether the checkpoint names commits that no review covers (`unreviewed`). `met` holds only with
+ * no blocking finding, the head covered, no remediation of its own and no unreviewed commit.
  */
 export function exitRuleState(checkpoint) {
   const reviews = listedReviews(checkpoint);
@@ -81,12 +85,14 @@ export function exitRuleState(checkpoint) {
   const before = checkpoint.split(checks(reviews.length - 1))[1] ?? '';
   const covers = flat(before.split(/^## /mu)[0]).includes(`The remediation ends at ${latest.head}`);
   const remediated = checkpoint.includes(checks(reviews.length));
+  const unreviewed = UNREVIEWED.test(checkpoint);
   const blocking = blockingFindings(latest);
   return {
     head: latest.head,
     blocking,
     covers,
     remediated,
-    met: blocking === 0 && covers && !remediated,
+    unreviewed,
+    met: blocking === 0 && covers && !remediated && !unreviewed,
   };
 }
