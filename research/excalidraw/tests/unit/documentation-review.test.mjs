@@ -310,12 +310,20 @@ describe('checkpoint statuses', () => {
 });
 
 describe('the open review row', () => {
-  it('names the review whose remediation is still unreviewed', () => {
+  const ORDINALS = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
+
+  it('names every listed review and the one whose remediation is still unreviewed', () => {
+    const list = read('docs/reverse-engineering/checkpoint.md')
+      .split('## Independent reviews\n')[1]
+      .split(/^## /mu)[0];
+    const heads = [...list.matchAll(/^\d+\. \*\*Review of `([0-9a-f]{7})`/gmu)].map(([, h]) => h);
+    const last = heads.at(-1);
     const r75 = row('R-75');
-    for (const head of ['cb11dff', '46b2b01']) expect(r75).toContain(`\`${head}\``);
-    expect(r75).toContain('The remediation of the `46b2b01` review has not been reviewed');
-    expect(flat(read('docs/reverse-engineering/checkpoint.md'))).toContain(
-      'Six independent reviews ran. The sixth (of 46b2b01) is remediated',
+    expect(heads.length).toBeGreaterThan(5);
+    for (const head of heads) expect(r75).toContain(`\`${head}\``);
+    expect(r75).toContain(`The remediation of the \`${last}\` review has not been reviewed`);
+    expect(doc('checkpoint.md')).toContain(
+      `The ${ORDINALS[heads.length - 1]} (of ${last}) is remediated`,
     );
   });
 });

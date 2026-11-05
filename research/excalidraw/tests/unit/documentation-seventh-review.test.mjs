@@ -1,7 +1,8 @@
 // Checks the checkpoint statements that the review of a78a210 found stale or wrong (R-75): where
 // the evidence regeneration was checked, how many reviews it counts, and which documentation
-// checks passed against the 46b2b01 documents. Where it can, each check derives its expectation
-// from the repository (the review list, the test sources) instead of a fixed phrase.
+// checks passed against the 46b2b01 documents; and the record of that review itself. Where it
+// can, each check derives its expectation from the repository (the review list, the test
+// sources) instead of a fixed phrase.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -18,7 +19,7 @@ const note = (criterion) =>
       .split('\n')
       .find((line) => line.startsWith(`| ${criterion} `))
       .split('|')[3],
-  );
+  ).trim();
 const section = (title) => checkpoint().split(`## ${title}\n`)[1].split(/^## /mu)[0];
 
 describe('the regeneration note', () => {
@@ -76,5 +77,46 @@ describe('the sixth-review sabotage record', () => {
         name,
       ).toBe(true);
     expect(bullet()).not.toContain('UI-created room');
+  });
+});
+
+describe('the record of the review of a78a210', () => {
+  const entry = () =>
+    flat(
+      section('Independent reviews')
+        .split(/\n(?=\d+\. \*\*Review of)/u)
+        .at(-1),
+    );
+  const status = (id) =>
+    read('docs/reverse-engineering/residual-matrix.md')
+      .split('\n')
+      .find((line) => line.startsWith(`| ${id} |`))
+      .split('|')[5]
+      .trim();
+
+  it('lists it last, with its findings, their commits and the suggestions left open', () => {
+    expect(entry()).toMatch(
+      /^7\. Review of a78a210: 0 critical, 0 major, 3 minor findings and 3 suggestions\./u,
+    );
+    for (const commit of ['b72d28d', '4f25d13', 'db24b1f']) expect(entry()).toContain(commit);
+    expect(entry()).toMatch(/Suggestions 2 and 3[^.]*not addressed/u);
+  });
+
+  it('keeps R-75 and issue #1 open', () => {
+    expect(status('R-75')).toBe('🟡');
+    expect(note('Separate Claude Code review session')).toMatch(
+      /^Seven independent reviews ran\. The seventh \(of a78a210\) is remediated[^.]*; no review of that remediation has run yet/u,
+    );
+    expect(flat(checkpoint())).toContain('Issue #1 stays open');
+    expect(flat(section('Blockers and residuals'))).toMatch(
+      /seventh-review remediation is still to be run \(R-75\)/u,
+    );
+  });
+
+  it('records the checks of its remediation', () => {
+    const checks = flat(section('Checks of the seventh-review remediation'));
+    expect(checks).toMatch(/npm run validate passed on db24b1f[^.]*30 test files and 461 tests/u);
+    expect(checks).toContain('in a temporary copy outside the repository');
+    expect(checks).toMatch(/test:e2e was not run locally/u);
   });
 });
