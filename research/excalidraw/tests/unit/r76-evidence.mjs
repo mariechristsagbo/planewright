@@ -14,13 +14,25 @@ export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
 // Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
 // records of the tenth to twelfth reviews cover only the files committed before them.
-// Evidence files committed after 2864145, by the mobile follow-up (s15, s16).
+// Evidence files committed after a4990b6, by the mobile priority-1 batch (s17–s21).
+export const COMMITTED_AFTER_A4990B6 = [
+  'netlog-steps-s17-s21.json',
+  'probes-s17-mobile-hit-reload.json',
+  'probes-s18-mobile-pinch.json',
+  'probes-s19-mobile-hit-reload-2.json',
+  'probes-s20-mobile-pinch-2.json',
+  'probes-s21-mobile-hit-reload-3.json',
+  'rea-windows-s17-s21.json',
+  'sessions-s17-s21.json',
+];
+// Evidence files committed after 2864145, by the mobile follow-up (s15, s16) and the batch after it.
 export const COMMITTED_AFTER_2864145 = [
   'netlog-steps-s15-s16.json',
   'probes-s15-mobile-svg-only.json',
   'probes-s16-mobile-generation-reload.json',
   'rea-windows-s15-s16.json',
   'sessions-s15-s16.json',
+  ...COMMITTED_AFTER_A4990B6,
 ];
 // Evidence files committed after db16323, by the observation batch and the mobile follow-up.
 // Records written before then count the files that existed when they were written.
