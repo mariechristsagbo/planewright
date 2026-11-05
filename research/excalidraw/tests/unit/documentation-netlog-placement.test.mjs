@@ -1,7 +1,8 @@
 // Checks the claims that rest on the committed netlog placement (evidence/netlog-steps.json):
 // traffic while the driver drew (R-66) and the step in which the dedicated worker started (R-64).
-// Every count, gap and time is derived from the committed summary, so a claim fails if its wording
-// regresses or if the summary changes.
+// Every count, gap and time that the committed summary holds is derived from it, so a claim fails
+// if its wording regresses or if the summary changes. The summary does not say which key a key step
+// pressed, nor which input came before a wait, so those inputs stay raw-only (limitations.md).
 import { describe, expect, it } from 'vitest';
 
 import { RE, cells, doc, evidence, flat, read, scenario } from './r76-evidence.mjs';
@@ -31,10 +32,14 @@ const timed = (p) =>
   }));
 const written = (s) => s.placements.flatMap(timed);
 const socketOpened = (s) => written(s).find((e) => e.text.includes(' websocket-open '))?.at;
+const isBeacon = (text) => text.includes('/simple.gif q24');
 const beacons = () =>
   sessions()
     .flatMap(written)
-    .filter((e) => e.text.includes('/simple.gif q24'));
+    .filter((e) => isBeacon(e.text));
+// The placements that hold a session's 24-key beacons, and each beacon's offset in its step.
+const beaconSteps = (s) => s.placements.filter((p) => p.entries.some(isBeacon));
+const beaconOffsets = (p) => p.entries.filter(isBeacon).map((e) => Number(e.split(' ')[0]));
 // The shortest time from a drawing step to the next entry, over the sessions of a platform.
 const shortest = (platform) =>
   seconds(
@@ -101,17 +106,64 @@ describe('the collaboration rooms and the 24-key beacons against the drawing ste
         `${joined(lastDrawn.map(clock))} UTC, and their sockets opened at ` +
         `${joined(opened.map(clock))} UTC.`,
     );
+    // The netlog counts WebSocket frames at a socket's close, and no socket closed.
+    const closed = sessions()
+      .flatMap(written)
+      .filter((e) => e.text.includes(' websocket-close '));
+    expect(closed).toHaveLength(0);
+    expect(network()).toContain(
+      'it counts WebSocket frames only when a socket closes, which neither collaboration socket did.',
+    );
   });
 
   it('place every 24-key beacon outside the drawing steps, with the inputs raw-only', () => {
     expect(beacons().some((e) => DRAWING.has(e.kind))).toBe(false);
+    // Sessions with the same count are named together, in index order: "4 in s1 and s6, 1 in s3".
+    const bySession = new Map();
+    for (const s of sessions().filter((x) => beaconSteps(x).length > 0)) {
+      const n = beaconSteps(s).flatMap(beaconOffsets).length;
+      bySession.set(n, [...(bySession.get(n) ?? []), short(s)]);
+    }
+    const split = [...bySession].map(([n, names]) => `${String(n)} in ${joined(names)}`);
+    // Measured from the input itself, which the summary holds unless a wait came between them.
+    const fromInput = sessions()
+      .flatMap(beaconSteps)
+      .filter((p) => p.do !== 'wait')
+      .flatMap(beaconOffsets);
+    expect(beacons().length - fromInput.length).toBe(2);
     expect(network()).toContain(
-      `The 24-key beacons ${PLACEMENT}. Each of the ${String(beacons().length)}`,
+      `The 24-key beacons ${PLACEMENT}. Each of the ${String(beacons().length)} ` +
+        `(${split.join(', ')}) was written ${String(Math.min(...fromInput))}–` +
+        `${String(Math.max(...fromInput))} ms after one of five inputs and before the next input`,
     );
     expect(network()).toMatch(/That these inputs send an analytics event is a hypothesis \[H\]/u);
     const raw = flat(read(`${RE}/limitations.md`).split('Facts read only from raw records')[1]);
     expect(raw.split(' - REA MCP denied.')[0]).toContain(
       'and the inputs before the 24-key beacons',
+    );
+  });
+});
+
+describe('the 24-key beacons of the desktop sessions', () => {
+  it('came once after each of four inputs in s1 and s6, two of them the export clicks', () => {
+    const desktop = sessions().filter(
+      (s) => s.session.includes('-desktop') && beaconSteps(s).length > 0,
+    );
+    expect(desktop.map(short)).toEqual(['s1', 's6']);
+    for (const s of desktop) {
+      const steps = beaconSteps(s);
+      expect(
+        steps.map((p) => beaconOffsets(p).length),
+        s.session,
+      ).toEqual([1, 1, 1, 1]);
+      expect(steps.map((p) => p.name ?? p.do).slice(1, 3), s.session).toEqual([
+        'Export to PNG',
+        'Export to SVG',
+      ]);
+    }
+    expect(network()).toContain(
+      's1 and s6 each wrote one after each of the four desktop inputs, and none followed a ' +
+        'drawing step.',
     );
   });
 });
