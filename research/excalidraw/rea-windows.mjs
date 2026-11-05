@@ -16,6 +16,18 @@ const readRows = (file) =>
         .map((line) => JSON.parse(line))
     : [];
 
+// A failed CLI call, or one that reports success without an Evidence record, stops the build and
+// names its file, so it is never summarised as a window or left out without notice. Every CLI
+// output retained so far, observation or not, holds a record.
+function readRecord(dir, session, name) {
+  const parsed = JSON.parse(readFileSync(join(dir, name), 'utf8'));
+  try {
+    return recordOf(parsed);
+  } catch (error) {
+    throw new Error(`${session}/rea/${name}: ${error.message}`, { cause: error });
+  }
+}
+
 function sessionWindows(root, session) {
   const dir = join(root, session, 'rea');
   if (!existsSync(dir)) return [];
@@ -24,10 +36,7 @@ function sessionWindows(root, session) {
     .filter((name) => name.endsWith('.json'))
     .sort()
     .map((name) => {
-      const summary = summariseWindow(
-        recordOf(JSON.parse(readFileSync(join(dir, name), 'utf8'))),
-        rows,
-      );
+      const summary = summariseWindow(readRecord(dir, session, name), rows);
       return summary ? { session, file: name, ...summary } : null;
     })
     .filter(Boolean);

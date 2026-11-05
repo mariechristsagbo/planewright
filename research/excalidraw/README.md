@@ -139,7 +139,7 @@ did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
   `{ ok, data }` output of the REA CLI. CLI output that does not report `ok: true`, or holds no
   Evidence record, is refused with a message and nothing is written; `rea-windows.mjs` reads
   records the same way, so a failed call stops its build instead of being summarised as a
-  window or left out without notice. It needs an input ending in `.json` and never replaces an
+  window or left out without notice, and its message names the session and file. It needs an input ending in `.json` and never replaces an
   existing PNG with different bytes. The optional summary file is created exclusively, so an
   existing file, the input included, is never replaced. Accessible names and descriptions, and
   REA's own condition and limitation text, are redacted before they are copied into a summary.
