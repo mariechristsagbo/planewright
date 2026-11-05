@@ -98,7 +98,13 @@ in an MCP restart and are withdrawn.
 
 - `subset-worker.chunk-*.js` and `subset-shared.chunk-*.js`. A **dedicated worker** was created
   from the subset-worker chunk (netlog `worker` event, s1 and s6 only; no mobile netlog has one).
-  Which action triggered it was not isolated [U].
+  In both sessions its event was written during the step that clicks Export to SVG in the Export
+  image dialog, 681 ms (s1) and 953 ms (s6) after that step started, after the netlog wrote both
+  chunks and before it wrote both again [I, raw netlog and timeline times]. Both sessions clicked
+  Export to PNG 15.0 s before, in the same dialog, and wrote no worker event then. These times
+  cannot tell the SVG click from a delayed effect of the PNG export or of opening the dialog, so
+  that the SVG export starts the worker is a hypothesis [H]. No mobile scenario clicks Export to
+  SVG.
 - On collaboration start: `firebaseSDK-*.js`, `qrcode.chunk-*.js`, `random-username.esm-*.js`.
 - Other `index-*.js` chunks with different hashes were also loaded. What they contain is [U].
 
@@ -140,14 +146,14 @@ references `OffscreenCanvas` and `Path2D`.
 
 ## 4. Backend hypotheses (not verified)
 
-| ID   | Hypothesis                                                                                                                                   | Basis                                                                                      | Confidence |
-| ---- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------- |
-| N-H1 | The collab server relays opaque, client-encrypted scene updates over socket.io rooms and cannot read them                                    | Binary frames; `AES-GCM` and `crypto.subtle` [S]; the dialog's E2E claim [O]               | medium     |
-| N-H2 | The 12-byte binary frame paired with each payload frame is an AES-GCM initialisation vector (12 bytes is the conventional GCM IV size)       | Repeated 137/12 pairing [O, low: lost Evidence, seen once]                                 | low        |
-| N-H3 | The 22-character fragment part is a base64url-encoded 128-bit symmetric key, and the 20-character part is the room id                        | Lengths [O]; the key stays client-side [I]                                                 | medium     |
-| N-H4 | Firestore stores an encrypted room scene snapshot for late joiners, and Firebase Storage stores encrypted binary files (images) for the room | Project name; batchGet/commit at session start; storage POST when an image was present [O] | medium     |
-| N-H5 | `version-dataState` and `version-files` plus `BroadcastChannel` coordinate several tabs on the same origin                                   | Key names [O]; identifier [S]                                                              | low        |
-| N-H6 | The subset worker subsets fonts (possibly with WebAssembly) for export or embedding                                                          | Chunk name [O]; `FontFace` and `WebAssembly` [S]                                           | low        |
+| ID   | Hypothesis                                                                                                                                   | Basis                                                                                                              | Confidence |
+| ---- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------- |
+| N-H1 | The collab server relays opaque, client-encrypted scene updates over socket.io rooms and cannot read them                                    | Binary frames; `AES-GCM` and `crypto.subtle` [S]; the dialog's E2E claim [O]                                       | medium     |
+| N-H2 | The 12-byte binary frame paired with each payload frame is an AES-GCM initialisation vector (12 bytes is the conventional GCM IV size)       | Repeated 137/12 pairing [O, low: lost Evidence, seen once]                                                         | low        |
+| N-H3 | The 22-character fragment part is a base64url-encoded 128-bit symmetric key, and the 20-character part is the room id                        | Lengths [O]; the key stays client-side [I]                                                                         | medium     |
+| N-H4 | Firestore stores an encrypted room scene snapshot for late joiners, and Firebase Storage stores encrypted binary files (images) for the room | Project name; batchGet/commit at session start; storage POST when an image was present [O]                         | medium     |
+| N-H5 | `version-dataState` and `version-files` plus `BroadcastChannel` coordinate several tabs on the same origin                                   | Key names [O]; identifier [S]                                                                                      | low        |
+| N-H6 | The subset worker subsets fonts (possibly with WebAssembly) for export or embedding                                                          | Chunk name [O]; `FontFace` and `WebAssembly` [S]; its event written during the Export to SVG step in s1 and s6 [I] | low        |
 
 ## 5. Unverified
 

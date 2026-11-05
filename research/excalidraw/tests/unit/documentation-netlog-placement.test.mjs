@@ -1,9 +1,10 @@
 // Checks the claims that rest on the committed netlog placement (evidence/netlog-steps.json):
-// traffic while the driver drew (R-66). Every count, gap and time is derived from the committed
-// summary, so a claim fails if its wording regresses or if the summary changes.
+// traffic while the driver drew (R-66) and the step in which the dedicated worker started (R-64).
+// Every count, gap and time is derived from the committed summary, so a claim fails if its wording
+// regresses or if the summary changes.
 import { describe, expect, it } from 'vitest';
 
-import { RE, cells, doc, evidence, flat, read } from './r76-evidence.mjs';
+import { RE, cells, doc, evidence, flat, read, scenario } from './r76-evidence.mjs';
 
 const PLACEMENT = '[I, raw netlog and timeline times]';
 const DRAWING = new Set(['drag', 'path', 'touchDrag']);
@@ -135,5 +136,71 @@ describe('R-66 and the other documents', () => {
         'drawing step',
     );
     expect(doc('checkpoint.md')).not.toMatch(/drawing steps for drawing-time traffic \(R-66\)/u);
+  });
+});
+
+// The placement that holds a session's dedicated-worker event, and the event's offset in it.
+const workerStep = (s) => s.placements.find((p) => p.entries.some((e) => / worker /u.test(e)));
+const offset = (p, pattern) =>
+  p.entries.filter((e) => pattern.test(e)).map((e) => Number(e.split(' ')[0]));
+const named = (s, name) => s.placements.find((p) => p.do === 'role' && p.name === name);
+
+describe('the step in which the dedicated worker started (R-64)', () => {
+  const dedicated = () => sessions().filter(workerStep);
+
+  it('is the Export to SVG click in both sessions, between two fetches of both chunks', () => {
+    expect(dedicated().map(short)).toEqual(['s1', 's6']);
+    const ms = [];
+    for (const s of dedicated()) {
+      const p = workerStep(s);
+      expect([p.do, p.name], s.session).toEqual(['role', 'Export to SVG']);
+      const [at] = offset(p, / worker /u);
+      ms.push(at);
+      for (const chunk of [/subset-worker\.chunk-/u, /subset-shared\.chunk-/u]) {
+        const fetched = offset(p, new RegExp(` request script 200 \\S+${chunk.source}`, 'u'));
+        expect(fetched.some((t) => t < at) && fetched.some((t) => t > at), s.session).toBe(true);
+      }
+    }
+    expect(network()).toContain(
+      'In both sessions its event was written during the step that clicks Export to SVG in the ' +
+        `Export image dialog, ${String(ms[0])} ms (s1) and ${String(ms[1])} ms (s6) after that step ` +
+        'started, after the netlog wrote both chunks and before it wrote both again ' +
+        `${PLACEMENT}.`,
+    );
+  });
+
+  it('cannot be told from the Export to PNG click before it, so the trigger stays a hypothesis', () => {
+    const before = dedicated().map(
+      (s) => Date.parse(workerStep(s).started) - Date.parse(named(s, 'Export to PNG').started),
+    );
+    expect(new Set(before.map(seconds)).size).toBe(1);
+    expect(network()).toContain(
+      `Both sessions clicked Export to PNG ${seconds(before[0])} s before, in the same dialog, ` +
+        'and wrote no worker event then.',
+    );
+    expect(network()).toMatch(/that the SVG export starts the worker is a hypothesis \[H\]/u);
+    expect(network()).not.toContain('Which action triggered it was not isolated');
+    const mobile = ['09', '10', '10b', '11', '14', '16'].map((id) => JSON.stringify(scenario(id)));
+    expect(mobile.some((text) => text.includes('Export to SVG'))).toBe(false);
+    expect(network()).toContain('No mobile scenario clicks Export to SVG.');
+  });
+
+  it('is cited by R-64, whose trigger stays open, and by the subset-worker hypothesis', () => {
+    const row = cells('R-64').map(flat);
+    expect(row[5]).toBe('🟡');
+    const [s1, s6] = sessions()
+      .filter(workerStep)
+      .map((s) => offset(workerStep(s), / worker /u)[0]);
+    expect(row[6]).toContain(
+      `written during the step that clicks Export to SVG in both, ${String(s1)} and ` +
+        `${String(s6)} ms after it started ${PLACEMENT}`,
+    );
+    expect(row[7]).toContain('no mobile scenario clicks Export to SVG');
+    expect(row[7]).toMatch(/cannot tell the two exports or the dialog apart \[H\]/u);
+    expect(row[8]).not.toContain('no live session needed');
+    const h6 = network().split(' | N-H6 | ')[1].split(' | N-')[0];
+    expect(h6).toContain('its event written during the Export to SVG step in s1 and s6 [I]');
+    expect(h6).toMatch(/\| low \|/u);
+    expect(doc('checkpoint.md')).not.toContain('for the worker trigger (R-64)');
   });
 });

@@ -770,9 +770,8 @@ Values were never printed; only counts and file names were recorded.
 The issue cannot be completed from retained evidence. These rows of the
 [residual matrix](residual-matrix.md) need work before the behaviour contract is met:
 
-- **Without a live session** (retained raw evidence only): set the s1–s7 driver netlog
-  timestamps against the driver steps for the worker trigger (R-64); re-export the s5–s11 REA
-  records once the MCP tools are granted (R-73).
+- **Without a live session** (retained raw evidence only): re-export the s5–s11 REA records once
+  the MCP tools are granted (R-73).
 - **New live observation, priority 1:** keyboard accessibility (R-27); multi-point and modifier
   drawing (R-30, R-31); hit-testing (R-34); other handles, modifiers and nudging (R-36, R-37); named style controls
   (R-10, R-39); text editing and its undo (R-40); arrow endpoint placement, binding rules and
