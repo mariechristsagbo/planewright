@@ -70,7 +70,10 @@ emulation also asks for a portrait-primary screen at angle 0 and every mobile me
 checks it; before, headless Chromium kept the landscape-primary orientation of its default screen
 ([limitations](limitations.md#environment-limits)). The mobile priority-1 batch s17–s21 ran at
 19:55–20:11 UTC, each session loading the page once (s17, s19 and s21 also reloaded it once, from
-the service worker); it is indexed in `evidence/sessions-s17-s21.json`.
+the service worker); it is indexed in `evidence/sessions-s17-s21.json`. The mobile touch-control
+batch s22–s36 ran at 21:25–21:58 UTC, each session loading the page once with no reload; it is
+indexed in `evidence/sessions-s22-s36.json`, and its probe summaries keep point counts
+(`timeline-summary.mjs --points`).
 
 ## Division of labour
 

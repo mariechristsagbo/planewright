@@ -111,6 +111,42 @@ window in s17, s19 and s21, because a window cannot span its reload (limitation 
 | `s21-mobile-hit-reload-3` | `r04-targets-after-reload.json` | `ev_bb4c5dbc`     | `list_browser_targets`, after 24's reload, with the same Evidence id as the listing after 09                                         |
 | `s21-mobile-hit-reload-3` | `r05-inspect-after-reload.json` | `ev_c9cae86f`     | `inspect_web_page`, 20:11:27.584–20:11:31.205, 7 origins, of the reloaded page after 24; no step inside it                           |
 
+**Mobile touch-control records** (s22–s36, on 2026-11-05, times UTC). Each session ran one
+scenario of 28–35 inside one window, after 09 and before 16.
+
+| Session                      | File                         | Evidence (prefix) | Operation and window                                                                                                                 |
+| ---------------------------- | ---------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `s22-mobile-popovers`        | `r01-targets.json`           | `ev_62520008`     | `list_browser_targets`                                                                                                               |
+| `s22-mobile-popovers`        | `r02-inspect-during-28.json` | `ev_54e1bed7`     | `inspect_web_page`, 21:26:20.661–21:27:16.536, 7 origins. Armed 4970 ms before scenario 28's first step; all its 94 steps inside it  |
+| `s23-mobile-arrow-binding`   | `r01-targets.json`           | `ev_e98b44f9`     | `list_browser_targets`                                                                                                               |
+| `s23-mobile-arrow-binding`   | `r02-inspect-during-29.json` | `ev_0e84c918`     | `inspect_web_page`, 21:32:22.559–21:33:18.142, 7 origins. Armed 4713 ms before scenario 29's first step; all its 96 steps inside it  |
+| `s24-mobile-handles`         | `r01-targets.json`           | `ev_a78858fe`     | `list_browser_targets`                                                                                                               |
+| `s24-mobile-handles`         | `r02-inspect-during-30.json` | `ev_9eaff5b6`     | `inspect_web_page`, 21:33:59.256–21:34:44.819, 7 origins. Armed 5099 ms before scenario 30's first step; all its 66 steps inside it  |
+| `s25-mobile-actions`         | `r01-targets.json`           | `ev_6e65795d`     | `list_browser_targets`                                                                                                               |
+| `s25-mobile-actions`         | `r02-inspect-during-31.json` | `ev_01aa98ca`     | `inspect_web_page`, 21:36:26.526–21:37:57.076, 7 origins. Armed 5766 ms before scenario 31's first step; all its 176 steps inside it |
+| `s26-mobile-styles`          | `r01-targets.json`           | `ev_648dbbae`     | `list_browser_targets`                                                                                                               |
+| `s26-mobile-styles`          | `r02-inspect-during-32.json` | `ev_b3f554e4`     | `inspect_web_page`, 21:38:35.569–21:39:46.212, 7 origins. Armed 5567 ms before scenario 32's first step; all its 132 steps inside it |
+| `s27-mobile-line-taps`       | `r01-targets.json`           | `ev_fe6af65b`     | `list_browser_targets`                                                                                                               |
+| `s27-mobile-line-taps`       | `r02-inspect-during-33.json` | `ev_00d60a2c`     | `inspect_web_page`, 21:40:23.718–21:41:04.218, 7 origins. Armed 5536 ms before scenario 33's first step; all its 53 steps inside it  |
+| `s28-mobile-arrow-binding-2` | `r01-targets.json`           | `ev_f28d234d`     | `list_browser_targets`                                                                                                               |
+| `s28-mobile-arrow-binding-2` | `r02-inspect-during-29.json` | `ev_9268abcc`     | `inspect_web_page`, 21:47:18.274–21:48:13.804, 7 origins. Armed 5566 ms before scenario 29's first step; all its 96 steps inside it  |
+| `s29-mobile-handles-2`       | `r01-targets.json`           | `ev_d0c6e12c`     | `list_browser_targets`                                                                                                               |
+| `s29-mobile-handles-2`       | `r02-inspect-during-30.json` | `ev_4335e9bf`     | `inspect_web_page`, 21:48:47.438–21:49:32.857, 7 origins. Armed 5759 ms before scenario 30's first step; all its 66 steps inside it  |
+| `s30-mobile-actions-2`       | `r01-targets.json`           | `ev_01cde115`     | `list_browser_targets`                                                                                                               |
+| `s30-mobile-actions-2`       | `r02-inspect-during-31.json` | `ev_8fcaaa19`     | `inspect_web_page`, 21:50:08.115–21:51:38.542, 7 origins. Armed 5377 ms before scenario 31's first step; all its 176 steps inside it |
+| `s31-mobile-styles-2`        | `r01-targets.json`           | `ev_a23bc095`     | `list_browser_targets`                                                                                                               |
+| `s31-mobile-styles-2`        | `r02-inspect-during-32.json` | `ev_7cc45a32`     | `inspect_web_page`, 21:52:14.681–21:53:25.257, 7 origins. Armed 5607 ms before scenario 32's first step; all its 132 steps inside it |
+| `s32-mobile-line-taps-2`     | `r01-targets.json`           | `ev_0afb2532`     | `list_browser_targets`                                                                                                               |
+| `s32-mobile-line-taps-2`     | `r02-inspect-during-33.json` | `ev_5a050f47`     | `inspect_web_page`, 21:53:59.664–21:54:40.251, 7 origins. Armed 5799 ms before scenario 33's first step; all its 53 steps inside it  |
+| `s33-mobile-distribute`      | `r01-targets.json`           | `ev_3d73d06d`     | `list_browser_targets`                                                                                                               |
+| `s33-mobile-distribute`      | `r02-inspect-during-34.json` | `ev_f6e8bb1b`     | `inspect_web_page`, 21:44:16.075–21:45:16.674, 7 origins. Armed 5290 ms before scenario 34's first step; all its 92 steps inside it  |
+| `s34-mobile-fill-line`       | `r01-targets.json`           | `ev_46b90df2`     | `list_browser_targets`                                                                                                               |
+| `s34-mobile-fill-line`       | `r02-inspect-during-35.json` | `ev_6754cb9b`     | `inspect_web_page`, 21:45:52.175–21:46:42.560, 7 origins. Armed 5469 ms before scenario 35's first step; all its 67 steps inside it  |
+| `s35-mobile-distribute-2`    | `r01-targets.json`           | `ev_d1b9e1fc`     | `list_browser_targets`                                                                                                               |
+| `s35-mobile-distribute-2`    | `r02-inspect-during-34.json` | `ev_446b3076`     | `inspect_web_page`, 21:55:16.058–21:56:16.668, 7 origins. Armed 5240 ms before scenario 34's first step; all its 92 steps inside it  |
+| `s36-mobile-fill-line-2`     | `r01-targets.json`           | `ev_2f162273`     | `list_browser_targets`                                                                                                               |
+| `s36-mobile-fill-line-2`     | `r02-inspect-during-35.json` | `ev_36b20beb`     | `inspect_web_page`, 21:56:51.295–21:57:41.852, 7 origins. Armed 5694 ms before scenario 35's first step; all its 67 steps inside it  |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
@@ -262,6 +298,7 @@ the committed index beyond their IDs.
     67 requests match, in number, the 67 that the driver netlog started inside the window, and in
     s15 and s16 the three windows kept 1, 67 and 18, as many as the netlog started inside each.
     In s17–s21 the 11 windows kept none, and the netlog started none inside them.
+    In s22–s36 the 15 windows kept none, and the netlog started none inside them.
 12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
     `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
     Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that

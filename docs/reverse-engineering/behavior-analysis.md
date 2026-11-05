@@ -92,10 +92,13 @@ value is a value the page had saved locally.
 - **Edge cases:** a drag that starts on the properties panel creates nothing (B-02).
   Shift/Alt modifiers, drags towards the top-left and very small drags: Not observed (R-31).
 - **Desktop/mobile:** a one-finger touch drag (120,250)→(260,350) with the Rectangle tool gives
-  `[120,250,140,100]` (`m-rect-touch`, s3, s7 and s11) [O]. Ellipse, diamond and line on mobile: Not
-  observed (R-24).
+  `[120,250,140,100]` (`m-rect-touch`, s3, s7 and s11) [O]. On mobile the Rectangle tool's choice
+  holds Rectangle, Diamond and Ellipse (s3, s7, s11, s12, s16, s22) and the Arrow tool's Arrow and
+  Line (s27, s32, s34, s36) (raw ARIA) [O]; a touch drag with Line gave `[60,420,240,0]` with 2 points (`33-line-drag`; s27,
+  s32). A tap with Arrow or Line makes a 2-point element 100 units long, centred on the tap (B-40).
+  Ellipse and diamond on mobile: Not observed (R-24).
 - **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`), 12 (s6, s8:
-  `12-after-canvas-drag`), 10 (s3, s7, s11: `m-rect-touch`).
+  `12-after-canvas-drag`), 10 (s3, s7, s11: `m-rect-touch`), 33 (s27, s32: `33-line-drag`).
 - **Confidence:** [O] high (s2 and s6 identical; s3, s7 and s11 identical).
 - **Limitations:** one size per shape; dark theme only for a rectangle and an arrow
   (scenario 15, s6 and s10); the line's point count (2) is from the raw timeline (R-29).
@@ -158,24 +161,37 @@ value is a value the page had saved locally.
 - **State and related effects:** each bound target's `boundElements` gains an `arrow` entry:
   (a) rectangle and ellipse; (b) the ellipse only. Arrow (b) has the defaults set in B-20 [O].
 - **Persistence:** read from local storage [O].
-- **Undo/redo:** Not observed for arrows (R-42).
+- **Undo/redo:** on mobile the Undo button removed a touch-drawn bound arrow and the `arrow`
+  entries of both targets, and Redo restored it with both ends bound (`29-arrow-undo`,
+  `29-arrow-redo`; s23, s28) [O]. Ctrl+Z on desktop: Not observed (R-42).
 - **Edge cases:**
-  - **Endpoint placement is not established.** The bound end of (a) lies 6 units outside the
-    ellipse and that of (b) 5 units inside it. An earlier version of this entry said the end
-    "snapped to the outline"; the probes do not support that.
-  - Start binding happened at 5 units (a) and not at 15 units (b) [O]. That a distance limit
-    between 5 and 15 units decides this is [H]: the two cases also differ in target size, style
-    and scene.
-  - Ctrl while drawing to prevent binding (listed in Help), moving a bound target, unbinding,
-    the "Arrow binding" toggle and midpoint snapping: Not observed (R-42). Scenario 04 moved
-    the rectangle, which was not bound to the arrow; the arrow did not change
+  - **Endpoint placement.** On desktop the bound end of (a) lies 6 units outside the ellipse
+    and that of (b) 5 units inside it. An earlier version of this entry said the end "snapped to
+    the outline"; the probes do not support that. On mobile (scenario 29, zoom 1, 2 px stroke),
+    ends released on R's left stroke or 8 units outside it were bound and placed 6 units outside
+    it, at x=244; an end released 16 units inside was bound and stayed where it was released; a
+    drag from P's centre to Q's centre bound both ends and kept them at the two centres
+    (`29-arrow-centres`: `[90,160,210,0]`) [O].
+  - **Distance.** On mobile, ends released 16, 24 and 40 units outside R were not bound
+    (`29-end-p16`, `29-end-p24`, `29-end-p40`), so the limit lies between 8 and 16 units at zoom
+    1 [O]. On desktop start binding happened at 5 units (a) and not at 15 units (b) [O]. That one
+    limit between 8 and 15 units holds for both is [H]: the cases differ in input, target and
+    scene.
+  - **A moved target.** On mobile, moving Q 40 units up by a touch drag on its top stroke moved
+    the bound end with it to Q's new centre (`29-target-moved`: `[90,160,210,40]`) [O]. Scenario
+    04 moved a rectangle that was not bound to the arrow; the arrow did not change
     (`04-move-bound-rect`).
-- **Desktop/mobile:** arrows on mobile: Not observed (R-42).
+  - Ctrl while drawing to prevent binding (listed in Help), unbinding, the "Arrow binding"
+    toggle and midpoint snapping: Not observed (R-42).
+- **Desktop/mobile:** on mobile, arrows drawn with a one-finger drag bind as above (s23, s28);
+  the bar shows an "Arrow type" button while the Arrow tool is active (s27, s32, raw ARIA) [O].
 - **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`); scenario 04 (s1, s6:
-  `04-arrow-bound`).
-- **Confidence:** [O] high for the stored geometry and the binding flags of both cases.
-- **Limitations:** the probe keeps the arrow's origin and extent, not its points, so end
-  positions are derived [I]; binding gap and focus values were not recorded (R-42).
+  `04-arrow-bound`); scenario 29 (s23, s28: `29-*`).
+- **Confidence:** [O] high for the stored geometry and the binding flags of both desktop cases and
+  of the mobile ladder, the centre arrow, its undo and the moved target (s23 and s28 identical).
+- **Limitations:** the probe keeps the arrow's origin, extent and (from s22, `--points`) point
+  count, not the points, so end positions are derived [I]; binding gap and focus values were not
+  recorded, and on mobile one target size, one zoom and horizontal arrows only (R-42).
 
 ### B-05 Freedraw
 
@@ -270,6 +286,38 @@ value is a value the page had saved locally.
 - **Confidence:** [O] high for the geometry.
 - **Limitations:** one image size (R-45).
 
+### B-40 Lines and multi-point lines by touch
+
+- **Initial state:** mobile, an empty canvas at zoom 1, right after 09 (scenarios 28, 33 and 35).
+- **Action:** with the Arrow tool, a tap at (60,560) in 28 or (60,200) in 33; with the Line tool,
+  picked from the Arrow tool's choice, taps at (60,280), (200,320) and (320,280); then a line drawn
+  by a drag from (60,420) to (300,420), which stays selected, and a one-finger drag from its middle
+  to (180,360), after a double tap on the middle in 33 and with none in 35.
+- **Immediate result:** the first tap with either tool made a horizontal 2-point element 100
+  units long, centred on the tap (`[10,560,100,0]`, `[10,200,100,0]`, `[10,280,100,0]`), and the
+  tool went back to Selection; the later taps deselected and added no point (`28-arrow-taps`,
+  `33-arrow-tap`, `33-line-taps`) [O]. The drag from the middle of the selected line gave it a
+  third point, its box becoming `[60,420,240,60]`, with or without the double tap
+  (`33-midpoint-drag`, `35-line-middle-drag`) [O].
+- **State and related effects:** after the double tap, the capture shows the line's ends as
+  circles and a filled dot at its middle (`m33-04-double-tap`, raw capture) [O]; the bar of a
+  selected arrow shows "Arrow type" and "Edit arrow" buttons, and the Arrow type popover holds
+  Arrowheads (buttons named `arrowhead_start` and `arrowhead_end`) and three unnamed Arrow type
+  radios, the second checked (s34, s36, raw ARIA) [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Not observed (R-30).
+- **Edge cases:** so a multi-point line cannot be made by taps alone: a tap makes a 100-unit
+  element and ends the tool [O]. Curved and elbow arrow types, more than three points, moving or
+  deleting a point and "Edit arrow": Not observed (R-30).
+- **Desktop/mobile:** desktop click sequences: Not observed (R-30).
+- **Reproduction:** scenarios 28 (s22), 33 (s27, s32) and 35 (s34, s36).
+- **Confidence:** [O] high for the 100-unit element made by a tap (s22, s27, s32) and for the added
+  point (s27, s32, s34, s36).
+- **Limitations:** the probe keeps each line's point count (from s22, `--points`), not the points,
+  so where the third point lies is derived from the box [I]; taps last 40 ms with a 1 px contact
+  radius; which radio stands for which arrow type is [U], because the radios have no accessible
+  name (R-30).
+
 ## Selection
 
 ### B-10 Click selection
@@ -282,7 +330,10 @@ value is a value the page had saved locally.
   (`selectedElementIds`) [O].
 - **Persistence:** on mobile a selection survived a reload at zoom 1.5 (B-30; s17, s19, s21) [O]; on
   desktop: Not observed (R-54).
-- **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
+- **Undo/redo:** on mobile, Undo after a deselecting tap restored the selection of 3 and changed
+  no element (`34-deselect-undo`; s33, s35), and in s25 and s30 the first Undo after a tap that
+  selected a group restored the empty selection before it and kept the group
+  (`31-group-undo`) [O]. On desktop: Not observed (R-52).
 - **Edge cases:** on mobile at zoom 1 with the 2 px stroke, a tap selected a transparent rectangle
   only within 4 px of its stroke, on either side (8 px or more away, and the centre, missed), and a
   filled one also from anywhere inside, but not from 8 px or more outside (`25-transparent-*`,
@@ -320,10 +371,14 @@ value is a value the page had saved locally.
 - **State and related effects:** none on the elements [O].
 - **Persistence:** the selection is part of the saved app state (B-10); whether it survives a
   reload: Not observed (R-54).
-- **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
+- **Undo/redo:** on mobile, the first Undo after a box selection that followed a deselecting tap
+  left nothing selected and changed no element (`31-distribute-horizontally-undo`, where
+  Distribute horizontally had changed nothing; s25, s30) [O]. On desktop: Not observed (R-52).
 - **Edge cases:** partial overlap and Ctrl box select: Not observed (R-33).
-- **Desktop/mobile:** mobile: Not observed (R-33).
-- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Desktop/mobile:** on mobile a one-finger drag with the Selection tool from empty canvas around
+  whole elements selected them: 2 in s22 (`28-box-selected`), 3 in s25, s30, s33 and s35 [O].
+- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 28 (s22), 31 (s25, s30) and 34 (s33,
+  s35).
 - **Confidence:** [O] high.
 - **Limitations:** the probe stores a count, not which elements (R-33).
 
@@ -388,13 +443,18 @@ value is a value the page had saved locally.
   is free (`resize-se-handle`) [O].
 - **State and related effects:** none on other elements [O].
 - **Persistence:** read from local storage [O].
-- **Undo/redo:** Not observed (R-36).
-- **Edge cases:** other handles, Shift (aspect lock), Alt (from the centre), multi-element
-  resize: Not observed (R-36).
-- **Desktop/mobile:** mobile: Not observed (R-36).
-- **Reproduction:** scenario 03 (s1, s2, s6).
-- **Confidence:** [O] high.
-- **Limitations:** one handle (R-36).
+- **Undo/redo:** on mobile the Undo button restored a north-side resize and Redo re-applied it
+  (`30-n-undo`, `30-n-redo`; s24, s29) [O]. Ctrl+Z on desktop: Not observed (R-36).
+- **Edge cases:** on mobile, a one-finger drag that started 4 units outside a selected
+  rectangle's corner or side middle moved the dragged corner or side by exactly the drag and kept
+  the opposite one fixed, with a free aspect ratio: south-east by (30,30) gave `[30,100,150,110]`,
+  north-west by (−20,−20) `[220,90,140,100]`, east by (40,0) `[30,280,160,80]` and north by
+  (0,−30) `[240,260,120,110]` (`30-se`, `30-nw`, `30-e`, `30-n`) [O]. The other four handles,
+  Shift (aspect lock), Alt (from the centre) and multi-element resize: Not observed (R-36).
+- **Desktop/mobile:** mobile handles respond to touch as above (scenario 30).
+- **Reproduction:** scenario 03 (s1, s2, s6); scenario 30 (s24, s29).
+- **Confidence:** [O] high (s24 and s29 identical).
+- **Limitations:** on desktop one handle; on mobile four handles, one size and zoom 1 (R-36).
 
 ### B-17 Rotate
 
@@ -407,8 +467,10 @@ value is a value the page had saved locally.
 - **Undo/redo:** Ctrl+Z restored angle 0 (`04-styles-applied`) [O].
 - **Edge cases:** missing the handle deselects instead (`rotate-handle`) [O]. Shift snapping: Not
   observed (R-36).
-- **Desktop/mobile:** mobile: Not observed (R-36).
-- **Reproduction:** scenarios 03 and 04 (s1, s2 for 03, s6).
+- **Desktop/mobile:** on mobile a one-finger drag from 20 units above the middle of the top edge
+  to 100 units right of the centre turned a 120×80 rectangle to angle 1.6, size unchanged; Undo
+  restored 0 and Redo 1.6 (`30-rotate`, `30-rotate-undo`, `30-rotate-redo`; s24, s29) [O].
+- **Reproduction:** scenarios 03 and 04 (s1, s2 for 03, s6); scenario 30 (s24, s29).
 - **Confidence:** [O] high.
 - **Limitations:** the exact stored angle was not captured (R-36).
 
@@ -458,10 +520,18 @@ value is a value the page had saved locally.
   state [O].
 - **Undo/redo:** Not observed (R-52).
 - **Edge cases:** see B-21 for clicks that missed after the panel reflowed.
-- **Desktop/mobile:** mobile Stroke and Background popovers: Not observed (R-11).
-- **Reproduction:** scenario 04 (s1, s6).
-- **Confidence:** [O] high.
-- **Limitations:** coordinate clicks, not named controls (R-39).
+- **Desktop/mobile:** on mobile (scenario 32, s26 and s31), each change applied to the selected
+  rectangle: Stroke width thin and extra bold gave stroke widths 1 and 4, Stroke style dashed and
+  dotted, Sloppiness architect and cartoonist roughness 0 and 2, Edges sharp roundness none, the
+  Opacity slider dragged to its middle opacity 50, Red in the Stroke colour popover `#e03131` and
+  Yellow in the Background popover `#ffec99` with fill `solid`; a rectangle drawn next had all of
+  them (`32-next-shape`) [O]. Hachure (Alt-Click) and Cross-hatch, picked by name after a
+  background was set, gave fill `hachure` and `cross-hatch` (scenario 35; s34, s36) [O].
+- **Reproduction:** scenario 04 (s1, s6); scenarios 32 (s26, s31) and 35 (s34, s36).
+- **Confidence:** [O] high (on mobile, s26 and s31, and s34 and s36, identical).
+- **Limitations:** desktop coordinate clicks, not named controls (R-39); on mobile the style
+  radios have no accessible name, so they were touched at the button centres of s22's capture,
+  and only the colours above, one shade each, were picked (R-39).
 
 ### B-21 Panel layout is dynamic
 
@@ -484,7 +554,13 @@ value is a value the page had saved locally.
 - **Undo/redo:** undo of the background change: Not observed (R-52).
 - **Edge cases:** at 1280×720 the panel is cut off at "Actions"; a wheel over it scrolls it
   (`dark-09-panel-rect-scrolled`) [O].
-- **Desktop/mobile:** mobile uses a compact bar instead (summary table below, R-11).
+- **Desktop/mobile:** mobile uses a compact bar instead (summary table below). For a selected
+  rectangle its style popover holds the groups Stroke width, Stroke style, Sloppiness and Edges,
+  whose radios have no accessible name, and the Opacity slider; for an arrow, the same without
+  Edges; once the rectangle has a background, a Fill group with the named buttons Hachure
+  (Alt-Click), Cross-hatch and Solid comes first. The Actions popover holds Layers and Actions for
+  one element, and adds Align (six buttons) and Group selection for two, and Distribute
+  horizontally and vertically for three (s22, s25, s26, raw ARIA) [O].
 - **Reproduction:** scenarios 04 (s1, s6) and 15 (s6, s10).
 - **Confidence:** [O] high for the Fill row (s1, s6); in s10, whose rectangle kept a
   transparent background, `dark-08` has no Fill group. High for the text section (`dark-11`
@@ -504,43 +580,74 @@ value is a value the page had saved locally.
 - **State and related effects:** a click on one member then moves the group as a unit (B-15)
   [O].
 - **Persistence:** read from local storage [O].
-- **Undo/redo:** undoing the move keeps the group (`undo-move`); undoing the grouping itself:
-  Not observed (R-49).
-- **Edge cases:** nested groups and selecting inside a group: Not observed (R-49).
-- **Desktop/mobile:** mobile: Not observed (R-49).
-- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Undo/redo:** undoing the move keeps the group (`undo-move`). On mobile, Undo straight after
+  Group selection removed the group and Redo restored it, the 3 staying selected (`34-group-undo`,
+  `34-group-redo`; s33, s35) [O]. Ctrl+Z after Ctrl+G on desktop: Not observed (R-49).
+- **Edge cases:** on mobile a tap on a member's stroke selected the whole group of 3
+  (`31-group-tap`; s25, s30) [O]. Nested groups and selecting inside a group: Not observed
+  (R-49).
+- **Desktop/mobile:** on mobile, Group selection in the Actions popover gave 3 box-selected
+  rectangles one group each, and Ungroup selection removed it, the 3 staying selected
+  (`31-grouped`, `31-ungrouped`; s25, s30) [O].
+- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 31 (s25, s30) and 34 (s33, s35).
 - **Confidence:** [O] high.
 - **Limitations:** two elements (R-49).
 
-### B-23 Align top
+### B-23 Alignment and distribution
 
-- **Initial state:** two elements whose top edges are both at y=240.
-- **Action:** Ctrl+Shift+Up.
-- **Immediate result:** no change (`align-top`) [O]. This does not test alignment.
-- **State and related effects:** Not observed (R-51).
-- **Persistence:** Not observed (R-51).
-- **Undo/redo:** Not observed (R-51).
-- **Edge cases:** Not observed (R-51).
-- **Desktop/mobile:** Not observed (R-51).
-- **Reproduction:** scenario 03 (s1, s2, s6).
-- **Confidence:** [O] high for "no change"; the alignment behaviour is [U].
-- **Limitations:** the shapes were already aligned (R-51).
+- **Initial state:** desktop: two elements whose top edges are both at y=240. Mobile (scenario
+  31): rectangles A `[40,120,120,80]`, B `[100,180,120,80]` and C `[160,240,120,80]`, box-selected;
+  scenario 34: a row of 60×60 rectangles at x 20, 100 and 300 and a column of 60×40 rectangles at
+  y 260, 320 and 520, each box-selected.
+- **Action:** desktop: Ctrl+Shift+Up. Mobile: Align left, Align top, Center vertically,
+  Distribute horizontally and Distribute vertically in the Actions popover.
+- **Immediate result:** desktop: no change (`align-top`) [O], which does not test alignment.
+  Mobile: Align left put every x at 40, the leftmost edge; Align top every y at 120, the topmost;
+  Center vertically every y at 180, centring all three on the selection's middle (y 220)
+  (`31-align-left`, `31-align-top`, `31-center-vertically`; s25, s30) [O]. Distribute
+  horizontally moved the row's middle rectangle from x 100 to 160 and Distribute vertically the
+  column's from y 320 to 390, making both gaps equal (80 and 90) while the outer elements stayed
+  (`34-distribute-horizontally`, `34-distribute-vertically`; s33, s35) [O].
+- **State and related effects:** on mobile the selection stayed 3 after each, and the element
+  order did not change [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** on mobile one Undo after each alignment and distribution that moved an element
+  restored every position, and Redo re-applied Distribute horizontally (`31-align-left-undo`,
+  `31-align-top-undo`, `31-center-vertically-undo`, `34-distribute-horizontally-undo`,
+  `34-distribute-horizontally-redo`, `34-distribute-vertically-undo`) [O]. On desktop: Not
+  observed (R-51).
+- **Edge cases:** on mobile, Distribute horizontally on three rectangles already spaced evenly
+  (scenario 31) changed nothing [O]. Align right, Align bottom, Center horizontally, and
+  alignment of a group: Not observed (R-51).
+- **Desktop/mobile:** desktop alignment of shapes that are not aligned: Not observed (R-51).
+- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 31 (s25, s30) and 34 (s33, s35).
+- **Confidence:** [O] high for the mobile results (each in two sessions, identical) and for
+  desktop's "no change".
+- **Limitations:** on mobile three elements of one size per command, at zoom 1 (R-51).
 
 ### B-24 Layer order
 
-- **Initial state:** rectangle selected (scenario 04).
-- **Action:** a coordinate click meant for "Bring to front".
-- **Immediate result:** element order unchanged (`04-bring-to-front`); the click missed after
-  the panel reflow (B-21).
-- **State and related effects:** Not observed (R-50).
-- **Persistence:** Not observed (R-50).
-- **Undo/redo:** Not observed (R-50).
-- **Edge cases:** Not observed (R-50).
-- **Desktop/mobile:** Not observed (R-50).
-- **Reproduction:** scenario 04 (s1, s6). The four layer commands are listed in the panel and
-  the element context menu (B-34).
-- **Confidence:** [U] for the behaviour.
-- **Limitations:** no layer command took effect (R-50).
+- **Initial state:** desktop: rectangle selected (scenario 04). Mobile (scenario 31): A, B and C
+  of B-23, stored in that order, overlapping in pairs; A selected by a tap on its left stroke.
+- **Action:** desktop: a coordinate click meant for "Bring to front". Mobile: Bring forward, Bring
+  to front, Send backward and Send to back in the Actions popover, each after a fresh selection
+  of A.
+- **Immediate result:** desktop: element order unchanged (`04-bring-to-front`); the click missed
+  after the panel reflow (B-21). Mobile: the stored order became B, A, C; then B, C, A; then B, A,
+  C; then A, B, C (`31-bring-forward`, `31-bring-to-front`, `31-send-backward`,
+  `31-send-to-back`; s25, s30) [O].
+- **State and related effects:** on mobile no element moved and A stayed selected; the Actions
+  popover stayed open after Bring forward (`m31-01-after-bring-forward`, raw ARIA) [O]. That the
+  stored order is the drawing order is [I].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** on mobile Undo after Send to back gave B, A, C again and Redo A, B, C
+  (`31-layer-undo`, `31-layer-redo`) [O]. On desktop: Not observed (R-50).
+- **Edge cases:** layer commands on several or grouped elements: Not observed (R-50).
+- **Desktop/mobile:** desktop layer commands: Not observed (R-50).
+- **Reproduction:** scenario 04 (s1, s6); scenario 31 (s25, s30). The four layer commands are
+  listed in the panel and the element context menu (B-34).
+- **Confidence:** [O] high for mobile (s25 and s30 identical); [U] on desktop.
+- **Limitations:** on mobile one element moved among three (R-50).
 
 ## History
 
@@ -555,7 +662,10 @@ value is a value the page had saved locally.
 - **Persistence:** history across a reload: Not observed (R-52).
 - **Undo/redo:** as above.
 - **Edge cases:** undo of style, delete, group and resize; Ctrl+Y: Not observed (R-52).
-- **Desktop/mobile:** the mobile Undo and Redo buttons: Not observed (R-52).
+- **Desktop/mobile:** the mobile Undo and Redo buttons reverse and re-apply an arrow with its
+  bindings (B-04), a resize and a rotation (B-16, B-17), a layer change (B-24), alignment and
+  distribution (B-23) and grouping (B-22), and Undo also reverses a selection change (B-10,
+  B-12) (s23–s35) [O].
 - **Reproduction:** scenarios 03, 04, 05, 06 (s1, s2, s6).
 - **Confidence:** [O] high.
 - **Limitations:** the undo stack depth was not probed (R-52).
@@ -972,4 +1082,4 @@ All rows are [O] high (s1/s6 desktop, s3/s7 mobile) except where marked.
 | Properties           | left side panel         | compact bar of 4 buttons above the toolbar                  |
 | Handles              | 4 corners plus rotation | 8 handles plus rotation                                     |
 | Lasso in More        | yes                     | no                                                          |
-| Diamond/Ellipse/Line | toolbar                 | access path [U] (R-24)                                      |
+| Diamond/Ellipse/Line | toolbar                 | in the choices of the Rectangle and Arrow tools (raw ARIA)  |

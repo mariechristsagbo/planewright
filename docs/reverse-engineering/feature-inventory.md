@@ -111,12 +111,22 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   Laser pointer, Bucket fill, and the three generation entries. Unlike desktop, there is **no
   Lasso selection**. Mermaid to Excalidraw and Text to diagram open one dialog with a tab each;
   Wireframe to code opens no dialog (B-38, B-39; s12 and s16, high).
-- **Diamond, Ellipse and Line** appear in neither the mobile toolbar nor More tools. How a
-  mobile user reaches them is [U].
+- **Diamond, Ellipse and Line** appear in neither the mobile toolbar nor More tools. A tap on
+  the Rectangle tool opens a choice of Rectangle, Diamond and Ellipse: the ARIA saved after that
+  tap lists it in s3, s7, s11, s12, s16 and s22, so the earlier statement that the access path was
+  unknown missed it. A tap on the Arrow tool opens a choice of Arrow and Line, and after Line was
+  picked the toolbar button was named Line (s27, s32, s34, s36) [O, high; raw ARIA]. Only Line
+  was drawn from them (B-40, R-24).
 - **With an element selected,** a compact bar above the toolbar shows "Stroke", "Background",
   a second "Stroke" (properties) and "Actions" buttons instead of the desktop side panel. The
   Actions popover holds Add link, Duplicate and Delete (s7 and s11, `m17-dark-actions`,
-  identical snapshots) [O, high].
+  identical snapshots) [O, high]. In s22–s36 the Stroke colour popover held 15 colours named with
+  a shortcut letter, a shades row and a hex box, like the Background popover; the style popover
+  Stroke width, Stroke style, Sloppiness and Edges groups of unnamed radios and an Opacity slider,
+  with a Fill group first once a background is set; and the Actions popover Layers, then Align
+  and Group selection for two elements and Distribute for three. A selected arrow's bar adds
+  "Arrow type" and "Edit arrow" (B-21, B-40; raw ARIA) [O, high, but medium for the Stroke colour
+  popover, saved in s22 only].
 - **Dark dialogs (s7, s11):** Help, Export image, Command palette (its search box only), the
   pre-session Live collaboration dialog and Clear canvas open from the main menu as dialogs
   with a Close button. Preferences opens as a submenu with the same items as on desktop, shown

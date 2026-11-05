@@ -66,6 +66,12 @@
     exactly, but the fixed point along the pinch axis lay 34.5–111.5 px from the midpoint and
     differed between the sessions; that this comes from the order in which the fingers' moves reach
     the page, one finger after the other in each move, is a hypothesis [H]. No real device was used.
+12. **Named controls are clicked, not tapped.** The driver's `role` step clicks a button with
+    Playwright's mouse-event click at its centre, so in s17–s36 the popover buttons, the Undo and
+    Redo buttons and the tool choices received mouse events while every canvas input was touch.
+    That a finger's tap on these DOM buttons acts the same is [I]. The style popover's radios have
+    no accessible name, so scenario 32 touched them at the button centres measured on s22's
+    capture; that layout held in s26 and s31, where every touch changed the intended value.
 
 ## Tooling limits
 
@@ -80,7 +86,9 @@
 - **Committed probe fields.** The committed probe summaries keep geometry, bindings, groups,
   locks, eight style values, selection count, tool, zoom, scroll and theme. Point counts, font
   fields, text length, the stored key count of `excalidraw-state` and which elements are
-  selected were read from raw timelines or not recorded, and cannot be re-checked from Git.
+  selected were read from raw timelines or not recorded, and cannot be re-checked from Git. From
+  s22 on the summaries are built with `--points` and keep each line's and arrow's point count; the
+  points themselves and the angle beyond one decimal (the scene probe rounds it) are not kept.
 - **Facts read only from raw records outside Git.** These are cited with that caveat and cannot
   be re-checked from the committed evidence:
   - the zen, grid, snap and view-mode keys of the saved app state (B-37);
@@ -116,7 +124,11 @@
     line counts and capture digests only;
   - the selected element's id on both sides of the s17, s19 and s21 reloads, the Undo button's state
     and the selection's handles in their captures (B-30), and the Background popover's ARIA (R-11):
-    the committed probes keep a selection count, and the index ARIA line counts and capture digests.
+    the committed probes keep a selection count, and the index ARIA line counts and capture digests;
+  - the names and groups of the mobile popovers and tool choices in s22–s36 (feature inventory §6,
+    B-21, B-40), the open Actions popover after Bring forward (B-24), the line's handles after a
+    double tap (B-40) and the arrows in s23's and s28's captures (B-04): the committed index keeps
+    ARIA line counts and capture digests.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

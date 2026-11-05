@@ -14,8 +14,32 @@ export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
 // Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
 // records of the tenth to twelfth reviews cover only the files committed before them.
-// Evidence files committed after a4990b6, by the mobile priority-1 batch (s17–s21).
+// Evidence files committed after 823dae7, by the mobile touch-control batch (s22–s36).
+export const COMMITTED_AFTER_823DAE7 = [
+  'netlog-steps-s22-s36.json',
+  ...[
+    's22-mobile-popovers',
+    's23-mobile-arrow-binding',
+    's24-mobile-handles',
+    's25-mobile-actions',
+    's26-mobile-styles',
+    's27-mobile-line-taps',
+    's28-mobile-arrow-binding-2',
+    's29-mobile-handles-2',
+    's30-mobile-actions-2',
+    's31-mobile-styles-2',
+    's32-mobile-line-taps-2',
+    's33-mobile-distribute',
+    's34-mobile-fill-line',
+    's35-mobile-distribute-2',
+    's36-mobile-fill-line-2',
+  ].map((name) => `probes-${name}.json`),
+  'rea-windows-s22-s36.json',
+  'sessions-s22-s36.json',
+];
+// Evidence files committed after a4990b6, by the mobile priority-1 batch (s17–s21) and later.
 export const COMMITTED_AFTER_A4990B6 = [
+  ...COMMITTED_AFTER_823DAE7,
   'netlog-steps-s17-s21.json',
   'probes-s17-mobile-hit-reload.json',
   'probes-s18-mobile-pinch.json',

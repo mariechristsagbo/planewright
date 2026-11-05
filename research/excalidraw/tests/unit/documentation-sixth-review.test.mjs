@@ -205,12 +205,13 @@ describe('architecture confidences', () => {
       .split('|')
       .map((cell) => flat(cell).trim());
 
-  it('do not rate a z-order that no layer command showed', () => {
-    expect(cells('R-50')[5]).toBe('❌');
+  it('rate the z-order no higher than the stored order that the mobile layer commands showed', () => {
+    expect(cells('R-50')[4]).toBe('❌/❌/✅');
     const [, , statement, , confidence] = hypothesis('A-02');
     expect(statement).not.toContain('z-ordered');
-    expect(statement).toContain('(R-50)');
-    expect(confidence).toMatch(/^high for the flat array/u);
+    expect(statement).toContain('(s25, s30; R-50)');
+    expect(statement).toContain('the drawing order itself was not checked in a capture');
+    expect(confidence).toMatch(/^high for the flat array; medium for the z-order/u);
   });
 
   it('do not claim an offline start that was never attempted', () => {

@@ -164,6 +164,15 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   requests, 0 WebSocket connections and 0 console events (`evidence/netlog-steps-s17-s21.json`,
   `evidence/rea-windows-s17-s21.json`).
 
+### Mobile touch-control batch (s22–s36) [O]
+
+- **Loads.** Each of the 15 loads got its document with HTTP 200 from the network, with no request
+  under `/.well-known/vercel/` and no `.map` request (`evidence/sessions-s22-s36.json`).
+- **No traffic during touch input or named-control clicks.** Each netlog holds 20 entries, all
+  placed in 09's load and the wait after it, none in scenarios 28–35 or 16, and the 15 REA windows
+  allowing 7 origins kept 0 requests, 0 WebSocket connections and 0 console events
+  (`evidence/netlog-steps-s22-s36.json`, `evidence/rea-windows-s22-s36.json`).
+
 ## 2. Storage [O]
 
 | Store          | Keys / names                                                                                                                                                                                                                                                         |
