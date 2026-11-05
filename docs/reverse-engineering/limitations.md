@@ -148,9 +148,11 @@
   R-54).
 - That observed numeric thresholds (save delay, binding gap, handle offsets) are stable across
   versions. Several `index-*.js` chunks with different hashes were loaded across sessions. The
-  REA initial-page inspections list the same 9 scripts in s1 and in s8–s11 except the main
+  one `index-*.js` script that every s1–s7 netlog requests is requested in no s8–s11 netlog,
+  and every s8–s11 netlog requests another one (`evidence/sessions.json`); the REA
+  initial-page inspections list the same 9 scripts in s1 and in s8–s11 except the main
   `index-*.js` chunk, whose name changed between s1 (2026-11-04) and s8–s11 (2026-11-05)
-  [O]; so s8–s11 ran a later build [I]. Whether the other hash differences within a day
+  [O]. So s8–s11 ran a later build [I]. Whether the other hash differences within a day
   reflect lazy chunks or a deploy is unknown.
 
 All open questions are tracked in the [residual matrix](residual-matrix.md).

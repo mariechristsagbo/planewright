@@ -204,7 +204,9 @@ profile, with a storage inventory and a REA initial-page inspection in that sess
   saved one shape by the 255 ms read where s6 had none saved by the third read; scenario 15
   matches s6 only once its different scroll and styles are allowed for, so B-34 stays medium,
   and B-06's dark text box, first rated high, is medium since the tenth review.
-  s8–s11 ran a later build than s1–s7: the main chunk listed by REA has another name.
+  s8–s11 ran a later build than s1–s7: the one `index-*.js` script that every s1–s7 netlog
+  requests is requested in no s8–s11 netlog, and every s8–s11 netlog requests another one
+  (`evidence/sessions.json`); the REA initial-page inspections list it as the main chunk.
 - **Not covered by a review.** These commits change research tooling, tests and claims. The R-75
   exit rule speaks of review remediations and none of them is one, so R-75 is left as the ninth
   review set it, but no independent review covers them yet.

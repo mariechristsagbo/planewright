@@ -1,6 +1,6 @@
 // Shared reads of the committed R-76 evidence (sessions s8–s11) for the documentation checks in
-// documentation-r76.test.mjs, documentation-r76-surfaces.test.mjs and
-// documentation-tenth-review.test.mjs.
+// documentation-r76.test.mjs, documentation-r76-surfaces.test.mjs,
+// documentation-r76-build.test.mjs and documentation-tenth-review.test.mjs.
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
