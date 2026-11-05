@@ -36,6 +36,10 @@ Confidence follows one rule:
 - **medium**: observed in one session only, or in sessions whose results differ;
 - **low**: indirect.
 
+Identical means identical as recorded. Results that match only once a setup difference is
+allowed for (another scroll, other styles) differ, as B-06 and B-34 show; what matches may be
+stated, but the rating stays medium.
+
 ## Environment
 
 | Item      | Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |

@@ -29,7 +29,10 @@ describe('scenario 15 against s6', () => {
     expect(text).toContain(`s10 shares ${String(shared)} labels with s6, and 0 of`);
     const [dx, dy] = probe('s6-desktop-fresh', '15-rect-selected').scroll;
     expect(probe('s10-desktop-r76-15', '15-rect-selected').scroll).toEqual([0, 0]);
-    expect(text).toContain(`With s6's scroll (${String(dx)},${String(dy)}) subtracted`);
+    const scroll = `(${String(dx)},${String(dy)})`;
+    expect(text).toContain(
+      `s6 had scroll ${scroll} and s10 none, and s10's boxes minus ${scroll} equal s6's boxes`,
+    );
     const drawn = probe('s10-desktop-r76-15', '15-text').elements;
     const earlier = probe('s6-desktop-fresh', '15-text').elements.slice(-drawn.length);
     drawn.forEach((element, i) => {

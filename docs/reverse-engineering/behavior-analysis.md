@@ -46,10 +46,10 @@ value is a value the page had saved locally.
 - s9 shares 20 labels with s6, and 19 of 20 are identical: all of scenario 13 except `13a-t200`,
   where s9 had already saved the new shape (B-30).
 - s10 shares 5 labels with s6, and 0 of 5 are identical: s10 ran scenario 15 after 00 and 07c,
-  s6 at the end of the desktop chain. With s6's scroll (90,45) subtracted, the three elements
-  that 15 draws have the same type, box, angle and binding flags in both; their style values
-  differ (the stock defaults in s10, scenario 04's styles in s6), and tool, selection, zoom and
-  theme agree [O].
+  s6 at the end of the desktop chain. s6 had scroll (90,45) and s10 none, and s10's boxes minus
+  (90,45) equal s6's boxes; the three elements that 15 draws also have the same type, angle and
+  binding flags in both. Their style values differ (the stock defaults in s10, scenario 04's
+  styles in s6), and tool, selection, zoom and theme agree [O].
 - s7 shares 6 labels with s3, and 2 of 6 are identical. The other 4 differ only in scrollX
   after the pinch (−135 in s3 at DPR 1, −132 in s7 at DPR 3), which carries into later labels.
 - s11 shares 9 labels with s7, and 2 of 9 are identical; the other 7 differ only in scrollX
@@ -202,10 +202,12 @@ value is a value the page had saved locally.
 - **Edge cases:** re-edit by double-click, multiline, wrapping, an empty text on Escape and the
   font picker: Not observed (R-40).
 - **Desktop/mobile:** dark desktop text: `15-text` `[910,572.5,40,25]` in s6 and
-  `[1000,617.5,40,25]` in s10, the same box once s6's scroll (90,45) is subtracted [O, high].
-  Text on mobile: Not observed (R-40).
+  `[1000,617.5,40,25]` in s10. s10's box minus (90,45), the scroll that s6 had and s10 did not,
+  equals s6's box [O, medium: the probes differ as recorded]. Text on mobile: Not observed
+  (R-40).
 - **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`), scenario 15 (s6, s10).
-- **Confidence:** [O] high for the geometry (s2 and s6 identical).
+- **Confidence:** [O] high for the geometry (s2 and s6 identical); medium for the dark text box
+  (s6 and s10 differ by the scroll, see the methodology's confidence rule).
 - **Limitations:** the width depends on the loaded font (R-40).
 
 ### B-07 Container label
