@@ -2,7 +2,7 @@
 // verdict, the handling of each finding, the exit rule that now covers every behaviour-changing
 // commit, and R-75, the review-session requirement and issue #1 left open while the remediation
 // of that review is not covered by a review.
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -68,6 +68,7 @@ describe('the record of the review of f1562ed', () => {
     expect(exitRuleState(checkpoint())).toMatchObject({
       head: 'f1562ed',
       blocking: 4,
+      remediated: true,
       unreviewed: true,
       met: false,
     });
@@ -87,6 +88,27 @@ describe('the record of the review of f1562ed', () => {
     ]);
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
     expect(flat(section('Blockers and residuals'))).toContain('Independent review (R-75), open.');
+  });
+});
+
+describe('the checks of the tenth-review remediation', () => {
+  const checks = () => flat(section('Checks of the tenth-review remediation'));
+  const committed = () =>
+    readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter((n) => n.endsWith('.json'));
+
+  it('name its commits, where it ends and the checks that ran or did not', () => {
+    for (const commit of [...COMMITS, '5f955a6']) expect(checks()).toContain(commit);
+    expect(checks()).toContain('The remediation ends at the commit that adds this section');
+    expect(checks()).toMatch(/npm run validate passed on 5f955a6[^.]*39 test files and 528 tests/u);
+    expect(checks()).toContain(
+      `all ${String(committed().length)} committed evidence files regenerate byte for byte`,
+    );
+    expect(checks()).toContain('in a temporary copy outside the repository');
+    expect(checks()).toMatch(
+      /test:e2e was not run locally: nothing under apps\/ or packages\/ changed/u,
+    );
+    expect(checks()).toMatch(/selftest\.sh were not run again/u);
+    expect(checks()).toContain('no live session ran');
   });
 });
 
