@@ -79,12 +79,18 @@ the committed index beyond their IDs.
   (unsupported URL) and 5 or 6 non-page targets are excluded. This rests on the retained CLI
   records; the committed index keeps only their IDs.
 - **Page inspection of the initial load** (`ev_e87d6771`). It covers only the initial empty page
-  (35 named controls) in a 2 s window. Secondary surfaces and the mobile shell come from driver
-  ARIA snapshots, not from REA. It established:
+  (35 named controls) in a 2 s window. Secondary surfaces come from driver ARIA snapshots, not
+  from REA, and of the mobile shell REA saw only the initial page, in s11. It established:
   - the accessibility tree (199 nodes) with toolbar names and shortcut descriptions;
   - the DOM size (385 nodes);
   - the storage key inventory with values redacted;
   - 9 scripts with module flags and sizes.
+- **The same inspection in the R-76 sessions**, with the same parameters (summaries in
+  `evidence/rea-inspect-initial-<session>.summary.json`). On desktop (s8–s10, on the later
+  build) the 35 controls with their names, descriptions and states, the 199 accessibility
+  nodes, the 9 scripts apart from the main chunk's name, and the storage inventory are the same
+  as s1's in all three; the DOM has 386 nodes instead of 385. On mobile (s11) it lists 19
+  controls, 93 accessibility nodes and 229 DOM nodes, with the same storage inventory.
 - **Storage inventory during scenario 13** (`ev_13a4756f`, s6). The localStorage keys matched s1.
   The IndexedDB names also include `workbox-expiration`, which the s1 inventory did not list.
   Cache Storage held 2 caches (the Workbox precache and one named `fonts`); s1's initial

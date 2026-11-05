@@ -7,9 +7,9 @@ baseline **discovered**. It is not proven exhaustive; the gaps are listed in the
 Sources:
 
 - The desktop shell (§1) comes from REA page inspection of the initial page (`ev_e87d6771`,
-  35 named controls) and driver ARIA snapshots.
-- Secondary surfaces and the mobile shell come only from driver ARIA snapshots and screenshots:
-  s1, the fresh-profile reruns s6 (desktop) and s7 (mobile), and the R-76 runs s10 (desktop
+  35 named controls, the same in s8–s10) and driver ARIA snapshots.
+- Secondary surfaces and the mobile shell come from driver ARIA snapshots and screenshots (REA
+  inspected only the initial mobile page, in s11): s1, the fresh-profile reruns s6 (desktop) and s7 (mobile), and the R-76 runs s10 (desktop
   dark, scenario 15) and s11 (mobile, scenarios 09, 10 and 14).
 - Confidence follows the [methodology rule](methodology.md#evidence-labels): **high** means the
   same surface was captured identically in at least two sessions, at least one from a fresh

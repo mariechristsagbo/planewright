@@ -207,7 +207,10 @@ describe('confidence, scope and backlog labels', () => {
     for (const name of ['methodology.md', 'behavior-analysis.md', 'feature-inventory.md']) {
       expect(flat(doc(name)), name).not.toMatch(/doubly sourced|\(REA and the driver\)\./u);
     }
-    expect(field(entry('B-31'), 'Confidence')).not.toMatch(/high/u);
+    // B-31 is high only for the first-load inventory, seen identical in several sessions.
+    expect(flat(field(entry('B-31'), 'Confidence'))).toMatch(
+      /^ ?\[O\] high for the first-load inventory: identical in five committed inventories \(s1 and s8–s11\), each from a fresh profile[^.]*\. Medium for the stores after interaction/u,
+    );
     for (const line of doc('feature-inventory.md').split('\n')) {
       expect(line).not.toMatch(/\[O, high[^\]]*\].*\bs[67] only\b/u);
     }

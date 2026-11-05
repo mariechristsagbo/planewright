@@ -752,13 +752,16 @@ value is a value the page had saved locally.
 
 ### B-31 Storage keys
 
-- **Initial state:** after the first load (s1) and during scenario 13 (s6).
+- **Initial state:** after the first load (s1, and s8–s11 with mobile in s11) and during
+  scenario 13 (s6).
 - **Action:** REA page inspection and driver storage probes, values redacted.
 - **Immediate result:** `localStorage`: `excalidraw`, `excalidraw-state`, `excalidraw-theme`,
   `i18nextLng`, `version-dataState`, `version-files`. `sessionStorage`: empty. IndexedDB:
   `excalidraw-library-db`, `excalidraw-ttd-chats-db`, `files-db`. Cache Storage: the Workbox
-  precache only. These are the committed inventory of s1's first load [O]. Later inspections
-  held more caches: 2 in s6 (`ev_13a4756f`) and 3 at a later s1 inspection, counts kept in
+  precache only. These are the committed inventories of the first load in s1 and in each of
+  s8–s11, identical in all five, mobile included [O]. Later inspections held more caches: 2 in
+  s6 (`ev_13a4756f`), 3 at a later s1 inspection and 3 at the end of s11's window during
+  scenario 14, while the desktop R-76 windows kept 1; the counts are in
   `evidence/rea-windows.json` [O]. From the raw REA record only: s6 also listed
   `workbox-expiration` in IndexedDB, and its 2 caches were the precache and `fonts` [O, raw
   only].
@@ -766,14 +769,18 @@ value is a value the page had saved locally.
 - **Persistence:** these are the persistent stores.
 - **Undo/redo:** not applicable (an inventory read changes nothing).
 - **Edge cases:** contents of `files-db` and the library database: Not observed (R-45, R-15).
-- **Desktop/mobile:** mobile storage inventory: Not observed (R-61).
-- **Reproduction:** `evidence/rea-inspect-initial.summary.json` (s1 first load). The s6 and later
-  s1 storage names are not in a committed file: `evidence/rea-windows.json` keeps only their
-  cache counts.
-- **Confidence:** [O] medium: one committed inventory, and the raw inventories differ from it
-  in IndexedDB and Cache Storage.
-- **Limitations:** values are redacted by design; the s6 and later s1 storage names are raw only
-  (R-61).
+- **Desktop/mobile:** the mobile first-load inventory (s11) is the same as on desktop [O];
+  inventories after interaction on mobile: raw only (R-61).
+- **Reproduction:** `evidence/rea-inspect-initial.summary.json` (s1 first load) and
+  `evidence/rea-inspect-initial-<session>.summary.json` (s8–s11 first loads). The s6, later s1
+  and R-76 window storage names are not in a committed file: `evidence/rea-windows.json` keeps
+  only their cache counts.
+- **Confidence:** [O] high for the first-load inventory: identical in five committed
+  inventories (s1 and s8–s11), each from a fresh profile and across a build change. Medium for
+  the stores after interaction, which differ from it in IndexedDB and Cache Storage and whose
+  names are raw only.
+- **Limitations:** values are redacted by design; the storage names after interaction (s6, later
+  s1, the R-76 windows and driver reads) are raw only (R-61).
 
 ## Import, export and collaboration
 
