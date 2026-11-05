@@ -140,8 +140,9 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
     followed. The new rules would not have changed which s6 captures were written.
   - No REA call runs during a collaboration window.
   - `secret-scan.mjs` scans trees by shape and prints only counts.
-- **Controls added after the review of cb11dff** (also untested in a live session; covered by
-  stub-based tests, the local self-test and the isolation check):
+- **Controls added after the review of cb11dff** (untested in a live session; stub-based tests
+  only. The self-test loads `about:blank` and a fixture, so it never reaches a room view, and
+  neither it nor the isolation check runs the halt, state-file or `rea-extract` checks):
   - In a room view the masks must also cover every on-screen input, textarea, image and canvas
     in a dialog and every element whose text names a room or link key, and a capture whose URL
     gains a value while it runs is refused. Whether this rule would have accepted the two s6
@@ -155,6 +156,16 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
     write.
   - `rea-extract.mjs` redacts copied accessible names and REA text and never replaces an
     existing summary; `build-evidence.mjs` redacts failure text again.
+- **Controls added after the review of 46b2b01** (stub-based tests only, for the same reason):
+  - A `goto` target whose fragment holds a room or `json` link value is refused before any
+    navigation. Rooms are opened only through the UI, as scenario 08 does; the watcher still
+    handles that path.
+  - Every string of a step record, keys included, is redacted before the row reaches the raw
+    timeline.
+  - In a room view the surfaces that may show the value are measured again after the capture,
+    so an element that appears while the capture runs is refused.
+  - `browser.sh stop` fails with state UNKNOWN when docker cannot list the resource, instead of
+    reporting that nothing was found.
 
 ## Validation of the evidence
 

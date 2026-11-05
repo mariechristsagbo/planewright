@@ -60,8 +60,9 @@ value is a value the page had saved locally.
   straight after the rectangle drag, both without a wait, and at the end of 02 after an 800 ms
   wait. The committed entry keeps the first read's time with the last read's values (tool
   Selection, 1 selected), so it describes the end of 02, not the drag. The two early reads (raw
-  timelines only) read the saved state before it caught up, and they disagree: straight after the
-  drag the saved tool was Rectangle in s2 and Selection in s6, with 0 selected in both. Stored
+  timelines only) disagree: straight after the drag the saved tool was Rectangle in s2 and
+  Selection in s6, with 0 selected in both. That they read the saved state before it caught up
+  is [H]. Stored
   defaults: stroke `#1e1e1e`, background `transparent`,
   fill `solid`, stroke width 2, stroke style `solid`, roughness 1, opacity 100. Roundness type 3
   for the rectangle; 2 for ellipse, diamond, line, arrow and sticky note; none for freedraw,
@@ -613,18 +614,19 @@ value is a value the page had saved locally.
   or the menu radio.
 - **Immediate result:**
 
-  | Toggle        | Visible effect                                                                                    | Key in the saved app state (raw)     |
-  | ------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------ |
-  | Zen (Alt+Z)   | Hides the menu, share, library, undo/redo, zoom in/out and help; keeps the toolbar and zoom reset | yes (`zenModeEnabled`)               |
-  | View (Alt+R)  | Hides the toolbar and editing UI; keeps zoom, share, help and the promotion link                  | **no** key observed                  |
-  | Grid (Ctrl+') | Draws a grid (`view-03-grid`)                                                                     | yes (`gridModeEnabled`)              |
-  | Snap (Alt+S)  | Flag toggles                                                                                      | yes (`objectsSnapModeEnabled`)       |
-  | Theme         | Switches light/dark                                                                               | yes (`theme` and `excalidraw-theme`) |
+  | Toggle        | Visible effect                                                                                    | Key in the saved app state (raw) |
+  | ------------- | ------------------------------------------------------------------------------------------------- | -------------------------------- |
+  | Zen (Alt+Z)   | Hides the menu, share, library, undo/redo, zoom in/out and help; keeps the toolbar and zoom reset | yes (`zenModeEnabled`)           |
+  | View (Alt+R)  | Hides the toolbar and editing UI; keeps zoom, share, help and the promotion link                  | **no** key observed              |
+  | Grid (Ctrl+') | Draws a grid (`view-03-grid`)                                                                     | yes (`gridModeEnabled`)          |
+  | Snap (Alt+S)  | Flag toggles                                                                                      | yes (`objectsSnapModeEnabled`)   |
+  | Theme         | Switches light/dark                                                                               | yes (`theme`)                    |
 
 - **State and related effects:** zoom and scroll unchanged by each toggle (`05-zen-on` …
   `05-snap-toggled`) [O].
-- **Persistence:** the theme is saved locally: `theme` in the committed probes and an
-  `excalidraw-theme` key [O]. The zen, grid and snap keys in the table were read from the raw
+- **Persistence:** the theme is saved locally as `theme` in the committed probes [O]. An
+  `excalidraw-theme` key was already present at the first, light, load (REA initial inspection,
+  values redacted), so that it stores the choice is [I]. The zen, grid and snap keys in the table were read from the raw
   timelines only [O, raw only]; no view-mode key was seen there, so view mode is probably not
   saved [I, raw only]. No session reloaded while dark or with zen, grid or snap on: s1's last
   reload and s6's scenario 06 reload both came before `07-dark`, and nothing after 07 reloads.

@@ -46,8 +46,9 @@ Sources:
 | Clear canvas dialog  | Main menu → Reset the canvas         | Heading "Clear canvas", Close, Cancel, Confirm. Escape dismissed it without clearing. [O, medium], mobile dark in s7.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Native file pickers  | Open, Save to…, Ctrl+S, Insert image | No in-page UI and no Playwright chooser or download event appeared [O]. See B-32 and the limitations.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
-**Confidence of §2.** Rows without their own label are [O, high], and that rating rests on a
-comparison of raw snapshots. The committed index keeps only ARIA line counts, and the light
+**Confidence of §2.** Rows without their own label are [O, medium]: the s1 and s6 snapshots are
+not identical, so the confidence rule in the [methodology](methodology.md) does not allow high,
+and even that rating rests on a comparison of raw snapshots. The committed index keeps only ARIA line counts, and the light
 snapshots differ in every pair: for example ui-01-main-menu has 97 lines in s1 and 89 in s6, and
 `ui-08-export-image-dialog` 83 and 75. For this correction the retained raw snapshots of s1 and
 s6 were compared outside Git. In `ui-01` to `ui-08` the only differences are the welcome-screen
@@ -55,7 +56,7 @@ block (8 lines) and the Undo button's disabled state, because s1 captured these 
 fresh page and s6 after drawing, plus a per-load query value in the library link. The dark main
 menu, Help and Export snapshots are identical, s1's `dark-03-props-panel` matches s6's
 `dark-03b-props-panel`, and the in-session share dialog differs only in the random guest name and
-its initial. The high rating of these rows rests on that raw comparison, which cannot be
+its initial. The rating of these rows rests on that raw comparison, which cannot be
 re-checked from Git.
 
 ## 3. Modes and toggles [O, high]

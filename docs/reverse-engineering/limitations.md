@@ -68,7 +68,13 @@
   - the clipboard shape after Ctrl+C in scenario 06: top-level keys `type`, `elements` and
     `files`, type `excalidraw/clipboard`, element types rectangle, text and arrow, the same in s1
     and s6 (B-26, B-13). The committed index counts the `clipboard` step only;
-  - the s1 and s6 ARIA snapshot comparison behind the high rating of the secondary surfaces
+  - the storage usage at the s1 initial inspection, about 2.5 MB of a 644 MB quota (network
+    analysis); the committed summary keeps the store names only;
+  - the REA PNG digests behind the three byte-identical pairs in
+    [REA findings](rea-findings.md#2-cross-driver-screenshot-comparison): only the driver digests
+    are in `evidence/sessions.json`, and the index keeps the REA Evidence IDs;
+  - the 84–91 KB sizes of the large REA results (REA findings, limitation 4);
+  - the s1 and s6 ARIA snapshot comparison behind the medium rating of the secondary surfaces
     (feature inventory §2); the committed index keeps line counts only.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export

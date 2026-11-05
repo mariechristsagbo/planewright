@@ -14,10 +14,12 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 
 1. **Infinite canvas viewport.** Ref: [B-36](behavior-analysis.md#b-36-pan-and-zoom).
    - Wheel pans vertically 1:1 at zoom 1, and Shift+wheel pans horizontally [O].
-   - Ctrl/Cmd+= and Ctrl/Cmd+− change zoom by 0.1 and keep the viewport-centre point fixed;
-     Ctrl/Cmd+0 returns to 100% keeping the centre [O, between 0.9 and 1.1]. Step sizes and
-     limits elsewhere are open (R-48).
-   - Ctrl/Cmd+wheel zooms [O]. Its anchor is **open**: the reference was probed only with the
+   - Ctrl+= and Ctrl+− change zoom by 0.1 and keep the viewport-centre point fixed; Ctrl+0
+     returns to 100% keeping the centre [O, between 0.9 and 1.1]. Step sizes and limits
+     elsewhere are open (R-48).
+   - The scenarios pressed Control only, so whether Cmd does the same on macOS is **open**; no
+     residual row plans a macOS session, so it is a Planewright decision.
+   - Ctrl+wheel zooms [O]. Its anchor is **open**: the reference was probed only with the
      pointer at the viewport centre, so pointer and centre anchoring were not distinguished
      (R-48).
    - Space+drag and a hand tool pan by exactly the pointer delta [O].
@@ -29,8 +31,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 2. **Shape creation tools.** Ref: B-01, B-02, B-05, B-06.
    - Rectangle, ellipse, diamond and line created by drag have exactly the drag extent [O].
    - Whether a creation tool selects the new element and returns to Selection is open (R-02,
-     R-29): the reads straight after the reference's rectangle drag ran without a wait and read
-     the saved state before it caught up (B-01). The freedraw tool stayed active across clicks
+     R-29): the two reads straight after the reference's rectangle drag ran without a wait and
+     disagree between s2 and s6 [O, raw timelines only]; that they read the saved state before
+     it caught up is [H] (B-01). The freedraw tool stayed active across clicks
      after Escape (B-29) [O]. Keeping the tool with a tool lock is **open** (R-02).
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
@@ -90,7 +93,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       (R-09, R-50).
 11. **Clipboard.** Ref: B-26.
     - Copy produces a typed JSON payload [O, raw timelines only], and paste centres the copies
-      on the pointer and selects them [O].
+      on the pointer, with 2 of the 3 copies selected [O]. The committed probes keep the count
+      only, so which copies those were is not recorded; the selection rule is a Planewright
+      decision.
 12. **Eraser.** Ref: B-29.
     - After an eraser drag across a freshly drawn freedraw stroke, the scene held no freedraw
       element [O]. That the stroke existed just before is [I] from B-05, because no probe ran in
@@ -106,12 +111,13 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       discrepancy).
 14. **Themes and view modes.** Ref: [B-37](behavior-analysis.md#b-37-view-modes-and-toggles),
     B-28.
-    - The light/dark choice is saved locally (`theme` in the saved app state and an
-      `excalidraw-theme` key) [O]. Whether it survives a reload is **open**: no session reloaded
-      while dark (R-19). The "System" option is **open** (R-26).
+    - The light/dark choice is saved locally as `theme` in the saved app state [O]. An
+      `excalidraw-theme` key was already present at the first, light, load and REA redacts its
+      value, so that it also stores the choice is [I]. Whether the choice survives a reload is
+      **open**: no session reloaded while dark (R-19). The "System" option is **open** (R-26).
     - Zen, grid and snap set keys in the saved app state [O, raw timelines only]; no view-mode key
-      was seen, so view mode is probably not saved [I]. Whether any mode survives a reload is
-      **open** (R-19).
+      was seen, so view mode is probably not saved [I, raw only]. Whether any mode survives a
+      reload is **open** (R-19).
 15. **Responsive mobile layout.** Ref: feature inventory §6.
     - Bottom toolbar, compact property bar, touch handles and pinch/pan [O, one phone
       viewport]. Breakpoints, tablet widths and orientation are **open** (R-23).
