@@ -1,7 +1,7 @@
 // Checks the record of the netlog placement (R-64, R-66) in the checkpoint: its commits, checks
 // and limits, the commit message errors it discloses, and that the review of 620eccf covers its
 // behaviour-changing commits while the thirteenth review keeps its own verdict. R-75 after the
-// fourteenth-review remediation is checked in documentation-fourteenth-review-record.test.mjs.
+// fourteenth-review remediation is checked in documentation-fifteenth-review-record.test.mjs.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -92,10 +92,12 @@ describe('the review that covers the netlog placement', () => {
     expect(reviewState(checkpoint(), '6d5d264').reviewMeets).toBe(true);
   });
 
-  it('leaves R-75 open and no longer calls the placement unreviewed', () => {
-    expect([r75()[5], r75()[9]]).toEqual(['🟡', '1']);
+  it('is not met by that review, and the placement is no longer called unreviewed', () => {
+    expect(reviewState(checkpoint(), '620eccf')).toMatchObject({
+      covers: true,
+      reviewMeets: false,
+    });
     expect(r75()[7]).not.toContain('the netlog placement from 6051fd5, are not covered');
-    expect(flat(section('Blockers and residuals'))).toContain('Independent review (R-75), open.');
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
   });
 });

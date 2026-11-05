@@ -1,14 +1,15 @@
 // Checks the record of the review of 620eccf, found by its head: its counts, session, range,
 // verification, limits and verdict, the commit of each of its findings, that it covers the netlog
-// placement, that its remediation keeps R-75, the review requirement and issue #1 open, and the
-// checks of that remediation.
+// placement and does not meet the exit rule on its own, the checks of its remediation, and that
+// the review of a9a4619 covers that remediation. R-75 after it is checked in
+// documentation-fifteenth-review-record.test.mjs.
 import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import { exitRuleState, listedReviews, reviewByHead, reviewState } from './review-list.mjs';
+import { listedReviews, reviewByHead, reviewState } from './review-list.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -20,12 +21,6 @@ const r75 = () =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
     .find((line) => line.startsWith('| R-75 |'))
-    .split('|')
-    .map((cell) => flat(cell).trim());
-const status = (title, name) =>
-  section(title)
-    .split('\n')
-    .find((line) => line.startsWith(`| ${name} `))
     .split('|')
     .map((cell) => flat(cell).trim());
 
@@ -134,20 +129,11 @@ describe('the review of 620eccf against the exit rule', () => {
     );
   });
 
-  it('keeps R-75, the review requirement and issue #1 open while its remediation is unreviewed', () => {
-    expect(exitRuleState(checkpoint())).toEqual({
-      ...reviewState(checkpoint(), '620eccf'),
-      unreviewed: true,
-      met: false,
-    });
-    expect([r75()[5], r75()[9]]).toEqual(['🟡', '1']);
-    expect(r75()[6]).toMatch(/6d5d264, 620eccf$/u);
-    expect(r75()[8]).toContain('that covers the fourteenth-review remediation');
-    expect(status('Testing requirements', 'Separate Claude Code review session')[2]).toBe(
-      'Partial',
-    );
-    expect(flat(section('Blockers and residuals'))).toContain(
-      'a review of the fourteenth-review remediation is still to be run (R-75)',
+  it('names its remediation as covered by the review of a9a4619, and keeps issue #1 open', () => {
+    expect(r75()[6]).toContain('6d5d264, 620eccf');
+    expect(entry()).toContain(
+      'Covered by the review of a9a4619. The fourteenth-review remediation, 620eccf..a9a4619, ' +
+        'from 93e4ae2 to a9a4619, is behaviour-changing.',
     );
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
   });
@@ -163,9 +149,15 @@ describe('the checks of the fourteenth-review remediation', () => {
       expect(commits.indexOf(commit), commit).toBeGreaterThan(at);
       at = commits.indexOf(commit);
     }
-    expect(commits).toContain('The remediation ends at the commit that adds this section.');
-    expect(section('Checks of the fourteenth-review remediation')).toMatch(
-      /^- \*\*Not covered by a review\.\*\* No review covers this remediation yet, from `93e4ae2`/mu,
+    expect(commits).toContain(
+      'The remediation ends at a9a4619, the commit that adds this section.',
+    );
+    expect(section('Checks of the fourteenth-review remediation')).not.toMatch(
+      /^- \*\*Not covered by a review\.\*\*/mu,
+    );
+    expect(checks()).toContain(
+      'Review. The review of a9a4619, the fifteenth, covers this remediation (620eccf..a9a4619). ' +
+        'It reported no critical, major or minor finding, so the exit rule is met',
     );
   });
 
