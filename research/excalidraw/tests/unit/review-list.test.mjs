@@ -1,5 +1,5 @@
-// Checks the number and ordinal words of review-list.mjs, that a checkpoint listing thirteen
-// reviews is read to its last entry, which the record checks need once a thirteenth review is
+// Checks the number and ordinal words of review-list.mjs, that a checkpoint listing fourteen
+// reviews is read to its last entry, which the record checks need once a fourteenth review is
 // recorded, and that the latest review's own verdict is kept apart from later commits that no
 // review covers.
 import { describe, expect, it } from 'vitest';
@@ -24,24 +24,24 @@ const record = (count) => {
 };
 
 describe('the review words', () => {
-  it('name every count up to thirteen reviews', () => {
-    expect(reviewWords(12)).toEqual({ number: 'twelve', ordinal: 'twelfth' });
+  it('name every count up to fourteen reviews', () => {
     expect(reviewWords(13)).toEqual({ number: 'thirteen', ordinal: 'thirteenth' });
+    expect(reviewWords(14)).toEqual({ number: 'fourteen', ordinal: 'fourteenth' });
   });
 
   it('fail with a clear message past the last word', () => {
-    expect(() => reviewWords(14)).toThrow(
-      'Add number and ordinal words for 14 reviews to review-list.mjs.',
+    expect(() => reviewWords(15)).toThrow(
+      'Add number and ordinal words for 15 reviews to review-list.mjs.',
     );
   });
 });
 
-describe('a checkpoint that lists thirteen reviews', () => {
-  it('is read to its thirteenth entry and the state of the exit rule', () => {
-    const text = record(13);
-    expect(listedReviews(text)).toHaveLength(13);
+describe('a checkpoint that lists fourteen reviews', () => {
+  it('is read to its fourteenth entry and the state of the exit rule', () => {
+    const text = record(14);
+    expect(listedReviews(text)).toHaveLength(14);
     expect(exitRuleState(text)).toMatchObject({
-      head: '000000d',
+      head: '000000e',
       blocking: 0,
       covers: true,
       remediated: false,
