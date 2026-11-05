@@ -1,6 +1,7 @@
-// Checks the number and ordinal words of review-list.mjs and that a checkpoint listing thirteen
+// Checks the number and ordinal words of review-list.mjs, that a checkpoint listing thirteen
 // reviews is read to its last entry, which the record checks need once a thirteenth review is
-// recorded.
+// recorded, and that the latest review's own verdict is kept apart from later commits that no
+// review covers.
 import { describe, expect, it } from 'vitest';
 
 import { exitRuleState, listedReviews, reviewWords } from './review-list.mjs';
@@ -47,5 +48,29 @@ describe('a checkpoint that lists thirteen reviews', () => {
       unreviewed: false,
       met: true,
     });
+  });
+});
+
+describe("the latest review's own verdict and the commits after it", () => {
+  it('keeps a review that meets the rule apart from later commits that no review covers', () => {
+    const later = `${record(2)}- **Not covered by a review.** Later commits.\n`;
+    expect(exitRuleState(record(2))).toMatchObject({ reviewMeets: true, met: true });
+    expect(exitRuleState(later)).toMatchObject({
+      head: '0000002',
+      blocking: 0,
+      unreviewed: true,
+      reviewMeets: true,
+      met: false,
+    });
+  });
+
+  it('does not let a review with a finding, or one left uncovered, meet the rule', () => {
+    const minor = record(2).replace(
+      '2. **Review of `0000002`**: 0 critical, 0 major, 0 minor',
+      '2. **Review of `0000002`**: 0 critical, 0 major, 1 minor',
+    );
+    const uncovered = record(2).replace('The remediation ends at 0000002', 'It ends elsewhere');
+    for (const text of [minor, uncovered])
+      expect(exitRuleState(text)).toMatchObject({ reviewMeets: false, met: false });
   });
 });

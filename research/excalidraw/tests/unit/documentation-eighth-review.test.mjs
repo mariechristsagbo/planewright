@@ -43,7 +43,8 @@ describe('the R-75 exit rule', () => {
 
   it('sets R-75 from the latest listed review: done only once that review meets it', () => {
     const state = exitRuleState(checkpoint());
-    const verdict = state.met ? 'meets' : 'does not meet';
+    // The review's own verdict; commits that no review covers keep R-75 open after a review met it.
+    const verdict = state.reviewMeets ? 'meets' : 'does not meet';
     expect(r75()[5], JSON.stringify(state)).toBe(state.met ? '✅' : '🟡');
     expect(r75()[7]).toMatch(
       new RegExp(`review of ${state.head} reported [^.]*, so it ${verdict} the exit rule`, 'u'),
@@ -58,7 +59,7 @@ describe('the R-75 exit rule', () => {
 
   it('is applied to the latest listed review, which states whether it meets it', () => {
     const latest = listedReviews(checkpoint()).at(-1);
-    const verdict = exitRuleState(checkpoint()).met ? 'meets' : 'does not meet';
+    const verdict = exitRuleState(checkpoint()).reviewMeets ? 'meets' : 'does not meet';
     expect(flat(latest.text)).toContain(`It ${verdict} the R-75 exit rule`);
   });
 });

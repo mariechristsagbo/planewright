@@ -109,6 +109,7 @@ describe('R-75 after the review of 6d5d264', () => {
       covers: true,
       remediated: false,
       unreviewed: false,
+      reviewMeets: true,
       met: true,
     });
   });

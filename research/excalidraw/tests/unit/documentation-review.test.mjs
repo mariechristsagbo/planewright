@@ -316,18 +316,20 @@ describe('the review row', () => {
   it('names every listed review and whether the latest one leaves a remediation unreviewed', () => {
     const text = read('docs/reverse-engineering/checkpoint.md');
     const heads = listedReviews(text).map((r) => r.head);
-    const { head: last, met } = exitRuleState(text);
+    const { head: last, met, reviewMeets } = exitRuleState(text);
     const r75 = row('R-75');
     expect(heads.length).toBeGreaterThan(5);
     for (const head of heads) expect(r75).toContain(`\`${head}\``);
+    const clean = `The review of \`${last}\` reported 0 critical, 0 major and 0 minor findings, so it meets the exit rule`;
     expect(r75).toContain(
-      met
-        ? `The review of \`${last}\` reported 0 critical, 0 major and 0 minor findings, so it meets the exit rule`
-        : `The remediation of the \`${last}\` review has not been reviewed`,
+      reviewMeets ? clean : `The remediation of the \`${last}\` review has not been reviewed`,
     );
+    // A review that meets the rule, followed by behaviour-changing commits no review covers yet.
+    if (reviewMeets && !met)
+      expect(r75).toContain(`${clean}, but the behaviour-changing commits after it`);
     const { ordinal } = reviewWords(heads.length);
     expect(doc('checkpoint.md')).toContain(
-      `The ${ordinal} (of ${last}) ${met ? 'meets the R-75 exit rule' : 'is remediated'}`,
+      `The ${ordinal} (of ${last}) ${reviewMeets ? 'meets the R-75 exit rule' : 'is remediated'}`,
     );
   });
 });
