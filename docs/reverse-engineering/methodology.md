@@ -28,6 +28,10 @@ Every claim in this directory carries one label:
 - **[U] Unverified**: not observed in this baseline. Each one is tracked in the
   [residual matrix](residual-matrix.md).
 
+Placing a netlog request in a scenario sets its start time against the step times of the
+timeline, so it is labelled [I, raw netlog and timeline times]: each time is observed, the
+placement is deduced from both, and the times are kept in the raw records only.
+
 Confidence follows one rule:
 
 - **high**: observed with identical results in at least two sessions, at least one of them from

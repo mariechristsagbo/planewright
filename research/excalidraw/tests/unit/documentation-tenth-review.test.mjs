@@ -255,7 +255,7 @@ describe('the s11 requests set against its scenarios', () => {
     );
     const text = doc('network-analysis.md');
     expect(text).toContain(
-      `s11's requests after its load [I, from the raw netlog and timeline times]. Of its ` +
+      `s11's requests after its load [I, raw netlog and timeline times]. Of its ` +
         `${String(count(requests(s11, () => true)))} requests`,
     );
     expect(text).toContain(
