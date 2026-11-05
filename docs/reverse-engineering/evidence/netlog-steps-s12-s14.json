@@ -1,0 +1,299 @@
+{
+  "schema": "planewright-research-netlog-steps/v1",
+  "generated_by": "research/excalidraw/netlog-steps.mjs",
+  "drawing_steps": ["drag", "path", "touchDrag"],
+  "sessions": [
+    {
+      "session": "s12-mobile-draw-rea",
+      "timeline_rows": 105,
+      "netlog_entries": 105,
+      "drawing": {
+        "steps": {
+          "drag": 0,
+          "path": 0,
+          "touchDrag": 3
+        },
+        "entries_during": 0,
+        "next_entry_ms": {
+          "min": 2916,
+          "max": 8598
+        },
+        "without_later_entry": 0,
+        "last_started": "2026-11-05T16:51:34.634Z",
+        "request_starts": {
+          "known": 104,
+          "unknown": 0,
+          "during_drawing": 0
+        }
+      },
+      "before_first_step": [],
+      "placements": [
+        {
+          "line": 3,
+          "started": "2026-11-05T16:51:08.872Z",
+          "do": "goto",
+          "entries": [
+            "+474 navigated https://excalidraw.com/",
+            "+829 request document 200 https://excalidraw.com/ start+239",
+            "+845 request script 200 https://excalidraw.com/assets/bundler-helpers-DA6W-a70.js start+553",
+            "+930 request stylesheet 200 https://excalidraw.com/assets/index-D0I-IbtP.css start+554",
+            "+947 request script 200 https://scripts.simpleanalyticscdn.com/latest.js start+931",
+            "+1164 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2 start+551",
+            "+1170 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2 start+545",
+            "+1179 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2 start+548",
+            "+1188 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-SemiBold.woff2 start+550",
+            "+1230 request manifest 200 https://excalidraw.com/manifest.webmanifest start+934",
+            "+1234 request script 200 https://excalidraw.com/assets/index-COQVqmE8.js start+552",
+            "+1682 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q23 start+1235",
+            "+1732 request script 200 https://excalidraw.com/assets/workbox-window.prod.es5-B9K5rw8f.js start+1667"
+          ]
+        },
+        {
+          "line": 4,
+          "started": "2026-11-05T16:51:10.614Z",
+          "do": "wait",
+          "entries": [
+            "+609 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Bold.woff2 start+525",
+            "+660 request script 200 https://excalidraw.com/assets/roundRect-0PYZxl1G.js start+5",
+            "+706 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Regular.woff2 start+519",
+            "+711 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Medium.woff2 start+526",
+            "+831 request fetch 200 https://sentry.io/api/5179260/envelope/ q3 start-77",
+            "+981 request other 200 https://excalidraw.com/apple-touch-icon.png start+832",
+            "+997 request other 200 https://excalidraw.com/favicon-32x32.png start+828"
+          ]
+        },
+        {
+          "line": 46,
+          "started": "2026-11-05T16:51:37.475Z",
+          "do": "wait",
+          "entries": [
+            "+75 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/CascadiaCode/CascadiaCode-Regular.woff2 sw start+1"
+          ]
+        },
+        {
+          "line": 50,
+          "started": "2026-11-05T16:51:39.067Z",
+          "do": "tap",
+          "entries": [
+            "+112 request script 200 https://excalidraw.com/assets/index-BFNtuejR.js sw start+13",
+            "+124 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q24 start+14"
+          ]
+        },
+        {
+          "line": 69,
+          "started": "2026-11-05T16:51:43.515Z",
+          "do": "wait",
+          "entries": [
+            "+365 request fetch 200 https://excalidraw.com/assets/mermaid-chunks-DA-Q52Mr.json start+328"
+          ]
+        },
+        {
+          "line": 70,
+          "started": "2026-11-05T16:51:44.023Z",
+          "do": "screenshot",
+          "entries": [
+            "+113 request fetch 200 https://excalidraw.com/assets/index-BFNtuejR.js sw start-123",
+            "+120 request fetch 200 https://excalidraw.com/assets/6PIGVMFT-DwUxGS3b.js sw start+8",
+            "+124 request fetch 200 https://excalidraw.com/assets/G76NGGFM-XWAvdsTK.js sw start-12",
+            "+125 request fetch 200 https://excalidraw.com/assets/DKTLEL5E-B7ILCVTH.js sw start+7",
+            "+127 request fetch 200 https://excalidraw.com/assets/BGW36YJW-DQNxLbq-.js sw start+8",
+            "+443 request fetch 200 https://excalidraw.com/assets/V67O4WWV-Cx0PDp2k.js sw start+29",
+            "+459 request fetch 200 https://excalidraw.com/assets/75JW6PN6-CIx5RcrF.js sw start+34",
+            "+464 request fetch 200 https://excalidraw.com/assets/4LWW3ZNH-cq6qHrdD.js sw start+26",
+            "+465 request fetch 200 https://excalidraw.com/assets/EFYWJBJK-Dj4eYI37.js sw start+26",
+            "+479 request fetch 200 https://excalidraw.com/assets/FTXIJQGB-nrHdCfp7.js sw start+28",
+            "+482 request fetch 200 https://excalidraw.com/assets/SG5TVYLW-Ccu9Iwal.js sw start+34",
+            "+487 request fetch 200 https://excalidraw.com/assets/7WLXJQOR-CHhKreq0.js sw start+27",
+            "+490 request fetch 200 https://excalidraw.com/assets/NT5JY5WP-DW7NVBPX.js sw start+25",
+            "+492 request fetch 200 https://excalidraw.com/assets/VBUCM3YD-D90Pv5D3.js sw start+25",
+            "+496 request fetch 200 https://excalidraw.com/assets/QQW2P742-Cm5qF5Hd.js sw start+16",
+            "+571 request fetch 200 https://excalidraw.com/assets/N7OWWQHY-BUXnxE3P.js sw start+36",
+            "+573 request fetch 200 https://excalidraw.com/assets/64PMEAB3-ChWfr_so.js sw start+39",
+            "+623 request fetch 200 https://excalidraw.com/assets/LF3NJQAX-n2wWC_oo.js sw start+43",
+            "+625 request fetch 200 https://excalidraw.com/assets/VINGRCPA-ulwFq5NR.js sw start+44",
+            "+627 request fetch 200 https://excalidraw.com/assets/XOYAOB3S-Ob36wuMJ.js sw start+44",
+            "+630 request fetch 200 https://excalidraw.com/assets/EXE5EH6O-nNCEPinJ.js sw start+40",
+            "+650 request fetch 200 https://excalidraw.com/assets/OT7W3RNY-CAKCc0g4.js sw start+46",
+            "+654 request fetch 200 https://excalidraw.com/assets/V44WA6U7-B0Nym5FC.js sw start+41",
+            "+656 request fetch 200 https://excalidraw.com/assets/PVFCHRLY-CztdcycK.js sw start+46",
+            "+657 request fetch 200 https://excalidraw.com/assets/DNNCRC2E-ITRMrTkh.js sw start+45",
+            "+664 request fetch 200 https://excalidraw.com/assets/LRZCOFJZ-BSA6PhwS.js sw start+39",
+            "+665 request fetch 200 https://excalidraw.com/assets/PUAMC4MJ-Dvf_jtkE.js sw start+48",
+            "+666 request fetch 200 https://excalidraw.com/assets/5THPTBWS-D57irc_4.js sw start+50",
+            "+671 request fetch 200 https://excalidraw.com/assets/PFLLLM7K-DOFJyxPu.js sw start+47",
+            "+680 request fetch 200 https://excalidraw.com/assets/YIK6JTN6-CflxyOAp.js sw start+49",
+            "+682 request fetch 200 https://excalidraw.com/assets/4FHPYW2L-3CyPUP3T.js sw start+49",
+            "+705 request fetch 200 https://excalidraw.com/assets/P67P66DB-C7n3WpXo.js sw start+69",
+            "+715 request fetch 200 https://excalidraw.com/assets/WL6DNKX4-BETsq0sj.js sw start+54",
+            "+717 request fetch 200 https://excalidraw.com/assets/N5NF2FGY-BVtHuUnY.js sw start+42",
+            "+719 request fetch 200 https://excalidraw.com/assets/E67EBMDD-b5f0ui5G.js sw start+55",
+            "+733 request fetch 200 https://excalidraw.com/assets/GH6G3TJC-BjgZRXJy.js sw start+50",
+            "+736 request fetch 200 https://excalidraw.com/assets/G3MDBVQH-EkdejvdW.js sw start+70",
+            "+740 request fetch 200 https://excalidraw.com/assets/7XWI72E6-DzVIUaXJ.js sw start+72",
+            "+741 request fetch 200 https://excalidraw.com/assets/Y5LQLG3M-EpMakM9B.js sw start+50",
+            "+745 request fetch 200 https://excalidraw.com/assets/6BEWHPQE-Dw8zIur4.js sw start+74",
+            "+767 request fetch 200 https://excalidraw.com/assets/G6GPDDNC-2jrY9iqw.js sw start+47",
+            "+771 request fetch 200 https://excalidraw.com/assets/CGIZI67J-BsPeWNq8.js sw start+78",
+            "+774 request fetch 200 https://excalidraw.com/assets/S63OEDPG-C81orfGq.js sw start+75",
+            "+777 request fetch 200 https://excalidraw.com/assets/state-BHOYKTJ2.js sw start+85",
+            "+781 request fetch 200 https://excalidraw.com/assets/HPNUA7RO-ws8NaPiS.js sw start+76",
+            "+786 request fetch 200 https://excalidraw.com/assets/IX6Z2TVR-CBEOCsKk.js sw start+60",
+            "+796 request fetch 200 https://excalidraw.com/assets/helpers-C98AZoLf.js sw start+79",
+            "+805 request fetch 200 https://excalidraw.com/assets/JAD36DTZ-C9T4IM06.js sw start+64",
+            "+808 request fetch 200 https://excalidraw.com/assets/flowchart-B-AtIEX4.js sw start+90",
+            "+810 request fetch 200 https://excalidraw.com/assets/class-BzsAY4PK.js sw start+86",
+            "+812 request fetch 200 https://excalidraw.com/assets/quadrant-CtTXzHLJ.js sw start+80",
+            "+813 request fetch 200 https://excalidraw.com/assets/UGRSUGA2-Cxi1jK0R.js sw start+75",
+            "+814 request fetch 200 https://excalidraw.com/assets/er-C7JRzxQk.js sw start+86",
+            "+816 request fetch 200 https://excalidraw.com/assets/J77NQRCJ-BotfhdZJ.js sw start+76",
+            "+818 request fetch 200 https://excalidraw.com/assets/5XYWFMKW-PyWnTwUr.js sw start+53",
+            "+820 request fetch 200 https://excalidraw.com/assets/gantt-CIj26a4k.js sw start+84",
+            "+821 request fetch 200 https://excalidraw.com/assets/timeline-DU_gviY6.js sw start+79",
+            "+823 request fetch 200 https://excalidraw.com/assets/sequence-COpB_oQG.js sw start+87",
+            "+834 request fetch 200 https://excalidraw.com/assets/transformToExcalidrawSkeleton-BhBsKKQ3.js sw start+79",
+            "+842 request fetch 200 https://excalidraw.com/assets/WQ63CJYP-CsF1MvOk.js sw start+51",
+            "+844 request fetch 200 https://excalidraw.com/assets/24BXRY42-Bun-eCbs.js sw start+72",
+            "+846 request fetch 200 https://excalidraw.com/assets/HQRGC5D7-EMMIgq64.js sw start+70",
+            "+848 request fetch 200 https://excalidraw.com/assets/RVARI57O-CXmrUIiS.js sw start+67"
+          ]
+        },
+        {
+          "line": 78,
+          "started": "2026-11-05T16:52:11.236Z",
+          "do": "role",
+          "name": "Mermaid to Excalidraw",
+          "entries": [
+            "+1636 request-failed script https://excalidraw.com/assets/CodeMirrorEditor-Bl85_JKK.js start+1418",
+            "+1649 request-failed script https://excalidraw.com/assets/codemirror.chunk-CLhMQAUm.js start+1430"
+          ]
+        },
+        {
+          "line": 79,
+          "started": "2026-11-05T16:52:13.016Z",
+          "do": "wait",
+          "entries": [
+            "+13 request script 200 https://excalidraw.com/assets/V67O4WWV-Cx0PDp2k.js sw start-107",
+            "+30 request script 200 https://excalidraw.com/assets/FTXIJQGB-nrHdCfp7.js sw start-107",
+            "+44 request script 200 https://excalidraw.com/assets/QQW2P742-Cm5qF5Hd.js sw start-38",
+            "+50 request script 200 https://excalidraw.com/assets/DKTLEL5E-B7ILCVTH.js sw start-36",
+            "+60 request script 200 https://excalidraw.com/assets/7WLXJQOR-CHhKreq0.js sw start-107",
+            "+64 request script 200 https://excalidraw.com/assets/4LWW3ZNH-cq6qHrdD.js sw start-106",
+            "+69 request script 200 https://excalidraw.com/assets/VBUCM3YD-D90Pv5D3.js sw start-58",
+            "+72 request script 200 https://excalidraw.com/assets/NT5JY5WP-DW7NVBPX.js sw start-57",
+            "+77 request script 200 https://excalidraw.com/assets/BGW36YJW-DQNxLbq-.js sw start-57",
+            "+93 request script 200 https://excalidraw.com/assets/helpers-C98AZoLf.js sw start-13",
+            "+119 request script 200 https://excalidraw.com/assets/6PIGVMFT-DwUxGS3b.js sw start-37",
+            "+125 request script 200 https://excalidraw.com/assets/transformToExcalidrawSkeleton-BhBsKKQ3.js sw start-11",
+            "+132 request script 200 https://excalidraw.com/assets/EFYWJBJK-Dj4eYI37.js sw start-58",
+            "+138 request script 200 https://excalidraw.com/assets/flowchart-B-AtIEX4.js sw start-20"
+          ]
+        },
+        {
+          "line": 89,
+          "started": "2026-11-05T16:52:18.791Z",
+          "do": "role",
+          "name": "Text to diagram",
+          "entries": [
+            "+268 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q24 start+213"
+          ]
+        },
+        {
+          "line": 98,
+          "started": "2026-11-05T16:52:23.116Z",
+          "do": "wait",
+          "entries": [
+            "+7 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q24 start-21"
+          ]
+        }
+      ]
+    },
+    {
+      "session": "s13-desktop-draw-rea",
+      "timeline_rows": 11,
+      "netlog_entries": 6,
+      "drawing": {
+        "steps": {
+          "drag": 0,
+          "path": 0,
+          "touchDrag": 0
+        },
+        "entries_during": 0,
+        "next_entry_ms": null,
+        "without_later_entry": 0,
+        "last_started": null,
+        "request_starts": {
+          "known": 4,
+          "unknown": 0,
+          "during_drawing": 0
+        }
+      },
+      "before_first_step": [],
+      "placements": [
+        {
+          "line": 3,
+          "started": "2026-11-05T16:53:11.633Z",
+          "do": "goto",
+          "entries": [
+            "+142 navigated https://excalidraw.com/",
+            "+177 request document 403 https://excalidraw.com/ start+57"
+          ]
+        },
+        {
+          "line": 4,
+          "started": "2026-11-05T16:53:11.833Z",
+          "do": "wait",
+          "entries": [
+            "+59 worker https://excalidraw.com/.well-known/vercel/security/static/challenge.v2.min.js",
+            "+164 request script 200 https://excalidraw.com/.well-known/vercel/security/static/challenge.v2.min.js start-12",
+            "+295 request fetch 200 https://excalidraw.com/.well-known/vercel/security/static/challenge.v2.wasm start+165",
+            "+1615 request-failed fetch https://excalidraw.com/.well-known/vercel/security/request-challenge start+1570"
+          ]
+        }
+      ]
+    },
+    {
+      "session": "s14-desktop-svg-only",
+      "timeline_rows": 9,
+      "netlog_entries": 6,
+      "drawing": {
+        "steps": {
+          "drag": 0,
+          "path": 0,
+          "touchDrag": 0
+        },
+        "entries_during": 0,
+        "next_entry_ms": null,
+        "without_later_entry": 0,
+        "last_started": null,
+        "request_starts": {
+          "known": 4,
+          "unknown": 0,
+          "during_drawing": 0
+        }
+      },
+      "before_first_step": [],
+      "placements": [
+        {
+          "line": 3,
+          "started": "2026-11-05T16:55:23.921Z",
+          "do": "goto",
+          "entries": [
+            "+123 navigated https://excalidraw.com/",
+            "+176 request document 403 https://excalidraw.com/ start+83"
+          ]
+        },
+        {
+          "line": 4,
+          "started": "2026-11-05T16:55:24.129Z",
+          "do": "wait",
+          "entries": [
+            "+64 worker https://excalidraw.com/.well-known/vercel/security/static/challenge.v2.min.js",
+            "+162 request script 200 https://excalidraw.com/.well-known/vercel/security/static/challenge.v2.min.js start+1",
+            "+257 request fetch 200 https://excalidraw.com/.well-known/vercel/security/static/challenge.v2.wasm start+163",
+            "+799 request-failed fetch https://excalidraw.com/.well-known/vercel/security/request-challenge start+793"
+          ]
+        }
+      ]
+    }
+  ]
+}

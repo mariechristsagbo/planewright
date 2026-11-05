@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 import { listedReviews, reviewByHead, reviewState } from './review-list.mjs';
+import { COMMITTED_AFTER_DB16323 } from './r76-evidence.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -69,8 +70,8 @@ describe('the record of the review of 620eccf', () => {
     const sessions = evidence('netlog-steps.json').sessions;
     const rows = sessions.reduce((sum, s) => sum + s.timeline_rows, 0);
     const entries = sessions.reduce((sum, s) => sum + s.netlog_entries, 0);
-    const files = readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter((name) =>
-      name.endsWith('.json'),
+    const files = readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter(
+      (name) => name.endsWith('.json') && !COMMITTED_AFTER_DB16323.includes(name),
     );
     expect(entry()).toContain('npm run validate on 620eccf (51 test files and 610 tests');
     expect(entry()).toContain('the research projects (43 files and 558 tests)');
@@ -162,8 +163,8 @@ describe('the checks of the fourteenth-review remediation', () => {
   });
 
   it('record the checks that ran, and those that did not', () => {
-    const files = readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter((name) =>
-      name.endsWith('.json'),
+    const files = readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter(
+      (name) => name.endsWith('.json') && !COMMITTED_AFTER_DB16323.includes(name),
     );
     expect(checks()).toMatch(/npm run validate passed on f6a9ffe[^.]*51 test files and 625 tests/u);
     expect(checks()).toContain('lib/placement.mjs at 100%');

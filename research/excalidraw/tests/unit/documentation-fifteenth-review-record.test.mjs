@@ -9,13 +9,8 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
-import {
-  NUMBERS,
-  exitRuleState,
-  listedReviews,
-  reviewByHead,
-  reviewState,
-} from './review-list.mjs';
+import { listedReviews, reviewByHead, reviewState } from './review-list.mjs';
+import { COMMITTED_AFTER_DB16323 } from './r76-evidence.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..');
 const read = (path) => readFileSync(join(ROOT, path), 'utf8');
@@ -28,19 +23,6 @@ const sessions = () =>
 const placed = (s) => s.placements.flatMap((p) => p.entries);
 const beaconsOf = (s) => placed(s).filter((e) => e.includes('/simple.gif q24'));
 const joined = (items) => `${items.slice(0, -1).join(', ')} and ${String(items.at(-1))}`;
-// The rows of a checkpoint status table, each as its trimmed, flattened cells.
-const rows = (title) =>
-  section(title)
-    .split('\n')
-    .filter((line) => /^\| [^-]/u.test(line))
-    .slice(1)
-    .map((line) => line.split('|').map((cell) => flat(cell).trim()));
-// The names of the rows of a checkpoint status table whose status is `status`, in table order.
-const withStatus = (title, status) =>
-  rows(title)
-    .filter((cells) => cells[2] === status)
-    .map((cells) => cells[1]);
-const note = (title, name) => rows(title).find((cells) => cells[1] === name)[3];
 const r75 = () =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
@@ -87,8 +69,8 @@ describe('the record of the review of a9a4619', () => {
   it('records what it verified, with the totals it recomputed from the raw records', () => {
     const timeline = sessions().reduce((sum, s) => sum + s.timeline_rows, 0);
     const entries = sessions().reduce((sum, s) => sum + s.netlog_entries, 0);
-    const files = readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter((name) =>
-      name.endsWith('.json'),
+    const files = readdirSync(join(ROOT, 'docs/reverse-engineering/evidence')).filter(
+      (name) => name.endsWith('.json') && !COMMITTED_AFTER_DB16323.includes(name),
     );
     expect(entry()).toContain('npm run validate on a9a4619 (52 test files and 633 tests');
     expect(entry()).toContain('the research projects (44 files and 581 tests)');
@@ -168,49 +150,21 @@ describe('the review of a9a4619 against the exit rule', () => {
     });
   });
 
-  it('closes R-75 and the review requirement at this record', () => {
-    expect(exitRuleState(checkpoint())).toEqual({
-      ...reviewState(checkpoint(), 'a9a4619'),
-      unreviewed: false,
-      met: true,
-    });
-    expect([r75()[5], r75()[9]]).toEqual(['✅', '—']);
+  it('met the exit rule at this record and kept its suggestions in the R-75 row', () => {
+    // R-75 at the latest head follows the exit rule (documentation-eighth-review.test.mjs); the
+    // observation batch after db16323 is not covered by a review, so it is open again.
+    expect(reviewState(checkpoint(), 'a9a4619').reviewMeets).toBe(true);
     expect(r75()[6]).toMatch(/620eccf, a9a4619$/u);
     expect(r75()[7]).toContain(
       'its 3 suggestions stay open, with their handling in the checkpoint',
     );
-    expect(r75()[8]).toMatch(/^None while no behaviour-changing commit follows a9a4619;/u);
-    expect(withStatus('Testing requirements', 'Done')).toContain(
-      'Separate Claude Code review session',
-    );
-    expect(flat(section('Blockers and residuals'))).toContain(
-      'Independent review (R-75), done. The fifteenth review (of a9a4619) meets the exit rule',
-    );
   });
 
-  it('leaves PR #2 a Draft and the other criteria and issue #1 open', () => {
-    const criteria = withStatus('Acceptance criteria', 'Partial');
-    const requirements = withStatus('Testing requirements', 'Partial');
-    expect(criteria).toEqual([
-      'feature-inventory.md covers all discovered features',
-      'behavior-analysis.md',
-      'limitations.md',
-      'Desktop light/dark and mobile evidence sets',
-      'Canvas interactions through the external driver while REA observes',
-      'Prioritised backlog with acceptance criteria',
-    ]);
-    expect(requirements).toEqual([
-      'Re-run each documented interaction from a fresh profile',
-      'Generated JSON and REA bundles validated',
-    ]);
+  it('records that PR #2 stays a Draft and issue #1 open', () => {
+    // The counts as the record gave them; the live lists are checked with the observation batch.
     expect(entry()).toContain('It found that PR #2 should not leave Draft yet');
     expect(entry()).toContain(
-      `issue #1 cannot close: ${NUMBERS[criteria.length - 1]} acceptance criteria and ` +
-        `${NUMBERS[requirements.length - 1]} testing requirements are Partial`,
-    );
-    expect(note('Testing requirements', 'Separate Claude Code review session')).toContain(
-      'This closes R-75 only; the other Partial criteria and the maintainer decisions keep ' +
-        'issue #1 open',
+      'issue #1 cannot close: six acceptance criteria and two testing requirements are Partial',
     );
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
   });

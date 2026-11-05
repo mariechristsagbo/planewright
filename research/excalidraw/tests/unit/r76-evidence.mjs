@@ -14,7 +14,15 @@ export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
 // Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
 // records of the tenth to twelfth reviews cover only the files committed before them.
-export const COMMITTED_AFTER_6D5D264 = ['netlog-steps.json'];
+// Evidence files committed after db16323, by the observation batch. Records written before then
+// count the files that existed when they were written.
+export const COMMITTED_AFTER_DB16323 = [
+  'netlog-steps-s12-s14.json',
+  'probes-s12-mobile-draw-rea.json',
+  'rea-windows-s12-s14.json',
+  'sessions-s12-s14.json',
+];
+export const COMMITTED_AFTER_6D5D264 = ['netlog-steps.json', ...COMMITTED_AFTER_DB16323];
 const DIR = 'research/excalidraw/scenarios';
 const FILES = readdirSync(join(ROOT, DIR)).map((file) => file.replace(/\.json$/u, ''));
 export const scenario = (id) => {
