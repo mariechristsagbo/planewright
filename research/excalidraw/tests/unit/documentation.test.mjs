@@ -201,7 +201,7 @@ describe('cited numbers match the committed evidence', () => {
   it('REA windows and what they retain', () => {
     const windows = evidence('rea-windows.json').windows;
     const text = flat(doc('rea-findings.md'));
-    for (const w of windows.filter((x) => !x.session.startsWith('s1'))) {
+    for (const w of windows.filter((x) => x.session !== 's1-desktop')) {
       expect(text).toContain(`${w.window.start.slice(11, 23)}–${w.window.end.slice(11, 23)}`);
       if (w.operation === 'observe_web_session') expect(w).not.toHaveProperty('network_requests');
     }
@@ -270,7 +270,7 @@ describe('cited network counts match the committed evidence', () => {
       e.origin === 'https://excalidraw.com' && e.fromServiceWorker === sw;
     const fresh = evidence('sessions.json')
       .sessions.map((s) => s.session)
-      .filter((s) => !s.startsWith('s1'));
+      .filter((s) => s !== 's1-desktop');
     expect(fresh).toHaveLength(6);
     const network = new Set(fresh.map((s) => count(s, origin(false))));
     expect(network.size, 'one count for each of s2–s7').toBe(1);
