@@ -144,6 +144,30 @@ const ROOM = 'a1B2'.repeat(5);
 const KEY = `${'k_L-'.repeat(5)}m1`;
 const LINK = `https://excalidraw.com/#room=${ROOM},${KEY}`;
 
+describe('rea-extract.mjs input that is not valid JSON', () => {
+  // The checks on the room value compare booleans, so a failure never prints the output.
+  it('names the file, never prints its content and writes nothing', () => {
+    const cases = [
+      ['truncated', `{"ok":true,"data":{"operation":"inspect_web_page","url":"${LINK}"`],
+      ['stray-token', `{"ok":true,"data":{"operation":"inspect_web_page","url":"${LINK}" x}}`],
+    ];
+    for (const [name, text] of cases) {
+      const input = join(dir, `${name}.json`);
+      const output = join(dir, `${name}.summary.json`);
+      writeFileSync(input, text);
+      const run = extract(input, output);
+      expect(run.status, name).not.toBe(0);
+      expect(run.stderr.includes(ROOM), `${name}: room value in stderr`).toBe(false);
+      expect(run.stderr.includes(KEY), `${name}: key in stderr`).toBe(false);
+      expect(run.stderr.includes('#room='), `${name}: link in stderr`).toBe(false);
+      expect(run.stderr, name).toContain(`${input}: not valid JSON.`);
+      expect(run.stderr, name).not.toMatch(/SyntaxError/u);
+      expect(existsSync(output), name).toBe(false);
+      expect(existsSync(join(dir, `${name}.png`)), name).toBe(false);
+    }
+  });
+});
+
 describe('rea-extract.mjs page inspection', () => {
   it('redacts room values in accessible names, descriptions and limitations', () => {
     const input = join(dir, 'inspect.json');

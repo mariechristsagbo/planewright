@@ -26,6 +26,17 @@ const failureCode = (envelope) => {
   return named ? ` (error code ${code})` : '';
 };
 
+// A raw file that is not valid JSON is named but never quoted. V8's parse message can quote the
+// text around the fault, and Node prints the offending line of an uncaught parse error; either
+// can hold a page URL. So the parse error is dropped, and not kept as the cause either.
+export function parseJson(text, name) {
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(`${name}: not valid JSON.`);
+  }
+}
+
 // REA CLI output wraps one Evidence record as { ok, data }; the MCP server saves the bare record.
 // An envelope must report ok: true and hold a record, so a failed CLI call is never read as one.
 export function recordOf(parsed) {

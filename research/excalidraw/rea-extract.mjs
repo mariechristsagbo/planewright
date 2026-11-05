@@ -8,13 +8,14 @@
 //
 // Usage: node research/excalidraw/rea-extract.mjs <rea-result.json> [summary-out.json]
 // The input is an Evidence record saved by the MCP server or REA CLI output, which wraps one
-// record as { ok, data }. CLI output that does not report ok: true is refused before anything is
-// written. The optional summary file must not exist yet; nothing that exists is ever replaced.
+// record as { ok, data }. CLI output that does not report ok: true, and a file that is not valid
+// JSON, are refused before anything is written; the latter is named, never quoted. The optional
+// summary file must not exist yet; nothing that exists is ever replaced.
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 
 import { redactSecrets, stripQuery } from './lib/sanitise.mjs';
-import { recordOf } from './lib/windows.mjs';
+import { parseJson, recordOf } from './lib/windows.mjs';
 
 const INTERACTIVE = new Set([
   'button',
@@ -175,7 +176,7 @@ function inspection(evidence) {
 
 const [input, output] = process.argv.slice(2);
 if (!input) throw new Error('Pass a saved REA result JSON file.');
-const evidence = recordOf(JSON.parse(readFileSync(input, 'utf8')));
+const evidence = recordOf(parseJson(readFileSync(input, 'utf8'), input));
 const summaries = { capture_web_screenshot: screenshot, inspect_web_page: inspection };
 const summarise = summaries[evidence.operation];
 if (!summarise) throw new Error(`Unsupported REA operation "${String(evidence.operation)}".`);

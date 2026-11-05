@@ -139,11 +139,14 @@ did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
   `{ ok, data }` output of the REA CLI. CLI output that does not report `ok: true`, or holds no
   Evidence record, is refused with a message and nothing is written; `rea-windows.mjs` reads
   records the same way, so a failed call stops its build instead of being summarised as a
-  window or left out without notice, and its message names the session and file. It needs an
-  input ending in `.json` and never replaces an existing PNG with different bytes. The optional
-  summary file is created exclusively, so an existing file, the input included, is never
-  replaced. Accessible names and descriptions, and REA's own condition and limitation text, are
-  redacted before they are copied into a summary.
+  window or left out without notice, and its message names the session and file. A file that is
+  not valid JSON is refused the same way by both scripts, and so is a timeline line that is not
+  by `rea-windows.mjs`: the message names the file, or the line by its number, and never quotes
+  it, because a JSON parse error can quote a page URL. `rea-extract.mjs` needs an input ending
+  in `.json` and never replaces an existing PNG with different bytes. The optional summary file
+  is created exclusively, so an existing file, the input included, is never replaced.
+  Accessible names and descriptions, and REA's own condition and limitation text, are redacted
+  before they are copied into a summary.
 
 ## Scenario order and dependencies
 

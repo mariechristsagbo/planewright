@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   driverOverlap,
+  parseJson,
   recordOf,
   summariseRecord,
   summariseWindow,
@@ -54,6 +55,25 @@ const rows = [
   { started: '2026-01-01T00:00:13.000Z', step: { do: 'scene', label: 'probe-a' }, error: 'x' },
   { started: '2026-01-01T00:00:20.001Z', step: { do: 'drag' }, result: {} },
 ];
+
+describe('raw files that are not valid JSON', () => {
+  it('are named, with neither the parse message nor the parse error kept', () => {
+    // Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).
+    const room = 'a1B2'.repeat(5);
+    expect(parseJson('{"ok":true}', 's/rea/f.json')).toEqual({ ok: true });
+    const thrown = (() => {
+      try {
+        parseJson(`{"note":"https://example.test/#room=${room}" x}`, 's/rea/f.json');
+      } catch (error) {
+        return error;
+      }
+    })();
+    expect(thrown).toBeInstanceOf(Error);
+    expect(thrown.message).toBe('s/rea/f.json: not valid JSON.');
+    expect(thrown).not.toHaveProperty('cause');
+    expect(String(thrown.stack).includes(room), 'room value in the stack').toBe(false);
+  });
+});
 
 describe('REA CLI envelopes', () => {
   it('unwraps CLI envelopes and keeps MCP records as they are', () => {

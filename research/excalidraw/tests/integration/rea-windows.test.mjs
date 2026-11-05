@@ -78,3 +78,43 @@ describe('rea-windows.mjs', () => {
     }
   });
 });
+
+describe('rea-windows.mjs on files that are not valid JSON', () => {
+  // Synthetic, low-entropy room value built at run time (see sanitise.test.mjs). The checks on it
+  // compare booleans, so that a failure never prints the output that holds it.
+  const room = 'a1B2'.repeat(5);
+  const link = `https://example.test/#room=${room},${'k_L-'.repeat(5)}m1`;
+  const holds = (text, value) => text.includes(value);
+
+  it('stops on a REA file that is not valid JSON, names it and never prints its content', () => {
+    const cases = [
+      ['truncated', `{"ok":true,"data":{"note":"${link}"`],
+      ['stray-token', `{"ok":true,"data":{"note":"${link}" x}}`],
+    ];
+    for (const [name, text] of cases) {
+      session(`s-${name}`, { 'r01-targets.json': envelope(targets) });
+      writeFileSync(join(root, `s-${name}`, 'rea', `${name}.json`), text);
+      const output = `${name}.windows.json`;
+      const run = build(output, 's-good', `s-${name}`);
+      expect(run.status, name).not.toBe(0);
+      expect(holds(run.stderr, room), `${name}: room value in stderr`).toBe(false);
+      expect(holds(run.stderr, '#room='), `${name}: link in stderr`).toBe(false);
+      expect(run.stderr, name).toContain(`s-${name}/rea/${name}.json: not valid JSON.`);
+      expect(run.stderr, name).not.toMatch(/SyntaxError/u);
+      expect(existsSync(join(root, output)), name).toBe(false);
+    }
+  });
+
+  it('stops on a timeline line that is not valid JSON and names it by its number', () => {
+    session('s-timeline', { 'r01.json': envelope(window) });
+    const row = { started: '2026-01-01T00:00:12.000Z', step: { do: 'goto', url: link } };
+    const text = `${JSON.stringify(row)}\n\n${JSON.stringify(row).slice(0, -2)}\n`;
+    writeFileSync(join(root, 's-timeline', 'timeline.jsonl'), text);
+    const run = build('timeline.windows.json', 's-timeline');
+    expect(run.status).not.toBe(0);
+    expect(holds(run.stderr, room), 'room value in stderr').toBe(false);
+    expect(holds(run.stderr, '#room='), 'link in stderr').toBe(false);
+    expect(run.stderr).toContain('s-timeline/timeline.jsonl line 3: not valid JSON.');
+    expect(existsSync(join(root, 'timeline.windows.json'))).toBe(false);
+  });
+});
