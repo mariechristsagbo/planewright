@@ -114,9 +114,11 @@ describe('the record of the review of a78a210', () => {
 describe('the latest listed review', () => {
   it('sets R-75, the review note and the blocker from the exit rule, and keeps issue #1 open', () => {
     const { number, ordinal } = reviewWords(listedReviews(checkpoint()).length);
-    const { head, met } = exitRuleState(checkpoint());
+    const { head, met, reviewMeets } = exitRuleState(checkpoint());
     const opening = `${number[0].toUpperCase()}${number.slice(1)} independent reviews ran`;
-    const state = met
+    // The latest review's own verdict; with it met, only commits that no review covers keep R-75
+    // open, and the note and the blocker say so.
+    const state = reviewMeets
       ? 'meets the R-75 exit rule'
       : 'is remediated[^.]*; no review of that remediation has run yet';
     expect(row('R-75')[5].trim()).toBe(met ? '✅' : '🟡');
@@ -124,10 +126,12 @@ describe('the latest listed review', () => {
     expect(note('Separate Claude Code review session')).toMatch(
       new RegExp(`^${opening}\\. The ${ordinal} \\(of ${head}\\) ${state}`, 'u'),
     );
+    if (reviewMeets && !met)
+      expect(note('Separate Claude Code review session')).toContain('no review covers it yet');
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
     expect(flat(section('Blockers and residuals'))).toContain(
-      met
-        ? `The ${ordinal} review (of ${head}) meets the exit rule`
+      reviewMeets
+        ? `The ${ordinal} review (of ${head}) meets the exit rule${met ? '' : ', but'}`
         : `${ordinal}-review remediation is still to be run (R-75)`,
     );
   });

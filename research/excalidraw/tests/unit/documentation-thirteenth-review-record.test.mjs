@@ -1,7 +1,8 @@
 // Checks the record of the review of 6d5d264, found by its head: its counts, session, range,
 // verification, limits and verdict, its four suggestions left open, where the twelfth-review
-// remediation ends, R-75 and the review-session requirement done under the exit rule while the
-// other criteria and issue #1 stay open, and the checks of this record.
+// remediation ends, that the review meets the exit rule on its own while the other criteria and
+// issue #1 stay open, and the checks of this record. R-75 after the later netlog placement is
+// checked in documentation-netlog-placement-record.test.mjs.
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -57,7 +58,7 @@ describe('the record of the review of 6d5d264', () => {
         .indexOf('6d5d264'),
     ).toBe(12);
     expect(entry()).toMatch(
-      /^13\. Review of 6d5d264: 0 critical, 0 major, 0 minor findings and 4 suggestions\. It meets the R-75 exit rule: it covers 6d5d264, where the twelfth-review remediation ends, and the commits after it only record this review\./u,
+      /^13\. Review of 6d5d264: 0 critical, 0 major, 0 minor findings and 4 suggestions\. It meets the R-75 exit rule: it covers 6d5d264, where the twelfth-review remediation ends, and the commits after it up to c010f7e only record this review\./u,
     );
     expect(entry()).toContain('the twelfth-review remediation 4e9c663..6d5d264 read-only');
     expect(entry()).toContain(
@@ -98,24 +99,21 @@ describe('the record of the review of 6d5d264', () => {
   });
 });
 
-describe('R-75 after the review of 6d5d264', () => {
+describe('the review of 6d5d264 against the exit rule', () => {
   it('ends the twelfth-review remediation at 6d5d264, the head the review covers', () => {
     expect(flat(section('Checks of the twelfth-review remediation'))).toContain(
       'The remediation ends at 6d5d264, the commit that adds this section',
     );
-    expect(exitRuleState(checkpoint())).toEqual({
+    expect(exitRuleState(checkpoint())).toMatchObject({
       head: '6d5d264',
       blocking: 0,
       covers: true,
       remediated: false,
-      unreviewed: false,
       reviewMeets: true,
-      met: true,
     });
   });
 
-  it('sets R-75 and the review requirement done, and leaves the rest and issue #1 open', () => {
-    expect([r75()[5], r75()[9]]).toEqual(['✅', '—']);
+  it('keeps its suggestions in the R-75 row, and leaves the other criteria and issue #1 open', () => {
     expect(r75()[6]).toContain('6d5d264');
     expect(r75()[7]).toContain(
       'Its 4 suggestions stay open, with their handling in the checkpoint',
@@ -128,15 +126,13 @@ describe('R-75 after the review of 6d5d264', () => {
       'Canvas interactions through the external driver while REA observes',
       'Prioritised backlog with acceptance criteria',
     ]);
-    expect(withStatus('Testing requirements', 'Partial')).toEqual([
-      'Re-run each documented interaction from a fresh profile',
-      'Generated JSON and REA bundles validated',
-    ]);
-    expect(withStatus('Testing requirements', 'Done')).toContain(
-      'Separate Claude Code review session',
+    expect(withStatus('Testing requirements', 'Partial')).toEqual(
+      expect.arrayContaining([
+        'Re-run each documented interaction from a fresh profile',
+        'Generated JSON and REA bundles validated',
+      ]),
     );
     expect(flat(checkpoint())).toContain('Issue #1 stays open');
-    expect(flat(section('Blockers and residuals'))).toContain('Independent review (R-75), done.');
   });
 });
 
