@@ -170,13 +170,23 @@ describe('the 24-key beacons of the desktop sessions', () => {
   });
 });
 
-describe('the order of steps that started in the same millisecond', () => {
-  it('is stated in the research README: a trigger before the rows it ran', () => {
-    const readme = flat(read('research/excalidraw/README.md')).split('- Netlog placement. ')[1];
-    expect(readme.split(' - ')[0]).toContain(
+describe('the netlog placement in the research README', () => {
+  const readme = () =>
+    flat(read('research/excalidraw/README.md')).split('- Netlog placement. ')[1].split(' - ')[0];
+
+  it('orders steps that started in the same millisecond: a trigger before the rows it ran', () => {
+    expect(readme()).toContain(
       'Rows that started in the same millisecond keep the order in which their steps started: a ' +
         'step with a trigger comes before the rows of its trigger, which the driver writes ' +
         'before it, and other rows keep their line order.',
+    );
+  });
+
+  it('reads only the canonical times that the driver writes, which the summary copies', () => {
+    expect(readme()).toContain(
+      'A missing file, or a line that is not valid JSON or has no time in the canonical form ' +
+        'that the driver writes (toISOString, with milliseconds and Z), stops the build and is ' +
+        'named, never quoted.',
     );
   });
 });

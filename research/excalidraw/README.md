@@ -155,8 +155,9 @@ did. Each output went straight to `$OUT/rea/` in the workspace artifact tree.
   and the timeline records when each step started, not when it ended. Rows that started in the
   same millisecond keep the order in which their steps started: a step with a trigger comes before
   the rows of its trigger, which the driver writes before it, and other rows keep their line
-  order. A missing file, or a line that is not valid JSON or has no valid time, stops the build
-  and is named, never quoted.
+  order. A missing file, or a line that is not valid JSON or has no time in the canonical form
+  that the driver writes (`toISOString`, with milliseconds and `Z`), stops the build and is
+  named, never quoted.
 
 ## Scenario order and dependencies
 
