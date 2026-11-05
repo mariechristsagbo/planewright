@@ -185,4 +185,17 @@ describe('timeline redaction', () => {
     // The page still received the selector and the name as sent.
     expect(clicked).toEqual([`a[href="${url}"]`, url]);
   });
+
+  it('redacts room values in key names, in the step record and in the result', async () => {
+    const steps = new Map([['echo', async () => ({ [ROOM_URL]: 'result' })]]);
+    const timelineFile = join(dir, 'redacted-keys.jsonl');
+    const ctx = createRunner({ steps, timelineFile, base: {} });
+    await ctx.run({ do: 'echo', nested: [{ [ROOM_URL]: 'step' }] });
+    const text = readFileSync(timelineFile, 'utf8');
+    expect(countSecretShapes(text)).toEqual({});
+    const redacted = 'https://excalidraw.com/#room=<redacted>';
+    const row = JSON.parse(text);
+    expect(row.step.nested).toEqual([{ [redacted]: 'step' }]);
+    expect(row.result).toEqual({ [redacted]: 'result' });
+  });
 });
