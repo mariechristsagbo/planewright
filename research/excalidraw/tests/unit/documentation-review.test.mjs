@@ -22,8 +22,13 @@ const row = (id) =>
   read('docs/reverse-engineering/residual-matrix.md')
     .split('\n')
     .find((line) => line.startsWith(`| ${id} |`));
+// The raw-only bullet of limitations.md, up to the next top-level bullet.
 const rawOnly = () =>
-  doc('limitations.md').split('Facts read only from raw records')[1].slice(0, 2500);
+  flat(
+    read('docs/reverse-engineering/limitations.md')
+      .split('Facts read only from raw records')[1]
+      .split(/\n- \*\*/u)[0],
+  );
 const SCENARIOS = 'research/excalidraw/scenarios';
 const scenario = (name) => JSON.parse(read(`${SCENARIOS}/${name}.json`));
 
