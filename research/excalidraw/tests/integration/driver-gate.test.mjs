@@ -198,4 +198,21 @@ describe('timeline redaction', () => {
     expect(row.step.nested).toEqual([{ [redacted]: 'step' }]);
     expect(row.result).toEqual({ [redacted]: 'result' });
   });
+
+  it('redacts room values nested in a result, in lists, objects and key names', async () => {
+    // Shaped like real results: storage key lists, chooser file names, mask boxes per selector.
+    const nested = (value) => ({
+      storage: { localStorage: { kind: 'object', keys: ['theme', value] } },
+      files: [{ name: value, bytes: 3 }],
+      maskBoxes: [[{ selector: value, width: 10 }]],
+      byKey: { outer: { [value]: { inner: [value] } } },
+    });
+    const steps = new Map([['echo', async () => nested(ROOM_URL)]]);
+    const timelineFile = join(dir, 'redacted-nested.jsonl');
+    const ctx = createRunner({ steps, timelineFile, base: {} });
+    await ctx.run({ do: 'echo' });
+    const text = readFileSync(timelineFile, 'utf8');
+    expect(countSecretShapes(text)).toEqual({});
+    expect(JSON.parse(text).result).toEqual(nested('https://excalidraw.com/#room=<redacted>'));
+  });
 });
