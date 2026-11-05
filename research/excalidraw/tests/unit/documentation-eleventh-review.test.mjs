@@ -109,21 +109,15 @@ describe('the unreviewed bullet', () => {
         .split(/\n\d+\. /u)[0],
     );
 
-  it('is said to be kept by hand, because no test can read the Git history', () => {
+  // Where the record checks run in CI, and why they have no history there, is checked against the
+  // workflow in documentation-twelfth-review.test.mjs.
+  it('is said to be kept by hand, because no record check reads the Git history', () => {
     expect(rule()).toContain(
       'The bullet is kept by hand: whoever pushes a behaviour-changing commit after the latest ' +
         'reviewed head adds it.',
     );
     expect(rule()).toMatch(
-      /The record checks test only that [^.]* agree with one another; they do not read the Git history, because the CI test job checks out a single commit and a squash merge keeps none of the branch commits\./u,
+      /The record checks test only that [^.]* agree with one another; they do not read the Git history\./u,
     );
-  });
-
-  it('describes the CI job that runs the tests: one checkout without history', () => {
-    const jobs = read('.github/workflows/ci.yml').split(/\n(?= {2}[\w-]+:\n)/u);
-    const tests = jobs.filter((job) => job.includes('run: npm run test:coverage'));
-    expect(tests).toHaveLength(1);
-    expect(tests[0]).toMatch(/uses: actions\/checkout@/u);
-    expect(tests[0]).not.toMatch(/fetch-depth/u);
   });
 });

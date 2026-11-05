@@ -310,9 +310,12 @@ remaining observation work and the maintainer decisions.
 
 **Unreviewed bullet.** The bullet is kept by hand: whoever pushes a behaviour-changing commit
 after the latest reviewed head adds it. The record checks test only that the review list, that
-bullet, the remediation checks and R-75 agree with one another; they do not read the Git history,
-because the CI test job checks out a single commit and a squash merge keeps none of the branch
-commits. So only a review finds a missing bullet, as the tenth review did.
+bullet, the remediation checks and R-75 agree with one another; they do not read the Git history.
+In CI they run only in the `quality` job, which checks out one commit, at the checkout action's
+default depth, and fetches nothing more. The jobs that fetch the whole history, `secret-history`
+and `conventions` (`fetch-depth: 0`), do not run them, and a squash merge keeps none of the
+branch commits on `main`. A check of the bullet against the history could run in `conventions`,
+but none does yet, so only a review finds a missing bullet, as the tenth review did.
 
 1. **Review of `3f9fc06`** (posted on PR #2): 7 major findings, 8 minor findings and 5
    suggestions.
