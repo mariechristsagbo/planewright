@@ -249,6 +249,13 @@ const servedTimes = (name) =>
     .sessions.find((x) => x.session === name)
     .placements.flatMap(servedAt);
 const clock = (t) => new Date(Math.round(t / 100) * 100).toISOString().slice(11, 21);
+// The same times for the served entries on one origin only.
+const servedOn = (name, origin) =>
+  evidence('netlog-steps.json')
+    .sessions.find((x) => x.session === name)
+    .placements.flatMap((p) =>
+      servedAt({ ...p, entries: p.entries.filter((e) => e.includes(` ${origin}/`)) }),
+    );
 
 describe('the s11 requests set against its scenarios', () => {
   const s11 = 's11-mobile-r76-14';
@@ -278,7 +285,6 @@ describe('the s11 requests set against its scenarios', () => {
         `${clock(Math.max(...written))} UTC`,
     );
     expect(text).toContain('evidence/netlog-steps.json keeps each entry');
-    expect(text).not.toMatch(/\b(?:started|start) (?:during|between|in the rest)\b/u);
     expect(text).toContain(
       `The 24-key beacon was written ${beacons === 2 ? 'twice' : String(beacons)}`,
     );
@@ -301,5 +307,22 @@ describe('the s11 requests set against its scenarios', () => {
         'step started and that finished later is placed in a later step',
     );
     expect(r66[7]).not.toContain('raw-only');
+  });
+});
+
+describe('the netlog times in the research documents', () => {
+  it('give no request a start time from the netlog, in any research document', () => {
+    // A netlog time is when the driver wrote the entry, after the request had finished or failed.
+    const names = readdirSync(join(ROOT, RE)).filter((name) => name.endsWith('.md'));
+    expect(names).toEqual(expect.arrayContaining(['checkpoint.md', 'network-analysis.md']));
+    for (const name of names)
+      expect(doc(name), name).not.toMatch(
+        /\b(?:started|start) (?:during|between|in the rest|from)\b/u,
+      );
+    const page = servedOn('s11-mobile-r76-14', PAGE);
+    expect(doc('checkpoint.md')).toContain(
+      `the ${String(page.length)} page-origin requests were written from ` +
+        `${clock(Math.min(...page))}.`,
+    );
   });
 });

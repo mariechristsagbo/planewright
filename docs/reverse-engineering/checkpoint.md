@@ -388,8 +388,8 @@ the four suggestions of the review of `6d5d264` is addressed.
   - R-64: in s1 and s6 the dedicated worker event was written during the Export to SVG step, but
     both sessions had clicked Export to PNG 15.0 s before in the same dialog, so the trigger stays
     a hypothesis and R-64 stays 🟡.
-  - The s8–s11 statements that said requests started during a scenario or between two times now
-    say when the netlog wrote them; their counts and times are unchanged.
+  - The s8–s11 statements that put a request's start in a scenario or between two times now say
+    when the netlog wrote it; their counts and times are unchanged.
 - `npm run validate` passed on `eff8534` (2026-11-05, 13:02–13:03 UTC: format, lint, typecheck,
   guardrails, secretlint, coverage and build; 50 test files and 605 tests; coverage 98.46%
   statements, 96.45% branches, 97.59% functions and 98.97% lines, with `lib/placement.mjs` at 100%;
@@ -631,7 +631,7 @@ but none does yet, so only a review finds a missing bullet, as the tenth review 
     - **Suggestion 3, the s11 timing:** placed in its scenarios as an inference from the raw
       times, narrowing R-64 and R-66 (`f0eac4f`). The raw records refine the review's summary:
       the first request of 04:54:12.0–19.7 is the Cascadia font, and the 64 page-origin
-      requests started from 04:54:13.3.
+      requests were written from 04:54:13.3.
     - **Suggestion 4, the scroll wording:** s10's box minus (90,45) equals s6's box (`19bfa5d`).
     - **Suggestion 5, the build change cited from REA alone:** cited from the netlog (`5eb8852`).
     - Suggestions 2–10 of the review of `a85eb82` stay open as listed there; this remediation
