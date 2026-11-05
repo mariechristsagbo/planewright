@@ -34,15 +34,50 @@ const kindOf = (step) => (typeof step?.do === 'string' && KIND.test(step.do) ? s
 const nameOf = (step) =>
   step?.do === 'role' && typeof step.name === 'string' ? redactSecrets(step.name) : undefined;
 
-/** Timeline rows ordered by start time; a trigger's nested rows are written before their parent. */
+const same = (step, wanted) => JSON.stringify(step) === JSON.stringify(wanted);
+
+// Takes from `done` the rows that a trigger ran: the most rows just before its own whose steps
+// are, in order, the first steps of the trigger (fewer than all when a trigger step failed).
+function takeNested(done, trigger) {
+  for (let k = Math.min(trigger.length, done.length); k > 0; k -= 1) {
+    if (done.slice(-k).every((node, i) => same(node.step, trigger[i]))) return done.splice(-k);
+  }
+  return [];
+}
+
+// The runner writes a row when its step ends, so the rows that a trigger ran come just before the
+// row of their parent, which started before them. Rebuilds that nesting from each parent's
+// recorded trigger and returns the timeline lines in the order their steps started.
+function startOrder(rows) {
+  const done = [];
+  rows.forEach((row, index) => {
+    const trigger = Array.isArray(row?.step?.trigger) ? row.step.trigger : [];
+    const nested = takeNested(done, trigger);
+    done.push({ line: index + 1, step: row?.step, nested });
+  });
+  const lines = [];
+  const visit = (node) => {
+    lines.push(node.line);
+    node.nested.forEach(visit);
+  };
+  done.forEach(visit);
+  return lines;
+}
+
+/**
+ * Timeline rows ordered by start time. Rows that started in the same millisecond keep the order in
+ * which their steps started: a trigger before the rows it ran, which are written before it, and
+ * other rows in line order.
+ */
 export function orderSteps(rows) {
+  const rank = new Map(startOrder(rows).map((line, k) => [line, k]));
   return rows
     .map((row, index) => {
       const line = index + 1;
       const t = timeOf(row?.started, `timeline line ${String(line)}`);
       return { line, t, started: row.started, do: kindOf(row.step), name: nameOf(row.step) };
     })
-    .sort((a, b) => a.t - b.t || a.line - b.line);
+    .sort((a, b) => a.t - b.t || rank.get(a.line) - rank.get(b.line));
 }
 
 /** The index of the step that started last at or before `t`, or -1 before the first step. */

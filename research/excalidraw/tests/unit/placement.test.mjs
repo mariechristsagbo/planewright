@@ -42,8 +42,8 @@ describe('orderSteps', () => {
     expect(steps[0].name).toBeUndefined();
   });
 
-  it('keeps the line order of rows that started in the same millisecond', () => {
-    const steps = orderSteps([row(1, { do: 'key' }), row(1, { do: 'download' })]);
+  it('keeps the line order of unrelated rows that started in the same millisecond', () => {
+    const steps = orderSteps([row(1, { do: 'key', key: 'a' }), row(1, { do: 'download' })]);
     expect(steps.map((s) => s.line)).toEqual([1, 2]);
   });
 
@@ -70,6 +70,43 @@ describe('orderSteps', () => {
     expect(() => orderSteps([{ started: 'soon', step: { do: 'key' } }])).toThrow(
       'timeline line 1: no valid time.',
     );
+  });
+});
+
+// The runner writes a row when its step ends, so the rows a trigger ran come before its own.
+describe('orderSteps with triggers', () => {
+  it('puts a trigger before the rows it ran when they started in the same millisecond', () => {
+    // The runner writes the key row first, when the key step ends, then the download row.
+    const key = { do: 'key', key: 'Control+s' };
+    const steps = orderSteps([row(1, key), row(1, { do: 'download', name: 'x', trigger: [key] })]);
+    expect(steps.map((s) => [s.line, s.do])).toEqual([
+      [2, 'download'],
+      [1, 'key'],
+    ]);
+  });
+
+  it('rebuilds nested triggers, and a trigger that stopped at a failed step', () => {
+    const [a, b, open] = [{ do: 'key', key: 'a' }, { do: 'key', key: 'b' }, { do: 'role' }];
+    const chooser = { do: 'fileChooser', trigger: [open] };
+    const nested = orderSteps([
+      row(1, a),
+      row(1, open),
+      row(1, chooser),
+      row(1, { do: 'download', trigger: [a, chooser] }),
+    ]);
+    expect(nested.map((s) => s.line)).toEqual([4, 1, 3, 2]);
+    // Only the first trigger step ran, so only its row belongs to the parent.
+    const stopped = orderSteps([row(1, a), row(1, a), row(1, { do: 'download', trigger: [a, b] })]);
+    expect(stopped.map((s) => s.line)).toEqual([1, 3, 2]);
+  });
+
+  it('keeps the line order when the rows before a trigger are not its steps', () => {
+    const steps = orderSteps([
+      row(1, { invalid: 'number' }),
+      row(1, { do: 'key', key: 'b' }),
+      row(1, { do: 'download', trigger: [5, { do: 'key', key: 'a' }] }),
+    ]);
+    expect(steps.map((s) => s.line)).toEqual([1, 2, 3]);
   });
 });
 
@@ -188,6 +225,24 @@ describe('the drawing summary of placeSession', () => {
     expect(drawing.next_entry_ms).toEqual({ min: 500, max: 500 });
     expect(drawing.without_later_entry).toBe(1);
     expect(drawing.last_started).toBe(at(30));
+  });
+
+  it('counts an entry written in the millisecond a drawing step started as written during it', () => {
+    const { drawing } = placeSession(rows, [request(20)]);
+    expect(drawing.entries_during).toBe(1);
+    expect(drawing.next_entry_ms).toEqual({ min: 0, max: 0 });
+    expect(drawing.without_later_entry).toBe(1);
+  });
+
+  it('places an entry under the step a trigger ran, not the trigger, in the same millisecond', () => {
+    const key = { do: 'key', key: 'Control+s' };
+    const placed = placeSession(
+      [row(1, key), row(1, { do: 'download', name: 'x', trigger: [key] })],
+      [request(1.1)],
+    );
+    expect(placed.placements.map((p) => [p.line, p.do, p.entries])).toEqual([
+      [1, 'key', ['+100 request script 200 https://example.test/a.js']],
+    ]);
   });
 
   it('reports no next entry when no entry follows any drawing step', () => {

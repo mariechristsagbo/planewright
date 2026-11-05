@@ -168,6 +168,17 @@ describe('the 24-key beacons of the desktop sessions', () => {
   });
 });
 
+describe('the order of steps that started in the same millisecond', () => {
+  it('is stated in the research README: a trigger before the rows it ran', () => {
+    const readme = flat(read('research/excalidraw/README.md')).split('- Netlog placement. ')[1];
+    expect(readme.split(' - ')[0]).toContain(
+      'Rows that started in the same millisecond keep the order in which their steps started: a ' +
+        'step with a trigger comes before the rows of its trigger, which the driver writes ' +
+        'before it, and other rows keep their line order.',
+    );
+  });
+});
+
 describe('R-66 and the other documents', () => {
   it('cite the placement for every session and keep the row partial', () => {
     const row = cells('R-66').map(flat);
