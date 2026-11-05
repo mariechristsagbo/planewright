@@ -83,7 +83,7 @@ describe('the mobile priority-1 scenarios', () => {
     const kinds = stepsOf(name).map((step) => step.do);
     for (const kind of [...mouseOrKeys, 'wheel', 'selector']) expect(kinds).not.toContain(kind);
     const named = stepsOf(name).filter((step) => step.do === 'role');
-    expect(named.map((step) => step.name)).toEqual(name === HIT ? ['Background', '#a5d8ff'] : []);
+    expect(named.map((step) => step.name)).toEqual(name === HIT ? ['Background', 'Blue'] : []);
   });
 
   it.each(ALL)('%s touches the canvas between the bars, or the Rectangle tool', (name) => {
@@ -139,7 +139,7 @@ describe('the hit-testing scenario (R-34)', () => {
     expect(open.right - open.left).toBe(filled.right - filled.left);
     expect(open.bottom - open.top).toBe(filled.bottom - filled.top);
     const steps = stepsOf(HIT);
-    const swatch = steps.findIndex((step) => step.name === '#a5d8ff');
+    const swatch = steps.findIndex((step) => step.name === 'Blue');
     const second = steps.indexOf(steps.filter((step) => step.do === 'touchDrag')[1]);
     expect(swatch).toBeGreaterThan(second);
   });

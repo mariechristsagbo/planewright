@@ -1,5 +1,5 @@
 {
-  "description": "Mobile 390x844 portrait, DPR 3, touch, R-34: hit-testing by tap at zoom 1. Draws a transparent rectangle [100,110,120,80] and a second of the same size [100,260,120,80], gives the second the #a5d8ff background through the compact property bar's Background popover, then taps each left stroke (x 100) at its vertical middle at offsets of -24 to +24 px and at the centre (+60), each tap after a deselecting tap on empty canvas, and reads the app state 900 ms after each. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas). The emulated touch points have the CDP default contact radius of 1 px, so a finger's contact area is not modelled.",
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-34: hit-testing by tap at zoom 1. Draws a transparent rectangle [100,110,120,80] and a second of the same size [100,260,120,80], gives the second the Blue background through the compact property bar's Background popover, whose colour buttons are named with their shortcut letter (\"Blue — s\"), then taps each left stroke (x 100) at its vertical middle at offsets of -24 to +24 px and at the centre (+60), each tap after a deselecting tap on empty canvas, and reads the app state 900 ms after each. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas). The emulated touch points have the CDP default contact radius of 1 px, so a finger's contact area is not modelled. s17 ran an earlier version that asked for a swatch named #a5d8ff, which the popover does not have, so both of its rectangles stayed transparent.",
   "continueOnError": true,
   "steps": [
     {
@@ -80,7 +80,7 @@
     {
       "do": "role",
       "role": "button",
-      "name": "#a5d8ff"
+      "name": "Blue"
     },
     {
       "do": "wait",

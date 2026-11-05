@@ -233,7 +233,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
   earlier `07b` that overwrote 07's captures, and earlier emulate steps that `s6` replaced with
   assertions. `s3` ran an earlier `10` that re-emulated. `s3`, `s4`, `s7`, `s11` and `s12` ran `09`
   before it asked for a portrait screen orientation (from `s15` on), and `s12` ran `22` before its
-  assertions expected it.
+  assertions expected it. `s17` ran an earlier `25` that asked for a swatch named `#a5d8ff`; the
+  Background popover names its colours with their shortcut letter (`Blue — s`), so that step
+  failed and both of its rectangles stayed transparent.
 - **REA.** Run REA calls only outside the collaboration window (`08`, `08b`): REA target
   listings keep URL fragments. The driver's `runLast` lock keeps 08/08b at the end of a session,
   but it cannot see REA calls, so this rule stays manual.
