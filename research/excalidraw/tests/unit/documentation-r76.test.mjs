@@ -43,6 +43,22 @@ const tally = (steps) => {
   return out;
 };
 const ms = (from, to) => Date.parse(to) - Date.parse(from);
+const probes = (name) => evidence(`probes-${name}.json`);
+const probe = (name, label) => probes(name).find((p) => p.label === label);
+const entry = (id) =>
+  read(`${RE}/behavior-analysis.md`)
+    .split(/^### /mu)
+    .find((section) => section.startsWith(id));
+const field = (text, name) => flat(text.split(`- **${name}:**`)[1].split(/\n- \*\*/u)[0]).trim();
+// The read time and label always differ between sessions; every other field must match.
+const strip = (p) => JSON.stringify({ ...p, at: undefined, label: undefined });
+const differing = (later, earlier) => {
+  const byLabel = new Map(probes(earlier).map((p) => [p.label, p]));
+  const shared = probes(later).filter((p) => byLabel.has(p.label));
+  const labels = shared.filter((p) => strip(p) !== strip(byLabel.get(p.label))).map((p) => p.label);
+  return { shared: shared.length, labels };
+};
+const range = (list) => `${String(Math.min(...list))}–${String(Math.max(...list))}`;
 
 describe('the R-76 sessions', () => {
   it.each(R76)('$name ran exactly the scenarios of its README row, once loaded', (run) => {
@@ -99,4 +115,78 @@ describe('the R-76 REA windows', () => {
       );
     },
   );
+});
+
+describe('scenarios 12 and 13 against s6', () => {
+  it('cite the replay counts of s8 and s9', () => {
+    const text = flat(read(`${RE}/behavior-analysis.md`));
+    const twelve = differing('s8-desktop-r76-12', 's6-desktop-fresh');
+    expect(twelve).toEqual({ shared: 5, labels: [] });
+    expect(text).toContain('s8 shares 5 labels with s6, and 5 of 5 are identical');
+    const thirteen = differing('s9-desktop-r76-13', 's6-desktop-fresh');
+    expect(thirteen.labels).toEqual(['13a-t200']);
+    const same = thirteen.shared - thirteen.labels.length;
+    expect(text).toContain(
+      `s9 shares ${String(thirteen.shared)} labels with s6, and ${String(same)} of ` +
+        `${String(thirteen.shared)} are identical: all of scenario 13 except 13a-t200`,
+    );
+  });
+
+  it('rate B-02 high only while s6 and s8 agree on every scenario 12 label', () => {
+    const labels = scenario('12')
+      .steps.filter((step) => step.label)
+      .map((step) => step.label);
+    const { shared, labels: differ } = differing('s8-desktop-r76-12', 's6-desktop-fresh');
+    expect(shared).toBe(new Set(labels).size);
+    const rating = field(entry('B-02'), 'Confidence');
+    expect(rating).toMatch(differ.length === 0 ? /^\[O\] high: s6 and s8/u : /medium/u);
+    expect(field(entry('B-02'), 'Reproduction')).toContain('scenario 12 (s6, s8)');
+  });
+});
+
+// For each trial, the offsets of the reads after the first and whether the new shape was there.
+const trials = (name) =>
+  ['13a', '13b', '13c'].map((trial) => {
+    const t0 = probe(name, `${trial}-t0`);
+    const final = probe(name, `${trial}-t1500`).elements.length;
+    return ['t100', 't200', 't300'].map((key) => {
+      const p = probe(name, `${trial}-${key}`);
+      return { trial, key, at: ms(t0.at, p.at), saved: p.elements.length === final };
+    });
+  });
+
+describe('the scenario 13 save timing', () => {
+  it('give the s9 save timing read by read, and keep the timing medium while it differs', () => {
+    const reads = trials('s9-desktop-r76-13').flat();
+    const at = (key, saved) =>
+      reads.filter((r) => r.key === key && r.saved === saved).map((r) => r.at);
+    expect(at('t100', true)).toEqual([]);
+    expect(at('t300', false)).toEqual([]);
+    const early = reads.filter((r) => r.key === 't200' && r.saved);
+    expect(early.map((r) => r.trial)).toEqual(['13a']);
+    const text = field(entry('B-30'), 'Immediate result');
+    expect(text).toContain(
+      `absent at 0 and ${range(at('t100', false))} ms in 3 of 3 trials, absent at ` +
+        `${range(at('t200', false))} ms in 2 and already present at ${String(early[0].at)} ms in ` +
+        `1 (13a), and present at ${range(at('t300', true))} ms and later in 3 of 3`,
+    );
+    const s6 = trials('s6-desktop-fresh').flat();
+    expect(s6.some((r) => r.key === 't200' && r.saved)).toBe(false);
+    expect(field(entry('B-30'), 'Confidence')).toMatch(/\[O\] medium for the timing: s6 and s9/u);
+  });
+
+  it('carry the two-session bounds into the backlog and hypothesis A-06', () => {
+    const reads = [...trials('s6-desktop-fresh'), ...trials('s9-desktop-r76-13')].flat();
+    const offsets = (key) => reads.filter((r) => r.key === key).map((r) => r.at);
+    const absent = reads.filter((r) => r.key === 't200' && !r.saved).map((r) => r.at);
+    const backlog = flat(read(`${RE}/backlog.md`));
+    expect(backlog).toContain(
+      `landed after the ${range(offsets('t100'))} ms read and by the ${range(offsets('t300'))} ` +
+        `ms read in 6 of 6 trials (s6 and s9); after the ${range(absent)} ms read in 5 of them`,
+    );
+    expect(flat(read(`${RE}/architecture-hypotheses.md`))).toContain(
+      `absent at the ${range(offsets('t100'))} ms read and present at the ` +
+        `${range(offsets('t300'))} ms read after the first post-drag read in 6 of 6 trials`,
+    );
+  });
 });

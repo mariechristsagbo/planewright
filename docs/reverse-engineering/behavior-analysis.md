@@ -42,6 +42,9 @@ value is a value the page had saved locally.
   labels from `05-shift-1-fit` on, because s2 ran 05 straight after 03 (see B-36).
 - In all, 47 of the 80 s6 labels also occur in s1 or s2, and each matches at least one earlier
   occurrence.
+- s8 shares 5 labels with s6, and 5 of 5 are identical: all of scenario 12 (B-02).
+- s9 shares 20 labels with s6, and 19 of 20 are identical: all of scenario 13 except `13a-t200`,
+  where s9 had already saved the new shape (B-30).
 - s7 shares 6 labels with s3, and 2 of 6 are identical. The other 4 differ only in scrollX
   after the pinch (−135 in s3 at DPR 1, −132 in s7 at DPR 3), which carries into later labels.
 
@@ -75,7 +78,7 @@ value is a value the page had saved locally.
 - **Desktop/mobile:** a one-finger touch drag (120,250)→(260,350) with the Rectangle tool gives
   `[120,250,140,100]` (`m-rect-touch`, s3 and s7) [O]. Ellipse, diamond and line on mobile: Not
   observed (R-24).
-- **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`), 12 (s6:
+- **Reproduction:** scenarios 02 (s2, s6: `02-all-shapes`), 12 (s6, s8:
   `12-after-canvas-drag`), 10 (s3, s7: `m-rect-touch`).
 - **Confidence:** [O] high (s2 and s6 identical; s3 and s7 identical).
 - **Limitations:** one size per shape; dark theme only for a rectangle and an arrow
@@ -96,8 +99,10 @@ value is a value the page had saved locally.
 - **Edge cases:** a drag that starts on the canvas and ends over the panel: Not observed (R-29).
 - **Desktop/mobile:** mobile has no side panel (feature inventory F-33); a drag across its
   compact bar: Not observed (R-11).
-- **Reproduction:** scenario 12 (s6). s1's earlier scenario 02 hit the same effect by accident.
-- **Confidence:** [O] medium (one committed scenario run; s1 corroborates only qualitatively).
+- **Reproduction:** scenario 12 (s6, s8). s1's earlier scenario 02 hit the same effect by
+  accident.
+- **Confidence:** [O] high: s6 and s8, both fresh profiles, gave identical probes for all five
+  labels of scenario 12; s8 ran a later build (see [limitations](limitations.md)).
 - **Limitations:** the panel extent was read from screenshots, not probed (R-29).
 
 ### B-03 Contextual hint line
@@ -699,16 +704,21 @@ value is a value the page had saved locally.
 - **Action:** draw a shape and read local storage at fixed delays; reload the page.
 - **Immediate result:** the scene is written to `localStorage["excalidraw"]` as an array of
   elements and the UI state to `localStorage["excalidraw-state"]` [O]. Save timing (scenario 13,
-  s6, three shapes; offsets from the first scene read after the drag step returned): each new
-  shape was absent at 0, 114–120 and 224–236 ms and present at 338–376 ms and later, in 3 of 3
-  trials [O]. The pointer-up time was not recorded, so the save came at least about 224 ms after
-  pointer-up; the upper bound is not known. A debounce of about 300 ms is [H].
+  three shapes per session; offsets from the first scene read after the drag step returned): in
+  s6, each new shape was absent at 0, 114–120 and 224–236 ms and present at 338–376 ms and
+  later, in 3 of 3 trials [O]. In s9, a second fresh profile on a later build, it was absent at
+  0 and 116–138 ms in 3 of 3 trials, absent at 244–245 ms in 2 and already present at 255 ms in
+  1 (13a), and present at 368–371 ms and later in 3 of 3 [O]. The pointer-up time was not
+  recorded, so in 5 of the 6 trials the save came more than about 224 ms after pointer-up and in
+  the sixth more than about 138 ms; the upper bound is not known. A debounce of about 300 ms
+  is [H].
 - **State and related effects:** the reload in scenario 06 restored the identical element list
   and scroll (90,45) (`06-image-inserted` → `06-after-reload`, s1 and s6) [O]. In s6 the
   9-element scene of `02-all-shapes` was read again, identical, as `diag-rect-before` after the
   `00b` and `00c` reloads that ran between them [O]; scroll was not read there. The later `00b`
   reload, between scenarios 13 and 03, has no scene probe after it before 03 clears the canvas.
-- **Persistence:** after Ctrl+A and Delete the stored array is empty (`12-end`, `13-end`): the
+- **Persistence:** after Ctrl+A and Delete the stored array is empty (`12-end`, `13-end`; s6, s8
+  and s9): the
   probe counts every stored element, including flagged ones, so deleted elements are dropped
   from storage [O].
 - **Undo/redo:** history across a reload: Not observed (R-52).
@@ -716,9 +726,11 @@ value is a value the page had saved locally.
   storage quota and mobile reload: Not observed (R-54).
 - **Desktop/mobile:** mobile reload: Not observed. Scenario `09b` exists but never ran: s3, s4
   and s7 each record 0 reloads (R-54).
-- **Reproduction:** scenario 13 (s6: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1, s6).
-- **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6); [O] medium
-  for the timing (one session; an s1 timing reading is not in the committed index).
+- **Reproduction:** scenario 13 (s6, s9: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1,
+  s6).
+- **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6; deletion also
+  in s8 and s9); [O] medium for the timing: s6 and s9 differ at the third read of one of six
+  trials, and an s1 timing reading is not in the committed index.
 - **Limitations:** `excalidraw-state` keeps 60 keys (raw count); the read cadence bounds the save
   time only to the 100–150 ms gaps between reads (R-54).
 

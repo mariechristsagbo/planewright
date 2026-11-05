@@ -60,9 +60,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 6. **Local persistence.** Ref: B-30, B-31.
    - The scene and the scroll position survive a reload [O, scenario 06 in s1 and s6]. Zoom and
      selection across a reload, and a mobile reload, are **open** (R-54).
-   - Changes are saved automatically. The reference's save landed after the 224–236 ms read and
-     by the 338–376 ms read, counted from the first read after the drag, in 3 of 3 trials
-     [O, medium]. Its delay from pointer-up and any effect on input are not established; the
+   - Changes are saved automatically. Counted from the first read after the drag, the
+     reference's save landed after the 114–138 ms read and by the 338–376 ms read in 6 of 6
+     trials (s6 and s9); after the 224–245 ms read in 5 of them, and by the 255 ms read in the
+     sixth [O, medium: the sessions differ]. Its delay from pointer-up and any effect on input are not established; the
      delay is a Planewright decision.
    - Deleted elements are not kept in local storage [O].
    - Binary files are stored apart from the scene: a design choice. The reference's `files-db`
