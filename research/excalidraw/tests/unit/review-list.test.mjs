@@ -1,5 +1,5 @@
-// Checks the number and ordinal words of review-list.mjs, that a checkpoint listing fourteen
-// reviews is read to its last entry, which the record checks need once a fourteenth review is
+// Checks the number and ordinal words of review-list.mjs, that a checkpoint listing fifteen
+// reviews is read to its last entry, which the record checks need once a fifteenth review is
 // recorded, that the latest review's own verdict is kept apart from later commits that no review
 // covers, and that any listed review keeps its own state whatever review comes after it.
 import { describe, expect, it } from 'vitest';
@@ -24,24 +24,29 @@ const record = (count) => {
 };
 
 describe('the review words', () => {
-  it('name every count up to fourteen reviews', () => {
+  it('name every count up to fifteen reviews', () => {
     expect(reviewWords(13)).toEqual({ number: 'thirteen', ordinal: 'thirteenth' });
     expect(reviewWords(14)).toEqual({ number: 'fourteen', ordinal: 'fourteenth' });
+    expect(reviewWords(15)).toEqual({ number: 'fifteen', ordinal: 'fifteenth' });
+    // Every count has words of its own, so no word is left out or repeated before the last.
+    const words = Array.from({ length: 15 }, (_, n) => reviewWords(n + 1));
+    expect(new Set(words.map(({ number }) => number)).size).toBe(15);
+    expect(new Set(words.map(({ ordinal }) => ordinal)).size).toBe(15);
   });
 
   it('fail with a clear message past the last word', () => {
-    expect(() => reviewWords(15)).toThrow(
-      'Add number and ordinal words for 15 reviews to review-list.mjs.',
+    expect(() => reviewWords(16)).toThrow(
+      'Add number and ordinal words for 16 reviews to review-list.mjs.',
     );
   });
 });
 
-describe('a checkpoint that lists fourteen reviews', () => {
-  it('is read to its fourteenth entry and the state of the exit rule', () => {
-    const text = record(14);
-    expect(listedReviews(text)).toHaveLength(14);
+describe('a checkpoint that lists fifteen reviews', () => {
+  it('is read to its fifteenth entry and the state of the exit rule', () => {
+    const text = record(15);
+    expect(listedReviews(text)).toHaveLength(15);
     expect(exitRuleState(text)).toMatchObject({
-      head: '000000e',
+      head: '000000f',
       blocking: 0,
       covers: true,
       remediated: false,
