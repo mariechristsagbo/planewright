@@ -1,0 +1,369 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-30: draws an arrow by a drag from (60,560) to (300,560), which leaves it selected, opens the Arrow type popover and touches its three unnamed radios at the button centres measured on s34's capture, (70,690), (150,690) and (110,690), each from a fresh popover after a deselecting tap and a tap on the arrow at (180,560); the Undo and Redo buttons follow the second. Then drags from the arrow's middle to (180,500), which adds a point (B-40), and presses Undo and Redo. Taps Edit arrow, saves the result, drags the end point from (300,560) to (330,620) and presses Undo, then taps empty canvas. Reads the scene, with each arrow's point count and elbowed flag, and the app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 560]],
+      "to": [[300, 560]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "39-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow type",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m39-01-arrow-type"
+    },
+    {
+      "do": "screenshot",
+      "name": "m39-01-arrow-type"
+    },
+    {
+      "do": "tap",
+      "at": [70, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-sharp"
+    },
+    {
+      "do": "appState",
+      "label": "39-sharp"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [180, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow type",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [150, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-elbow"
+    },
+    {
+      "do": "appState",
+      "label": "39-elbow"
+    },
+    {
+      "do": "aria",
+      "save": "m39-02-elbow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-elbow-undo"
+    },
+    {
+      "do": "appState",
+      "label": "39-elbow-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-elbow-redo"
+    },
+    {
+      "do": "appState",
+      "label": "39-elbow-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [180, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow type",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [110, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-round"
+    },
+    {
+      "do": "appState",
+      "label": "39-round"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [180, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 560]],
+      "to": [[180, 500]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-middle-drag"
+    },
+    {
+      "do": "appState",
+      "label": "39-middle-drag"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-middle-drag-undo"
+    },
+    {
+      "do": "appState",
+      "label": "39-middle-drag-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-middle-drag-redo"
+    },
+    {
+      "do": "appState",
+      "label": "39-middle-drag-redo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Edit arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m39-03-edit-arrow"
+    },
+    {
+      "do": "screenshot",
+      "name": "m39-03-edit-arrow"
+    },
+    {
+      "do": "scene",
+      "label": "39-edit-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "39-edit-arrow"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[300, 560]],
+      "to": [[330, 620]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-edit-end-drag"
+    },
+    {
+      "do": "appState",
+      "label": "39-edit-end-drag"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "39-edit-end-drag-undo"
+    },
+    {
+      "do": "appState",
+      "label": "39-edit-end-drag-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m39-04-after-edit"
+    },
+    {
+      "do": "scene",
+      "label": "39-end"
+    },
+    {
+      "do": "appState",
+      "label": "39-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

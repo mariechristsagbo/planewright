@@ -257,6 +257,12 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     need and s22 did not save: the Stroke colour popover once a colour with shades is picked, the
     bar for a text, for the Draw tool and for a freehand stroke, the result of Edit arrow, and the
     Save to... dialog, which it closes without touching any entry, so nothing is saved or uploaded.
+  - `37` to `40` run right after `09`, each in a fresh session, and use the names and positions
+    that s22, s34 and s37 saved: the four handles that 30 left and a two-element resize (37),
+    Diamond and Ellipse from the Rectangle tool's choice with three alignments (38), the Arrow
+    type popover's unnamed radios, touched at the centres measured on s34's capture, and Edit
+    arrow (39), and a shade, a typed hex code, Duplicate and the text and freehand popovers (40).
+    40 types into the hex box and a new text with the keyboard, which stands in for the phone's.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
