@@ -1,0 +1,258 @@
+{
+  "schema": "planewright-research-rea-windows/v1",
+  "generated_by": "research/excalidraw/rea-windows.mjs",
+  "windows": [
+    {
+      "session": "s15-mobile-svg-only",
+      "file": "r02-inspect-during-19.json",
+      "evidence_id": "ev_0c2e9b3bf7016e275e99c0a57910d7d8923955a205e02989d9f21b471db41492",
+      "operation": "inspect_web_page",
+      "allowed_origins": [
+        "https://excalidraw.com",
+        "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+        "https://firebasestorage.googleapis.com",
+        "https://firestore.googleapis.com",
+        "https://queue.simpleanalyticscdn.com",
+        "https://scripts.simpleanalyticscdn.com",
+        "https://sentry.io"
+      ],
+      "window": {
+        "start": "2026-11-05T17:57:10.652Z",
+        "end": "2026-11-05T17:57:46.409Z",
+        "requested_ms": 35000,
+        "end_reason": null
+      },
+      "completeness": "policy_filtered",
+      "conditions": ["attach_limited", "policy_filtered"],
+      "attach_limited_sections": [
+        "console_events",
+        "metadata",
+        "network_requests",
+        "websocket_connections",
+        "websocket_frames",
+        "workers"
+      ],
+      "policy_filtered_sections": [
+        "accessibility",
+        "console_text",
+        "json_body_shapes",
+        "metadata",
+        "network_requests",
+        "resources",
+        "script_sources",
+        "scripts",
+        "websocket_shapes"
+      ],
+      "unavailable_sections": ["workers"],
+      "retains": "page inventory plus request, WebSocket and console metadata",
+      "network_coverage_started_at": "2026-11-05T17:57:11.209Z",
+      "console_coverage_started_at": "2026-11-05T17:57:10.693Z",
+      "network_requests": 1,
+      "websocket_connections": 0,
+      "console_events": 1,
+      "workers": 0,
+      "cache_names": 1,
+      "limitations": [
+        "Observation starts when REA attaches; prior network and console activity is unavailable.",
+        "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+        "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+        "Source maps are reported only as declarative URLs and are not fetched.",
+        "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+        "CDP discovery could not establish the target's debugger attachment state."
+      ],
+      "driver": {
+        "steps": 21,
+        "failed": 1,
+        "by_kind": {
+          "assertMetrics": 2,
+          "tap": 3,
+          "wait": 7,
+          "touchDrag": 1,
+          "scene": 1,
+          "role": 2,
+          "aria": 2,
+          "download": 1,
+          "key": 1,
+          "appState": 1
+        },
+        "probe_labels": ["19-drawn", "19-end"],
+        "first_step_at": "2026-11-05T17:57:14.843Z",
+        "last_step_at": "2026-11-05T17:57:31.462Z",
+        "previous_step": {
+          "at": "2026-11-05T17:56:59.747Z",
+          "do": "screenshot"
+        }
+      }
+    },
+    {
+      "session": "s16-mobile-generation-reload",
+      "file": "r02-inspect-during-10.json",
+      "evidence_id": "ev_0d96dd39cf2852fc429ea76e17a9a0802047a3f460ba22cc73fd37cd050c3d46",
+      "operation": "inspect_web_page",
+      "allowed_origins": [
+        "https://excalidraw.com",
+        "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+        "https://firebasestorage.googleapis.com",
+        "https://firestore.googleapis.com",
+        "https://queue.simpleanalyticscdn.com",
+        "https://scripts.simpleanalyticscdn.com",
+        "https://sentry.io"
+      ],
+      "window": {
+        "start": "2026-11-05T17:59:30.865Z",
+        "end": "2026-11-05T18:00:16.692Z",
+        "requested_ms": 45000,
+        "end_reason": null
+      },
+      "completeness": "policy_filtered",
+      "conditions": ["attach_limited", "policy_filtered"],
+      "attach_limited_sections": [
+        "console_events",
+        "metadata",
+        "network_requests",
+        "websocket_connections",
+        "websocket_frames",
+        "workers"
+      ],
+      "policy_filtered_sections": [
+        "accessibility",
+        "console_text",
+        "json_body_shapes",
+        "metadata",
+        "network_initiators",
+        "network_requests",
+        "resources",
+        "script_sources",
+        "scripts",
+        "websocket_shapes"
+      ],
+      "unavailable_sections": ["workers"],
+      "retains": "page inventory plus request, WebSocket and console metadata",
+      "network_coverage_started_at": "2026-11-05T17:59:31.525Z",
+      "console_coverage_started_at": "2026-11-05T17:59:30.899Z",
+      "network_requests": 67,
+      "websocket_connections": 0,
+      "console_events": 0,
+      "workers": 0,
+      "cache_names": 3,
+      "limitations": [
+        "Observation starts when REA attaches; prior network and console activity is unavailable.",
+        "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+        "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+        "Source maps are reported only as declarative URLs and are not fetched.",
+        "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+        "CDP discovery could not establish the target's debugger attachment state."
+      ],
+      "driver": {
+        "steps": 63,
+        "failed": 0,
+        "by_kind": {
+          "assertMetrics": 2,
+          "tap": 13,
+          "wait": 15,
+          "aria": 8,
+          "screenshot": 8,
+          "touchDrag": 3,
+          "scene": 6,
+          "appState": 6,
+          "colorScheme": 1,
+          "role": 1
+        },
+        "probe_labels": [
+          "m-rect-touch",
+          "m-tap-select-stroke",
+          "m-pinch-out",
+          "m-two-finger-pan",
+          "m-dark-scheme-emulated",
+          "m-dark-via-menu"
+        ],
+        "first_step_at": "2026-11-05T17:59:35.165Z",
+        "last_step_at": "2026-11-05T17:59:58.663Z",
+        "previous_step": {
+          "at": "2026-11-05T17:59:22.619Z",
+          "do": "screenshot"
+        }
+      }
+    },
+    {
+      "session": "s16-mobile-generation-reload",
+      "file": "r03-inspect-during-22.json",
+      "evidence_id": "ev_c1deacac0986b541b41759a35f9e6f92aa166e964948ad0b8fec15fe14962120",
+      "operation": "inspect_web_page",
+      "allowed_origins": [
+        "https://excalidraw.com",
+        "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+        "https://firebasestorage.googleapis.com",
+        "https://firestore.googleapis.com",
+        "https://queue.simpleanalyticscdn.com",
+        "https://scripts.simpleanalyticscdn.com",
+        "https://sentry.io"
+      ],
+      "window": {
+        "start": "2026-11-05T18:00:21.114Z",
+        "end": "2026-11-05T18:00:56.748Z",
+        "requested_ms": 35000,
+        "end_reason": null
+      },
+      "completeness": "policy_filtered",
+      "conditions": ["attach_limited", "policy_filtered"],
+      "attach_limited_sections": [
+        "console_events",
+        "metadata",
+        "network_requests",
+        "websocket_connections",
+        "websocket_frames",
+        "workers"
+      ],
+      "policy_filtered_sections": [
+        "accessibility",
+        "console_text",
+        "json_body_shapes",
+        "metadata",
+        "network_initiators",
+        "resources",
+        "script_sources",
+        "scripts",
+        "websocket_shapes"
+      ],
+      "unavailable_sections": ["workers"],
+      "retains": "page inventory plus request, WebSocket and console metadata",
+      "network_coverage_started_at": "2026-11-05T18:00:21.243Z",
+      "console_coverage_started_at": "2026-11-05T18:00:21.158Z",
+      "network_requests": 18,
+      "websocket_connections": 0,
+      "console_events": 0,
+      "workers": 0,
+      "cache_names": 3,
+      "limitations": [
+        "Observation starts when REA attaches; prior network and console activity is unavailable.",
+        "Worker targets are a final inventory snapshot, not worker-session observation. Their attached flag describes any debugging client; this page-session collector does not observe worker network, console, or script events, and short-lived workers may be absent from the snapshot.",
+        "Raw network headers, bodies, cookies, storage values, console objects, and WebSocket payloads are never retained; explicitly requested primitive console text is retained verbatim, while payload captures retain value-free shapes.",
+        "Source maps are reported only as declarative URLs and are not fetched.",
+        "URL-less scripts and console events without an allowed source URL are excluded because their origin cannot be proven.",
+        "CDP discovery could not establish the target's debugger attachment state."
+      ],
+      "driver": {
+        "steps": 32,
+        "failed": 0,
+        "by_kind": {
+          "assertMetrics": 2,
+          "key": 4,
+          "role": 7,
+          "wait": 10,
+          "aria": 4,
+          "screenshot": 3,
+          "scene": 1,
+          "appState": 1
+        },
+        "probe_labels": ["22-mermaid-inserted", "22-wireframe"],
+        "first_step_at": "2026-11-05T18:00:25.751Z",
+        "last_step_at": "2026-11-05T18:00:40.652Z",
+        "previous_step": {
+          "at": "2026-11-05T17:59:58.663Z",
+          "do": "assertMetrics"
+        }
+      }
+    }
+  ]
+}

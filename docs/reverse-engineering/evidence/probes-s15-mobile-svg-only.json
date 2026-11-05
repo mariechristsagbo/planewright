@@ -1,0 +1,29 @@
+[
+  {
+    "label": "19-drawn",
+    "at": "2026-11-05T17:57:17.051Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [120, 250, 140, 100],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ]
+  },
+  {
+    "label": "19-end",
+    "at": "2026-11-05T17:57:31.462Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light"
+  }
+]
