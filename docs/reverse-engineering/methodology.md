@@ -166,6 +166,9 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
     so an element that appears while the capture runs is refused.
   - `browser.sh stop` fails with state UNKNOWN when docker cannot list the resource, instead of
     reporting that nothing was found.
+- **Controls added after the review of a78a210** (stub-based tests only, for the same reason):
+  - The handler's result is redacted like the step record before the row reaches the raw
+    timeline: the `selector` and `role` handlers echo their step fields in it.
 
 ## Validation of the evidence
 

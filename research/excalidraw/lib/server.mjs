@@ -16,9 +16,10 @@ const stepName = (step) =>
   step !== null && typeof step === 'object' && typeof step.do === 'string' ? step.do : null;
 
 /**
- * A copy of a step for the raw timeline, with room and link values and other secret shapes
- * redacted in every string, keys included. A `goto` URL or typed text could otherwise keep the
- * value on disk. Handlers still receive the step as sent.
+ * A copy of a step or a handler result for the raw timeline, with room and link values and other
+ * secret shapes redacted in every string, keys included. A `goto` URL, typed text or a result that
+ * echoes a step field (`selector`, `role`) could otherwise keep the value on disk. Handlers still
+ * receive the step as sent.
  */
 function redactedRecord(value) {
   if (typeof value === 'string') return redactSecrets(value);
@@ -48,7 +49,8 @@ export function createRunner({ steps, timelineFile, base }) {
       const handler = steps.get(stepName(step) ?? '');
       if (typeof handler !== 'function') throw new Error('Unknown step name.');
       const result = await handler(ctx, step);
-      appendFileSync(timelineFile, `${JSON.stringify({ started, step: record, result })}\n`);
+      const row = { started, step: record, result: redactedRecord(result) };
+      appendFileSync(timelineFile, `${JSON.stringify(row)}\n`);
       return { do: step.do, result };
     } catch (error) {
       const fatal = error?.fatal === true;

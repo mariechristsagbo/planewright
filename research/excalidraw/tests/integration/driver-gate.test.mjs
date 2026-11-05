@@ -10,6 +10,7 @@ import { TOKEN_HEADER } from '../../lib/guard.mjs';
 import { countSecretShapes } from '../../lib/sanitise.mjs';
 import { createDriverServer, createGate, createRunner, listenLoopback } from '../../lib/server.mjs';
 import { openSessionState } from '../../lib/session-state.mjs';
+import { handlers } from '../../lib/steps.mjs';
 
 const dir = mkdtempSync(join(tmpdir(), 'pw-gate-test-'));
 const servers = [];
@@ -23,6 +24,8 @@ const scenarioFile = (name, batch) => {
   writeFileSync(file, JSON.stringify(batch));
   return [name, file];
 };
+// Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).
+const ROOM_URL = `https://excalidraw.com/#room=${'a1B2'.repeat(5)},${'k_L-'.repeat(5)}m1`;
 const ECHO = [{ do: 'echo' }];
 const scenarios = new Map([
   scenarioFile('plain', { steps: ECHO }),
@@ -126,8 +129,7 @@ describe('halted runner', () => {
   });
 
   it('redacts room and link values in step records before they reach the timeline', async () => {
-    // Synthetic, low-entropy value built at run time (see sanitise.test.mjs).
-    const url = `https://excalidraw.com/#room=${'a1B2'.repeat(5)},${'k_L-'.repeat(5)}m1`;
+    const url = ROOM_URL;
     const seen = [];
     const steps = new Map([['echo', async (_ctx, step) => seen.push(step.url)]]);
     const timelineFile = join(dir, 'redacted.jsonl');
@@ -150,5 +152,37 @@ describe('halted runner', () => {
     const ctx = createRunner({ steps, timelineFile, base: { halted: () => '' } });
     await expect(ctx.run({ do: 'echo' })).rejects.toMatchObject({ fatal: true });
     expect(calls).toBe(0);
+  });
+});
+
+describe('timeline redaction', () => {
+  it('redacts the results of the real selector and role handlers, which echo the step', async () => {
+    const url = ROOM_URL;
+    const clicked = [];
+    const target = (what) => ({ click: async () => clicked.push(what) });
+    const page = {
+      locator: (selector) => ({ first: () => target(selector) }),
+      getByRole: (_role, { name }) => ({ first: () => target(name) }),
+    };
+    const steps = new Map([
+      ['selector', handlers.selector],
+      ['role', handlers.role],
+    ]);
+    const timelineFile = join(dir, 'redacted-results.jsonl');
+    const ctx = createRunner({ steps, timelineFile, base: { page } });
+    await ctx.run({ do: 'selector', selector: `a[href="${url}"]` });
+    await ctx.run({ do: 'role', role: 'link', name: url });
+    const text = readFileSync(timelineFile, 'utf8');
+    expect(countSecretShapes(text)).toEqual({});
+    const rows = text
+      .trim()
+      .split('\n')
+      .map((line) => JSON.parse(line));
+    expect(rows.map((row) => row.result)).toEqual([
+      { selector: 'a[href="https://excalidraw.com/#room=<redacted>"]' },
+      { role: 'link', name: 'https://excalidraw.com/#room=<redacted>' },
+    ]);
+    // The page still received the selector and the name as sent.
+    expect(clicked).toEqual([`a[href="${url}"]`, url]);
   });
 });
