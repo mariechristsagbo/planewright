@@ -16,10 +16,11 @@ const stepName = (step) =>
   step !== null && typeof step === 'object' && typeof step.do === 'string' ? step.do : null;
 
 /**
- * A copy of a step or a handler result for the raw timeline, with room and link values and other
- * secret shapes redacted in every string, keys included. A `goto` URL, typed text or a result that
- * echoes a step field (`selector`, `role`) could otherwise keep the value on disk. Handlers still
- * receive the step as sent.
+ * A copy of a step or a handler result for the raw timeline and the HTTP reply, with room and link
+ * values and other secret shapes redacted in every string, keys included. A `goto` URL, typed text
+ * or a result that echoes a step field (`selector`, `role`) could otherwise keep the value on disk
+ * or in the client's output. Handlers still receive the step as sent, and their own result object
+ * is left unchanged.
  */
 function redactedRecord(value) {
   if (typeof value === 'string') return redactSecrets(value);
@@ -32,9 +33,11 @@ function redactedRecord(value) {
 
 /**
  * Creates the step runner. Every step, successful or not, is appended to the timeline; failures
- * keep only a sanitised one-line message. `steps` is a Map so names never reach inherited
- * object properties. When `base.halted()` returns a reason (see navwatch.mjs), every step fails
- * fatally before its handler runs.
+ * keep only a sanitised one-line message. A successful step returns the redacted result of its
+ * timeline row, so the HTTP reply and what `run.mjs` prints carry no more than the timeline; the
+ * nested runs of a trigger ignore it. `steps` is a Map so names never reach inherited object
+ * properties. When `base.halted()` returns a reason (see navwatch.mjs), every step fails fatally
+ * before its handler runs.
  */
 export function createRunner({ steps, timelineFile, base }) {
   const ctx = { ...base };
@@ -51,7 +54,7 @@ export function createRunner({ steps, timelineFile, base }) {
       const result = await handler(ctx, step);
       const row = { started, step: record, result: redactedRecord(result) };
       appendFileSync(timelineFile, `${JSON.stringify(row)}\n`);
-      return { do: step.do, result };
+      return { do: step.do, result: row.result };
     } catch (error) {
       const fatal = error?.fatal === true;
       const row = { started, step: record, error: sanitiseError(error), ...(fatal && { fatal }) };

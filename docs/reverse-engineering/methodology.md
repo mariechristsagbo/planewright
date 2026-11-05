@@ -169,6 +169,12 @@ research/excalidraw/browser.sh stop pw-research        # also removes the run ne
 - **Controls added after the review of a78a210** (stub-based tests only, for the same reason):
   - The handler's result is redacted like the step record before the row reaches the raw
     timeline: the `selector` and `role` handlers echo their step fields in it.
+- **Controls added after the review of 8029c1e** (stub-based tests only, for the same reason):
+  - The driver's HTTP reply, and so what `run.mjs` prints, carries the redacted result of the
+    timeline row. Before, it carried the result as the handler returned it: the step fields that
+    `selector` and `role` echo, and bounded probe reads that were never redacted, such as
+    storage key names, the keys of stored JSON values, picked app-state values (`activeTool`,
+    `selectedElementIds`) and the focused element's `aria-label`.
 
 ## Validation of the evidence
 

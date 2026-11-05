@@ -1,8 +1,11 @@
 // Exercises batch admission (one batch at a time, the runLast lock) over real loopback HTTP, and
 // the runner's halt check. Steps are stubs, so no browser is started and no website is contacted.
+import { execFile } from 'node:child_process';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 
 import { afterAll, describe, expect, it } from 'vitest';
 
@@ -26,6 +29,9 @@ const scenarioFile = (name, batch) => {
 };
 // Synthetic, low-entropy room value built at run time (see sanitise.test.mjs).
 const ROOM_URL = `https://excalidraw.com/#room=${'a1B2'.repeat(5)},${'k_L-'.repeat(5)}m1`;
+const REDACTED_URL = 'https://excalidraw.com/#room=<redacted>';
+const TOKEN = 'b'.repeat(64);
+const RUN_CLIENT = fileURLToPath(new URL('../../run.mjs', import.meta.url));
 const ECHO = [{ do: 'echo' }];
 const scenarios = new Map([
   scenarioFile('plain', { steps: ECHO }),
@@ -33,17 +39,22 @@ const scenarios = new Map([
   scenarioFile('final-b', { runLast: true, steps: ECHO }),
 ]);
 
-async function startDriver(state) {
+// `extra` adds step handlers and context fields to the stub driver.
+async function startDriver(state, extra = {}) {
   let release = () => undefined;
   const gateOpen = new Promise((resolve) => {
     release = resolve;
   });
   const steps = new Map(
-    Object.entries({ echo: async () => ({ ok: true }), hold: async () => gateOpen }),
+    Object.entries({
+      echo: async () => ({ ok: true }),
+      hold: async () => gateOpen,
+      ...extra.steps,
+    }),
   );
-  const ctx = createRunner({ steps, timelineFile: join(dir, 'timeline.jsonl'), base: {} });
+  const ctx = createRunner({ steps, timelineFile: join(dir, 'timeline.jsonl'), base: extra.base });
   let port = 0;
-  const token = 'b'.repeat(64);
+  const token = TOKEN;
   const server = createDriverServer({
     ctx,
     token,
@@ -62,8 +73,17 @@ async function startDriver(state) {
     });
     return { status: res.status, body: await res.json() };
   };
-  return { post, release };
+  return { post, release, port };
 }
+
+// A page whose locators record what they were asked to click.
+const stubPage = (clicked) => {
+  const target = (what) => ({ click: async () => clicked.push(what) });
+  return {
+    locator: (selector) => ({ first: () => target(selector) }),
+    getByRole: (_role, { name }) => ({ first: () => target(name) }),
+  };
+};
 
 describe('one batch at a time', () => {
   it('refuses a batch that arrives while another runs, and runs nothing from it', async () => {
@@ -159,11 +179,7 @@ describe('timeline redaction', () => {
   it('redacts the results of the real selector and role handlers, which echo the step', async () => {
     const url = ROOM_URL;
     const clicked = [];
-    const target = (what) => ({ click: async () => clicked.push(what) });
-    const page = {
-      locator: (selector) => ({ first: () => target(selector) }),
-      getByRole: (_role, { name }) => ({ first: () => target(name) }),
-    };
+    const page = stubPage(clicked);
     const steps = new Map([
       ['selector', handlers.selector],
       ['role', handlers.role],
@@ -214,5 +230,43 @@ describe('timeline redaction', () => {
     const text = readFileSync(timelineFile, 'utf8');
     expect(countSecretShapes(text)).toEqual({});
     expect(JSON.parse(text).result).toEqual(nested('https://excalidraw.com/#room=<redacted>'));
+  });
+});
+
+describe('reply redaction', () => {
+  it('sends the redacted results in the HTTP reply and in what run.mjs prints', async () => {
+    const clicked = [];
+    let kept = null;
+    const { post, port } = await startDriver(undefined, {
+      steps: {
+        selector: handlers.selector,
+        role: handlers.role,
+        keep: async () => (kept = { url: ROOM_URL }),
+      },
+      base: { page: stubPage(clicked) },
+    });
+    const batch = {
+      steps: [
+        { do: 'selector', selector: `a[href="${ROOM_URL}"]` },
+        { do: 'role', role: 'link', name: ROOM_URL },
+        { do: 'keep' },
+      ],
+    };
+    const reply = await post(batch);
+    writeFileSync(join(dir, 'driver.token'), TOKEN);
+    const client = [RUN_CLIENT, '--port', String(port), '--out', dir, JSON.stringify(batch)];
+    const { stdout } = await promisify(execFile)(process.execPath, client);
+    expect(countSecretShapes(JSON.stringify(reply.body))).toEqual({});
+    expect(countSecretShapes(stdout)).toEqual({});
+    expect(reply.body).toEqual([
+      { do: 'selector', result: { selector: `a[href="${REDACTED_URL}"]` } },
+      { do: 'role', result: { role: 'link', name: REDACTED_URL } },
+      { do: 'keep', result: { url: REDACTED_URL } },
+    ]);
+    expect(JSON.parse(stdout)).toEqual(reply.body);
+    // Handlers still receive the step as sent, and their own result object is left unchanged.
+    const sent = [`a[href="${ROOM_URL}"]`, ROOM_URL];
+    expect(clicked).toEqual([...sent, ...sent]);
+    expect(kept).toEqual({ url: ROOM_URL });
   });
 });

@@ -122,9 +122,10 @@ the background just before a driver batch.
   counted. The clipboard text is redacted in full before its preview is cut. URL probes and the netlog return key names and value
   lengths only; a key that is not a plain identifier is replaced by `<non-identifier>`.
 - **Failures.** Every step is appended to `timeline.jsonl`, with every string of the step and of
-  its result redacted, keys included; failures keep a sanitised one-line
-  message, redacted before it is cut to length, because these messages reach the committed
-  `sessions.json`. A failed trigger in `download`, `fileChooser` or `acceptDialog` fails its step
+  its result redacted, keys included. The HTTP reply, and so what `run.mjs` prints, carries that
+  redacted result, not the one the handler returned; handlers still receive the step as sent.
+  Failures keep a sanitised one-line message, redacted before it is cut to length, because these
+  messages reach the committed `sessions.json`. A failed trigger in `download`, `fileChooser` or `acceptDialog` fails its step
   and leaves no pending waiter that could stop the driver.
 - **Cleanup checks.** `isolation-check.sh` and `selftest.sh` pass a removal check only when a
   successful docker listing omits the name; a failed listing is a FAIL. `browser.sh stop` reports
