@@ -76,9 +76,9 @@
     [REA findings](rea-findings.md#2-cross-driver-screenshot-comparison): only the driver digests
     are in `evidence/sessions.json`, and the index keeps the REA Evidence IDs;
   - the 84–91 KB sizes of the large REA results (REA findings, limitation 4);
-  - the driver netlog requests set against scenarios 12, 13, 15 and 14 in s8–s11, and against
-    09, 10 and 14 in s11, s11's service-worker requests and beacons included (network
-    analysis): `evidence/sessions.json` keeps request counts per session, not their times;
+  - the step before a wait or probe in which a netlog entry was written, such as the two taps
+    before `m06-more-tools` in s11 (network analysis): `evidence/netlog-steps.json` names the step
+    in effect and the entry's offset from it, not the steps before it;
   - the s1 and s6 ARIA snapshot comparison behind the medium rating of the secondary surfaces
     (feature inventory §2); the committed index keeps line counts only;
   - the s6 and s10 (scenario 15) and s7 and s11 (scenarios 09, 10 and 14) ARIA snapshot
@@ -137,7 +137,7 @@
   palette, help, panels and context menus of an empty or simple scene.
 - That bundle identifiers execute.
 - That drawing causes, or does not cause, network, WebSocket or console activity. Only
-  same-origin REA windows (scenario 13 in s6 and s9, 12 in s8 and 15 in s10) and the raw s8–s11
+  same-origin REA windows (scenario 13 in s6 and s9, 12 in s8 and 15 in s10) and the s8–s11
   netlog times (those scenarios and the mobile scenario 10 in s11) covered drawing.
 - That Ctrl+wheel zoom is anchored at the pointer, that a bound arrow end snaps to the outline,
   or that the local save delay is measured from pointer-up. See B-36, B-04 and B-30.

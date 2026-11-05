@@ -238,6 +238,18 @@ describe('the Clear canvas dialog in the feature inventory', () => {
   });
 });
 
+// The times the driver wrote the entries that the service worker served in a session, from the
+// committed placement (a placement's start plus each entry's offset), and a time rounded to 0.1 s.
+const servedAt = (placement) =>
+  placement.entries
+    .filter((e) => / sw( |$)/u.test(e))
+    .map((e) => Date.parse(placement.started) + Number(e.split(' ')[0]));
+const servedTimes = (name) =>
+  evidence('netlog-steps.json')
+    .sessions.find((x) => x.session === name)
+    .placements.flatMap(servedAt);
+const clock = (t) => new Date(Math.round(t / 100) * 100).toISOString().slice(11, 21);
+
 describe('the s11 requests set against its scenarios', () => {
   const s11 = 's11-mobile-r76-14';
   const rawOnly = () =>
@@ -258,25 +270,36 @@ describe('the s11 requests set against its scenarios', () => {
       `s11's requests after its load [I, raw netlog and timeline times]. Of its ` +
         `${String(count(requests(s11, () => true)))} requests`,
     );
+    const written = servedTimes(s11);
+    expect(written).toHaveLength(count(worker));
     expect(text).toContain(
       `every request that the service worker served, the ${String(page)} on the page origin ` +
-        `and the Cascadia Code font, started between 04:54:12.0 and 04:54:19.7 UTC`,
+        `and the Cascadia Code font, was written between ${clock(Math.min(...written))} and ` +
+        `${clock(Math.max(...written))} UTC`,
     );
-    expect(text).toContain(`The 24-key beacon came ${beacons === 2 ? 'twice' : String(beacons)}`);
+    expect(text).toContain('evidence/netlog-steps.json keeps each entry');
+    expect(text).not.toMatch(/\b(?:started|start) (?:during|between|in the rest)\b/u);
+    expect(text).toContain(
+      `The 24-key beacon was written ${beacons === 2 ? 'twice' : String(beacons)}`,
+    );
     expect(text).toMatch(/This narrows R-64 and R-66 without isolating a trigger[^.]*\[U\]/u);
   });
 
   it('list the placement as raw-only and narrow R-64 and R-66 to it', () => {
-    expect(rawOnly()).toContain('the driver netlog requests set against scenarios 12, 13, 15');
-    expect(rawOnly()).toContain("and against 09, 10 and 14 in s11, s11's service-worker requests");
+    expect(rawOnly()).toContain(
+      'the step before a wait or probe in which a netlog entry was written',
+    );
+    expect(rawOnly()).not.toContain('keeps request counts per session, not their times');
     const [r64, r66] = [cells('R-64'), cells('R-66')].map((row) => row.map(flat));
-    expect(r64[6]).toContain('in s11 every request the service worker served started during');
+    expect(r64[6]).toContain('in s11 every request the service worker served was written during');
     expect(r64[7]).toMatch(/a step of scenario 10 or a delay since the load/u);
     expect(r66[6]).toContain(
-      "netlog request on any origin during 12, 13, 15 or s11's drawing in 10",
+      "netlog entry on any origin was written during 12, 13, 15 or s11's drawing in 10",
     );
     expect(r66[7]).toContain(
-      "only the raw s11 netlog covers it: no request during scenario 10's touch drawing, pinch",
+      'the netlog writes a request once it has finished or failed, so a request that a drawing ' +
+        'step started and that finished later is placed in a later step',
     );
+    expect(r66[7]).not.toContain('raw-only');
   });
 });

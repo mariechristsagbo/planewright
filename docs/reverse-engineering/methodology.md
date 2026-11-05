@@ -28,9 +28,13 @@ Every claim in this directory carries one label:
 - **[U] Unverified**: not observed in this baseline. Each one is tracked in the
   [residual matrix](residual-matrix.md).
 
-Placing a netlog request in a scenario sets its start time against the step times of the
-timeline, so it is labelled [I, raw netlog and timeline times]: each time is observed, the
-placement is deduced from both, and the times are kept in the raw records only.
+Placing a netlog entry in a scenario sets the time the driver wrote it against the step start
+times of the timeline, so it is labelled [I, raw netlog and timeline times]: each time is observed
+and the placement is deduced from both. `evidence/netlog-steps.json` keeps each entry's offset from
+the step in effect, built by `netlog-steps.mjs` from the raw records. Both times come from the
+driver process's clock. The netlog writes a request once it has finished or failed, so a placement
+bounds when the request started but never gives that time, and the timeline records when each
+step started, not when it ended.
 
 Confidence follows one rule:
 

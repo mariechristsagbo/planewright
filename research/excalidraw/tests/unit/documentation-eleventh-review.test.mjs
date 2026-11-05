@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 
 import { RE, cells, doc, evidence, flat, read } from './r76-evidence.mjs';
 
-// Placing a netlog request in a scenario sets the netlog's request times against the timeline's
-// step times, so it is an inference from two raw records, never an observation of its own.
+// Placing a netlog entry in a scenario sets the time the driver wrote it against the timeline's
+// step start times, so it is an inference from two raw records, never an observation of its own.
 const PLACEMENT = '[I, raw netlog and timeline times]';
 // Every evidence label in a flattened text that rests on raw netlog or timeline times.
 const timingLabels = (text) =>
@@ -16,9 +16,14 @@ const timingLabels = (text) =>
 describe('the netlog placement label', () => {
   it('is defined once in the methodology', () => {
     expect(doc('methodology.md')).toContain(
-      'Placing a netlog request in a scenario sets its start time against the step times of ' +
-        `the timeline, so it is labelled ${PLACEMENT}`,
+      'Placing a netlog entry in a scenario sets the time the driver wrote it against the step ' +
+        `start times of the timeline, so it is labelled ${PLACEMENT}`,
     );
+    expect(doc('methodology.md')).toContain(
+      'The netlog writes a request once it has finished or failed, so a placement bounds when ' +
+        'the request started but never gives that time',
+    );
+    expect(doc('methodology.md')).not.toContain('the times are kept in the raw records only');
   });
 
   it('is the only label of the placements in the network analysis', () => {
@@ -26,9 +31,12 @@ describe('the netlog placement label', () => {
     const labels = timingLabels(text);
     expect(labels.length).toBeGreaterThanOrEqual(3);
     for (const label of labels) expect(label).toBe(PLACEMENT);
-    expect(text).toContain(`started during scenario 10, not with the load ${PLACEMENT}`);
     expect(text).toContain(
-      `and one, to https://queue.simpleanalyticscdn.com, during 14 ${PLACEMENT}`,
+      `which the netlog wrote during scenario 10, not with the load ${PLACEMENT}`,
+    );
+    expect(text).toContain(
+      'no entry on any origin was written during scenarios 12, 13 or 15, and one, to ' +
+        `https://queue.simpleanalyticscdn.com, during 14 ${PLACEMENT}`,
     );
     expect(text).toContain(`s11's requests after its load ${PLACEMENT}`);
   });
