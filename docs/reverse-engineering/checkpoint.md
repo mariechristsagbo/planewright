@@ -266,13 +266,20 @@ profile, with a storage inventory and a REA initial-page inspection in that sess
 behaviour-changing commit reports 0 critical, 0 major and 0 minor findings. Suggestions that do not
 block may stay open if they are listed here with their handling. A commit is behaviour-changing when
 it changes the research tooling, its tests or a documented research claim, whether or not it
-remediates a review; the R-76 commits `935f2fc`..`f1562ed`, from `0b4fb19` to `f1562ed`, were. A behaviour-changing commit that no
-listed review covers is named under a **Not covered by a review.** bullet in this checkpoint, and
-R-75 stays 🟡 while such a bullet remains. Commits that only record a review, its checks or the PR
-description are not, so a review that meets the rule does not call for another one. Updating the
-record checks (the documentation checks that read the review list, R-75 and the review records) so
-that they accept a new record also counts as recording. Until then R-75 stays 🟡. Meeting the rule
-closes R-75 only: issue #1 also needs the remaining observation work and the maintainer decisions.
+remediates a review; the R-76 commits `935f2fc`..`f1562ed`, from `0b4fb19` to `f1562ed`, were. A
+behaviour-changing commit that no listed review covers is named under a **Not covered by a
+review.** bullet in this checkpoint, and R-75 stays 🟡 while such a bullet remains. Commits that
+only record a review, its checks or the PR description are not, so a review that meets the rule
+does not call for another one. Updating the record checks (the documentation checks that read the
+review list, R-75 and the review records) so that they accept a new record also counts as
+recording. Until then R-75 stays 🟡. Meeting the rule closes R-75 only: issue #1 also needs the
+remaining observation work and the maintainer decisions.
+
+**Unreviewed bullet.** The bullet is kept by hand: whoever pushes a behaviour-changing commit
+after the latest reviewed head adds it. The record checks test only that the review list, that
+bullet, the remediation checks and R-75 agree with one another; they do not read the Git history,
+because the CI test job checks out a single commit and a squash merge keeps none of the branch
+commits. So only a review finds a missing bullet, as the tenth review did.
 
 1. **Review of `3f9fc06`** (posted on PR #2): 7 major findings, 8 minor findings and 5
    suggestions.

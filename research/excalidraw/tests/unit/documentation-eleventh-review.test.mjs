@@ -2,7 +2,7 @@
 // methodology and the committed evidence.
 import { describe, expect, it } from 'vitest';
 
-import { cells, doc, evidence, flat } from './r76-evidence.mjs';
+import { RE, cells, doc, evidence, flat, read } from './r76-evidence.mjs';
 
 // Placing a netlog request in a scenario sets the netlog's request times against the timeline's
 // step times, so it is an inference from two raw records, never an observation of its own.
@@ -98,5 +98,32 @@ describe('commit ranges in the checkpoint', () => {
     expect(starts.size).toBeGreaterThan(1);
     for (const [end, list] of starts) expect(list, end).toHaveLength(1);
     expect(starts.get('f1562ed')).toEqual(['935f2fc']);
+  });
+});
+
+describe('the unreviewed bullet', () => {
+  const rule = () =>
+    flat(
+      read(`${RE}/checkpoint.md`)
+        .split('## Independent reviews\n')[1]
+        .split(/\n\d+\. /u)[0],
+    );
+
+  it('is said to be kept by hand, because no test can read the Git history', () => {
+    expect(rule()).toContain(
+      'The bullet is kept by hand: whoever pushes a behaviour-changing commit after the latest ' +
+        'reviewed head adds it.',
+    );
+    expect(rule()).toMatch(
+      /The record checks test only that [^.]* agree with one another; they do not read the Git history, because the CI test job checks out a single commit and a squash merge keeps none of the branch commits\./u,
+    );
+  });
+
+  it('describes the CI job that runs the tests: one checkout without history', () => {
+    const jobs = read('.github/workflows/ci.yml').split(/\n(?= {2}[\w-]+:\n)/u);
+    const tests = jobs.filter((job) => job.includes('run: npm run test:coverage'));
+    expect(tests).toHaveLength(1);
+    expect(tests[0]).toMatch(/uses: actions\/checkout@/u);
+    expect(tests[0]).not.toMatch(/fetch-depth/u);
   });
 });
