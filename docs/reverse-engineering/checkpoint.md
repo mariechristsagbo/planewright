@@ -30,7 +30,7 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
 | Generated JSON and REA bundles validated                | Partial | All committed JSON parses. With the current tools, `sessions.json`, `rea-windows.json`, the five probe summaries and `rea-inspect-initial.summary.json` regenerate byte for byte from the retained records. This was checked in the fifth-review remediation on 2026-11-04, by the sixth review on `46b2b01` and by the review of `a78a210` on that head; the builders and the libraries they import are unchanged since `46b2b01`, and no later remediation regenerated the files. `bundle-01-desktop.json` passed `rea evidence-export` earlier on 2026-11-04. The REA CLI records of s5–s7 cannot be exported as a bundle without the MCP `export_evidence_bundle` tool (R-73) |
 | CDP and driver ports loopback-only                      | Done    | With the sixth-review tooling, `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 against real local containers on 2026-11-05 at 00:15–00:16 UTC, on `e38955a`, contacting no website; their output is committed in [local-checks/](local-checks/). The earlier runs on `dc6eef1` (2026-11-04, 22:18 and 22:19 UTC) kept no output. This holds from s5 on: s1–s4 ran on the default Docker bridge, where the DevTools forwarder was reachable from other containers (see the methodology). A probe that cannot run, and a failed docker listing during cleanup, count as FAIL                                                                                        |
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs. The removal checks of the `e38955a` runs are in local-checks                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Separate Claude Code review session                     | Partial | Seven independent reviews ran. The seventh (of `a78a210`) is remediated in the current tree; no review of that remediation has run yet (R-75)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Separate Claude Code review session                     | Partial | Seven independent reviews ran. The seventh (of `a78a210`) is remediated in the current tree; no review of that remediation has run yet (R-75). R-75 closes only under the exit rule in [Independent reviews](#independent-reviews)                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 ## Checks of the fifth-review remediation
 
@@ -104,6 +104,15 @@ open: the Draft PR refers to it (`Refs #1`) and does not close it.
   description.
 
 ## Independent reviews
+
+**R-75 exit rule.** R-75 may become ✅ only after a fresh independent review of the latest
+behaviour-changing remediation reports 0 critical, 0 major and 0 minor findings. Suggestions
+that do not block may stay open if they are listed here with their handling. A remediation is
+behaviour-changing when it changes the research tooling, its tests or a documented research
+claim. Commits that only record a review, its checks or the PR description are not, so a review
+that meets the rule does not call for another one. Until then R-75 stays 🟡. Meeting the rule
+closes R-75 only: issue #1 also needs the remaining observation work and the maintainer
+decisions.
 
 1. **Review of `3f9fc06`** (posted on PR #2): 7 major findings, 8 minor findings and 5
    suggestions.
@@ -239,7 +248,8 @@ Values were never printed; only counts and file names were recorded.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client
   collaboration (R-55), and offline start and reconnection (R-57).
 - **Review of the remediation.** A fresh independent review of the seventh-review remediation
-  is still to be run (R-75).
+  is still to be run (R-75). R-75 closes only under the exit rule in
+  [Independent reviews](#independent-reviews).
 
 ## Remaining observation work
 
