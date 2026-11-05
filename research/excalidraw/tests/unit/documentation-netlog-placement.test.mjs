@@ -160,6 +160,8 @@ describe('the 24-key beacons of the desktop sessions', () => {
         'Export to PNG',
         'Export to SVG',
       ]);
+      // The last follows Ctrl+S, a key step; in s6 a download step ran it in the same millisecond.
+      expect(steps[3].do, s.session).toBe('key');
     }
     expect(network()).toContain(
       's1 and s6 each wrote one after each of the four desktop inputs, and none followed a ' +

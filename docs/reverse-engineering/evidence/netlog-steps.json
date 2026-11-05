@@ -736,9 +736,9 @@
           ]
         },
         {
-          "line": 460,
+          "line": 459,
           "started": "2026-11-04T16:13:26.729Z",
-          "do": "download",
+          "do": "key",
           "entries": ["+106 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q24"]
         },
         {
