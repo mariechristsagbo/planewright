@@ -38,6 +38,7 @@ describe('the R-75 exit rule', () => {
     );
     expect(rule).toMatch(/Suggestions that do not block may stay open if they are listed/u);
     expect(rule).toMatch(/Commits that only record a review, its checks or the PR description/u);
+    expect(rule).toMatch(/Updating the record checks [^.]* also counts as recording\./u);
     expect(rule).toMatch(/issue #1 also needs/u);
     expect(r75()[8]).toBe(
       'A fresh independent review of the latest behaviour-changing remediation that reports 0 critical, 0 major and 0 minor findings (exit rule in the checkpoint)',

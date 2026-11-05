@@ -144,7 +144,9 @@ behaviour-changing remediation reports 0 critical, 0 major and 0 minor findings.
 that do not block may stay open if they are listed here with their handling. A remediation is
 behaviour-changing when it changes the research tooling, its tests or a documented research
 claim. Commits that only record a review, its checks or the PR description are not, so a review
-that meets the rule does not call for another one. Until then R-75 stays 🟡. Meeting the rule
+that meets the rule does not call for another one. Updating the record checks (the
+documentation checks that read the review list, R-75 and the review records) so that they accept
+a new record also counts as recording. Until then R-75 stays 🟡. Meeting the rule
 closes R-75 only: issue #1 also needs the remaining observation work and the maintainer
 decisions.
 
