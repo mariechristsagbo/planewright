@@ -99,7 +99,17 @@ describe('REA CLI envelopes', () => {
 
   it('names only error codes shaped like REA identifiers, never one of a room value length', () => {
     const named = (code) => () => recordOf({ ok: false, error: { code } });
-    for (const code of ['target_not_found', 'INVALID_OUTPUT_FILTER', 'invalid-row', 'ENOENT'])
+    // Codes are capped at 64 characters: the 64-character identifier is named, and 65-character
+    // ones of either case are not.
+    const [longest, tooLong] = [`${'abcd_'.repeat(12)}abcd`, `${'abcd_'.repeat(12)}abcde`];
+    expect([longest.length, tooLong.length]).toEqual([64, 65]);
+    for (const code of [
+      'target_not_found',
+      'INVALID_OUTPUT_FILTER',
+      'invalid-row',
+      'ENOENT',
+      longest,
+    ])
       expect(named(code), code).toThrow(`(error code ${code})`);
     // Room ids are 20 characters and keys 22, from [A-Za-z0-9_-]; every one of these matched the
     // earlier filter. A real REA code of either length (INVALID_OUTPUT_VALUE) is left out too, and
@@ -119,6 +129,8 @@ describe('REA CLI envelopes', () => {
         /^The REA CLI output does not report ok: true, so it holds no Evidence record to read\.$/u,
       );
     }
+    for (const code of [tooLong, tooLong.toUpperCase()])
+      expect(named(code), code).toThrow(/^The REA CLI output does not report ok: true, so it/u);
   });
 
   it('refuses a CLI envelope that reports ok: true without an Evidence record', () => {
