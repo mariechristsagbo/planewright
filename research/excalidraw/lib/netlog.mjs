@@ -1,5 +1,7 @@
-// Metadata-only network log: method, origin, path, query key names, resource type, status and
-// WebSocket frame counts/sizes. Headers, cookies, query values and bodies are never recorded.
+// Metadata-only network log: method, origin, path, query key names, resource type, status, when a
+// request started and WebSocket frame counts/sizes. Headers, cookies, query values and bodies are
+// never recorded. A request is written once it has finished or failed; `at` is that write time and
+// `startedAt` the time the page reported the request, or null when its start was not seen.
 import { appendFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -22,15 +24,23 @@ function watchSocket(write, socket) {
   );
 }
 
-/** Attaches the log to a page and returns its writer for other metadata-only events. */
-export function attachNetlog(page, outDir) {
+/**
+ * Attaches the log to a page and returns its writer for other metadata-only events. `now` is the
+ * clock both times are read from; the driver uses the default.
+ */
+export function attachNetlog(page, outDir, now = () => new Date()) {
   const file = join(outDir, 'netlog.jsonl');
   const write = (entry) =>
-    appendFileSync(file, `${JSON.stringify({ at: new Date().toISOString(), ...entry })}\n`);
+    appendFileSync(file, `${JSON.stringify({ at: now().toISOString(), ...entry })}\n`);
+  const starts = new WeakMap();
+  const startOf = (request) => starts.get(request) ?? null;
+  page.on('request', (request) => starts.set(request, now().toISOString()));
   page.on('requestfinished', async (request) => {
+    const startedAt = startOf(request);
     const response = await request.response().catch(() => null);
     write({
       event: 'request',
+      startedAt,
       method: request.method(),
       type: request.resourceType(),
       status: response?.status() ?? null,
@@ -41,6 +51,7 @@ export function attachNetlog(page, outDir) {
   page.on('requestfailed', (request) =>
     write({
       event: 'request-failed',
+      startedAt: startOf(request),
       method: request.method(),
       type: request.resourceType(),
       failure: request.failure()?.errorText ?? null,
