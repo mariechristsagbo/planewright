@@ -103,7 +103,11 @@ under the same gate and is indexed in `evidence/sessions-s68-s70.json`. From `56
 `offline` step also sends its network conditions to the page on the driver's own session, so a
 value that Playwright already holds is applied again, and in s68 and s69 the offline state then
 held across a reload; one REA window spans 61 and 51, because a DevTools session that detached
-from the page turned `navigator.onLine` true again in a local test.
+from the page turned `navigator.onLine` true again in a local test. The preferences, modes and
+eraser batch s71–s73 ran on 2026-11-06 at 07:30–07:47 UTC under the same gate and is indexed in
+`evidence/sessions-s71-s73.json`. Its probe summaries are the first built with `--modes`, which
+keeps the stored mode flags and the tool lock, and its `role` steps open the Preferences submenu
+with `unlessExpanded`, so a reopened menu never collapses it.
 
 ## Division of labour
 

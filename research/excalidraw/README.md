@@ -253,6 +253,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Library undo (`s68`)   | 09 → 60 → 09b → 50 → 61 → 51 → 24 → 16                                                                                                                                                                                                                 |
 | Library undo (`s69`)   | 09 → 60 → 09b → 50 → 61 → 51 → 24 → 16                                                                                                                                                                                                                 |
 | Language (`s70`)       | 09 → 53 → 54 → 16                                                                                                                                                                                                                                      |
+| Preferences (`s71`)    | 09 → 62 → 63 → 64 → 65 → 16                                                                                                                                                                                                                            |
+| Preferences (`s72`)    | 09 → 62 → 66 → 63 → 64 → 65 → 16                                                                                                                                                                                                                       |
+| Eraser (`s73`)         | 09 → 62 → 66 → 16                                                                                                                                                                                                                                      |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
@@ -347,6 +350,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     inside one REA window, because in a local test a DevTools session that detached from the page
     turned `navigator.onLine` true again; 24 reloaded last. s70 ran 54 again after 53, last in the
     batch, because its locale chunk got HTTP 403 in s64.
+  - s71 ran 62 to 65 after 09, last 65, since view mode hides controls (and zen mode does on
+    desktop); 62 showed that Undo after erasing a selected element leaves the Selection tool active,
+    so s72 ran the same chain with 66 right after 62, and s73 ran 62 and 66 again.
   - `62` to `65` run in this order in one session, right after `09`, and use only names s11 and
     s70 saved. `62` draws three rectangles and an arrow and erases a free rectangle, the arrow's
     end target and the arrow with one-finger strokes, with Undo and Redo after each. `63` deselects

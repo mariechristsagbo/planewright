@@ -244,6 +244,32 @@ window spans a reload.
 | `s64-mobile-find-library`          | `r04-inspect-during-58.json` | `ev_9a429301`     | `inspect_web_page`, 03:22:37.459–03:23:27.644, 7 origins. Armed 3394 ms before scenario 58's first step; all its 40 steps inside it |
 | `s64-mobile-find-library`          | `r05-inspect-during-59.json` | `ev_fe536c38`     | `inspect_web_page`, 03:23:31.515–03:24:11.782, 7 origins. Armed 3135 ms before scenario 59's first step; all its 26 steps inside it |
 
+**Preferences, modes and eraser records** (s71–s73, on 2026-11-06, times UTC). Each session listed
+the target after 09, and s71 and s72 again after 65; a session's listings returned the same record
+each time, so they share one Evidence ID. Each of 62, 63, 64 and 66 ran inside its own window, and
+s71 and s72 had a 3 s inspection after 65's second reload. Files are numbered as in s71, so s72's
+window over 66 (`r08`) ran second. No window spans a reload, and every window and inspection kept 0
+requests, 0 WebSocket connections and 0 console events.
+
+| Session                           | File                         | Evidence (prefix) | Operation and window                                                                                                                |
+| --------------------------------- | ---------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `s71-mobile-preferences-eraser`   | `r01-targets.json`           | `ev_b06c63e4`     | `list_browser_targets`                                                                                                              |
+| `s71-mobile-preferences-eraser`   | `r02-inspect-during-62.json` | `ev_d12ae0cf`     | `inspect_web_page`, 07:31:16.397–07:32:16.949, 7 origins. Armed 3408 ms before scenario 62's first step; all its 63 steps inside it |
+| `s71-mobile-preferences-eraser`   | `r03-inspect-during-63.json` | `ev_b57aa985`     | `inspect_web_page`, 07:32:19.925–07:33:35.099, 7 origins. Armed 3639 ms before scenario 63's first step; all its 89 steps inside it |
+| `s71-mobile-preferences-eraser`   | `r04-inspect-during-64.json` | `ev_78fda506`     | `inspect_web_page`, 07:33:38.342–07:35:08.578, 7 origins. Armed 3439 ms before scenario 64's first step; all its 99 steps inside it |
+| `s71-mobile-preferences-eraser`   | `r05-targets-after-65.json`  | `ev_b06c63e4`     | `list_browser_targets`                                                                                                              |
+| `s71-mobile-preferences-eraser`   | `r06-inspect-after-65.json`  | `ev_c6fd3703`     | `inspect_web_page`, 07:35:36.853–07:35:40.526, 7 origins, after 65's second reload, with no step inside it                          |
+| `s72-mobile-preferences-eraser-2` | `r01-targets.json`           | `ev_401d0fea`     | `list_browser_targets`                                                                                                              |
+| `s72-mobile-preferences-eraser-2` | `r02-inspect-during-62.json` | `ev_703682d8`     | `inspect_web_page`, 07:39:15.090–07:40:15.546, 7 origins. Armed 3646 ms before scenario 62's first step; all its 63 steps inside it |
+| `s72-mobile-preferences-eraser-2` | `r03-inspect-during-63.json` | `ev_8df948a1`     | `inspect_web_page`, 07:41:02.753–07:42:17.948, 7 origins. Armed 2892 ms before scenario 63's first step; all its 89 steps inside it |
+| `s72-mobile-preferences-eraser-2` | `r04-inspect-during-64.json` | `ev_ac08252a`     | `inspect_web_page`, 07:42:21.162–07:43:51.416, 7 origins. Armed 3453 ms before scenario 64's first step; all its 99 steps inside it |
+| `s72-mobile-preferences-eraser-2` | `r05-targets-after-65.json`  | `ev_401d0fea`     | `list_browser_targets`                                                                                                              |
+| `s72-mobile-preferences-eraser-2` | `r06-inspect-after-65.json`  | `ev_baca4fb4`     | `inspect_web_page`, 07:44:20.298–07:44:23.997, 7 origins, after 65's second reload, with no step inside it                          |
+| `s72-mobile-preferences-eraser-2` | `r08-inspect-during-66.json` | `ev_093768ed`     | `inspect_web_page`, 07:40:18.822–07:40:58.994, 7 origins. Armed 3356 ms before scenario 66's first step; all its 40 steps inside it |
+| `s73-mobile-eraser-bound`         | `r01-targets.json`           | `ev_c1893a6a`     | `list_browser_targets`                                                                                                              |
+| `s73-mobile-eraser-bound`         | `r02-inspect-during-62.json` | `ev_046494fc`     | `inspect_web_page`, 07:45:24.478–07:46:25.059, 7 origins. Armed 3360 ms before scenario 62's first step; all its 63 steps inside it |
+| `s73-mobile-eraser-bound`         | `r08-inspect-during-66.json` | `ev_ecf4e9bb`     | `inspect_web_page`, 07:46:28.203–07:47:08.511, 7 origins. Armed 3560 ms before scenario 66's first step; all its 40 steps inside it |
+
 **Library undo, offline and language records** (s68–s70, on 2026-11-06, times UTC). Each session
 listed the target after 09, and s68 and s69 again after 09b, 50 and 24; a session's listings
 returned the same record each time, so they share one Evidence ID. s68 and s69 ran 60 inside its

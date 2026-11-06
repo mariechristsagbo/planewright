@@ -34,14 +34,16 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      R-29): the two reads straight after the reference's rectangle drag ran without a wait and
      disagree between s2 and s6 [O, raw timelines only]; that they read the saved state before
      it caught up is [H] (B-01). The freedraw tool stayed active across clicks
-     after Escape (B-29) [O]. Keeping the tool with a tool lock is **open** (R-02).
+     after Escape (B-29) [O]. On mobile Tool lock kept the Rectangle tool over two drags and left
+     the new rectangles unselected (s71, s72; B-37) [O]; on desktop it is **open** (R-02).
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
 3. **Selection model.** Ref: B-10 to B-14.
    - A click on the stroke selects an unfilled shape and a click inside it does not [O]; filled
      shapes are **open** (R-34).
    - Shift+click adds to the selection, and a box selection selects fully enclosed elements [O];
-     partial overlap is **open** (R-33).
+     on mobile a partial box selects nothing by default and the element once Overlap is picked
+     (s71, s72; B-12) [O]; on desktop partial overlap is **open** (R-33).
    - Ctrl+A then Ctrl+C left a locked element out of the copy [O]; whether select-all or copy
      excludes it is **open** (R-33).
    - The desktop selection shows corner handles and a rotation handle above the top centre; the
@@ -112,6 +114,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       between (R-44).
     - After Escape the reference returned to the tool used before the eraser, once [O]; as a
       rule this is [H] (R-44).
+    - On mobile a touch stroke with the eraser erases the element it crosses; erasing an arrow's
+      end target drops that end's binding, and Undo brings back the element and its bindings
+      (s71–s73) [O]. After erasing the element selected just before, Undo brought back that
+      selection and the Selection tool [O]; that the tool follows the selection is [I] (B-29).
 
 ## P2: application features
 
@@ -123,11 +129,14 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
     B-28.
     - The light/dark choice is saved locally as `theme` in the saved app state [O]. An
       `excalidraw-theme` key was already present at the first, light, load and REA redacts its
-      value, so that it also stores the choice is [I]. Whether the choice survives a reload is
-      **open**: no session reloaded while dark (R-19). The "System" option is **open** (R-26).
+      value, so that it also stores the choice is [I]. On mobile the dark choice was kept across
+      reloads (s16, s71, s72) and the "System" option followed the emulated scheme (s71, s72) [O];
+      on desktop both are **open** (R-19, R-26). A toggle or theme change is not an undo step on
+      mobile (s71, s72) [O].
     - Zen, grid and snap set keys in the saved app state [O, raw timelines only]; no view-mode key
-      was seen, so view mode is probably not saved [I, raw only]. Whether any mode survives a
-      reload is **open** (R-19).
+      was seen, so view mode is probably not saved [I, raw only]. On mobile zen, snap, Overlap
+      and Mouse were kept across a reload and view mode was not (s71, s72) [O]; on desktop this is
+      **open** (R-19).
 15. **Responsive mobile layout.** Ref: feature inventory §6.
     - Bottom toolbar, compact property bar, touch handles and pinch/pan [O, one phone
       viewport]. Breakpoints, tablet widths and orientation are **open** (R-23).

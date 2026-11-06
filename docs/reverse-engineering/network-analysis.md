@@ -222,6 +222,20 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Preferences, modes and eraser batch (s71–s73) [O]
+
+- **Loads and reloads.** Each of the three loads got its document with HTTP 200 from the network,
+  and 65's two reloads in s71 and in s72 got theirs from the service worker, with the scripts,
+  stylesheet and manifest, while the fonts came from the font CDN and the analytics script and
+  beacon from their own origins, with 200 and 202; no netlog holds a 403, 429, request under
+  `/.well-known/vercel/` or `.map` request (`evidence/sessions-s71-s73.json`).
+- **No traffic while erasing, drawing or using Preferences.** Every netlog entry was written during
+  09's load and the wait after it, or during one of 65's reloads and the wait after it: none of the
+  133 request starts fell in one of the 39 drawing and erasing steps, and the 9 REA windows over 62,
+  63, 64 and 66 kept 0 requests (`evidence/netlog-steps-s71-s73.json`,
+  `evidence/rea-windows-s71-s73.json`). Picking a theme, a mode, a selection mode or an input
+  device made no request.
+
 ### Library undo, offline and language batch (s68–s70) [O]
 
 - **Loads and reloads.** Each of the three loads got its document with HTTP 200 from the network,

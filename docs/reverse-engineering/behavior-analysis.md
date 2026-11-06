@@ -444,11 +444,14 @@ value is a value the page had saved locally.
 - **Undo/redo:** on mobile, the first Undo after a box selection that followed a deselecting tap
   left nothing selected and changed no element (`31-distribute-horizontally-undo`, where
   Distribute horizontally had changed nothing; s25, s30) [O]. On desktop: Not observed (R-52).
-- **Edge cases:** partial overlap and Ctrl box select: Not observed (R-33).
+- **Edge cases:** on mobile a box dragged from empty canvas over the top-left quarter of a rectangle
+  selected nothing in the default Select on mode, Wrap (stored `contain`), and the rectangle once
+  Overlap was picked in Preferences (`64-wrap-partial`, `64-overlap-partial`, s71, s72) [O]. Partial
+  overlap on desktop and Ctrl box select: Not observed (R-33).
 - **Desktop/mobile:** on mobile a one-finger drag with the Selection tool from empty canvas around
   whole elements selected them: 2 in s22 (`28-box-selected`), 3 in s25, s30, s33 and s35 [O].
 - **Reproduction:** scenario 03 (s1, s2, s6); scenarios 28 (s22), 31 (s25, s30) and 34 (s33,
-  s35).
+  s35); 64 (s71, s72).
 - **Confidence:** [O] high.
 - **Limitations:** the probe stores a count, not which elements (R-33).
 
@@ -932,17 +935,33 @@ value is a value the page had saved locally.
   `excalidraw-theme` key was already present at the first, light, load (REA initial inspection,
   values redacted), so that it stores the choice is [I]. The zen, grid and snap keys in the table were read from the raw
   timelines only [O, raw only]; no view-mode key was seen there, so view mode is probably not
-  saved [I, raw only]. No session reloaded while dark or with zen, grid or snap on: s1's last
+  saved [I, raw only]. No desktop session reloaded while dark or with zen, grid or snap on: s1's last
   reload and s6's scenario 06 reload both came before `07-dark`, and nothing after 07 reloads.
-  Whether the theme or any mode survives a reload: Not observed (R-19).
-- **Undo/redo:** whether a toggle or theme change is an undo step: Not observed (R-19).
-- **Edge cases:** snap's effect on dragging, Keep tool active, Arrow binding and Snap to
-  midpoints: Not observed (R-19).
-- **Desktop/mobile:** mobile theme in B-28; mobile zen/view/grid: Not observed (R-19).
-- **Reproduction:** scenarios 05 and 07 (s1, s6).
-- **Confidence:** [O] high for the visible effects and the unchanged zoom and scroll (s1 and s6).
-- **Limitations:** visible effects from screenshots and ARIA outside Git; the zen, grid, snap
-  and view-mode keys come from raw timelines and are not in the committed probes (R-19).
+  On desktop whether the theme or any mode survives a reload: Not observed (R-19). On mobile the
+  dark theme, zen mode, snap to objects, Overlap and Mouse were all kept across a reload
+  (`65-before-reload`, `65-after-reload`, s71, s72), and view mode, which stored no key, was gone
+  after the next one (`65-view-reloaded`) [O].
+- **Undo/redo:** on mobile, with a deselecting tap as the last history step, Undo after Toggle grid
+  and after the Dark mode radio left the grid and the theme as they were and selected the rectangle
+  again, so a toggle is not an undo step, nor is a theme change (`63-grid-undo`, `63-dark-undo`,
+  s71, s72) [O]. On desktop: Not observed (R-19).
+- **Edge cases:** on mobile, Snap to objects turned on while the grid was on turned the grid off
+  (`65-snap`); Tool lock kept the Rectangle tool over two drags, read 800 ms after each, left the
+  new rectangles unselected and stayed on after Selection was picked (`63-locked-2`,
+  `63-selection`); with Arrow binding off, an arrow drawn between two rectangles bound neither end
+  (`64-arrow-unbound`) (s71, s72) [O]. Snap's effect on dragging and Snap to midpoints: Not observed
+  (R-19).
+- **Desktop/mobile:** mobile theme in B-28. On mobile the toggles sit in the main menu's Preferences
+  submenu, which stays open after one is picked; zen mode left every named control of the first load
+  and the menu trigger in place, the welcome screen aside, and view mode left only the unnamed menu
+  trigger and an unnamed button with a pencil where Library was (raw ARIA and captures, s71, s72)
+  [O].
+- **Reproduction:** scenarios 05 and 07 (s1, s6); 63–65 (s71, s72).
+- **Confidence:** [O] high for the visible effects and the unchanged zoom and scroll (s1 and s6),
+  and for the mobile toggles, Undo and reload reads (s71 and s72 identical).
+- **Limitations:** visible effects from screenshots and ARIA outside Git; for s1 and s6 the zen,
+  grid, snap and view-mode keys come from raw timelines and are not in the committed probes, while
+  the s71 and s72 summaries keep the stored flags (R-19).
 
 ### B-28 System colour scheme
 
@@ -951,14 +970,20 @@ value is a value the page had saved locally.
 - **Immediate result:** emulation did **not** switch the theme (`m-dark-scheme-emulated`);
   choosing Dark did (`m-dark-via-menu`) [O].
 - **State and related effects:** `theme` in the saved app state follows the menu choice [O].
-- **Persistence:** read from local storage [O]; across a reload: Not observed (R-19).
-- **Undo/redo:** whether a theme change is an undo step: Not observed (R-19).
-- **Edge cases:** the "System" radio: Not observed (R-26).
+- **Persistence:** read from local storage [O]; the dark theme was kept across a mobile reload (s16;
+  `65-after-reload`, s71, s72) [O]; on desktop: Not observed (R-19).
+- **Undo/redo:** on mobile Undo after the Dark mode radio kept the dark theme, so a theme change is
+  not an undo step (`63-dark-undo`, s71, s72; B-37) [O]; on desktop: Not observed (R-19).
+- **Edge cases:** on mobile, System mode picked under an emulated dark scheme stored the theme as
+  dark, and emulating light and then dark again turned it light and dark with no input
+  (`64-system-dark`, `64-system-light`, `64-system-dark-again`, s71, s72) [O]. The "System" radio on
+  desktop: Not observed (R-26).
 - **Desktop/mobile:** desktop dark by shortcut and menu (B-37); desktop emulation: Not observed
   (R-26).
-- **Reproduction:** scenario 10 (s3, s7, s11).
-- **Confidence:** [O] high.
-- **Limitations:** default settings only (R-26).
+- **Reproduction:** scenario 10 (s3, s7, s11); 64 (s71, s72).
+- **Confidence:** [O] high; the System mode reads are high too, both runs identical.
+- **Limitations:** default settings only (R-26); the colour scheme was emulated, not a phone's own
+  setting (limitations).
 
 ### B-28a Export defaults follow the theme
 
@@ -988,12 +1013,24 @@ value is a value the page had saved locally.
   eraser, and the clicks made dots (`diag-after-eraser`) [O]. That Escape returns to the
   previous tool in general is [H] (R-44).
 - **Persistence:** read from local storage [O].
-- **Undo/redo:** Not observed for erasing (R-44).
-- **Edge cases:** erasing bound or locked elements: Not observed (R-44).
-- **Desktop/mobile:** mobile eraser: Not observed (R-44).
-- **Reproduction:** scenarios 04 and 04b (s1, s6).
-- **Confidence:** [O] high for the removal and the tool after Escape.
-- **Limitations:** no probe before the eraser (R-44).
+- **Undo/redo:** on mobile, after erasing a rectangle drawn just before and still selected, Undo
+  brought it back, selected, and left the Selection tool active, and Redo erased it again
+  (`62-erased-free-undo`, s71–s73) [O]; after an erase with nothing selected, Undo brought back the
+  element and its bindings with the Eraser still active, and Redo removed them again
+  (`66-erased-target-undo`, s72, s73) [O]. That the tool follows the selection Undo brings back is
+  [I]. On desktop: Not observed (R-44).
+- **Edge cases:** on mobile, erasing an arrow's end target removed it and the arrow's end binding,
+  keeping the start binding (`66-erased-target`), and erasing the arrow emptied both rectangles'
+  bound lists (`66-erased-arrow`); Undo restored each (s72, s73) [O]. Bound targets on desktop and
+  locked elements: Not observed (R-44).
+- **Desktop/mobile:** on mobile a one-finger stroke with the Eraser across an element's edge erased
+  it (`62-erased-free`, s71–s73), and Escape with the Eraser active left the Selection tool
+  (`66-escape`, s72, s73) [O].
+- **Reproduction:** scenarios 04 and 04b (s1, s6); 62 and 66 (s71–s73).
+- **Confidence:** [O] high for the removal and the tool after Escape; on mobile high, 62 run in
+  three fresh profiles and 66 in two, with identical probes.
+- **Limitations:** no probe before the desktop eraser (R-44); in s71 the strokes of 62 after its
+  first Undo ran with the Selection tool and erased nothing.
 
 ## Persistence
 

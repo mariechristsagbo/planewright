@@ -67,7 +67,11 @@ byte-identical, the shared digest.
 
 Zen mode (Alt+Z), view mode (Alt+R), grid (Ctrl+'), snap to objects (Alt+S), theme (Alt+Shift+D),
 keep-tool-active (Q), arrow binding and snap to midpoints (context-menu checkboxes). Their
-effects are in [behaviour](behavior-analysis.md#b-37-view-modes-and-toggles).
+effects are in [behaviour](behavior-analysis.md#b-37-view-modes-and-toggles). On mobile they sit in
+the main menu's Preferences submenu, with the Select on and Input radios and Tool lock; s71 and s72
+used each from there but Snap to midpoints and Canvas & Shape properties, with Undo after Toggle
+grid and a theme change and a reload with zen, snap, Overlap and Mouse on (B-37, B-12, B-28) [O,
+high: both runs identical].
 
 ## 4. Element types created in this baseline [O, high]
 

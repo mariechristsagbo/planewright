@@ -70,7 +70,7 @@
    the manifest got HTTP 403 twice, three minutes before s50's verification page. Those gates passed
    both. About two hours after s64, s65–s67 (05:21–05:33 UTC) loaded the app normally under a gate
    that stops on a 403 of any request type, and met none, nor did s68–s70 (06:21–06:33 UTC), where
-   54 got its locale chunk with HTTP 200; whether the protection depends on rate, time or the
+   54 got its locale chunk with HTTP 200, or s71–s73 (07:30–07:47 UTC); whether the protection depends on rate, time or the
    requests asked for is not known [H].
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
@@ -113,6 +113,10 @@
     the reload (s68, s69), but in a local test a DevTools session that detached from the page
     turned it true again, so no REA call may end while a page should read offline. A real lost
     connection, a flaky one and a longer offline period were not tried.
+15. **Emulated colour scheme and wheel.** In 64 the System theme was read under a
+    `prefers-color-scheme` emulated through CDP, which also asks for reduced motion, and the wheel
+    turns are the driver's mouse wheel on a page with touch emulation; a phone's own dark-mode
+    switch and a mouse or trackpad on a real device were not tried.
 
 ## Tooling limits
 
@@ -131,9 +135,12 @@
   s22 on the summaries are built with `--points` and keep each line's and arrow's point count; the
   points themselves and the angle beyond one decimal (the scene probe rounds it) are not kept.
   From s38 on the scene probe also reads an arrow's elbowed flag, and the summaries keep it.
+  From s71 on the summaries are built with `--modes` and keep the stored mode flags (grid, zen,
+  view, snap, arrow binding, midpoint snapping, selection mode and input device) and the tool lock.
 - **Facts read only from raw records outside Git.** These are cited with that caveat and cannot
   be re-checked from the committed evidence:
-  - the zen, grid, snap and view-mode keys of the saved app state (B-37);
+  - the zen, grid, snap and view-mode keys of the saved app state in s1 and s6 (B-37); from s71
+    the summaries keep them;
   - the load lifecycle offsets of `ev_58bb47ed` (`rea-windows.json` keeps the event names only);
   - the start time of scenario 13's Delete keypress (16:11:07.053, from the s6 timeline);
   - the s6 storage names of `ev_13a4756f`, including `workbox-expiration` and the `fonts` cache
@@ -193,6 +200,9 @@
   - in s68–s70, the byte-identical ARIA of the replay pairs and against s63 and s61, the 3 snapshots
     that differ only in that query value, the Undo button disabled after 60's first Undo, the one
     library item in each sidebar snapshot, and the local test reads of `navigator.onLine`.
+  - in s71–s73, the byte-identical ARIA of the replay pairs, the menu left open after a Preferences
+    choice, the controls that zen and view mode leave, and the Preferences items that show a check
+    mark but expose no checked state.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
