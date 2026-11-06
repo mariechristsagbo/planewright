@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
 import { screenshot } from './capture.mjs';
+import { clipboardWrite } from './clipboard-text.mjs';
 import { streamExclusive, writeExclusive } from './files.mjs';
 import {
   REFERENCE_ORIGIN,
@@ -268,4 +269,6 @@ export const handlers = {
       .grantPermissions(['clipboard-read', 'clipboard-write'], { origin: REFERENCE_ORIGIN });
     return { granted: true };
   },
+  // A self-authored plain text for Paste (s83 on); see clipboard-text.mjs.
+  clipboardWrite,
 };

@@ -1,9 +1,10 @@
 // Bounded reads of state created by the research session itself: storage key inventory,
 // a structural summary of the locally persisted scene, clipboard text shape, the clipboard items'
-// types and sizes, the URL shape and the computed style of the document root. Values are reduced
-// to shapes, counts and geometry.
+// types and sizes, a copied link's shape, the URL shape and the computed style of the document
+// root. Values are reduced to shapes, counts and geometry.
 // The focus, connectivity and layout reads of s59 on live in view-probes.mjs.
 import { HEAD_BYTES, readClipboardItems, shapeClipboardItems } from './clipboard-items.mjs';
+import { clipboardUrlProbe } from './clipboard-text.mjs';
 import { clipboardShapeOf, urlShapeOf } from './sanitise.mjs';
 import { viewProbes } from './view-probes.mjs';
 
@@ -173,6 +174,8 @@ export const probes = {
     ctx.page.evaluate(summariseAppState, step.key ?? 'excalidraw-state'),
   clipboard: clipboardProbe,
   clipboardItems: clipboardItemsProbe,
+  // The shape of a copied link (s83 on); see clipboard-text.mjs.
+  clipboardUrl: clipboardUrlProbe,
   rootStyle: async (ctx) => ctx.page.evaluate(rootStyle),
   ...viewProbes,
 };

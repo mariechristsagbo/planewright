@@ -27,6 +27,7 @@ it never writes raw third-party content into this repository. See
 | `lib/sanitise.mjs`       | URL shapes, query stripping, secret-shape counting and redaction.                                                                                                                                           |
 | `lib/png.mjs`            | Minimal PNG codec used to paint masks and to verify them.                                                                                                                                                   |
 | `lib/probes.mjs`         | Reads of session-created state: storage keys, scene and appState shape (elbowed flag, link, pressure, Preferences flags), clipboard text and URL shape, and clipboard items (`clipboard-items.mjs`).        |
+| `lib/clipboard-text.mjs` | A self-authored plain text for Paste, refused when it reads as a link, and the shape of a copied link (origin, path, key names, value lengths).                                                             |
 | `lib/view-probes.mjs`    | The focused element and live regions, the connection and service worker state, and the language and named button boxes.                                                                                     |
 | `lib/netlog.mjs`         | Metadata-only network log (no headers, cookies, bodies or query values).                                                                                                                                    |
 | `scenarios/*.json`       | Replayable step batches; coordinates assume the stated viewport and default zoom.                                                                                                                           |
@@ -152,6 +153,12 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
   count also reads the ASCII-decoded text, so a value whose own characters are encoded is
   counted. The clipboard text is redacted in full before its preview is cut. URL probes and the netlog return key names and value
   lengths only; a key that is not a plain identifier is replaced by `<non-identifier>`.
+- **Clipboard writes.** `clipboardWrite` (from s83 on) puts one self-authored plain text on the
+  clipboard so that Paste can be observed: 1 to 200 printable ASCII characters, refused before
+  the page is reached when it holds `://`, starts with `//`, names a `www.` host or a `room` or
+  `json` link key, so a paste can never make a link or an embed. `clipboardUrl` reads what Copy
+  link to object leaves as its origin, path, query key names with value lengths and fragment key
+  names with part lengths; a text that is not a web link keeps its length only.
 - **Failures.** Every step is appended to `timeline.jsonl`, with every string of the step and of
   its result redacted, keys included. The HTTP reply, and so what `run.mjs` prints, carries that
   redacted result, not the one the handler returned; handlers still receive the step as sent.
