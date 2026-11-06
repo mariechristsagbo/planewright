@@ -15,3 +15,13 @@ export const anyAngle = (random: Random): number => randomBetween(random, 0, TAU
 /** A string of `length` characters, each drawn uniformly from `alphabet`. */
 export const randomText = (random: Random, alphabet: string, length: number): string =>
   Array.from({ length }, () => alphabet.charAt(randomInt(random, 0, alphabet.length - 1))).join('');
+
+/** A copy of `items` in a uniformly random order (Fisher–Yates). */
+export function shuffled<T>(random: Random, items: readonly T[]): T[] {
+  const copy = [...items];
+  for (let index = copy.length - 1; index > 0; index -= 1) {
+    const other = randomInt(random, 0, index);
+    [copy[index], copy[other]] = [copy[other] as T, copy[index] as T];
+  }
+  return copy;
+}
