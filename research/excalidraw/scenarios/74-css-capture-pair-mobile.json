@@ -1,0 +1,45 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-71: one capture at CSS scale and one at device scale of the same view, with no input, right after a REA capture of the page, so the REA and driver captures can be compared at one size. Asserts the metrics before and after, as Playwright's own capture was once found to reset the emulated DPR.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "screenshot",
+      "name": "m74-01-css",
+      "cssScale": true
+    },
+    {
+      "do": "screenshot",
+      "name": "m74-02-device"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

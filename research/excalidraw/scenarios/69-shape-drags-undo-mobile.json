@@ -1,0 +1,406 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-29: every drag-made shape with Undo of its creation. Picks Rectangle, then Diamond and Ellipse from the Rectangle tool's choice, then Line and Arrow from the Arrow tool's choice, reading the tool, and draws each by a one-finger drag from (200,480) to (340,600), reading the scene and the app state 800 ms later, then presses Undo and reads again; draws a freehand stroke through the same box with Freedraw and undoes it too. It then picks Rectangle again, because the Rectangle slot keeps the last choice, and Selection. It types nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-rectangle-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 480]],
+      "to": [[340, 600]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-rectangle"
+    },
+    {
+      "do": "appState",
+      "label": "69-rectangle"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-rectangle-undo"
+    },
+    {
+      "do": "appState",
+      "label": "69-rectangle-undo"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Diamond",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-diamond-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 480]],
+      "to": [[340, 600]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-diamond"
+    },
+    {
+      "do": "appState",
+      "label": "69-diamond"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-diamond-undo"
+    },
+    {
+      "do": "appState",
+      "label": "69-diamond-undo"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Ellipse",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-ellipse-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 480]],
+      "to": [[340, 600]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-ellipse"
+    },
+    {
+      "do": "appState",
+      "label": "69-ellipse"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-ellipse-undo"
+    },
+    {
+      "do": "appState",
+      "label": "69-ellipse-undo"
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Line",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-line-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 480]],
+      "to": [[340, 600]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-line"
+    },
+    {
+      "do": "appState",
+      "label": "69-line"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-line-undo"
+    },
+    {
+      "do": "appState",
+      "label": "69-line-undo"
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-arrow-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 480]],
+      "to": [[340, 600]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "69-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-arrow-undo"
+    },
+    {
+      "do": "appState",
+      "label": "69-arrow-undo"
+    },
+    {
+      "do": "tap",
+      "at": [127, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Freedraw",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-freedraw-tool"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [200, 480],
+        [270, 560],
+        [340, 600]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-freedraw"
+    },
+    {
+      "do": "appState",
+      "label": "69-freedraw"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "69-freedraw-undo"
+    },
+    {
+      "do": "appState",
+      "label": "69-freedraw-undo"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Rectangle",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-rectangle-again"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "69-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

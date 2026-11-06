@@ -374,6 +374,18 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     tool active, so 66 picks the Eraser again before it erases the arrow's end target, with Undo,
     Redo and Undo, and before it erases the arrow, with Undo; it then picks the Eraser and presses
     Escape. Its last Undo leaves the scene as 62 left it, so 63 to 65 can follow it.
+  - `67` to `74` (from s74 on) use only names that s11, s16 and s72 saved, and run in one session
+    right after `09`: 67, 69, 70, 72, a REA capture with 74 straight after it, 68, 71 and last 73,
+    before 16. `67` holds one finger still for 800 ms on empty canvas and on a rectangle, first
+    deselected, then selected, saving the ARIA after each hold; `68` right-clicks the same points,
+    a mouse event on the touch-emulated page and not a phone gesture. `69` draws every drag-made
+    shape through one box and undoes each. `70` picks Frame tool, Laser pointer and Sticky note
+    from More tools, and the Lasso. `72` drags a rectangle to 3 px below another's top before and
+    after Snap to objects, and draws an arrow ending 6 px off a stroke's midpoint before and after
+    Snap to midpoints is toggled. `74` takes a CSS-scale and a device-scale capture with no input.
+    `71` types four command names into the command palette's search box, and stops at its first
+    failed step, so nothing is typed unless that box was clicked; `73` confirms Clear canvas and
+    presses Undo. None picks a context-menu item, uploads anything or follows a link.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
