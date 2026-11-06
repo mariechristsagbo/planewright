@@ -89,8 +89,9 @@ describe('clipboardUrl', () => {
     const room = 'Zz09Zz09Zz09Zz09Zz09';
     const text = `https://excalidraw.com/#room=${room},${'k'.repeat(22)}`;
     const shape = clipboardUrlShape(text);
-    expect(shape.fragment).toEqual([{ key: 'room', valueLengths: [20, 22] }]);
+    // The boolean comes first, so a failure never prints the room value.
     expect(JSON.stringify(shape).includes(room)).toBe(false);
+    expect(shape.fragment).toEqual([{ key: 'room', valueLengths: [20, 22] }]);
   });
 
   it('reduces a text that is not a web link to its length', () => {
