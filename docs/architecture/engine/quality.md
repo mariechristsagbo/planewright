@@ -57,10 +57,10 @@ its tests.
   offset of B-18 and, in P1, the paste centring of B-26 become fixed expectations. They are
   numbers the baseline observed, not code.
 - **Properties.** Screen to scene to screen is the identity; zooming about a point keeps that point;
-  a generated order key lies strictly between its neighbours and never ends with `0`; decoding an
-  encoded document gives it back; undo then redo restores the document; a cancelled transaction
-  leaves the document unchanged. Generators are seeded, and a failure prints its seed. They use no
-  new dependency.
+  a generated order key lies strictly between its neighbours and never ends with `0`; renormalising
+  a rotated point element moves none of its unchanged points; decoding an encoded document gives it
+  back; undo then redo restores the document; a cancelled transaction leaves the document unchanged.
+  Generators are seeded, and a failure prints its seed. They use no new dependency.
 - **Determinism.** Engine code never calls `Math.random`, `Date.now` or timers directly; an ESLint
   rule in the engine block enforces it, and the ports supply them.
 - **Coverage.** The repository thresholds stay at 90 % statements, 85 % branches, 90 % functions
