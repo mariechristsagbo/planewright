@@ -1,0 +1,515 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-08, R-09, R-53, R-38 and R-44: items of the context menus that s74 found a long press opens. Runs after 72 and 76, whose rectangles A and B stay above, and 67, whose rectangle [120,330,120,90] stays below. Draws P [40,230,100,90] and gives it the Yellow background by name, then Q [220,230,100,90], and deselects. Holds on empty canvas at (200,560), now that drawing has removed the welcome screen, saving the ARIA. By a long press on a left stroke each time, 22 px below its corner and clear of the handles a selected shape shows, picks Copy styles on P and Paste styles on Q, with Undo and Redo; Wrap selection in frame on Q, with Undo; and Lock on Q, with Undo and Redo. Then taps Q, strokes the Eraser across it and picks Selection again; holds on Q and picks Unlock, and holds on empty canvas and picks Unlock all, saving the ARIA of each menu, so whichever item the menus offer unlocks it. It types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 230]],
+      "to": [[140, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Yellow — c",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "75-p-yellow"
+    },
+    {
+      "do": "appState",
+      "label": "75-p-yellow"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 230]],
+      "to": [[320, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "75-two"
+    },
+    {
+      "do": "appState",
+      "label": "75-two"
+    },
+    {
+      "do": "touchHold",
+      "at": [200, 560],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m75-01-canvas-hold"
+    },
+    {
+      "do": "screenshot",
+      "name": "m75-01-canvas-hold"
+    },
+    {
+      "do": "appState",
+      "label": "75-canvas-hold"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Copy styles",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-copied"
+    },
+    {
+      "do": "appState",
+      "label": "75-copied"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Paste styles",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-pasted"
+    },
+    {
+      "do": "appState",
+      "label": "75-pasted"
+    },
+    {
+      "do": "screenshot",
+      "name": "m75-02-pasted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-pasted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "75-pasted-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-pasted-redo"
+    },
+    {
+      "do": "appState",
+      "label": "75-pasted-redo"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Wrap selection in frame",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-framed"
+    },
+    {
+      "do": "appState",
+      "label": "75-framed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m75-03-framed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-framed-undo"
+    },
+    {
+      "do": "appState",
+      "label": "75-framed-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Lock",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-locked"
+    },
+    {
+      "do": "appState",
+      "label": "75-locked"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-locked-undo"
+    },
+    {
+      "do": "appState",
+      "label": "75-locked-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-locked-redo"
+    },
+    {
+      "do": "appState",
+      "label": "75-locked-redo"
+    },
+    {
+      "do": "tap",
+      "at": [220, 252]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "75-locked-tap"
+    },
+    {
+      "do": "tap",
+      "at": [172, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "75-eraser"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [205, 252],
+        [235, 252]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "screenshot",
+      "name": "m75-04-locked-erase"
+    },
+    {
+      "do": "scene",
+      "label": "75-locked-erase"
+    },
+    {
+      "do": "appState",
+      "label": "75-locked-erase"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "75-selection"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m75-05-locked-hold"
+    },
+    {
+      "do": "screenshot",
+      "name": "m75-05-locked-hold"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Unlock",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-unlock-element"
+    },
+    {
+      "do": "appState",
+      "label": "75-unlock-element"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchHold",
+      "at": [200, 560],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m75-06-canvas-hold-locked"
+    },
+    {
+      "do": "screenshot",
+      "name": "m75-06-canvas-hold-locked"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Unlock all",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "75-unlock-all"
+    },
+    {
+      "do": "appState",
+      "label": "75-unlock-all"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "75-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

@@ -386,6 +386,15 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     `71` types four command names into the command palette's search box, and stops at its first
     failed step, so nothing is typed unless that box was clicked; `73` confirms Clear canvas and
     presses Undo. None picks a context-menu item, uploads anything or follows a link.
+  - `75` and `76` (from s75 on) follow what s74 found. In s74, 67's first hold landed on the
+    welcome screen's Live collaboration entry and opened its dialog (no session was started), and
+    72's drag from the middle of B's left stroke, where a resize handle sits once B is selected,
+    moved nothing. `76` runs right after `72` and repeats that drag from B's top stroke at
+    (220,140), 20 px from its corner and its middle, before and after Snap to objects. `75` runs
+    after 76: it draws two rectangles, holds on empty canvas only after drawing has removed the
+    welcome screen, and by long presses clear of the handles picks Copy styles, Paste styles,
+    Wrap selection in frame and Lock, each with Undo; it then taps and erases the locked shape
+    and tries Unlock and Unlock all. Neither uses a clipboard item, types or follows a link.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
