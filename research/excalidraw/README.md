@@ -347,6 +347,16 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     inside one REA window, because in a local test a DevTools session that detached from the page
     turned `navigator.onLine` true again; 24 reloaded last. s70 ran 54 again after 53, last in the
     batch, because its locale chunk got HTTP 403 in s64.
+  - `62` to `65` run in this order in one session, right after `09`, and use only names s11 and
+    s70 saved. `62` draws three rectangles and an arrow and erases a free rectangle, the arrow's
+    end target and the arrow with one-finger strokes, with Undo and Redo after each. `63` deselects
+    a new rectangle, then picks Toggle grid and Dark mode from the main menu, each followed by Undo
+    and Redo, and draws twice with Tool lock on. `64` picks System mode under an emulated colour
+    scheme, drags one selection box over part of a rectangle before and after picking Overlap,
+    draws an arrow with Arrow binding off and one with it on, and turns the wheel before and after
+    picking Mouse. `65` turns Dark mode, Snap to objects and Zen mode on and reloads, then turns View
+    mode on and reloads again. Each menu choice reopens the menu, never collapses Preferences
+    (`unlessExpanded`) and is closed by a tap at (330,300), outside the menu and its submenu.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

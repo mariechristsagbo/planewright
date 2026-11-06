@@ -1,0 +1,412 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-19, R-52 and R-02: Toggle grid and a theme change from the main menu, each followed by Undo and Redo, then Tool lock with two drags. Draws a rectangle at [40,560,80,80] and deselects it with a tap on empty canvas, so that the last history step is known; opens the menu and its Preferences submenu, which unlessExpanded never collapses, saves their ARIA and taps Toggle grid, saving the ARIA again to show whether the menu stayed open, then closes it with a tap on empty canvas at (330,300), outside the menu and the submenu, and presses Undo and Redo, reading the scene and the app state after each. It does the same for the Dark mode radio. It then turns Tool lock on, draws two rectangles with the Rectangle tool picked once, reading 800 ms after each drag, goes back to Selection with a tap on it and on empty canvas, and turns Tool lock off. It types nothing and follows no link. Runs after 62 in the same session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 560]],
+      "to": [[120, 640]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-rect"
+    },
+    {
+      "do": "appState",
+      "label": "63-rect"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "63-deselected"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m63-01-preferences"
+    },
+    {
+      "do": "screenshot",
+      "name": "m63-01-preferences"
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Toggle grid",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m63-02-grid-menu"
+    },
+    {
+      "do": "appState",
+      "label": "63-grid"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "63-grid-closed"
+    },
+    {
+      "do": "appState",
+      "label": "63-grid-closed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m63-03-grid"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-grid-undo"
+    },
+    {
+      "do": "appState",
+      "label": "63-grid-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m63-04-grid-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-grid-redo"
+    },
+    {
+      "do": "appState",
+      "label": "63-grid-redo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "radio",
+      "name": "Dark mode",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "63-dark"
+    },
+    {
+      "do": "aria",
+      "save": "m63-05-dark-menu"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "63-dark-closed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-dark-undo"
+    },
+    {
+      "do": "appState",
+      "label": "63-dark-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m63-06-dark-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-dark-redo"
+    },
+    {
+      "do": "appState",
+      "label": "63-dark-redo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Tool lock",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "63-tool-lock"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 560]],
+      "to": [[280, 640]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-locked-1"
+    },
+    {
+      "do": "appState",
+      "label": "63-locked-1"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 400]],
+      "to": [[280, 480]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "63-locked-2"
+    },
+    {
+      "do": "appState",
+      "label": "63-locked-2"
+    },
+    {
+      "do": "screenshot",
+      "name": "m63-07-locked"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "63-selection"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Tool lock",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "63-tool-unlock"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "63-end"
+    },
+    {
+      "do": "appState",
+      "label": "63-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
