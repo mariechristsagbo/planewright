@@ -13,10 +13,12 @@
 // layout probes and the app state's canvas background are read only from s59 on, so the earlier
 // summaries have none of their rows or keys: a focus row keeps the focused element and each live
 // region's role, politeness and length, never its text, and a layout row leaves out the app root's
-// class.
+// class. With --modes an app-state row keeps the stored mode flags it read and the tool lock;
+// the probe reads the binding, midpoint, selection-mode and input flags only from s71 on, and the
+// summaries committed before s71 were built without it.
 //
 // Usage: node research/excalidraw/timeline-summary.mjs <timeline.jsonl> [--since ISO] [--json]
-//        [--points] [--text]
+//        [--points] [--text] [--modes]
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 
@@ -27,6 +29,7 @@ const { values, positionals } = parseArgs({
     json: { type: 'boolean', default: false },
     points: { type: 'boolean', default: false },
     text: { type: 'boolean', default: false },
+    modes: { type: 'boolean', default: false },
   },
 });
 const [file] = positionals;
@@ -60,6 +63,27 @@ const rows = readFileSync(file, 'utf8')
 const LATER = ['elbowed', 'link', 'simulatePressure', 'pressures', 'strokeOptions'];
 const later = (e) =>
   Object.fromEntries(LATER.filter((k) => e[k] !== undefined).map((k) => [k, e[k]]));
+
+// Summary names of the stored mode flags; a flag the probe did not read is left out.
+const MODES = {
+  grid: 'gridModeEnabled',
+  zen: 'zenModeEnabled',
+  view: 'viewModeEnabled',
+  snap: 'objectsSnapModeEnabled',
+  binding: 'isBindingEnabled',
+  midpointSnap: 'isMidpointSnappingEnabled',
+  boxSelection: 'boxSelectionMode',
+  input: 'inputDevice',
+};
+function modesOf(selected) {
+  const modes = Object.fromEntries(
+    Object.entries(MODES)
+      .filter(([, key]) => selected[key] !== undefined)
+      .map(([name, key]) => [name, selected[key]]),
+  );
+  const locked = selected.activeTool?.locked;
+  return typeof locked === 'boolean' ? { ...modes, toolLocked: locked } : modes;
+}
 
 const element = (e) => ({
   type: e.type,
@@ -103,6 +127,7 @@ for (const row of rows) {
     );
     entry.theme = selected.theme;
     if (selected.viewBackgroundColor !== undefined) entry.background = selected.viewBackgroundColor;
+    if (values.modes) entry.modes = modesOf(selected);
   }
   if (Object.hasOwn(VIEW, row.step.do)) Object.assign(entry, VIEW[row.step.do](row.result));
   summary.set(row.step.label, entry);

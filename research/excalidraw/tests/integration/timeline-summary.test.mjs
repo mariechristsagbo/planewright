@@ -236,3 +236,61 @@ describe('timeline-summary.mjs rows come from the probes only', () => {
     expect(JSON.parse(run.stdout).map((row) => row.label)).toEqual(['after']);
   });
 });
+
+describe('timeline-summary.mjs mode flags', () => {
+  const at = '2026-01-01T00:00:01.000Z';
+  const state = {
+    theme: 'dark',
+    activeTool: { type: 'rectangle', locked: true },
+    selectedElementIds: {},
+    gridModeEnabled: true,
+    zenModeEnabled: false,
+    objectsSnapModeEnabled: true,
+    isBindingEnabled: false,
+    isMidpointSnappingEnabled: true,
+    boxSelectionMode: 'overlap',
+    inputDevice: 'mouse',
+  };
+  const read = (selected) => ({
+    started: at,
+    step: { do: 'appState', label: 'm' },
+    result: { selected },
+  });
+
+  it('keeps every stored mode flag and the tool lock only with --modes', () => {
+    const run = summarise('modes', [read(state)], ['--modes']);
+    expect(run.status).toBe(0);
+    expect(JSON.parse(run.stdout)[0].modes).toEqual({
+      grid: true,
+      zen: false,
+      snap: true,
+      binding: false,
+      midpointSnap: true,
+      boxSelection: 'overlap',
+      input: 'mouse',
+      toolLocked: true,
+    });
+  });
+
+  it('keeps a view-mode flag only when the probe read one', () => {
+    const run = summarise('modes-view', [read({ ...state, viewModeEnabled: true })], ['--modes']);
+    expect(JSON.parse(run.stdout)[0].modes.view).toBe(true);
+    const without = summarise('modes-no-view', [read(state)], ['--modes']);
+    expect('view' in JSON.parse(without.stdout)[0].modes).toBe(false);
+  });
+
+  it('leaves the flags out by default, as in the summaries built before it', () => {
+    const run = summarise('no-modes', [read(state)]);
+    expect(run.status).toBe(0);
+    expect('modes' in JSON.parse(run.stdout)[0]).toBe(false);
+  });
+
+  it('adds an empty set for an app state read with no flag and no tool lock', () => {
+    const run = summarise(
+      'modes-empty',
+      [read({ activeTool: { type: 'selection' } })],
+      ['--modes'],
+    );
+    expect(JSON.parse(run.stdout)[0].modes).toEqual({});
+  });
+});

@@ -174,10 +174,18 @@ async function acceptDialog(ctx, step) {
   return seen;
 }
 
+// With unlessExpanded true, an item that already reports aria-expanded="true" is left alone, so
+// a menu reopened with its submenu still expanded does not collapse it (Preferences, s71 on).
 async function role(ctx, step) {
   const locator = ctx.page.getByRole(step.role, { name: step.name, exact: step.exact ?? false });
   const target = step.nth === undefined ? locator.first() : locator.nth(step.nth);
-  await target.click({ timeout: step.timeout ?? 5000 });
+  const timeout = step.timeout ?? 5000;
+  if (step.unlessExpanded === true) {
+    if ((await target.getAttribute('aria-expanded', { timeout })) === 'true') {
+      return { role: step.role, name: step.name, skipped: 'expanded' };
+    }
+  }
+  await target.click({ timeout });
   return { role: step.role, name: step.name };
 }
 

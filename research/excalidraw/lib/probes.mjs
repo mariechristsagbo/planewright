@@ -112,6 +112,11 @@ function summariseAppState(key) {
     'name',
     // Read from s59 on (the canvas background, R-05).
     'viewBackgroundColor',
+    // Read from s71 on: the Preferences flags whose key names the stored state shows (R-19, R-12).
+    'isBindingEnabled',
+    'isMidpointSnappingEnabled',
+    'boxSelectionMode',
+    'inputDevice',
   ];
   const selected = Object.fromEntries(pick.filter((k) => k in state).map((k) => [k, state[k]]));
   if (selected.name) selected.name = `<${String(selected.name).length} chars>`;
