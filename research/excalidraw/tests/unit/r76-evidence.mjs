@@ -14,9 +14,21 @@ export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
 // Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
 // records of the tenth to twelfth reviews cover only the files committed before them.
-// Evidence files committed after d81dc03, by the keyboard, offline and layout batch (s58–s64); s58
-// ran no labelled probe, so it has no probe summary.
+// Evidence files committed after 61c695a, by the replay batch (s65–s67).
+export const COMMITTED_AFTER_61C695A = [
+  'netlog-steps-s65-s67.json',
+  ...[
+    's65-mobile-keyboard-resize-3',
+    's66-mobile-library-background-2',
+    's67-mobile-library-sidebar-2',
+  ].map((name) => `probes-${name}.json`),
+  'rea-windows-s65-s67.json',
+  'sessions-s65-s67.json',
+];
+// Evidence files committed after d81dc03, by the keyboard, offline and layout batch (s58–s64) and
+// later; s58 ran no labelled probe, so it has no probe summary.
 export const COMMITTED_AFTER_D81DC03 = [
+  ...COMMITTED_AFTER_61C695A,
   'netlog-steps-s58-s64.json',
   ...[
     's59-mobile-keyboard-resize',
