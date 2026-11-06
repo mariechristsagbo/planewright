@@ -333,6 +333,13 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     its first failed step, so nothing is typed unless that box was clicked.
   - The replay batch (s65–s67) ran s62's chain again, and s64's and s61's without 54, whose locale
     chunk got HTTP 403 in s64: 58 and 59 after 53 (s66), and 55 after 53 (s67).
+  - `60` runs right after `09`, with an empty library and nothing on the canvas where it draws or
+    taps. It repeats 58's add and placement at (136,214) and presses Undo and Redo by name after
+    each, reading the scene and the app state after every press; it taps Close before the first
+    Undo, so that no sidebar covers the button. `61` runs right after `50`, still offline, and
+    before `51`. It sends no input: it reads the connection state that 50's offline reload left and
+    repeats the `offline` step with the value 50 set, which the driver applies again on its own
+    session, then waits 6 s and reads again, so 51 then draws offline in a page that reads offline.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

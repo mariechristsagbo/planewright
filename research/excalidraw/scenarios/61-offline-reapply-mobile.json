@@ -1,0 +1,45 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-57: the offline state applied again after 50's offline reload, in the same session and before 51. It reads the metrics without asserting them and the connection state, which s60 and s63 found online after that reload although the browser context was still offline, then repeats the offline step with the value true: Playwright skips a value its context already holds, so the step also sends the network conditions on the driver's own session of the page, and navigator.onLine is read back false or the batch stops. It then waits 6 s with no input, so that a REA window and the netlog show what the page does once it reads offline, and reads the connection state, the scene and the app state, with ARIA and a capture. It sends no input, never reloads and stays offline; 51 then asserts the metrics, draws offline and goes back online. Runs right after 50.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "connectivity",
+      "label": "61-reloaded"
+    },
+    {
+      "do": "appState",
+      "label": "61-reloaded"
+    },
+    {
+      "do": "offline",
+      "value": true
+    },
+    {
+      "do": "wait",
+      "ms": 6000
+    },
+    {
+      "do": "connectivity",
+      "label": "61-reapplied"
+    },
+    {
+      "do": "scene",
+      "label": "61-reapplied"
+    },
+    {
+      "do": "appState",
+      "label": "61-reapplied"
+    },
+    {
+      "do": "aria",
+      "save": "m61-01-reapplied"
+    },
+    {
+      "do": "screenshot",
+      "name": "m61-01-reapplied"
+    }
+  ]
+}
