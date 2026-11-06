@@ -25,4 +25,16 @@ export type {
 } from './model/elements.ts';
 export type { ClientId, ElementId, FileId, GroupId } from './model/ids.ts';
 export type { OrderKey } from './model/order-key.ts';
+export type { ElementPatch } from './model/patch.ts';
 export type { Fill, FontFamily, FontSpec, Stroke, Style, TextBlock } from './model/style.ts';
+export type {
+  CanvasChange,
+  ChangeOrigin,
+  ChangeSet,
+  ChangeStamp,
+  ElementChange,
+  GroupChange,
+} from './scene/change-set.ts';
+export type { ChangeError, ChangeProblem } from './scene/check.ts';
+export type { ApplyOptions, SceneReader, SceneStore, SceneUpdate } from './scene/store.ts';
+export type { SceneTransaction } from './scene/transaction.ts';

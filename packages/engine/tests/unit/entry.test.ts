@@ -8,7 +8,12 @@ import type * as Document from '../../src/model/document.ts';
 import type * as Elements from '../../src/model/elements.ts';
 import type * as Ids from '../../src/model/ids.ts';
 import type * as Keys from '../../src/model/order-key.ts';
+import type * as Patch from '../../src/model/patch.ts';
 import type * as Styles from '../../src/model/style.ts';
+import type * as Changes from '../../src/scene/change-set.ts';
+import type * as Check from '../../src/scene/check.ts';
+import type * as Store from '../../src/scene/store.ts';
+import type * as Transaction from '../../src/scene/transaction.ts';
 
 describe('the engine entry point', () => {
   it('exports no run-time value: the layers stay internal until the editor exists', () => {
@@ -48,5 +53,22 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.CodecError>().toEqualTypeOf<Codec.CodecError>();
     expectTypeOf<Engine.CodecProblem>().toEqualTypeOf<Codec.CodecProblem>();
     expectTypeOf<Engine.Decoded<number>>().toEqualTypeOf<Codec.Decoded<number>>();
+  });
+
+  it("exports the scene's change sets, store and transaction types", () => {
+    expectTypeOf<Engine.ElementPatch>().toEqualTypeOf<Patch.ElementPatch>();
+    expectTypeOf<Engine.ChangeOrigin>().toEqualTypeOf<Changes.ChangeOrigin>();
+    expectTypeOf<Engine.ElementChange>().toEqualTypeOf<Changes.ElementChange>();
+    expectTypeOf<Engine.GroupChange>().toEqualTypeOf<Changes.GroupChange>();
+    expectTypeOf<Engine.CanvasChange>().toEqualTypeOf<Changes.CanvasChange>();
+    expectTypeOf<Engine.ChangeStamp>().toEqualTypeOf<Changes.ChangeStamp>();
+    expectTypeOf<Engine.ChangeSet>().toEqualTypeOf<Changes.ChangeSet>();
+    expectTypeOf<Engine.ChangeError>().toEqualTypeOf<Check.ChangeError>();
+    expectTypeOf<Engine.ChangeProblem>().toEqualTypeOf<Check.ChangeProblem>();
+    expectTypeOf<Engine.SceneUpdate>().toEqualTypeOf<Store.SceneUpdate>();
+    expectTypeOf<Engine.SceneReader>().toEqualTypeOf<Store.SceneReader>();
+    expectTypeOf<Engine.ApplyOptions>().toEqualTypeOf<Store.ApplyOptions>();
+    expectTypeOf<Engine.SceneStore>().toEqualTypeOf<Store.SceneStore>();
+    expectTypeOf<Engine.SceneTransaction>().toEqualTypeOf<Transaction.SceneTransaction>();
   });
 });
