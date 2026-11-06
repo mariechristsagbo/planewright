@@ -26,3 +26,6 @@ release has been published yet.
 - Governance documents: MIT license, contributing guide, code of conduct, security policy and
   agent instructions.
 - Documentation structure with architecture decision records and the investigation process.
+- Engine package `@planewright/engine` (ENG-01): the math layer, the clock, scheduler and
+  identifier ports, a seeded random source for property tests, an ESLint boundary and a
+  layer-order check. It is not a drawing engine yet.

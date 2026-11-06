@@ -60,11 +60,14 @@ its tests.
   a generated order key lies strictly between its neighbours and never ends with `0`; renormalising
   a rotated point element moves none of its unchanged points; decoding an encoded document gives it
   back; undo then redo restores the document; a cancelled transaction leaves the document unchanged.
-  Generators are seeded, and a failure prints its seed. They use no new dependency.
+  Generators are seeded, and a failure prints its seed. They use no new dependency: `createRandom`
+  in `math` is the seeded source, and `checkProperty` in the engine's test helpers names the seed,
+  the run and the generated value of a failure.
 - **Determinism.** Engine code never calls `Math.random`, `Date.now` or timers directly; an ESLint
   rule in the engine block enforces it, and the ports supply them.
 - **Coverage.** The repository thresholds stay at 90 % statements, 85 % branches, 90 % functions
-  and 90 % lines; the engine package adds its own thresholds of 95, 90, 95 and 95 %.
+  and 90 % lines; the engine package adds its own thresholds of 95, 90, 95 and 95 %, and its `math`
+  layer must be covered in full.
 - **Storage.** The repository's revision and delta logic is unit-tested with the in-memory
   repository; the IndexedDB adapter is tested end to end in Chromium, so no IndexedDB emulation is
   added.
