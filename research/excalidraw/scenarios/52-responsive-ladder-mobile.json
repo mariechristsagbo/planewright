@@ -1,0 +1,511 @@
+{
+  "description": "Mobile emulation, DPR 3, touch, R-23: live resizing of the loaded page, with no reload and no input. From 09's 390x844 portrait it emulates in turn 480x844, 600x960, 768x1024, 820x1180 and 1024x1366 portrait (angle 0), then 1024x768, 1180x820, 1280x800 and 844x390 landscape (angle 90), then 390x844 portrait again, each with DPR 3, touch, the mobile flag and a screen of the same size; emulate sends no user agent, so 09's stays. After each change it waits 1 s, reads the metrics and asserts the viewport, screen, orientation, DPR, touch and canvas backing store (a mismatch stops it), then reads the layout (the document language and direction and the boxes of the Rectangle, Library, Undo, More tools, Selection and Hand buttons) and saves ARIA and a capture, and asserts the portrait metrics once more at the end. Runs right after 09 in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-390x844-start",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "emulate",
+      "width": 480,
+      "height": 844,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 480,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 480,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-480x844",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-01-480x844"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-01-480x844"
+    },
+    {
+      "do": "emulate",
+      "width": 600,
+      "height": 960,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 600,
+        "innerHeight": 960,
+        "devicePixelRatio": 3,
+        "screenWidth": 600,
+        "screenHeight": 960,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-600x960",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-02-600x960"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-02-600x960"
+    },
+    {
+      "do": "emulate",
+      "width": 768,
+      "height": 1024,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 768,
+        "innerHeight": 1024,
+        "devicePixelRatio": 3,
+        "screenWidth": 768,
+        "screenHeight": 1024,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-768x1024",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-03-768x1024"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-03-768x1024"
+    },
+    {
+      "do": "emulate",
+      "width": 820,
+      "height": 1180,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 820,
+        "innerHeight": 1180,
+        "devicePixelRatio": 3,
+        "screenWidth": 820,
+        "screenHeight": 1180,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-820x1180",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-04-820x1180"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-04-820x1180"
+    },
+    {
+      "do": "emulate",
+      "width": 1024,
+      "height": 1366,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1024,
+        "innerHeight": 1366,
+        "devicePixelRatio": 3,
+        "screenWidth": 1024,
+        "screenHeight": 1366,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-1024x1366",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-05-1024x1366"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-05-1024x1366"
+    },
+    {
+      "do": "emulate",
+      "width": 1024,
+      "height": 768,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "landscapePrimary",
+        "angle": 90
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1024,
+        "innerHeight": 768,
+        "devicePixelRatio": 3,
+        "screenWidth": 1024,
+        "screenHeight": 768,
+        "orientationType": "landscape-primary",
+        "orientationAngle": 90,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-1024x768",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-06-1024x768"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-06-1024x768"
+    },
+    {
+      "do": "emulate",
+      "width": 1180,
+      "height": 820,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "landscapePrimary",
+        "angle": 90
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1180,
+        "innerHeight": 820,
+        "devicePixelRatio": 3,
+        "screenWidth": 1180,
+        "screenHeight": 820,
+        "orientationType": "landscape-primary",
+        "orientationAngle": 90,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-1180x820",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-07-1180x820"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-07-1180x820"
+    },
+    {
+      "do": "emulate",
+      "width": 1280,
+      "height": 800,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "landscapePrimary",
+        "angle": 90
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 800,
+        "devicePixelRatio": 3,
+        "screenWidth": 1280,
+        "screenHeight": 800,
+        "orientationType": "landscape-primary",
+        "orientationAngle": 90,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-1280x800",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-08-1280x800"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-08-1280x800"
+    },
+    {
+      "do": "emulate",
+      "width": 844,
+      "height": 390,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "landscapePrimary",
+        "angle": 90
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 844,
+        "innerHeight": 390,
+        "devicePixelRatio": 3,
+        "screenWidth": 844,
+        "screenHeight": 390,
+        "orientationType": "landscape-primary",
+        "orientationAngle": 90,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-844x390",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-09-844x390"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-09-844x390"
+    },
+    {
+      "do": "emulate",
+      "width": 390,
+      "height": 844,
+      "deviceScaleFactor": 3,
+      "mobile": true,
+      "hasTouch": true,
+      "screenOrientation": {
+        "type": "portraitPrimary",
+        "angle": 0
+      }
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "52-390x844-end",
+      "buttons": ["Rectangle", "Library", "Undo", "More tools", "Selection", "Hand (panning tool)"]
+    },
+    {
+      "do": "aria",
+      "save": "m52-10-390x844-end"
+    },
+    {
+      "do": "screenshot",
+      "name": "m52-10-390x844-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

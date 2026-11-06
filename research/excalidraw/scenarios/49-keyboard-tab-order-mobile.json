@@ -1,0 +1,360 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-27: keyboard-only traversal of the guest UI as it first loads. Presses Tab 30 times and then Shift+Tab 4 times, and after each press reads the focused element (its tag, role, accessible label, states, whether it matches :focus-visible, its outline, box shadow and box) and every live region (role, politeness, text length); it captures the view after the 1st, 4th, 8th, 12th and 20th Tab and the last Shift+Tab. It presses no Enter or Space and sends no touch, so nothing is activated and a focused link is never followed. Escape at the end, then one more read, the scene and the app state. The keyboard stands in for an external one. Runs right after 09 in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "focus",
+      "label": "49-start"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-01"
+    },
+    {
+      "do": "screenshot",
+      "name": "m49-tab-01"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-02"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-03"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-04"
+    },
+    {
+      "do": "screenshot",
+      "name": "m49-tab-04"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-05"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-06"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-07"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-08"
+    },
+    {
+      "do": "screenshot",
+      "name": "m49-tab-08"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-09"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-10"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-11"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-12"
+    },
+    {
+      "do": "screenshot",
+      "name": "m49-tab-12"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-13"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-14"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-15"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-16"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-17"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-18"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-19"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-20"
+    },
+    {
+      "do": "screenshot",
+      "name": "m49-tab-20"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-21"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-22"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-23"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-24"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-25"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-26"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-27"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-28"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-29"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-tab-30"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-back-1"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-back-2"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-back-3"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Tab"
+    },
+    {
+      "do": "focus",
+      "label": "49-back-4"
+    },
+    {
+      "do": "screenshot",
+      "name": "m49-back-4"
+    },
+    {
+      "do": "aria",
+      "save": "m49-01-after-walk"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "focus",
+      "label": "49-escape"
+    },
+    {
+      "do": "scene",
+      "label": "49-end"
+    },
+    {
+      "do": "appState",
+      "label": "49-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

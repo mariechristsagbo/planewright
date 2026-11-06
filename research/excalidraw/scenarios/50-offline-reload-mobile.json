@@ -1,0 +1,112 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-57: an offline start after one online load. Draws a rectangle [60,200,160,120] online and deselects it, reads the scene and the app state, waits 8 s for the service worker and reads the connection state, then sets the browser context offline with the offline step (CDP network conditions for the page and the service workers Playwright attached; navigator.onLine is read back and a mismatch is fatal), reads the connection state and saves ARIA and a capture. It then reloads the page offline and reads the metrics (without asserting them, as the app may not start), the connection state, the stored scene and the app state again, with ARIA and a capture. It sends no input after the reload and stays offline; 51 continues in the same session. Runs right after 09 in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 200]],
+      "to": [[220, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "50-online"
+    },
+    {
+      "do": "appState",
+      "label": "50-online"
+    },
+    {
+      "do": "wait",
+      "ms": 8000
+    },
+    {
+      "do": "connectivity",
+      "label": "50-online"
+    },
+    {
+      "do": "offline",
+      "value": true
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "connectivity",
+      "label": "50-offline"
+    },
+    {
+      "do": "aria",
+      "save": "m50-01-offline"
+    },
+    {
+      "do": "screenshot",
+      "name": "m50-01-offline"
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 4000
+    },
+    {
+      "do": "metrics"
+    },
+    {
+      "do": "connectivity",
+      "label": "50-offline-reloaded"
+    },
+    {
+      "do": "scene",
+      "label": "50-offline-reloaded"
+    },
+    {
+      "do": "appState",
+      "label": "50-offline-reloaded"
+    },
+    {
+      "do": "aria",
+      "save": "m50-02-offline-reloaded"
+    },
+    {
+      "do": "screenshot",
+      "name": "m50-02-offline-reloaded"
+    }
+  ]
+}
