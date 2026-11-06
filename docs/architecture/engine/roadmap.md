@@ -80,12 +80,13 @@ and ENG-14.
 
 ### ENG-02 Document model, order keys and codec
 
-- **Delivers:** the [domain model](domain-model.md) types for every kind; identifier, colour and
-  order-key helpers; the initial default style; `decodeDocument` and `encodeDocument` with every
-  limit and the migration scaffold.
+- **Delivers:** the [domain model](domain-model.md) types for every kind; identifier, colour,
+  order-key and point-normalisation helpers; the initial default style; `decodeDocument` and
+  `encodeDocument` with every limit and the migration scaffold.
 - **Acceptance criteria:**
   - property tests: a generated key lies strictly between its neighbours and never ends with `0`;
-    decoding an encoded document returns it; encoding is byte-stable;
+    decoding an encoded document returns it; encoding is byte-stable; renormalising the points of a
+    rotated point element keeps every unchanged point at its scene position within 10⁻⁶ units;
   - each limit and invariant of the domain model has a failing-input test that returns an error
     with the right path, and no invalid input yields a partial document;
   - a newer schema number is refused with its own message.

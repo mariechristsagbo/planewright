@@ -43,6 +43,11 @@ a width and a height, and a `rotation` in radians in `[0, 2π)` about the box ce
 - **Point kinds** (line, arrow, freehand) store `points` relative to the origin. After every edit
   the points are normalised so that their smallest x and smallest y are 0: the origin moves, the
   points shift, and the drawing does not move. Their width and height are derived from the points.
+  A rotation turns the box about its centre, which moves when the size changes, so the new origin
+  is solved to keep every unchanged point where it was in scene space: if normalising shifts the
+  points by `−m` (`m` is their smallest x and y before it) and the size changes by `d`, the new
+  origin is `o + R(m + d / 2) − d / 2`, where `R` rotates by the element's rotation. Without a
+  rotation this is `o + m`.
 - A **text** stores its measured width and height, so a document lays out and hit-tests without its
   fonts. The size is measured again when the text, its font or a loaded font changes.
 
