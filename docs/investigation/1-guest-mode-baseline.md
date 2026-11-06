@@ -14,7 +14,9 @@ location and set of documents.
   [methodology](../reverse-engineering/methodology.md).
 - **Evidence:** a sanitized, generated index in `docs/reverse-engineering/evidence/`. Raw captures
   stay outside the repository.
-- **Status:** the issue stays open. The remaining gaps, blockers and the next steps are tracked in
-  the [checkpoint](../reverse-engineering/checkpoint.md) and the
-  [residual matrix](../reverse-engineering/residual-matrix.md). No feature issue has been derived
-  yet.
+- **Status:** the issue was closed on 2026-11-06 by the merge of PR #2. Its Partial items stay open
+  as classified in the [readiness record](../reverse-engineering/readiness.md), and the open rows
+  are tracked in the [residual matrix](../reverse-engineering/residual-matrix.md). No feature issue
+  has been derived yet; the proposed
+  [canvas-engine architecture](../architecture/engine/README.md), issue #3, traces its requirements
+  to this baseline.
