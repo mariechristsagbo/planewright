@@ -638,7 +638,10 @@ session ran. It is not a review remediation and addresses none of the open revie
   target listing after 09 and an `inspect-web-page` window allowing the 7 HTTP(S) origins of the
   observation batch, armed 4.2 s before 19 in s15 and 4.3 and 4.6 s before 10 and 22 in s16
   (`evidence/rea-windows-s15-s16.json`). Each kept as many requests as the netlog started inside it:
-  1, 67 and 18, 2 of them aborted. The window armed before 24 returned no Evidence:
+  1, 67 and 18, 2 of them aborted. REA recorded HTTP 403 for those 2, the script chunks of Mermaid
+  to Excalidraw, which the gates, reading documents and verification paths only, let pass (found
+  on 2026-11-06; see [Blockers and residuals](#blockers-and-residuals)) [O, raw REA record]. The
+  window armed before 24 returned no Evidence:
   `inspect_web_page` reported `target_unavailable`, because the reload changed the document
   ([REA findings](rea-findings.md#5-rea-limitations-met)). Its output was moved unchanged to
   `rea-failed/` in the raw tree, where no builder reads it.
@@ -940,7 +943,9 @@ addresses none of the open review suggestions.
   23:18–23:25, and `s50-mobile-export-link` (for 44), 23:25–23:26. The gates of the touch-control
   batch stopped a session unless its load returned HTTP 200 with no verification-page request and
   every metric asserted, and after each scenario unless no step had failed fatally and the netlog
-  still held no verification-page request and no 403 document. In s37–s49 every load passed and no
+  still held no verification-page request and no 403 document. At s49's load the manifest got HTTP
+  403 twice, three minutes before s50's verification page, which these gates did not check (found
+  on 2026-11-06; `evidence/sessions-s37-s50.json`) [O]. In s37–s49 every load passed and no
   metrics assertion failed (3 in each, 5 in s49), and the metrics read after each load gave 390×844
   CSS px, DPR 3, a portrait-primary screen at angle 0, 5 touch points, a coarse pointer and canvases
   of 1170×2532 (`evidence/sessions-s37-s50.json`) [O]. The only failed steps were the Close steps
@@ -1853,7 +1858,12 @@ Values were never printed; only counts and file names were recorded.
   the app normally, and so did s52–s57, so the one upload ran on mobile in s52 (R-56); the desktop
   was not tried. A load check (s58, 02:34 UTC) and s59–s64 (to 03:24 UTC) loaded normally too, but
   in s64 a locale script got HTTP 403, so the batch stopped all live contact after s64 (see
-  [Keyboard, offline and layout batch](#keyboard-offline-and-layout-batch-s58s64)).
+  [Keyboard, offline and layout batch](#keyboard-offline-and-layout-batch-s58s64)). Read again for
+  403 responses on 2026-11-06, the retained records show earlier asset 403s that the gates of
+  their sessions passed: in s16 (2026-11-05, 18:00 UTC) REA kept HTTP 403 for the two script chunks
+  of Mermaid to Excalidraw, which the netlog wrote as aborted, as it did in s12 at 16:52 UTC with
+  no window open, and at s49's load (23:22 UTC) the manifest got HTTP 403 twice, three minutes
+  before s50's verification page.
 - **Not observable in this headless setup.** Native file pickers, save and export flows; R-18
   and R-46 plan them in a headed browser.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client

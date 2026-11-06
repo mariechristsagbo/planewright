@@ -88,7 +88,11 @@ region lengths (`focus`), the connection and service worker state (`connectivity
 named button boxes (`layout`) and the canvas background. Resizes (52, 57) are emulate steps on the
 loaded page with the same metric assertions as a load, and the offline state is the `offline`
 step's, read back from `navigator.onLine`. After s64, a 403 on any request, not only on a document,
-is read as the provider's protection and stops live contact; the first was s64's locale chunk.
+is read as the provider's protection and stops live contact. s64's locale chunk was not the first:
+read again for 403 responses on 2026-11-06, the retained records show that s16's REA window kept
+HTTP 403 for two script chunks, which the netlog wrote as aborted, and that at s49's load the
+manifest got HTTP 403 twice, three minutes before s50's verification page. The gates of those
+sessions checked documents and verification paths only, so neither stopped a session.
 
 ## Division of labour
 

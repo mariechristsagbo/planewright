@@ -63,7 +63,12 @@
    and s59–s64 (to 03:24 UTC) loaded the app normally too, but in s64 the fr-FR locale chunk got
    HTTP 403 (seen by REA; the driver's netlog has `net::ERR_ABORTED`), where s61 had got it through
    the service worker. The gates checked documents and verification paths only, so s64 ran to its
-   end; the 403 is read as the same protection [H], live contact stopped, and s65 never ran.
+   end; the 403 is read as the same protection [H], live contact stopped, and s65 never ran. It
+   was not the first asset 403: read again for 403 responses on 2026-11-06, the retained records
+   show that s16's REA window kept HTTP 403 for the two script chunks of Mermaid to Excalidraw,
+   which the netlog wrote as aborted (as in s12, where no window was open), and that at s49's load
+   the manifest got HTTP 403 twice, three minutes before s50's verification page. Those gates passed
+   both.
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -174,6 +179,8 @@
     which only REA's raw record keeps, the byte-identical ARIA of the replay pairs, and the request
     start times against the scenario steps (B-44, B-47): the committed files keep the probe rows,
     ARIA line counts, capture digests and request metadata.
+  - found on 2026-11-06, the HTTP 403 of the two script chunks in s16, which only REA's raw record
+    keeps: the committed index has them as failed requests (network analysis).
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

@@ -149,7 +149,10 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   `worker` event, script or font followed (`evidence/sessions-s15-s16.json`)
   [I, raw netlog and timeline times].
 - **Mermaid to Excalidraw again.** In s16 opening it wrote the same 2 aborted script requests and 14
-  scripts served by the service worker as in s12.
+  scripts served by the service worker as in s12. REA's window over 22 kept HTTP 403 for the two
+  script chunks that the netlog wrote as aborted (`CodeMirrorEditor-*.js` and
+  `codemirror.chunk-*.js`) [O, raw REA record]; no window was open over 22 in s12, so their status
+  there is unknown. The gates passed the 403 (see the asset 403s under the mobile control batch).
 - **Mobile reload.** The reload of scenario 24 got its document (HTTP 200) from the service worker.
 - **REA beside the netlog.** The three s15 and s16 windows kept 1, 67 and 18 requests, as many as
   the netlog started inside each (`evidence/rea-windows-s15-s16.json`).
@@ -181,6 +184,12 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   `/.well-known/vercel/security/`, after which the page navigated to `/` itself and got the app
   with HTTP 200; the load gate stopped the session there. The 14 netlogs hold no `.map` request
   (`evidence/sessions-s37-s50.json`).
+- **Asset 403s before s50.** At s49's load the manifest got HTTP 403 twice, about three minutes
+  before s50's document did (`evidence/sessions-s37-s50.json`). The gates of these batches checked
+  documents and verification paths only, so neither this nor s16's two script chunks stopped a
+  session; in s48 and s49 those chunks came through the service worker with HTTP 200, and the same
+  app bundle (`index-COQVqmE8.js`) loaded in s12, s16, s49 and s64, so a new deployment does not
+  explain the 403s [I].
 - **No traffic during touch input.** No request started while a touch drag was the latest step
   (`evidence/netlog-steps-s37-s50.json`), and the windows over scenarios 36–39 kept 0 requests.
 - **Font picker.** Opening it fetched the Lilita One font file from the font CDN origin, served by
