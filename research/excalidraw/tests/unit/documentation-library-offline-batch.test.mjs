@@ -31,6 +31,11 @@ const SESSIONS = [
 ];
 const [UNDO, UNDO2, LANGUAGE] = SESSIONS;
 const index = () => evidence('sessions-s68-s70.json').sessions;
+// The reference origin or one of its subdomains, by the parsed host, never by a bare suffix.
+const reference = (origin) => {
+  const host = new URL(origin).hostname;
+  return host === 'excalidraw.com' || host.endsWith('.excalidraw.com');
+};
 const online = (name, label) => probe(name, label).connectivity.onLine;
 const placements = (name) =>
   evidence('netlog-steps-s68-s70.json').sessions.find((s) => s.session === name).placements;
@@ -58,7 +63,7 @@ describe('the loads, the strict gate and the windows of the s68–s70 batch', ()
       expect(network.some((n) => n.path?.startsWith('/.well-known/vercel/'))).toBe(false);
       expect(network.some((n) => n.path?.endsWith('.map'))).toBe(false);
       const failed = network.filter((n) => n.event === 'request-failed');
-      expect(failed.some((n) => n.origin.endsWith('excalidraw.com'))).toBe(false);
+      expect(failed.some((n) => reference(n.origin))).toBe(false);
     }
     expect(index().map((s) => s.steps.byKind.assertMetrics)).toEqual([9, 9, 5]);
     expect(index().map((s) => s.steps.failed)).toEqual([0, 0, 0]);

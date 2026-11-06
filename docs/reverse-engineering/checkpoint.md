@@ -1405,8 +1405,11 @@ suggestions.
 - **Commits.** `56b88ff` makes the `offline` step also send its CDP network conditions to the page
   on the driver's own session, because Playwright skips a value its context already holds;
   `c097333` adds scenarios 60 and 61 with their checks; `b5a8a17` commits the evidence of s68–s70,
-  and the commit that adds this section adds the local check output and the documents. Nothing
-  under `apps/` or `packages/` changed.
+  and `de77f20` adds this section, the local check output and the documents. The commit after it
+  makes one record check of this section compare the reference host exactly, where CodeQL flagged
+  a bare suffix match: a failed request on the reference host or a subdomain fails the check, in a
+  temporary copy each, and one on a lookalike host does not. Nothing under `apps/` or `packages/`
+  changed.
 - **The driver change, checked locally first.** On `about:blank` in a disposable container,
   contacting no website, the driver of `5d2126b` showed what s60 and s63 showed: after a reload,
   `navigator.onLine` read true while the context was still offline, and repeating `offline` with
