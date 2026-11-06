@@ -248,14 +248,14 @@ describe('wording', () => {
       .map(({ name }) => name.split('-')[0]);
 
   it('name every scenario that emulates', () => {
-    expect(emulating()).toEqual(['00', '00c', '09', '11', '52']);
+    expect(emulating()).toEqual(['00', '00c', '09', '11', '52', '57']);
     const texts = [doc('checkpoint.md'), flat(read('research/excalidraw/README.md'))];
     for (const text of texts) {
       expect(text).not.toMatch(
         /These are the only steps that emulate|Only 00 \(desktop\) and 09 \(mobile\) emulate/u,
       );
       expect(text).toMatch(/00c re-emulates after a driver restart, and 11 re-emulates/u);
-      expect(text).toMatch(/52 re-emulates on purpose to resize the loaded page \(R-23\)/u);
+      expect(text).toMatch(/52 and 57 re-emulate on purpose to resize the loaded page \(R-23\)/u);
     }
   });
 

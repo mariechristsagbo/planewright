@@ -1,0 +1,197 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-15: adding a selection to the library and placing the item. Draws a rectangle [20,600,60,80], which stays selected, opens the Library by its exact name and taps the add tile at (136,214), where s61's capture shows it for a selection, and saves ARIA, a capture, the scene and the app state; taps Close and deselects with a tap on empty canvas; opens the Library again, taps the first tile at the same point, and reads the scene and the app state, with ARIA and a capture; taps Close. It types nothing and follows no link (Browse libraries leads off-site). Runs right after 09, or after 54 or 55.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 600]],
+      "to": [[80, 680]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "58-rect"
+    },
+    {
+      "do": "appState",
+      "label": "58-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m58-01-library-selection"
+    },
+    {
+      "do": "screenshot",
+      "name": "m58-01-library-selection"
+    },
+    {
+      "do": "tap",
+      "at": [136, 214]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m58-02-added"
+    },
+    {
+      "do": "screenshot",
+      "name": "m58-02-added"
+    },
+    {
+      "do": "scene",
+      "label": "58-added"
+    },
+    {
+      "do": "appState",
+      "label": "58-added"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [300, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "58-deselected"
+    },
+    {
+      "do": "appState",
+      "label": "58-deselected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m58-03-items"
+    },
+    {
+      "do": "screenshot",
+      "name": "m58-03-items"
+    },
+    {
+      "do": "tap",
+      "at": [136, 214]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "58-placed"
+    },
+    {
+      "do": "appState",
+      "label": "58-placed"
+    },
+    {
+      "do": "aria",
+      "save": "m58-04-placed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m58-04-placed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m58-05-closed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m58-05-closed"
+    },
+    {
+      "do": "scene",
+      "label": "58-end"
+    },
+    {
+      "do": "appState",
+      "label": "58-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

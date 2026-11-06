@@ -1790,7 +1790,7 @@ The issue cannot be completed from retained evidence. These rows of the
    `research/excalidraw/selftest.sh` and `npx vitest run --project 'research:*'`.
 2. Start each session with `00` (desktop) or `09` (mobile), which emulate before the first
    navigation; `00c` re-emulates after a driver restart, and `11` re-emulates on purpose to probe
-   DPR; `52` re-emulates on purpose to resize the loaded page (R-23). To run 15 in a fresh session, run `07c` after `00`; `16` reads the storage inventory at
+   DPR; `52` and `57` re-emulate on purpose to resize the loaded page (R-23). To run 15 in a fresh session, run `07c` after `00`; `16` reads the storage inventory at
    any point before 08.
    Every main scenario asserts the metrics before its first input; the short follow-on
    scenarios (02b, 02c, 03b, 04b, 07b, 08b, 10b) rely on the one before them.

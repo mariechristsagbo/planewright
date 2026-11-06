@@ -180,8 +180,8 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
 
 Most scenarios continue from the previous one's end state. `00` (desktop) and `09` (mobile) emulate
 before the first navigation; `00c` re-emulates after a driver restart, and `11` re-emulates on
-purpose to probe DPR; `52` re-emulates on purpose to resize the loaded page (R-23). Every main
-scenario asserts the metrics before its first input (02 right after its own load; 00b, 00c and 09b after their reload); the short follow-on
+purpose to probe DPR; `52` and `57` re-emulate on purpose to resize the loaded page (R-23). Every
+main scenario asserts the metrics before its first input (02 right after its own load; 00b, 00c and 09b after their reload); the short follow-on
 scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 
 | Session                | Order                                                                                                                                                                                                                                                  |
@@ -310,6 +310,13 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     was clicked. `54` switches the language to Français and back with `selectOption` and opens
     Canvas background without picking a colour, and `55` opens the Library sidebar with and
     without a selection, adding nothing and following no link.
+  - `56` to `59` use what s59 and s61 saved. `56` presses Enter and Space only on the Library
+    button it has just clicked, which s61 found then holds the focus, and before any Tab; it then
+    reads the focus after each Tab from Selection, in the main menu and in the Help dialog. `57`
+    refines 52's ladder where s59 saw the layout switch, with no input. `58` adds a selection to
+    the library with the add tile at (136,214), where s61's capture shows it, and places the item
+    from the same point. `59` types a hex code into the box named Canvas background; it stops at
+    its first failed step, so nothing is typed unless that box was clicked.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
