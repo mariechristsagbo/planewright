@@ -41,6 +41,22 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'engine:unit',
+          root: './packages/engine',
+          include: ['tests/unit/**/*.test.ts'],
+          environment: 'node',
+        },
+      },
+      {
+        test: {
+          name: 'engine:integration',
+          root: './packages/engine',
+          include: ['tests/integration/**/*.test.ts'],
+          environment: 'node',
+        },
+      },
+      {
+        test: {
           name: 'collab:unit',
           root: './apps/collab',
           include: ['tests/unit/**/*.test.ts'],
@@ -83,6 +99,13 @@ export default defineConfig({
         branches: 85,
         functions: 90,
         lines: 90,
+        // The engine holds itself to a higher bar (docs/architecture/engine/quality.md).
+        'packages/engine/src/**': {
+          statements: 95,
+          branches: 90,
+          functions: 95,
+          lines: 95,
+        },
       },
     },
   },
