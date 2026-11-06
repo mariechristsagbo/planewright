@@ -32,12 +32,29 @@ const { values, positionals } = parseArgs({
 const [file] = positionals;
 if (!file) throw new Error('Pass a timeline.jsonl path.');
 
+// Rows of the probes that only the sessions of s59 on ran.
+const VIEW = {
+  focus: (r) => ({
+    focused: r.focused,
+    live: (r.live ?? []).map(({ role, live, chars }) => ({ role, live, chars })),
+  }),
+  connectivity: (r) => ({ connectivity: r }),
+  layout: (r) => ({
+    layout: { viewport: r.viewport, lang: r.lang, dir: r.dir, buttons: r.buttons },
+  }),
+};
+
+// Rows come from the probes only: a step such as selectOption names an option in its own label
+// field, which is not a probe label. Before s59 only scene and appState reads had labels.
+const PROBES = new Set(['scene', 'appState', ...Object.keys(VIEW)]);
+
 const rows = readFileSync(file, 'utf8')
   .split('\n')
   .filter(Boolean)
   .map((line) => JSON.parse(line))
   // Failed steps carry "error" instead of "result" and are not probe summaries.
-  .filter((row) => row.result && row.step.label && (!values.since || row.started >= values.since));
+  .filter((row) => row.result && row.step.label && (!values.since || row.started >= values.since))
+  .filter((row) => PROBES.has(row.step.do));
 
 // Fields that only the probes of later sessions read, each kept when its probe read it.
 const LATER = ['elbowed', 'link', 'simulatePressure', 'pressures', 'strokeOptions'];
@@ -68,18 +85,6 @@ const element = (e) => ({
   ...(values.text && e.fontSize !== undefined && { font: [e.fontSize, e.fontFamily, e.textAlign] }),
   ...later(e),
 });
-
-// Rows of the probes that only the sessions of s59 on ran.
-const VIEW = {
-  focus: (r) => ({
-    focused: r.focused,
-    live: (r.live ?? []).map(({ role, live, chars }) => ({ role, live, chars })),
-  }),
-  connectivity: (r) => ({ connectivity: r }),
-  layout: (r) => ({
-    layout: { viewport: r.viewport, lang: r.lang, dir: r.dir, buttons: r.buttons },
-  }),
-};
 
 const summary = new Map();
 const reads = new Map();

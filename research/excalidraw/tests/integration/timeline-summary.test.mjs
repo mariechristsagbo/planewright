@@ -218,3 +218,21 @@ describe('timeline-summary.mjs focus, connectivity, layout and background reads'
     expect('background' in JSON.parse(run.stdout)[0]).toBe(false);
   });
 });
+
+describe('timeline-summary.mjs rows come from the probes only', () => {
+  it('adds no row and no warning for a step whose label field names an option', () => {
+    const pick = (started) => ({
+      started,
+      step: { do: 'selectOption', role: 'combobox', label: 'English' },
+      result: { values: ['en'] },
+    });
+    const run = summarise('select', [
+      pick('2026-01-01T00:00:01.000Z'),
+      pick('2026-01-01T00:00:02.000Z'),
+      appState('2026-01-01T00:00:03.000Z', 'after', 'selection', {}),
+    ]);
+    expect(run.status).toBe(0);
+    expect(run.stderr).toBe('');
+    expect(JSON.parse(run.stdout).map((row) => row.label)).toEqual(['after']);
+  });
+});
