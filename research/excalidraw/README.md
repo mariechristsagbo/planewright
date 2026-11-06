@@ -121,6 +121,10 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
   conditions to the page and to each service worker Playwright has attached, and then reads
   `navigator.onLine` back; a read that disagrees is fatal. It changes nothing else, the user agent
   included, and the driver itself stays reachable, as it listens on the host's loopback.
+  Playwright skips a value its context already holds, while an offline reload leaves
+  `navigator.onLine` true (s60, s63, and a local reload of `about:blank`), so the step also sends
+  the same conditions to the page on the driver's own CDP session: repeated after a reload, it
+  applies the value again.
 - **Screenshots** use CDP `Page.captureScreenshot` on the driver's own session. Playwright's
   `page.screenshot()` was found to reset emulated DPR and screen until the next navigation.
   `mask` selectors are painted onto the decoded image before writing. Every requested mask must

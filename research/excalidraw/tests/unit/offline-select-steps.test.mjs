@@ -5,19 +5,40 @@ import { describe, expect, it, vi } from 'vitest';
 import { probes } from '../../lib/probes.mjs';
 import { handlers } from '../../lib/steps.mjs';
 
-// A page whose navigator.onLine follows the emulated state, or stays at `stuck` when given.
+// The CDP network conditions that Playwright's setOffline sends, for one offline value.
+const conditions = (offline) => [
+  'Network.emulateNetworkConditions',
+  { offline, latency: 0, downloadThroughput: -1, uploadThroughput: -1 },
+];
+
+// A page whose navigator.onLine follows the emulated state, or stays at `stuck` when given. Like
+// Playwright's, the context skips a value it already holds. `reload` drops the page's own online
+// override but not the context's value, as the offline reloads of s60 and s63 did.
 function network({ stuck, workers = [] } = {}) {
   const calls = [];
-  let offline = false;
+  const sent = [];
+  let held = false;
+  let onLine = true;
   const context = {
     setOffline: async (value) => {
       calls.push(value);
-      offline = value;
+      if (value === held) return;
+      held = value;
+      onLine = !value;
     },
     serviceWorkers: () => workers.map((url) => ({ url: () => url })),
   };
-  const evaluate = async () => stuck ?? !offline;
-  return { calls, ctx: { page: { context: () => context, evaluate } } };
+  const cdp = {
+    send: async (method, params) => {
+      sent.push([method, params]);
+      if (method === 'Network.emulateNetworkConditions') onLine = !params.offline;
+    },
+  };
+  const evaluate = async () => stuck ?? onLine;
+  const reload = () => {
+    onLine = true;
+  };
+  return { calls, sent, reload, ctx: { page: { context: () => context, evaluate }, cdp } };
 }
 
 describe('offline step', () => {
@@ -38,6 +59,27 @@ describe('offline step', () => {
     expect(calls).toEqual([true, false]);
   });
 
+  it("sends the same conditions to the page on the driver's own session too", async () => {
+    const { sent, ctx } = network();
+    await handlers.offline(ctx, { value: true });
+    await handlers.offline(ctx, { value: false });
+    expect(sent).toEqual([conditions(true), conditions(false)]);
+  });
+
+  it('applies a value the context already holds again, after a reload dropped it', async () => {
+    const { calls, sent, reload, ctx } = network();
+    await handlers.offline(ctx, { value: true });
+    reload();
+    expect(await ctx.page.evaluate()).toBe(true);
+    expect(await handlers.offline(ctx, { value: true })).toEqual({
+      offline: true,
+      onLine: false,
+      serviceWorkers: [],
+    });
+    expect(calls).toEqual([true, true]);
+    expect(sent).toEqual([conditions(true), conditions(true)]);
+  });
+
   it('stops the batch when the page does not read the emulated state back', async () => {
     const { ctx } = network({ stuck: true });
     const failure = await handlers.offline(ctx, { value: true }).catch((error) => error);
@@ -49,11 +91,12 @@ describe('offline step', () => {
 
   it('refuses a value that is not a boolean, fatally and before any emulation', async () => {
     for (const value of [undefined, 'true', 1, null]) {
-      const { calls, ctx } = network();
+      const { calls, sent, ctx } = network();
       const failure = await handlers.offline(ctx, { value }).catch((error) => error);
       expect(failure.fatal).toBe(true);
       expect(failure.message).toBe('offline needs a boolean value.');
       expect(calls).toEqual([]);
+      expect(sent).toEqual([]);
     }
   });
 });

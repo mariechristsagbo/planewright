@@ -57,10 +57,19 @@ async function emulate(ctx, step) {
 // network conditions to the page and to every service worker it has attached, then reads
 // navigator.onLine back for up to a second. A read that disagrees stops the batch, as a metrics
 // mismatch does. Nothing else is changed, the user agent included.
+// Playwright skips a value its context already holds, but an offline reload left navigator.onLine
+// true (s60, s63), so the same conditions also go to the page on the driver's own CDP session:
+// repeating the step after a reload applies it again.
 async function offline(ctx, step) {
   if (typeof step.value !== 'boolean') throw new FatalStepError('offline needs a boolean value.');
   const context = ctx.page.context();
   await context.setOffline(step.value);
+  await ctx.cdp.send('Network.emulateNetworkConditions', {
+    offline: step.value,
+    latency: 0,
+    downloadThroughput: -1,
+    uploadThroughput: -1,
+  });
   let onLine = step.value;
   for (let i = 0; i < 10 && onLine === step.value; i += 1) {
     if (i > 0) await sleep(100);
