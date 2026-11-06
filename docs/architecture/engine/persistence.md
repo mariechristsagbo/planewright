@@ -167,7 +167,7 @@ Every untrusted document input goes through one decoder:
 ```ts
 export interface CodecError {
   readonly path: string; // JSON path, for example "elements[3].style.stroke.width"
-  readonly problem: MessageKey;
+  readonly problem: CodecProblem; // a message key, such as "newer-schema"
 }
 
 export type Decoded<T> =
@@ -175,17 +175,23 @@ export type Decoded<T> =
   | { readonly ok: false; readonly errors: readonly CodecError[] };
 
 export function decodeDocument(text: string): Decoded<DocumentState>;
-export function decodeClipboard(text: string): Decoded<ClipboardContent>;
+export function decodeClipboard(text: string): Decoded<ClipboardContent>; // P1, with the clipboard
 export function encodeDocument(document: DocumentState): string;
 ```
 
 1. Refuse input above the size limit before parsing it.
 2. Parse JSON; a syntax error is one error at the root.
-3. Check the structure field by field, collecting errors with their paths.
-4. Check the cross-references: groups, parents, attachments and files.
-5. Migrate from an older schema number, one step at a time; refuse a newer one with a message that
-   the document was made by a newer version.
-6. Return the whole document, or the errors and nothing else.
+3. Read the format and the schema number. Refuse a newer schema at once, with its own message that
+   the document was made by a newer version (`newer-schema`), since nothing else of it can be read.
+4. Migrate from an older schema number, one step at a time; what a migration returns is checked
+   like any input.
+5. Check the structure field by field, collecting errors with their paths.
+6. Check the cross-references once every field is valid: unique identifiers, groups, parents and
+   their cycles, and attachments; files with the P2 files store.
+7. Return the whole document, or the errors and nothing else.
+
+ENG-02 implements `decodeDocument` and `encodeDocument` in the `model` layer, with an empty list of
+migrations, since schema 1 is the first.
 
 Encoding writes keys in a fixed order and elements in drawing order, so that the same document
 always gives the same text.

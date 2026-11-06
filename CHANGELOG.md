@@ -29,3 +29,7 @@ release has been published yet.
 - Engine package `@planewright/engine` (ENG-01): the math layer, the clock, scheduler and
   identifier ports, a seeded random source for property tests, an ESLint boundary and a
   layer-order check. It is not a drawing engine yet.
+- Document model in the engine (ENG-02): the element, style and document types of every kind,
+  identifier, colour, order-key and point-normalisation helpers, the initial default style, and
+  `encodeDocument` and `decodeDocument` with the domain model's limits and a migration scaffold.
+  Nothing uses it yet.

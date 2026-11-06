@@ -2,8 +2,9 @@
 
 This document fixes where engine code lives and which way dependencies point. The decision and its
 alternatives are in [ADR 0004](../../adr/0004-canvas-engine-package-boundaries.md). ENG-01 created
-`@planewright/engine` with its `math` and `ports` modules, its ESLint block and its layer check;
-`@planewright/render-canvas` and the other layers arrive with the issues that need them.
+`@planewright/engine` with its `math` and `ports` modules, its ESLint block and its layer check,
+and ENG-02 added the `model` layer; `@planewright/render-canvas` and the other layers arrive with
+the issues that need them.
 
 ## Packages
 

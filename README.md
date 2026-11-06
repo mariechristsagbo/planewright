@@ -6,8 +6,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > **Status: repository foundation only.** Planewright is not a usable drawing editor yet. There
 > is no canvas, no shapes, no persistence and no collaboration. This repository currently
 > contains the workspace structure, a factual status page, a collaboration-service skeleton, the
-> first layer of the engine package (math primitives and platform ports, used by nothing yet) and
-> the quality gates that future work must pass.
+> first two layers of the engine package (math primitives, platform ports and the document model
+> with its codec, used by nothing yet) and the quality gates that future work must pass.
 
 ## Goals
 

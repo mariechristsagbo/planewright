@@ -8,7 +8,7 @@ that P1 and P2 add to the model without breaking it ([model-shaping requirements
 ## Identifiers and primitive types
 
 ```ts
-declare const brand: unique symbol;
+const brand: unique symbol = Symbol('brand'); // not exported, so only the model can brand
 type Brand<T, Name extends string> = T & { readonly [brand]: Name };
 
 export type ElementId = Brand<string, 'ElementId'>; // 22 base64url characters, 128 random bits
@@ -32,7 +32,11 @@ export interface Box {
 ```
 
 Branded strings are created only by the codec and by the identifier, order-key and colour helpers,
-so a plain string can never be used where an identifier is expected.
+so a plain string can never be used where an identifier is expected. The brand key is a real symbol
+rather than an ambient `declare`, which the engine's ESLint boundary refuses
+([ADR 0004](../../adr/0004-canvas-engine-package-boundaries.md)). The identifier helpers check the
+form only, 22 characters of the base64url alphabet; which bits they carry is the identifier
+source's concern.
 
 ## Geometry of an element
 
@@ -79,8 +83,8 @@ export interface Style {
 
 P0 creates every element with the editor's current default style (REQ-C12). The initial defaults
 are Planewright's own: stroke `#1e2430`, width 2, solid; no fill; opacity 1; round corners for
-rectangles and diamonds; sketch 0. The P1 style issue (REQ-M06) adds the palette and the controls
-that change them.
+rectangles and diamonds, and sharp corners for every other kind; sketch 0. The P1 style issue
+(REQ-M06) adds the palette and the controls that change them.
 
 ## Text
 
@@ -260,12 +264,30 @@ The codec enforces these on every untrusted input, and the scene store asserts t
 - colours match `#rrggbb` or `#rrggbbaa` in lower case.
 
 Validation returns either a document or a list of errors with their JSON paths; it never repairs
-or drops part of its input (REQ-P07).
+or drops part of its input (REQ-P07). The codec reads these rules as follows:
+
+- lengths count UTF-16 code units, and the 50 MB limit is 50,000,000 bytes of UTF-8, where a lone
+  surrogate counts as the 3 bytes of U+FFFD;
+- a text holds no carriage return, since its line breaks are `\n`, and a link's scheme is compared
+  without regard to case;
+- a point's coordinates lie within ±10⁷ and the points' extent within the size limit; a revision is
+  a non-negative integer;
+- a field that the model does not have is an error, never dropped, and an own `__proto__` field is
+  never read;
+- order keys and frame names have no length limit of their own beyond the input's size: keys longer
+  than 32 characters are reassigned by the scene's transactions, not refused;
+- an image's file identifier is checked for its form; whether the file exists is checked against
+  the files store that P2 adds.
 
 ## Encoded form
 
 The encoded document is JSON. Maps become arrays: elements sorted by drawing order and groups by
-identifier, so that saving the same document twice gives the same bytes.
+identifier, so that saving the same document twice gives the same bytes. The encoder writes it
+without white space, with every object's keys in a fixed order and optional fields only when
+present; an element's keys come in the order `id`, `kind`, `order`, `x`, `y`, then `width` and
+`height` or `points` and `pressures`, `rotation`, `style`, `locked`, `group`, `link`, `content`,
+`start`, `end`, `heads`, `route`, `label`, `file`, `crop`, `name` and `rev`. The example below is
+indented for reading.
 
 ```json
 {
