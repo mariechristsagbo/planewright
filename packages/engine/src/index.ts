@@ -3,4 +3,4 @@
  * exists, one constructor (docs/architecture/engine/modules.md#public-surface); every layer stays
  * internal to the package.
  */
-export {};
+export type { Cancel, Clock, IdSource, Scheduler } from './ports/ports.ts';
