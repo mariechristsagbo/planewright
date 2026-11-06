@@ -104,7 +104,8 @@
     Insert buttons; scenario 39 touched the unnamed Arrow type radios at the centres measured on
     s34's capture, and each touch stored a different arrow type in s40 and s44. In s74–s78 the
     context-menu items, the More tools entries and the command palette's search box were clicked
-    the same way, and 68's right clicks are mouse events by design.
+    the same way, and 68's right clicks are mouse events by design; so were the menu items, the
+    More tools entries and the right clicks of s79–s82.
 13. **The keyboard stands in for the phone's.** The word typed into new texts (s37, s41, s45–s47),
     the hex code with Ctrl+A and Enter (s41, s45) and the generation prompt with Enter (s49) were
     sent as CDP key events to the focused field. No virtual keyboard was shown or used, so its
@@ -112,7 +113,8 @@
     Enter, Space and Escape presses of 49 and 56 (s59, s62) are CDP key events too: they show how
     the page handles an external keyboard's keys, and no screen reader or assistive technology
     took part, so what one would announce was not observed. The command names typed into the
-    command palette (s74–s76) are CDP key events too.
+    command palette (s74–s76) are CDP key events too, as are the note text typed in 81 and the
+    Escape and Delete presses of 80, 81, 82 and 84 (s79, s80).
 14. **Offline emulation.** The `offline` step sets Chromium's network conditions for the page and
     the service workers Playwright attached (s60, s63), and from s68 for the page on the driver's
     own session too. Set by Playwright alone, they held for requests across a reload, which still
@@ -131,8 +133,14 @@
     (s74–s76); 75 held there again only after drawing had removed it. In s76 every long press at
     (220,490) on 77's right-hand rectangle selected it but left no menu item to pick within 5 s,
     and the capture after shows no menu, while presses at (40,490), (40,252), (220,252) and
-    (120,375) opened the menu each time; why is not known [U], and 78 moved the presses to 75's
-    height.
+    (120,375) opened the menu each time; 78 moved the presses to 75's height. Scenario 84 repeated
+    one press at (40,490) and one at (220,490) on 77's shapes, with none of s76's earlier steps, in
+    s79 and s80: the first opened the menu and the second selected the shape and showed none, so
+    the place of the press decides it; why is a hypothesis (A-16) [H].
+17. **Clipboard access is granted, not asked for.** Scenario 82 grants clipboard read and write to
+    the reference origin through Playwright before its first input, so no permission prompt was
+    shown or answered, and the clipboard is the headless browser's own; what a phone's clipboard
+    or prompt does was not observed. The reads keep types, sizes and shapes only.
 
 ## Tooling limits
 
@@ -224,6 +232,11 @@
     a menu in the capture after s76's failed paste; the slanted arrow end in 72's captures; the
     laser trail in 70's; the analytics beacon's query; and the listener record's script source
     text, source-map URL declaration and callback locations.
+  - in s79–s82, the clipboard reads of 82 (item types, byte counts, the PNG size and the JSON
+    shape), the text length of the sticky note, the menu, link-box and Library ARIA of 79, 80, 84
+    and 85 (the committed index keeps line counts), the absence of a menu in 84's captures, the
+    flipped arrow's direction in 85's captures, and the s82 listener records' script source text,
+    which holds three key-shaped values, as s76's did.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

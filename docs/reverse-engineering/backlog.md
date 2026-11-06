@@ -38,7 +38,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      the new rectangles unselected (s71, s72; B-37) [O]; on desktop it is **open** (R-02). On
      mobile, read 800 ms after a touch drag, each of rectangle, diamond, ellipse, line and arrow
      left the new element selected with the Selection tool, while Freedraw stayed active with
-     nothing selected (s74–s76; B-01) [O].
+     nothing selected (s74–s76; B-01) [O]. On mobile Draw to shape is the same shape-recognising
+     tool as the Draw tool's Autoshape, and an embed box drawn with Web Embed asks for its link at
+     once and loads nothing while it is empty (s79, s80; B-05, B-50) [O].
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
 3. **Selection model.** Ref: B-10 to B-14.
@@ -49,6 +51,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      (s71, s72; B-12) [O]; on desktop partial overlap is **open** (R-33).
    - Ctrl+A then Ctrl+C left a locked element out of the copy [O]; whether select-all or copy
      excludes it is **open** (R-33).
+   - On touch, two fingers pan and pinch and never select (s79, s80; B-12) [O]; a long press on
+     one of several selected shapes narrows the selection to it, while a right click keeps it
+     (s79–s82; B-11, B-34) [O]. Which one Planewright follows is a decision.
    - The desktop selection shows corner handles and a rotation handle above the top centre; the
      reference showed 8 handles on mobile [O]. What decides the count is open (R-35).
 4. **Transforms.** Ref: B-15 to B-18.
@@ -58,8 +63,11 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      about the fixed corner by the drag's ratios [O, mobile, one case]. Modifiers are **open**
      (R-36).
    - The rotation handle rotates around the centre [O].
-   - Duplicate offsets the copies by +10/+10 [O], from the mobile Actions popover too; which
-     elements end up selected is open (R-38).
+   - Duplicate offsets the copies by +10/+10 [O], from the mobile Actions popover and the
+     long-press menu too; which elements end up selected is open (R-38).
+   - Flip horizontal and vertical mirror the selection about the middle of its box, an arrow by
+     moving its first point to the other end, each one undo step [O, mobile; B-34]; on desktop they
+     are **open** (R-09).
    - Move, rotation and duplicate are each one undo step [O]; so is a resize on mobile [O], while
      the desktop resize undo is open (R-36).
 5. **Undo/redo.** Ref: B-25.
@@ -67,7 +75,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      and Undo became enabled after the first change [O]; the buttons' state after everything is
      undone, and when Redo enables, are **open** (R-04, R-52). History across a reload is open
      (R-52). On mobile one Undo removes a shape just drawn, a sticky note, a frame, a pasted style,
-     a lock, a deletion from the context menu and a cleared canvas (s74–s78) [O].
+     a lock, a deletion from the context menu and a cleared canvas (s74–s78), and a flip, a paste,
+     a cut, an embed box, a fill and a note's resize (s79–s82) [O].
 6. **Local persistence.** Ref: B-30, B-31.
    - The scene and the scroll position survive a reload [O, scenario 06 in s1 and s6]. Zoom and
      selection across a reload, and a mobile reload, are **open** (R-54).
@@ -91,7 +100,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 8. **Text and labels.** Ref: B-06, B-07, B-08.
    - Click-to-type text whose vertical centre is the click; Enter on a shape adds a centred label
      that moves with its container [O].
-   - Sticky notes are centred on the click [O].
+   - Sticky notes are centred on the click [O]; typed text goes into the note's centred label,
+     and a corner resize keeps the note square and scales its label's font with it [O, mobile;
+     B-08].
    - The font is picked from a list, as one undo step, beside font size and alignment controls
      [O, mobile]; re-editing, wrapping and the undo of typing are **open** (R-40).
 9. **Arrows and binding.** Ref: B-04.
@@ -115,6 +126,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       on the pointer, with 2 of the 3 copies selected [O]. The committed probes keep the count
       only, so which copies those were is not recorded; the selection rule is a Planewright
       decision.
+    - On mobile Cut and Copy write the same payload, Paste in the canvas menu adds a selected copy
+      that one Undo removes, and the image items write one PNG of the selection (360×300 for a
+      100×80 shape) or one SVG text (s79, s80; B-26, B-27) [O, raw timelines only for the clipboard]. Desktop
+      cut and the image items are **open** (R-53).
 12. **Eraser.** Ref: B-29.
     - After an eraser drag across a freshly drawn freedraw stroke, the scene held no freedraw
       element [O]. That the stroke existed just before is [I] from B-05, because no probe ran in
@@ -131,7 +146,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 13. **Menus, command palette and help.** Ref: [feature inventory](feature-inventory.md).
     - Every command is reachable from the palette with its shortcut. On mobile the reference's
       palette ran a command typed by name with Enter (s74–s76; B-36) [O]; a canvas context menu
-      reached only by a right click there is a gap to close, not to copy (R-08).
+      reached only by a right click there is a gap to close, not to copy (R-08). A toggle's
+      check mark is part of its accessible name there ("✓ Toggle grid"), so its name changes with
+      its state (s79–s82; B-37) [O]; Planewright should expose the state instead.
     - Help lists shortcuts consistently with the palette (avoid the reference's Shift+2/Shift+3
       discrepancy).
 14. **Themes and view modes.** Ref: [B-37](behavior-analysis.md#b-37-view-modes-and-toggles),
@@ -175,6 +192,8 @@ feature issue is written.
       item's tile placed a copy centred in the viewport, selected [O, mobile, once; B-48].
     - On mobile, Undo after placing removed the copy and Redo restored it; after an add, Undo took
       back the step before it [O, mobile, two sessions; B-48].
+    - On mobile Add to library in the element menu added the selected shape as one item and
+      changed neither the scene nor the selection [O, mobile, two sessions; B-48].
     - Desktop use and exporting or importing a library file are **open** (R-15).
 20. **Alignment and distribution.** Ref: B-23, R-51.
     - The Help dialog lists Ctrl+Shift+Arrow for alignment [O]. One press on two shapes that

@@ -244,6 +244,38 @@ window spans a reload.
 | `s64-mobile-find-library`          | `r04-inspect-during-58.json` | `ev_9a429301`     | `inspect_web_page`, 03:22:37.459–03:23:27.644, 7 origins. Armed 3394 ms before scenario 58's first step; all its 40 steps inside it |
 | `s64-mobile-find-library`          | `r05-inspect-during-59.json` | `ev_fe536c38`     | `inspect_web_page`, 03:23:31.515–03:24:11.782, 7 origins. Armed 3135 ms before scenario 59's first step; all its 26 steps inside it |
 
+**Menu items, tools and clipboard records** (s79–s82, on 2026-11-06, times UTC). Each session
+listed the target after 09 once. Every scenario but 16 ran inside its own window, armed 0.4–3.7 s
+before its first step, with all its steps inside it, and in s82 REA inspected the listeners of the
+app root, the static canvas, the `html` element and the `body` after 16, with no step running. No
+session reloaded. The windows over 80 kept one font request each, as many as the netlog started
+inside them; the other 12 kept 0 requests, and none kept a WebSocket connection or console event.
+
+| Session                             | File                               | Evidence (prefix) | Operation and window                                                                                                                                |
+| ----------------------------------- | ---------------------------------- | ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `s79-mobile-menu-items-clipboard`   | `r01-targets.json`                 | `ev_060d1444`     | `list_browser_targets`                                                                                                                              |
+| `s79-mobile-menu-items-clipboard`   | `r02-inspect-during-79.json`       | `ev_cf6c47dc`     | `inspect_web_page`, 11:03:39.498–11:05:10.115, 7 origins. Armed 1784 ms before scenario 79's first step; all its 88 steps inside it                 |
+| `s79-mobile-menu-items-clipboard`   | `r03-inspect-during-80.json`       | `ev_e092fe0e`     | `inspect_web_page`, 11:05:13.606–11:06:38.898, 7 origins. Armed 3204 ms before scenario 80's first step; all its 81 steps inside it; kept 1 request |
+| `s79-mobile-menu-items-clipboard`   | `r04-inspect-during-81.json`       | `ev_f7bf13aa`     | `inspect_web_page`, 11:06:42.448–11:07:37.832, 7 origins. Armed 3342 ms before scenario 81's first step; all its 41 steps inside it                 |
+| `s79-mobile-menu-items-clipboard`   | `r05-inspect-during-84.json`       | `ev_4f460ca9`     | `inspect_web_page`, 11:07:42.200–11:08:32.437, 7 origins. Armed 2514 ms before scenario 84's first step; all its 42 steps inside it                 |
+| `s79-mobile-menu-items-clipboard`   | `r06-inspect-during-82.json`       | `ev_bb3759e8`     | `inspect_web_page`, 11:08:36.747–11:10:07.147, 7 origins. Armed 2388 ms before scenario 82's first step; all its 80 steps inside it                 |
+| `s79-mobile-menu-items-clipboard`   | `r07-inspect-during-83.json`       | `ev_314dc260`     | `inspect_web_page`, 11:10:12.299–11:10:47.682, 7 origins. Armed 2195 ms before scenario 83's first step; all its 16 steps inside it                 |
+| `s80-mobile-menu-items-clipboard-2` | `r01-targets.json`                 | `ev_d4dbaa0d`     | `list_browser_targets`                                                                                                                              |
+| `s80-mobile-menu-items-clipboard-2` | `r02-inspect-during-79.json`       | `ev_19a70cd0`     | `inspect_web_page`, 11:13:23.639–11:14:54.199, 7 origins. Armed 2692 ms before scenario 79's first step; all its 88 steps inside it                 |
+| `s80-mobile-menu-items-clipboard-2` | `r03-inspect-during-80.json`       | `ev_403001c3`     | `inspect_web_page`, 11:14:58.233–11:16:23.558, 7 origins. Armed 3702 ms before scenario 80's first step; all its 81 steps inside it; kept 1 request |
+| `s80-mobile-menu-items-clipboard-2` | `r04-inspect-during-81.json`       | `ev_fb94fe58`     | `inspect_web_page`, 11:16:27.841–11:17:23.114, 7 origins. Armed 2589 ms before scenario 81's first step; all its 41 steps inside it                 |
+| `s80-mobile-menu-items-clipboard-2` | `r05-inspect-during-84.json`       | `ev_629c355d`     | `inspect_web_page`, 11:17:33.350–11:18:23.720, 7 origins. Armed 381 ms before scenario 84's first step; all its 37 steps inside it                  |
+| `s80-mobile-menu-items-clipboard-2` | `r06-inspect-during-82.json`       | `ev_6596e105`     | `inspect_web_page`, 11:18:30.294–11:20:01.190, 7 origins. Armed 1342 ms before scenario 82's first step; all its 80 steps inside it                 |
+| `s80-mobile-menu-items-clipboard-2` | `r07-inspect-during-83.json`       | `ev_6c59dfc1`     | `inspect_web_page`, 11:20:07.392–11:20:43.207, 7 origins. Armed 1664 ms before scenario 83's first step; all its 16 steps inside it                 |
+| `s81-mobile-flip-arrow-grid`        | `r01-targets.json`                 | `ev_39394522`     | `list_browser_targets`                                                                                                                              |
+| `s81-mobile-flip-arrow-grid`        | `r02-inspect-during-85.json`       | `ev_f5cd2fc2`     | `inspect_web_page`, 11:21:54.095–11:23:09.761, 7 origins. Armed 3066 ms before scenario 85's first step; all its 83 steps inside it                 |
+| `s82-mobile-flip-arrow-grid-2`      | `r01-targets.json`                 | `ev_67521785`     | `list_browser_targets`                                                                                                                              |
+| `s82-mobile-flip-arrow-grid-2`      | `r02-inspect-during-85.json`       | `ev_f144a1f2`     | `inspect_web_page`, 11:24:22.380–11:25:38.812, 7 origins. Armed 2315 ms before scenario 85's first step; all its 83 steps inside it                 |
+| `s82-mobile-flip-arrow-grid-2`      | `r04-listeners-app-root.json`      | `ev_75c36152`     | `inspect_web_event_listeners` on `.excalidraw`, after 16, with no step running                                                                      |
+| `s82-mobile-flip-arrow-grid-2`      | `r05-listeners-static-canvas.json` | `ev_bc0a72e2`     | `inspect_web_event_listeners` on `canvas.static`, after 16, with no step running                                                                    |
+| `s82-mobile-flip-arrow-grid-2`      | `r06-listeners-html.json`          | `ev_cad442fd`     | `inspect_web_event_listeners` on `html`, after 16, with no step running                                                                             |
+| `s82-mobile-flip-arrow-grid-2`      | `r07-listeners-body.json`          | `ev_91888148`     | `inspect_web_event_listeners` on `body`, after 16, with no step running                                                                             |
+
 **Context-menu, tools and snap records** (s74–s78, on 2026-11-06, times UTC). Each session listed
 the target after 09 once. Every scenario but 74 and 16 ran inside its own window, armed 0.6–3.5 s
 before its first step, with all its steps inside it; REA captured the viewport with no step running
@@ -459,7 +491,14 @@ the committed index beyond their IDs.
   delegated ones on its ancestors, the document or the window, so where the pointer events are
   handled is not shown. The record also holds the main script's full source text, which the
   raw-tree scan found three key-shaped values in, and its source-map URL declaration, which was
-  not fetched; both stay in the raw tree, and the committed summary keeps neither.
+  not fetched; both stay in the raw tree, and the committed summary keeps neither. In s82 the same
+  operation found six listeners on the app root `.excalidraw`, two `dragover`, `drop`, `wheel`,
+  `dragenter` and `dragleave`, none capturing, passive or once, all in the main script, and none on
+  `canvas.static`, `html` or `body`, each with cleanup confirmed
+  (`evidence/rea-listeners-s82-app-root.summary.json` and its three siblings). A wheel listener that
+  is not passive may cancel the browser's own scroll; that this one does is [H]. The app-root
+  record again holds the main script's source text, in which the raw-tree scan found three
+  key-shaped values, as in s76's; it stays in the raw tree.
 
 ## 2. Cross-driver screenshot comparison
 
@@ -543,10 +582,14 @@ the committed index beyond their IDs.
     locale request each, as many as the netlog started inside them; REA's record of it holds
     HTTP 200 in s61 and HTTP 403 in s64, where the netlog has only a failure (raw REA records).
     In s74–s78 the 32 windows kept as many requests as the netlog started inside them: one font
-    over each 70 and four analytics beacons over each 71, and none in the others.
+    over each 70 and four analytics beacons over each 71, and none in the others. In s79–s82 the
+    14 windows kept one font over each 80 and none in the others, as many as the netlog started.
 12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
     `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
     Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that
     ends before it and one that starts after it, or `observe_web_session` for the navigation
     metadata alone. In s17, s19 and s21, 24 ran outside any window and a 3 s inspection followed
     its reload.
+13. `inspect_web_event_listeners` takes a CSS selector and inspects its first match, so listeners
+    registered on the document or the window, which no selector matches, are outside what it can
+    list (s82: `html` and `body` had none); delegated handling of the canvas events stays unknown.

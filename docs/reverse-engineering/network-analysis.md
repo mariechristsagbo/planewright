@@ -222,6 +222,23 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Menu items, tools and clipboard batch (s79–s82) [O]
+
+- **Loads.** Each of the four loads got its document with HTTP 200 from the network, and none
+  reloaded; no netlog holds a 403, 429, request under `/.well-known/vercel/`, `.map` request or
+  failed request on the reference origin (`evidence/sessions-s79-s82.json`).
+- **An empty embed loads nothing.** Web Embed's box, with its link box left empty, started no
+  request; the one request in the window over 80, in s79 and s80, is the CascadiaCode font on the
+  font CDN, HTTP 200, after More tools opened, as in 70 (`evidence/rea-windows-s79-s82.json`) [O].
+- **The clipboard stays local.** Copy, Cut, Paste and the two Copy to clipboard items of 82 made no
+  request, and the clipboard grant changed nothing on the network [O].
+- **No other traffic while drawing or using the menus.** None of the 78 request starts fell in
+  one of the 30 drawing steps, and the long presses, the menu items, the right clicks, the
+  two-finger pan and pinch, Draw to shape and Bucket fill made no request. Of the 14 REA windows
+  the two over 80 kept the font request and the other 12 kept 0 requests, and none kept a
+  WebSocket or console event (`evidence/netlog-steps-s79-s82.json`,
+  `evidence/rea-windows-s79-s82.json`).
+
 ### Context-menu, tools and snap batch (s74–s78) [O]
 
 - **Loads.** Each of the five loads got its document with HTTP 200 from the network, and none

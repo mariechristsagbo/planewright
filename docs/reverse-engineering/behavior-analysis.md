@@ -236,9 +236,13 @@ value is a value the page had saved locally.
   With Autoshape picked by name from the Draw tool's choice the tool became `autoshape`, and a
   closed rough rectangle drawn with one finger through nine points between (58,527) and (302,633)
   was stored as a `rectangle` `[58,527,244,106]`, the extent of the input, with stroke width 1 and
-  nothing selected (`45-autoshape`) [O].
-- **Reproduction:** scenarios 02 (s2, s6), 04b (s1, s6), 05; on mobile 36 (s37), 40 (s41, s45)
-  and 45 (s53, s55, s57).
+  nothing selected (`45-autoshape`) [O]. Draw to shape, from More tools, set the same `autoshape`
+  tool; with the grid on, a one-finger loop through four corners from (60,350) became a
+  `rectangle` `[60,350,240,80]`, Undo removed it and the tool stayed `autoshape`, and the toolbar's
+  Draw button was named Draw to shape afterwards (`80-shape`, `80-shape-undo`, raw ARIA; s79,
+  s80) [O].
+- **Reproduction:** scenarios 02 (s2, s6), 04b (s1, s6), 05; on mobile 36 (s37), 40 (s41, s45),
+  45 (s53, s55, s57) and 80 (s79, s80).
 - **Confidence:** [O] high (geometry s2 and s6; dots s1 and s6; mobile s41 and s45 identical, and
   scenario 45's 20 labels identical in s53, s55 and s57).
 - **Limitations:** on desktop the point count and smoothing are not in the committed summary; on
@@ -310,15 +314,26 @@ value is a value the page had saved locally.
   `shape-02-all-tools`) [O]; whether it is stored is [U] (R-41).
 - **Persistence:** read from local storage [O].
 - **Undo/redo:** on mobile one Undo after placing a note and pressing Escape removed the note
-  (`70-sticky-undo`; s74–s76) [O]. On desktop: Not observed (R-41).
-- **Edge cases:** resizing and long text: Not observed (R-41).
+  (`70-sticky-undo`; s74–s76) [O], and one Undo after a resize brought back the 250 px note and its
+  text at font size 20 (`81-resized-undo`; s79, s80) [O]. On desktop: Not observed (R-41).
+- **Edge cases:** on mobile, with the grid on, a drag of the note's bottom-right handle by (40,40)
+  made it `[80,440,300,300]`, still square, and its bound text grew from font size 20 to 24,
+  `[131.3,575,197.3,30]` (`81-resized`; s79, s80) [O]. Long text, and a resize on desktop: Not
+  observed (R-41).
 - **Desktop/mobile:** on mobile the Sticky note is in More tools. Picked there, a tap at (195,180)
   placed a note `[70,55,250,250]` centred on the tap, with an empty bound text being edited, and
   left the Selection tool active; Escape dropped the empty text and left the note selected
-  (`70-sticky`, `70-sticky-escape`; s74–s76) [O]. Nothing was typed into it.
-- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`); 70 on mobile (s74–s76).
+  (`70-sticky`, `70-sticky-escape`; s74–s76) [O]. In 81, with the grid on, a tap at (195,560)
+  placed `[80,440,250,250]`, and the 16 typed characters of "Planewright note" went into its bound
+  text, centred at `[122.8,552.5,164.4,25]`, font size 20 and family 5; Escape left the note
+  selected, and Delete from its long-press menu removed the note and its text (`81-typed`,
+  `81-escape`, `81-deleted`; s79, s80) [O]. The text's stored background was the default that 80
+  had set, `#a5d8ff`, and the note's stayed `#ffdf6b` [O].
+- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`); 70 (s74–s76) and 81 (s79, s80) on
+  mobile.
 - **Confidence:** [O] high.
-- **Limitations:** one note; the screenshot is outside Git, with its digest committed (R-41).
+- **Limitations:** one note on desktop and one typed text on mobile; the screenshot is outside Git,
+  with its digest committed (R-41).
 
 ### B-09 Image by file drop
 
@@ -437,8 +452,11 @@ value is a value the page had saved locally.
   reload: Not observed (R-54).
 - **Undo/redo:** whether a selection change is an undo step: Not observed (R-52).
 - **Edge cases:** Shift+click on a selected element and Ctrl deep select: Not observed (R-33).
-- **Desktop/mobile:** mobile multi-select: Not observed (R-33).
-- **Reproduction:** scenario 03 (s1, s2, s6).
+- **Desktop/mobile:** on mobile Select all, from the canvas menu of a right click, selected both
+  rectangles, and a long press on one of them then left only that one selected before its menu
+  opened (`79-select-all`, `79-hold`; s79, s80) [O]. Adding one element to a mobile selection: Not
+  observed (R-33).
+- **Reproduction:** scenario 03 (s1, s2, s6); 79 on mobile (s79, s80).
 - **Confidence:** [O] high.
 - **Limitations:** two elements only (R-33).
 
@@ -460,9 +478,11 @@ value is a value the page had saved locally.
 - **Desktop/mobile:** on mobile a one-finger drag with the Selection tool from empty canvas around
   whole elements selected them: 2 in s22 (`28-box-selected`), 3 in s25, s30, s33 and s35 [O]. The
   Lasso, picked from the Selection tool's choice, drawn as a one-finger loop round a rectangle,
-  selected it and stayed the active tool (`70-lasso`; s74–s76) [O].
+  selected it and stayed the active tool (`70-lasso`; s74–s76) [O]. Two fingers moved together 80
+  px down from two rectangles' strokes selected nothing and moved nothing, and the scroll moved
+  by 80 (`83-two-finger`; s79, s80) [O]: two fingers pan (B-36).
 - **Reproduction:** scenario 03 (s1, s2, s6); scenarios 28 (s22), 31 (s25, s30) and 34 (s33,
-  s35); 64 (s71, s72); 70 (s74–s76).
+  s35); 64 (s71, s72); 70 (s74–s76); 83 (s79, s80).
 - **Confidence:** [O] high.
 - **Limitations:** the probe stores a count, not which elements (R-33).
 
@@ -582,8 +602,10 @@ value is a value the page had saved locally.
 - **Edge cases:** Alt+drag duplicate: Not observed (R-38).
 - **Desktop/mobile:** on mobile Duplicate in the Actions popover added one copy at +10/+10,
   `[50,130,120,80]` beside `[40,120,120,80]`, with 1 element selected; Undo removed it and Redo
-  restored it (`40-duplicate`, `40-duplicate-undo`, `40-duplicate-redo`; s41, s45) [O].
-- **Reproduction:** scenario 03 (s1, s2, s6); scenario 40 (s41, s45).
+  restored it (`40-duplicate`, `40-duplicate-undo`, `40-duplicate-redo`; s41, s45) [O]. Duplicate
+  from the long-press menu did the same to `[40,230,60,90]`, adding `[50,240,60,90]` with one
+  selected, and Undo removed it (`79-duplicate`, `79-duplicate-undo`; s79, s80) [O].
+- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 40 (s41, s45) and 79 (s79, s80).
 - **Confidence:** [O] high for offset and count.
 - **Limitations:** which elements are selected (R-38).
 
@@ -852,11 +874,20 @@ value is a value the page had saved locally.
   The copied arrow lost its binding (B-13).
 - **Persistence:** read from local storage [O].
 - **Undo/redo:** Ctrl+Z removed the paste (`06-undo-paste`) [O].
-- **Edge cases:** cut, paste of external text or images, and paste with the pointer outside the
-  canvas: Not observed (R-53).
-- **Desktop/mobile:** mobile: Not observed (R-53).
-- **Reproduction:** scenario 06 (s1, s6).
-- **Confidence:** [O] high.
+- **Edge cases:** on mobile Cut removed the shape and left the same JSON shape on the clipboard,
+  Paste from the canvas menu put the copy back at the same place as after Copy, and two Undos
+  removed the paste and then brought the cut shape back (`82-cut`, `82-cut-pasted`,
+  `82-cut-pasted-undo`, `82-cut-undo`; s79, s80) [O]. Paste of external text or images, and paste
+  with the pointer outside the canvas: Not observed (R-53).
+- **Desktop/mobile:** on mobile, after the driver granted clipboard read and write to the reference
+  origin, Copy from the long-press menu on `[60,340,100,80]` left one `text/plain` clipboard item,
+  the same JSON shape as on desktop with one `rectangle` (526 and 527 characters) [O, raw
+  timelines only]. Paste, picked from the canvas menu of a right click at (300,380), added a copy
+  at `[140,380,100,80]`, selected, and Undo removed it (`82-pasted`, `82-pasted-undo`; s79, s80)
+  [O]; that the copy is centred on the point where the driver's click on Paste left the mouse is
+  [I] from B-26's desktop rule.
+- **Reproduction:** scenario 06 (s1, s6); 82 on mobile (s79, s80).
+- **Confidence:** [O] high (the mobile probes identical in s79 and s80).
 - **Limitations:** the clipboard shape came from the driver, values redacted, and is in the raw
   timelines only (R-53).
 
@@ -870,12 +901,17 @@ value is a value the page had saved locally.
   "Paste styles" [O]. On mobile the paste gave the second rectangle the yellow background
   (`78-pasted`; s77, s78) [O].
 - **State and related effects:** no clipboard permission had been granted, so that the copied
-  styles are kept by the app rather than the system clipboard is [I]. The PNG and SVG items: Not
-  observed (R-53).
+  styles are kept by the app rather than the system clipboard is [I]. On mobile, with clipboard
+  access granted, Copy to clipboard as PNG on a selected `[60,340,100,80]` left one `image/png`
+  item, 360×300 pixels (12,830 and 13,643 bytes), and Copy to clipboard as SVG one `text/plain`
+  item of 1,346 and 1,356 characters starting with an `<svg` element, not JSON (82; s79, s80)
+  [O, raw timelines only]. That the PNG is the shape with 10 px of padding at scale 3 is [I] from
+  its size.
 - **Persistence:** the pasted background was read from local storage [O].
 - **Undo/redo:** on mobile Undo after Paste styles brought the transparent background back and
-  Redo the yellow one (`78-pasted-undo`, `78-pasted-redo`; s77, s78) [O]. The PNG and SVG items and
-  desktop: Not observed (R-53).
+  Redo the yellow one (`78-pasted-undo`, `78-pasted-redo`; s77, s78) [O]. The PNG and SVG items
+  change nothing stored, so Not applicable (no scene change to undo) on mobile; desktop: Not
+  observed (R-53).
 - **Edge cases:** in s75, 75's paste went onto a rectangle that had been drawn with the same
   background, because the background picked for the first one had become the default (B-20), so
   it changed nothing (`75-pasted`) [O]. In s76, 77's long presses on its right-hand rectangle at
@@ -883,12 +919,13 @@ value is a value the page had saved locally.
   78 repeated 77 at 75's height. Styles between element types: Not observed (R-53).
 - **Desktop/mobile:** the mobile menu offers the same four items (`m67-02-element-hold`) [O]; on
   desktop none was clicked: Not observed (R-53).
-- **Reproduction:** scenario 15 (s6: `dark-07-element-context-menu`); 75 (s75, s76), 77 (s76) and
-  78 (s77, s78) on mobile.
+- **Reproduction:** scenario 15 (s6: `dark-07-element-context-menu`); 75 (s75, s76), 77 (s76),
+  78 (s77, s78) and 82 (s79, s80) on mobile.
 - **Confidence:** [O] medium for the listing; [O] high for Copy and Paste styles on mobile (s77 and
-  s78 identical); the PNG and SVG effects [U].
-- **Limitations:** the PNG and SVG items were not clicked, and the styles were pasted between two
-  rectangles only (R-53).
+  s78 identical) and for the PNG and SVG item types and the PNG size (s79 and s80 identical; the
+  byte counts differ with each session's drawing); desktop [U].
+- **Limitations:** the clipboard reads keep types, sizes and shapes only, raw; one shape was copied,
+  and the styles were pasted between two rectangles only (R-53).
 
 ## View
 
@@ -941,9 +978,12 @@ value is a value the page had saved locally.
   command palette by typing a command's name and pressing Enter with one rectangle selected, Zoom
   to selection zoomed to 2.85, Reset zoom went back to 1 with the scroll at (15,29), and Zoom to fit
   all elements kept zoom 1 and moved the scroll, to (35,101) with three rectangles (s74), (15,101)
-  with five (s75) and (15,36) with six (s76) (`71-*`) [O].
-- **Reproduction:** scenario 05 (s1, s2, s6), scenario 10 (s3, s7, s11), scenario 26 (s18, s20)
-  and scenario 71 (s74–s76).
+  with five (s75) and (15,36) with six (s76) (`71-*`) [O]. In 83 two fingers spread from 90 to 170
+  px apart zoomed to 1.888889, 170/90, and pinched back to 90 px returned to zoom 1, with the scroll
+  at (2,80) after an 80 px two-finger pan; zoomed, the view still offered no zoom button and no
+  zoom label, only Undo and Redo (`83-spread`, `83-pinched`, raw ARIA; s79, s80) [O].
+- **Reproduction:** scenario 05 (s1, s2, s6), scenario 10 (s3, s7, s11), scenario 26 (s18, s20),
+  scenario 71 (s74–s76) and scenario 83 (s79, s80).
 - **Confidence:** desktop rows [O] high (s1 and s6 identical; s2 differs from Shift+1 on because
   05 ran straight after 03 there, see the [research README](../../research/excalidraw/README.md#scenario-order-and-dependencies)).
   Mobile rows [O] high for zoom and the pan delta (s3, s7 and s11); scrollX after the pinch differs
@@ -1001,8 +1041,12 @@ value is a value the page had saved locally.
   submenu, which stays open after one is picked; zen mode left every named control of the first load
   and the menu trigger in place, the welcome screen aside, and view mode left only the unnamed menu
   trigger and an unnamed button with a pencil where Library was (raw ARIA and captures, s71, s72)
-  [O].
-- **Reproduction:** scenarios 05 and 07 (s1, s6); 63–65 (s71, s72); 72 (s74–s78) and 76 (s75–s78).
+  [O]. Toggle grid in the canvas menu of a right click turned the grid on; that menu then named the
+  item "✓ Toggle grid", so a second pick by the plain name found nothing and the grid stayed on for
+  the rest of s79 and s80, and picking the checked name turned it off (`79-grid-on`, `79-grid-off`,
+  `85-grid-on`, `85-grid-off`, raw ARIA; s79–s82) [O].
+- **Reproduction:** scenarios 05 and 07 (s1, s6); 63–65 (s71, s72); 72 (s74–s78), 76 (s75–s78),
+  79 (s79, s80) and 85 (s81, s82).
 - **Confidence:** [O] high for the visible effects and the unchanged zoom and scroll (s1 and s6),
   and for the mobile toggles, Undo and reload reads (s71 and s72 identical).
 - **Limitations:** visible effects from screenshots and ARIA outside Git; for s1 and s6 the zen,
@@ -1249,30 +1293,48 @@ value is a value the page had saved locally.
 - **State and related effects:** on mobile Wrap selection in frame added a frame
   `[204,214,132,122]` round a `[220,230,100,90]` rectangle, 16 px larger on each side
   (`75-framed`), Delete removed the shape (`78-deleted-q`), and Copy styles, Paste styles, Lock and
-  Unlock did what B-27 and B-19 say (s75–s78) [O]. Flip, Add to library, the links, Duplicate and
-  the clipboard items: Not observed (R-09).
+  Unlock did what B-27 and B-19 say (s75–s78) [O]. Duplicate, Add to library and the clipboard
+  items did what B-18, B-48, B-26 and B-27 say (s79, s80) [O]. Flip horizontal and Flip vertical
+  on a lone rectangle changed nothing stored (`79-flip-h`, `79-flip-v`; s79, s80) [O]. On an arrow
+  `[60,240,140,80]`, long-pressed on its line, Flip horizontal moved its first point to within
+  0.6 px of the other end, `[199.8,240,140,80]` in s81 and `[199.4,240,140,80]` in s82, and Flip
+  vertical likewise, to a y of 320.6 and 319.7, the size unchanged; with three shapes selected by
+  Select all and the menu opened by a right click on one of them, Flip horizontal mirrored all three
+  about the middle of their box: the arrow's first point from x 60 to 300, `[40,400,60,90]` to
+  `[260,400,60,90]` and `[200,400,120,60]` to `[40,400,120,60]` (`85-flip-h`, `85-flip-v`,
+  `85-flip-all`; s81, s82) [O]. The links: Not observed (R-09).
 - **Persistence:** each mobile change was read from local storage [O].
 - **Undo/redo:** on mobile Undo removed the frame, unlocked a locked shape and brought a deleted
-  one back (`75-framed-undo`, `75-locked-undo`, `78-deleted-q-undo`) [O]. On desktop: Not observed
-  (R-09).
+  one back (`75-framed-undo`, `75-locked-undo`, `78-deleted-q-undo`) [O]. After each Flip of the
+  lone rectangle, Undo reselected both rectangles that Select all had selected before the press,
+  changing no element (`79-flip-h-undo`, `79-flip-v-undo`) [O]. Undo after each flip of the arrow
+  and of the three shapes put them back, the three staying selected (`85-flip-h-undo`,
+  `85-flip-v-undo`, `85-flip-all-undo`) [O]. On desktop: Not observed (R-09).
 - **Edge cases:** on mobile a long press on a selected rectangle opened the same menu
-  (`m67-03-selected-hold`) [O]; in s76 the presses at (220,490) on 77's right-hand rectangle
-  selected it and showed no menu (capture `m77-01-pasted`), while the presses at (40,490) did [O];
-  why is [U]. Menu on multi-selection or groups: Not observed (R-09).
+  (`m67-03-selected-hold`) [O]; on one of two selected rectangles it left only that one selected
+  (`79-hold`; s79, s80) [O], while a right click on one of three selected shapes kept all three
+  selected (`85-right-selected`; s81, s82) [O]. In s76 the presses at (220,490) on 77's right-hand
+  rectangle selected it and showed no menu (capture `m77-01-pasted`), while the presses at (40,490)
+  did [O].
+  Scenario 84 repeated one press at each point on 77's two shapes, with none of s76's steps before
+  them and the grid on, which drew them at y 480: in s79 and s80 the press at (40,490) opened the
+  menu and the one at (220,490) selected the shape and left no menu in the ARIA or the capture
+  (`84-p-hold`, `84-q-hold`, raw ARIA) [O]. So it depends on where the press lands, not on what ran
+  before; why is [H] (A-16). Groups: Not observed (R-09).
 - **Desktop/mobile:** light desktop: Not observed (R-09). On mobile a long press on an unselected
   shape selected it and opened the menu (`67-element-hold`), while a long press on empty canvas
   opened no menu; the canvas menu (F-14) opened there by a right click only (`m75-01-canvas-hold`,
   `m68-01-canvas-right`) [O].
-- **Reproduction:** scenario 15 (s6, s10); 67 and 68 (s74–s76), 75 (s75, s76), 77 (s76) and 78
-  (s77, s78) on mobile.
+- **Reproduction:** scenario 15 (s6, s10); 67 and 68 (s74–s76), 75 (s75, s76), 77 (s76), 78
+  (s77, s78), 79 and 84 (s79, s80) and 85 (s81, s82) on mobile.
 - **Confidence:** [O] medium. The menu entries are identical in s6 and s10, but the snapshots
   are not: the panel behind the menu has no Fill group in s10 and another Sloppiness radio
   checked, following the styles in use (a raw comparison). By the rule applied to the secondary
   surfaces in the feature inventory, that stays medium. Effects of Duplicate are known only
   through its shortcut (B-18). On mobile [O] high: the menus and each item's effect are identical
-  in the two or three fresh profiles that ran them.
-- **Limitations:** no item was clicked on desktop; on mobile Flip, Add to library, the links,
-  Duplicate and the clipboard items were not (R-09).
+  in the two or three fresh profiles that ran them, but for the flipped arrow's first point, which
+  lay within 0.6 px of the other end at a place up to 0.9 px apart in s81 and s82.
+- **Limitations:** no item was clicked on desktop; on mobile the links were not (R-09).
 
 ### B-35 Clear canvas confirmation
 
@@ -1522,9 +1584,14 @@ external one.
   (`60-added-undo`, `60-added-redo`) [O]. Undo after placing removed the copy and cleared the
   selection, and Redo restored it, selected (`60-placed-undo`, `60-placed-redo`) [O]. The library
   held its one item throughout (raw ARIA) [O].
-- **Edge cases:** export, import and a second item: Not observed (R-15).
+- **Edge cases:** Add to library from the long-press menu, on the one rectangle the press had left
+  selected, put it into the personal library: the sidebar then showed the add tile and one item,
+  that rectangle (raw ARIA, capture), and the scene and the selection did not change
+  (`79-library`; s79, s80) [O]. Undo after it, with the Library opened and closed in between,
+  reselected both rectangles, as before the press (`79-library-undo`) [O]. Export, import and a
+  second item: Not observed (R-15).
 - **Desktop/mobile:** the desktop: Not observed (R-15).
-- **Reproduction:** scenario 58 (s64, s66); scenario 60 (s68, s69).
+- **Reproduction:** scenario 58 (s64, s66); scenario 60 (s68, s69); 79 (s79, s80).
 - **Confidence:** [O] high (s64 and s66 identical, although s66 ran it without 54 before it; s68
   and s69 identical).
 - **Limitations:** the tile was tapped at a point measured on s61's capture.
@@ -1546,6 +1613,37 @@ external one.
 - **Reproduction:** scenario 59 (s64, s66).
 - **Confidence:** [O] high (s64 and s66 identical).
 - **Limitations:** one colour, typed.
+
+### B-50 Web Embed and Bucket fill
+
+- **Initial state:** mobile, two rectangles from 79 above y 320, nothing selected, the grid on
+  (scenario 80, after 79 in s79 and s80).
+- **Action:** Web Embed from More tools and a one-finger drag from (40,340) to (340,440), then
+  Escape and Undo; a transparent rectangle R drawn from (60,340) to (300,430), deselected, Bucket
+  fill from More tools and a tap inside R at (180,385); the Background button and its Blue colour
+  by name; a second tap at the same point; Undo.
+- **Immediate result:** Web Embed set the tool to `embeddable`, and the drag added an `embeddable`
+  `[40,340,300,100]`, selected, with the Selection tool back, and opened a link box "Type or paste
+  your link here" beside a "Link to object" button (`80-embed`, raw ARIA) [O]. With Bucket fill the
+  tool was `bucketfill`, and the tap inside R added a separate `line` element `[85,340,240,100]`
+  with 21 points, a stored `polygon` key, no stroke colour, the background `#b2f2bb` with a solid
+  fill and roughness 0, listed before R, which kept its transparent background (`80-fill-first`)
+  [O].
+- **State and related effects:** with nothing typed, no request followed the embed (the window
+  over 80 kept one font request; network analysis) [O]. While Bucket fill was the tool, the bar
+  offered Stroke and Background, and the Blue colour picked there became the default background,
+  `#a5d8ff`; the second tap inside R changed nothing stored (`80-fill-colour`, `80-fill-blue`) [O].
+  That the fill traces R's rounded outline is [I] from its point count and box.
+- **Persistence:** each element was read from local storage [O].
+- **Undo/redo:** Escape left the empty embed in place, and Undo removed it; Undo removed the fill
+  and left R (`80-embed-escape`, `80-embed-undo`, `80-fill-undo`) [O]. Redo: Not observed (R-17).
+- **Edge cases:** an embed with a link, a fill of an open shape or of empty canvas, and a fill
+  when the default background is not transparent: Not observed (R-17).
+- **Desktop/mobile:** the desktop: Not observed (R-17).
+- **Reproduction:** scenario 80 (s79, s80).
+- **Confidence:** [O] high (s79 and s80 identical).
+- **Limitations:** both ran with the grid on, which 79 had left on; one embed box and one fill,
+  each in one rectangle (R-17).
 
 ## Desktop and mobile differences (summary)
 

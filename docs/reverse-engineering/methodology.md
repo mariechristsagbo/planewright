@@ -113,7 +113,12 @@ batch s74–s78 ran on 2026-11-06 at 09:16–09:57 UTC under the same gate and i
 time, and the `cssScale` option of the screenshot step, which clips the capture to the viewport at
 1/DPR so that it has the size of a REA capture. `rea-extract.mjs` reduces its one REA listener
 inspection to listener types and flags and script paths, because the record also holds the
-script's source text, which stays in the raw tree.
+script's source text, which stays in the raw tree. The menu items, tools and clipboard batch
+s79–s82 ran on 2026-11-06 at 11:03–11:26 UTC under the same gate and is indexed in
+`evidence/sessions-s79-s82.json`. It added the `clipboardItems` probe, which, after the driver's
+`grantClipboard` step, reduces every clipboard item to its types and byte counts, a PNG to its
+header size and a text to the clipboard text shape; like the clipboard text probe, its results
+stay in the raw timelines.
 
 ## Division of labour
 

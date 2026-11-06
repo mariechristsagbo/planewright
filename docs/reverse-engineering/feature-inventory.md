@@ -193,6 +193,17 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   (B-08). The command palette, opened from the main menu, ran Zoom to selection, Reset zoom and Zoom
   to fit all elements when their names were typed into its search box and Enter was pressed (B-36)
   [O, high].
+- **Menu items, tools and the clipboard (s79–s82):** from the element menu Flip horizontal, Flip
+  vertical, Duplicate, Add to library, Cut, Copy, Copy to clipboard as PNG and as SVG, and from the
+  canvas menu Toggle grid, Select all and Paste were used, each with Undo where it changed the
+  scene (B-11, B-18, B-26, B-27, B-34, B-37, B-48) [O, high: s79 and s80 identical, and s81 and s82
+  but for the flipped arrow's sub-pixel position]. An active toggle's item is named with a check
+  mark ("✓ Toggle grid"). From More tools, Web Embed drew an empty embed box and opened its link
+  box, Draw to shape is the Autoshape tool, and Bucket fill added a filled polygon behind a
+  rectangle (B-05, B-50) [O, high]; a sticky note took typed text and a corner resize (B-08). The
+  clipboard items were read only after the driver granted clipboard access to the reference
+  origin, and their types and sizes stay in the raw timelines. Zoomed in, the mobile view still
+  shows no zoom control (B-36).
 
 ## 7. Theme coverage [O, high]
 
