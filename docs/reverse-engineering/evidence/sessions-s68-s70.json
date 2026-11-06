@@ -1,0 +1,2012 @@
+{
+  "schema": "planewright-research-evidence/v1",
+  "generated_by": "research/excalidraw/build-evidence.mjs",
+  "sessions": [
+    {
+      "session": "s68-mobile-library-undo-offline",
+      "steps": {
+        "total": 140,
+        "failed": 0,
+        "failures": [],
+        "first": "2026-11-06T06:21:05.493Z",
+        "last": "2026-11-06T06:24:06.312Z",
+        "byKind": {
+          "emulate": 1,
+          "colorScheme": 1,
+          "goto": 1,
+          "wait": 29,
+          "metrics": 3,
+          "assertMetrics": 9,
+          "rootStyle": 1,
+          "aria": 14,
+          "screenshot": 13,
+          "tap": 9,
+          "touchDrag": 3,
+          "scene": 16,
+          "appState": 17,
+          "role": 9,
+          "reload": 3,
+          "connectivity": 7,
+          "offline": 3,
+          "storage": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 980,
+            "innerHeight": 2121,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": []
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "m01-initial-light.png",
+          "sha256": "4ce1aaa455a97191616117e41071f157e1e4a619a6e7e51288346996977b011a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m24-01-before-reload.png",
+          "sha256": "3636ffd8c1e17d6e2d162b453fa8cbab544c6259fcfbdf3490a09ed0f952811f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m24-02-after-reload.png",
+          "sha256": "fc586e25600c5b2fbcdcd768804ccf3bb2e67a074ef655d9833e1d5417b5e39e",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m50-01-offline.png",
+          "sha256": "e43d9d378d353b55d4e058fcd26011b34b31e4f65d83c1a2af3bc7dd0f565354",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m50-02-offline-reloaded.png",
+          "sha256": "a84b1872444603b0078f4f7ac1ab6e4e9885ca6b6b3f28fd65812e5d34016ca1",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m51-01-offline-drawn.png",
+          "sha256": "3636ffd8c1e17d6e2d162b453fa8cbab544c6259fcfbdf3490a09ed0f952811f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m51-02-online-again.png",
+          "sha256": "3636ffd8c1e17d6e2d162b453fa8cbab544c6259fcfbdf3490a09ed0f952811f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-02-added-undo.png",
+          "sha256": "2f9e73cc6c934d0c4a8eceba4aa9c59be0906a4acbda1622fc2b418870d26414",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-04-placed.png",
+          "sha256": "a3bb6466771fef142483aa0019ca03237ff93955ff7884c2aefdc46131dbd4e6",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-05-placed-undo.png",
+          "sha256": "add2118ac8ca75a788c89e01baaf129c50c003c71208ad46f1e319449ef8f9ee",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-06-placed-redo.png",
+          "sha256": "a3bb6466771fef142483aa0019ca03237ff93955ff7884c2aefdc46131dbd4e6",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-07-library-after.png",
+          "sha256": "1c8b870a4f256a4b16cc1ac5b9a0fc9051c3f76c0ee4f551e6d6dd758b92c1aa",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m61-01-reapplied.png",
+          "sha256": "a84b1872444603b0078f4f7ac1ab6e4e9885ca6b6b3f28fd65812e5d34016ca1",
+          "width": 1170,
+          "height": 2532
+        }
+      ],
+      "retired_screenshots": [],
+      "aria_snapshots": [
+        {
+          "name": "m01-initial-light.yml",
+          "lines": 24
+        },
+        {
+          "name": "m24-01-before-reload.yml",
+          "lines": 16
+        },
+        {
+          "name": "m24-02-after-reload.yml",
+          "lines": 16
+        },
+        {
+          "name": "m50-01-offline.yml",
+          "lines": 16
+        },
+        {
+          "name": "m50-02-offline-reloaded.yml",
+          "lines": 16
+        },
+        {
+          "name": "m51-01-offline-drawn.yml",
+          "lines": 16
+        },
+        {
+          "name": "m51-02-online-again.yml",
+          "lines": 16
+        },
+        {
+          "name": "m60-01-added.yml",
+          "lines": 30
+        },
+        {
+          "name": "m60-02-added-undo.yml",
+          "lines": 16
+        },
+        {
+          "name": "m60-03-items.yml",
+          "lines": 30
+        },
+        {
+          "name": "m60-04-placed.yml",
+          "lines": 22
+        },
+        {
+          "name": "m60-05-placed-undo.yml",
+          "lines": 16
+        },
+        {
+          "name": "m60-07-library-after.yml",
+          "lines": 30
+        },
+        {
+          "name": "m61-01-reapplied.yml",
+          "lines": 16
+        }
+      ],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 4
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-COQVqmE8.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-COQVqmE8.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": false,
+          "count": 3
+        },
+        {
+          "event": "request-failed",
+          "method": "GET",
+          "type": "image",
+          "status": null,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 4
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "fromServiceWorker": false,
+          "count": 3
+        },
+        {
+          "event": "request-failed",
+          "method": "POST",
+          "type": "fetch",
+          "status": null,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "fromServiceWorker": null,
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "r01-targets.json",
+          "evidence_id": "ev_8ff765f2c9d6252b582f0831a4f52a12db7ee5ff06a2b78985e17cc522dbcf6e",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r02-inspect-during-60.json",
+          "evidence_id": "ev_ec2f95e1e06062546d2551e47f100ebb20c3a4ebdddd827bd2f51313ffbcadc9",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r03-targets-after-09b.json",
+          "evidence_id": "ev_8ff765f2c9d6252b582f0831a4f52a12db7ee5ff06a2b78985e17cc522dbcf6e",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r04-inspect-after-09b.json",
+          "evidence_id": "ev_72b51e201c32e6bb6d7f95d8598a85e37bf6eaaf1559fda700616f2260e201ae",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r05-targets-after-50.json",
+          "evidence_id": "ev_8ff765f2c9d6252b582f0831a4f52a12db7ee5ff06a2b78985e17cc522dbcf6e",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r06-inspect-during-61-51.json",
+          "evidence_id": "ev_66ffa91e28c466a884468d58d5d85527d07ef07e7391a4f17a2a53a4ccec7f94",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r08-targets-after-24.json",
+          "evidence_id": "ev_8ff765f2c9d6252b582f0831a4f52a12db7ee5ff06a2b78985e17cc522dbcf6e",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r09-inspect-after-24.json",
+          "evidence_id": "ev_fa0eadd1ae7061691de0e81749b4b28d17a5efa43194b352a01a9743772ad54f",
+          "operation": "inspect_web_page"
+        }
+      ]
+    },
+    {
+      "session": "s69-mobile-library-undo-offline-2",
+      "steps": {
+        "total": 140,
+        "failed": 0,
+        "failures": [],
+        "first": "2026-11-06T06:27:19.696Z",
+        "last": "2026-11-06T06:30:23.625Z",
+        "byKind": {
+          "emulate": 1,
+          "colorScheme": 1,
+          "goto": 1,
+          "wait": 29,
+          "metrics": 3,
+          "assertMetrics": 9,
+          "rootStyle": 1,
+          "aria": 14,
+          "screenshot": 13,
+          "tap": 9,
+          "touchDrag": 3,
+          "scene": 16,
+          "appState": 17,
+          "role": 9,
+          "reload": 3,
+          "connectivity": 7,
+          "offline": 3,
+          "storage": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 980,
+            "innerHeight": 2121,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": []
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "m01-initial-light.png",
+          "sha256": "4ce1aaa455a97191616117e41071f157e1e4a619a6e7e51288346996977b011a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m24-01-before-reload.png",
+          "sha256": "78df6f53adbc3f84ed965235b9eb536e22e2a23d94e5a0d14107212251d2da6a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m24-02-after-reload.png",
+          "sha256": "e629b894c6a7d264890e47f88f1da9c95692416d8d96ba49e427396285e267ac",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m50-01-offline.png",
+          "sha256": "a0fe36a03db4beebf07e3d28ef5e569863c6d66fe1ab3fc4487e0ebf3b95a107",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m50-02-offline-reloaded.png",
+          "sha256": "281162d5d73d95b3397b3db1f9d40e6f011c34bc08a360b9c90a71066e152d11",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m51-01-offline-drawn.png",
+          "sha256": "78df6f53adbc3f84ed965235b9eb536e22e2a23d94e5a0d14107212251d2da6a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m51-02-online-again.png",
+          "sha256": "78df6f53adbc3f84ed965235b9eb536e22e2a23d94e5a0d14107212251d2da6a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-02-added-undo.png",
+          "sha256": "2f9e73cc6c934d0c4a8eceba4aa9c59be0906a4acbda1622fc2b418870d26414",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-04-placed.png",
+          "sha256": "f4c8237714a3b31b67f142ccff4efebb36e0b41ef94e64535624248fe59ddb7f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-05-placed-undo.png",
+          "sha256": "015052d6ef39abfb7127e67a61361a1576f9eea55a5719c611eb99ae7aee75e9",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-06-placed-redo.png",
+          "sha256": "f4c8237714a3b31b67f142ccff4efebb36e0b41ef94e64535624248fe59ddb7f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m60-07-library-after.png",
+          "sha256": "7fbd49bdd90671ef89416306aa06f31b90b3d221d2b8974226d0f473b1d430fa",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m61-01-reapplied.png",
+          "sha256": "281162d5d73d95b3397b3db1f9d40e6f011c34bc08a360b9c90a71066e152d11",
+          "width": 1170,
+          "height": 2532
+        }
+      ],
+      "retired_screenshots": [],
+      "aria_snapshots": [
+        {
+          "name": "m01-initial-light.yml",
+          "lines": 24
+        },
+        {
+          "name": "m24-01-before-reload.yml",
+          "lines": 16
+        },
+        {
+          "name": "m24-02-after-reload.yml",
+          "lines": 16
+        },
+        {
+          "name": "m50-01-offline.yml",
+          "lines": 16
+        },
+        {
+          "name": "m50-02-offline-reloaded.yml",
+          "lines": 16
+        },
+        {
+          "name": "m51-01-offline-drawn.yml",
+          "lines": 16
+        },
+        {
+          "name": "m51-02-online-again.yml",
+          "lines": 16
+        },
+        {
+          "name": "m60-01-added.yml",
+          "lines": 30
+        },
+        {
+          "name": "m60-02-added-undo.yml",
+          "lines": 16
+        },
+        {
+          "name": "m60-03-items.yml",
+          "lines": 30
+        },
+        {
+          "name": "m60-04-placed.yml",
+          "lines": 22
+        },
+        {
+          "name": "m60-05-placed-undo.yml",
+          "lines": 16
+        },
+        {
+          "name": "m60-07-library-after.yml",
+          "lines": 30
+        },
+        {
+          "name": "m61-01-reapplied.yml",
+          "lines": 16
+        }
+      ],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 4
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-COQVqmE8.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-COQVqmE8.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": false,
+          "count": 3
+        },
+        {
+          "event": "request-failed",
+          "method": "GET",
+          "type": "image",
+          "status": null,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 4
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "fromServiceWorker": false,
+          "count": 3
+        },
+        {
+          "event": "request-failed",
+          "method": "POST",
+          "type": "fetch",
+          "status": null,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "fromServiceWorker": null,
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "r01-targets.json",
+          "evidence_id": "ev_f01852a0f6853f3079282f0dfbb7c63e21f7947287c4c508dc26ef32c82e0f4f",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r02-inspect-during-60.json",
+          "evidence_id": "ev_4a9a35a96d9b3f94da286ebac3f2e95f6ee46011681764d2c30eaa463b38b675",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r03-targets-after-09b.json",
+          "evidence_id": "ev_f01852a0f6853f3079282f0dfbb7c63e21f7947287c4c508dc26ef32c82e0f4f",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r04-inspect-after-09b.json",
+          "evidence_id": "ev_7fee0bf96231d04b6e7dfcc5f2dee5b023fa63f3bde590501b5328a943154b10",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r05-targets-after-50.json",
+          "evidence_id": "ev_f01852a0f6853f3079282f0dfbb7c63e21f7947287c4c508dc26ef32c82e0f4f",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r06-inspect-during-61-51.json",
+          "evidence_id": "ev_0542a76ee74f186531bd66fa11105006674da0d47bea593ea227b8daa80e255a",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r08-targets-after-24.json",
+          "evidence_id": "ev_f01852a0f6853f3079282f0dfbb7c63e21f7947287c4c508dc26ef32c82e0f4f",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r09-inspect-after-24.json",
+          "evidence_id": "ev_c401f6f1e05c64f4319a64713cddaa5c19b25771345c279910cfd7ff7665f359",
+          "operation": "inspect_web_page"
+        }
+      ]
+    },
+    {
+      "session": "s70-mobile-language-2",
+      "steps": {
+        "total": 101,
+        "failed": 0,
+        "failures": [],
+        "first": "2026-11-06T06:31:04.817Z",
+        "last": "2026-11-06T06:33:02.946Z",
+        "byKind": {
+          "emulate": 1,
+          "colorScheme": 1,
+          "goto": 1,
+          "wait": 26,
+          "metrics": 1,
+          "assertMetrics": 5,
+          "rootStyle": 1,
+          "aria": 11,
+          "screenshot": 10,
+          "tap": 13,
+          "type": 3,
+          "scene": 2,
+          "appState": 9,
+          "role": 3,
+          "focus": 3,
+          "key": 3,
+          "layout": 4,
+          "selectOption": 3,
+          "storage": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 980,
+            "innerHeight": 2121,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": []
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "orientationType": "portrait-primary",
+            "orientationAngle": 0,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "m01-initial-light.png",
+          "sha256": "4ce1aaa455a97191616117e41071f157e1e4a619a6e7e51288346996977b011a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m53-01-find-open.png",
+          "sha256": "8bcf516efa3ffe1223858383cdd6f211451cf670ce66ec00d7d7c4a4d04e5900",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m53-02-find-typed.png",
+          "sha256": "4398176998a4081adf7706437f3768aea14342686b30c1edcf72de82a1609992",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m53-03-enter-1.png",
+          "sha256": "4f7efdf6b0015dfe350ff23696ed76019f824ef2d8eb4e03769face9cba2d815",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m53-04-enter-2.png",
+          "sha256": "4398176998a4081adf7706437f3768aea14342686b30c1edcf72de82a1609992",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m53-05-after-escape.png",
+          "sha256": "9f666e425338096477f60cf77b70ee7025652e63661c255b78138b06973f99f5",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m54-02-fr.png",
+          "sha256": "4f49ba33cbb930ae46c5992321eed5c79c8d70a5df641bff3b99b3fb87843d5e",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m54-03-back.png",
+          "sha256": "d10728ed7fbea68d3f3e15b910884376329405c2fef92bfbdd0279776b930b79",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m54-05-background.png",
+          "sha256": "8ef5c6787a5d6b3f1cfe7d281cf0ed68b0be025eae9ff42629ba45709c8cf77e",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m54-06-closed.png",
+          "sha256": "9f666e425338096477f60cf77b70ee7025652e63661c255b78138b06973f99f5",
+          "width": 1170,
+          "height": 2532
+        }
+      ],
+      "retired_screenshots": [],
+      "aria_snapshots": [
+        {
+          "name": "m01-initial-light.yml",
+          "lines": 24
+        },
+        {
+          "name": "m53-01-find-open.yml",
+          "lines": 24
+        },
+        {
+          "name": "m53-02-find-typed.yml",
+          "lines": 28
+        },
+        {
+          "name": "m53-04-enter-2.yml",
+          "lines": 28
+        },
+        {
+          "name": "m53-05-after-escape.yml",
+          "lines": 16
+        },
+        {
+          "name": "m54-01-menu.yml",
+          "lines": 64
+        },
+        {
+          "name": "m54-02-fr.yml",
+          "lines": 64
+        },
+        {
+          "name": "m54-03-back.yml",
+          "lines": 64
+        },
+        {
+          "name": "m54-04-back-2.yml",
+          "lines": 64
+        },
+        {
+          "name": "m54-05-background.yml",
+          "lines": 70
+        },
+        {
+          "name": "m54-06-closed.yml",
+          "lines": 16
+        }
+      ],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-COQVqmE8.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/locales/fr-FR.json-CzAs2G34.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "fromServiceWorker": false,
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "r01-targets.json",
+          "evidence_id": "ev_8d75a7e5dedfef5af6cc147ec8baa206e8dbf7234386615882d64a062157f07c",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r02-inspect-during-53.json",
+          "evidence_id": "ev_e612455d8d4a264a3955876adcd702f2ecae6716c17b8ea12e166dab5b930b22",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r03-inspect-during-54.json",
+          "evidence_id": "ev_5cffd52900b3b80e5bb65cc0497181169d42df4319802c317e29083f5debe1d6",
+          "operation": "inspect_web_page"
+        }
+      ]
+    }
+  ]
+}

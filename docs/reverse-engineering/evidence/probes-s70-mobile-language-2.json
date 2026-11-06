@@ -1,0 +1,279 @@
+[
+  {
+    "label": "53-texts",
+    "at": "2026-11-06T06:31:25.467Z",
+    "elements": [
+      {
+        "type": "text",
+        "box": [60, 287.5, 40.5, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "text",
+        "box": [60, 487.5, 62.3, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-find-open",
+    "at": "2026-11-06T06:31:28.256Z",
+    "focused": {
+      "tag": "INPUT",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 0,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [149, 88, 217, 24],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": [],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-find-typed",
+    "at": "2026-11-06T06:31:30.411Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "focused": {
+      "tag": "INPUT",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 0,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [149, 88, 217, 24],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "53-find-enter-1",
+    "at": "2026-11-06T06:31:31.270Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-find-enter-2",
+    "at": "2026-11-06T06:31:32.316Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-after-escape",
+    "at": "2026-11-06T06:31:33.727Z",
+    "focused": {
+      "tag": "BODY",
+      "body": true
+    },
+    "live": []
+  },
+  {
+    "label": "53-end",
+    "at": "2026-11-06T06:31:33.737Z",
+    "elements": [
+      {
+        "type": "text",
+        "box": [60, 287.5, 40.5, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "text",
+        "box": [60, 487.5, 62.3, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "54-start",
+    "at": "2026-11-06T06:32:13.643Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "54-fr",
+    "at": "2026-11-06T06:32:16.784Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "fr-FR",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": []
+        },
+        {
+          "name": "Undo",
+          "boxes": []
+        }
+      ]
+    },
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "54-back",
+    "at": "2026-11-06T06:32:19.123Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "54-back-2",
+    "at": "2026-11-06T06:32:23.097Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "54-english",
+    "at": "2026-11-06T06:32:24.428Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "54-end",
+    "at": "2026-11-06T06:32:27.374Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  }
+]
