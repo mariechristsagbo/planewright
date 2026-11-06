@@ -41,7 +41,9 @@ export interface Transaction {
   applies the net change set with the `local` origin
   ([transient previews](scene-and-viewport.md#transient-previews)) and calls `History.record` with
   the label, the merge key and the selection before and after. The scene layer supplies the revert
-  and the net set (ENG-03); recording is the history layer's (ENG-04).
+  and the net set (ENG-03): its transaction previews, cancels, and commits with a stamp, returning
+  the net set it applied or `null`; recording is the history layer's (ENG-04), whose `Transaction`
+  wraps it.
 - Only one transaction is open at a time. Undo and redo requested while one is open are ignored
   (REQ-H06).
 

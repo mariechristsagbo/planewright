@@ -48,21 +48,24 @@ contains only the server hello and error messages and has no compatibility guara
 The canvas engine's package ([ADR 0004](../adr/0004-canvas-engine-package-boundaries.md)):
 ECMAScript-only TypeScript that reaches the platform through ports. It holds the `math` layer
 (vectors, affine matrices, axis-aligned and oriented boxes, angles, tolerances and a seeded random
-source), the clock, scheduler and identifier ports, and the `model` layer: the document's types,
-order keys, point normalisation, the initial default style and the validating codec. No application
-imports it yet.
+source), the clock, scheduler and identifier ports, the `model` layer (the document's types,
+order keys, point normalisation, the initial default style, element patches and the validating
+codec), the world bounds in `geometry`, and the `scene` layer: the scene store with its change
+sets, indexes, transient previews and transactions. No application imports it yet.
 
 ## Decisions and what stays open
 
 The [canvas-engine architecture](engine/README.md) (issue #3) decides how the editor is built,
 traced to the behavioural baseline of issue #1. Its ADRs are accepted. ENG-01 (issue #5) created
-the engine package with its boundary checks, its math layer and its ports, and ENG-02 (issue #7)
-added the document model and its codec; the rest is not implemented yet:
+the engine package with its boundary checks, its math layer and its ports, ENG-02 (issue #7)
+added the document model and its codec, and ENG-03 (issue #9) the scene store; the rest is not
+implemented yet:
 
-- the scene store and storage, beyond the element model and codec that ENG-02 implements:
+- storage, beyond the element model and codec of ENG-02 and the scene store of ENG-03:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
 - rendering approach, hit testing and viewport culling: [ADR 0006](../adr/0006-canvas-rendering.md);
-- input handling, tool architecture and undo/redo model:
+- input handling, tool architecture and undo/redo model, beyond the change sets and transactions
+  of ENG-03:
   [ADR 0007](../adr/0007-history-model.md) and [ADR 0008](../adr/0008-input-tools-and-commands.md);
 - package boundaries for the engine, in place since ENG-01, and for its renderer:
   [ADR 0004](../adr/0004-canvas-engine-package-boundaries.md);

@@ -249,7 +249,9 @@ parents (REQ-M04).
 
 ## Invariants and limits
 
-The codec enforces these on every untrusted input, and the scene store asserts them in tests:
+The codec enforces these on every untrusted input, and the scene store refuses any change set that
+would break one of them, the encoded size aside; its tests assert that the codec accepts every
+document the store holds:
 
 - identifiers are well formed and unique; an element's `group`, a group's `parent` and an
   attachment's `target` exist; an attachment never targets its own connector;

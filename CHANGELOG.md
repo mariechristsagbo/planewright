@@ -33,3 +33,8 @@ release has been published yet.
   identifier, colour, order-key and point-normalisation helpers, the initial default style, and
   `encodeDocument` and `decodeDocument` with the domain model's limits and a migration scaffold.
   Nothing uses it yet.
+- Scene store in the engine (ENG-03): element patches checked by the model, change sets and their
+  inverse, a store that applies a set whole or not at all with its origin and emits one scene
+  update per set, the order, spatial, group and attachment indexes, the world bounds they key on,
+  transient previews and transactions that commit one net change set. Nothing uses it yet, and
+  history, rendering and input do not exist.
