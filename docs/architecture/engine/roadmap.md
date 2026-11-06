@@ -207,7 +207,8 @@ and ENG-14.
 - **Delivers:** the transform rules of [interaction](interaction.md#transforms) and their commands.
 - **Acceptance criteria:**
   - B-15's move by +40, +40 and B-16's resize boxes are reproduced for all eight handles and the
-    two-element case; Shift and Alt resize as specified; sizes stop at 1 unit;
+    two-element case; Shift and Alt resize as specified; sizes stop at 1 unit, and zero sizes stay
+    0, so horizontal lines, a dot and a flat freehand stroke resize without dividing by zero;
   - rotation follows the pointer and snaps to 15° with Shift;
   - duplicate offsets by +10, +10 and selects the copies; Delete removes and undo restores the
     selection;

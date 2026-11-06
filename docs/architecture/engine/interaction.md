@@ -191,12 +191,17 @@ history entry (REQ-T11).
   centre. The dragged edges follow it and the opposite corner or side stays fixed in scene space;
   the new origin is solved from that fixed point (REQ-T02). Shift keeps the aspect ratio by taking
   the larger scale; Alt fixes the centre instead and doubles the change (REQ-T04). Sizes stop at 1
-  unit and never flip (REQ-T05). Point kinds scale their points and are normalised again. A text's
-  corner handle scales its font size by the height ratio; texts have no side handles in P0.
+  unit and never flip (REQ-T05). Point kinds scale their points by the box's ratios and are
+  normalised again. A text's corner handle scales its font size by the height ratio; texts have no
+  side handles in P0.
 - **Resize, several elements.** The fixed point is the opposite corner or side of the selection
   outline; each element's centre and size scale by the drag's ratios (REQ-T03). If any selected
   element is rotated by an angle that is not a multiple of 90°, the aspect ratio is kept, so no
   element is skewed.
+- **Zero sizes.** A ratio is a box's new size over its old size along one axis. Where the box, or
+  the selection outline, has no extent along an axis, as for a horizontal line, a row of them, a
+  freehand dot or a flat stroke, that axis keeps the ratio 1. A dimension that is already 0 stays
+  0, so nothing divides by zero, and only positive sizes stop at 1 unit (REQ-T05).
 - **Rotate.** The angle is the change in the pointer's direction around the outline's centre;
   Shift rounds the total to 15° steps (REQ-T06). One element turns about its centre; several turn
   their centres about the outline's centre and add the angle to their own rotation.
