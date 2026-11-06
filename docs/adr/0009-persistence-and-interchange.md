@@ -15,9 +15,13 @@ more than a frame (REQ-F03).
 ## Decision
 
 1. **A repository port.** The engine saves through a document repository that loads a stored
-   document and saves a delta against an expected document revision; a save whose expected
-   revision is stale is refused, so another tab's newer document is never overwritten silently
-   (REQ-P06).
+   document and saves against an expected stored revision. The repository, not the editor, assigns
+   revisions: inside the save's transaction it checks that the stored revision still equals the
+   expected one, writes, and raises it by one. A save whose expectation is stale is refused, so
+   another tab's newer document is never overwritten silently (REQ-P06). After a refusal the user
+   loads the newer document or keeps this one, which writes this tab's whole document over the
+   stored one, and the other tab is then refused in turn. A save of camera and selection alone
+   neither checks nor raises the revision.
 2. **IndexedDB in the web app.** One database holds a store of document records (metadata,
    revision, camera and selection), a store of element records keyed by document and element, and,
    from P2, a store of files keyed by the SHA-256 of their bytes (REQ-P04). An autosave writes only
@@ -52,5 +56,6 @@ more than a frame (REQ-F03).
 
 - Tests use an in-memory repository with the same revision rule; end-to-end tests reload the real
   page and read the restored state through the accessible element list.
-- A multi-tab conflict shows a notice that offers to reload the newer document.
+- A multi-tab conflict shows a notice that offers to load the newer document or to keep this one,
+  which replaces the stored document whole.
 - Requirements served: REQ-F03, REQ-P01 to REQ-P07, REQ-V11, REQ-X01 and REQ-X03.

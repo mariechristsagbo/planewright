@@ -204,7 +204,7 @@ export interface DocumentState {
   readonly elements: ReadonlyMap<ElementId, Element>;
   readonly groups: ReadonlyMap<GroupId, GroupRecord>;
   readonly canvas: CanvasState;
-  readonly rev: number;
+  readonly rev: number; // in memory: raised by every applied change set, never saved
 }
 ```
 

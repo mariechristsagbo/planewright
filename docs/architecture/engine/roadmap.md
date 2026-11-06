@@ -241,7 +241,12 @@ and ENG-14.
 - **Acceptance criteria:**
   - scheduler tests with a fake clock: saved within 300 ms of the last change and at most 1 s after
     the first; transient previews never saved; retries and notices on failure;
-  - repository tests: a stale revision is refused and nothing is written;
+  - repository tests: the repository assigns every stored revision; a stale base is refused and
+    nothing is written; a session save neither checks nor raises the revision;
+  - two editors over one in-memory repository: both load revision 5 and B saves (revision 6); A
+    edits, its save is refused as stale, and A keeps its version, so storage holds exactly A's
+    document at revision 7; B's next save is then refused and raises B's notice; had A loaded the
+    newer version instead, it would show B's document with an empty history;
   - end to end: after a reload the document, camera and selection are back, the tool is Selection,
     history is empty and deleted elements are gone; a second tab's newer save raises the notice;
   - invalid stored data is left untouched and a new document opens with a notice.
