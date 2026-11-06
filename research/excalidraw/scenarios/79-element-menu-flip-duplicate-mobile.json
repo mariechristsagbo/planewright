@@ -1,0 +1,415 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-09 and R-08: items picked from both context menus. Runs right after 09 and draws first, at a height clear of the welcome screen's entries. Draws A [40,230,60,90] and B [200,230,120,60], of different sizes so that a flip of both moves them, and deselects. By a right click on empty canvas at (200,560), a mouse event on the touch-emulated page, picks Toggle grid twice, reading the app state after each, and then Select all. By a long press on A's left stroke each time, 22 px below its corner and clear of the handles, reading the app state after the first, picks Flip horizontal, Flip vertical and Duplicate, each with Undo straight after it, and Add to library, then opens the Library, saving its ARIA and a capture, closes it and presses Undo. It leaves A and B on the canvas for the scenarios after it, types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 230]],
+      "to": [[100, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 230]],
+      "to": [[320, 290]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "79-two"
+    },
+    {
+      "do": "appState",
+      "label": "79-two"
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m79-01-canvas-menu"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Toggle grid",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "79-grid-on"
+    },
+    {
+      "do": "screenshot",
+      "name": "m79-01-grid-on"
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Toggle grid",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "79-grid-off"
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Select all",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-select-all"
+    },
+    {
+      "do": "appState",
+      "label": "79-select-all"
+    },
+    {
+      "do": "screenshot",
+      "name": "m79-02-select-all"
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "79-hold"
+    },
+    {
+      "do": "aria",
+      "save": "m79-03-element-menu"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Flip horizontal",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-flip-h"
+    },
+    {
+      "do": "appState",
+      "label": "79-flip-h"
+    },
+    {
+      "do": "screenshot",
+      "name": "m79-04-flip-h"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-flip-h-undo"
+    },
+    {
+      "do": "appState",
+      "label": "79-flip-h-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Flip vertical",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-flip-v"
+    },
+    {
+      "do": "appState",
+      "label": "79-flip-v"
+    },
+    {
+      "do": "screenshot",
+      "name": "m79-05-flip-v"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-flip-v-undo"
+    },
+    {
+      "do": "appState",
+      "label": "79-flip-v-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Duplicate",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-duplicate"
+    },
+    {
+      "do": "appState",
+      "label": "79-duplicate"
+    },
+    {
+      "do": "screenshot",
+      "name": "m79-06-duplicate"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-duplicate-undo"
+    },
+    {
+      "do": "appState",
+      "label": "79-duplicate-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Add to library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-library"
+    },
+    {
+      "do": "appState",
+      "label": "79-library"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m79-07-library"
+    },
+    {
+      "do": "screenshot",
+      "name": "m79-07-library"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "79-library-undo"
+    },
+    {
+      "do": "appState",
+      "label": "79-library-undo"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "79-end"
+    },
+    {
+      "do": "appState",
+      "label": "79-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

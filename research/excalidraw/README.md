@@ -411,6 +411,16 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     right-hand rectangle at (220,490) selected it but left no menu item to pick, while its presses
     at (40,490) and all of 75's at a height of 252 worked. It runs after 72 and 76, in a session
     without 75, while the default background is still transparent.
+  - `79` to `81` (from s79 on) pick the context-menu and More tools items that s74–s78 left
+    unused. `79` runs right after `09` and draws two rectangles of different sizes first, clear
+    of the welcome screen's entries; from the canvas menu of a right click it picks Toggle grid
+    twice and Select all, and by long presses on a selected rectangle Flip horizontal, Flip
+    vertical and Duplicate, each with Undo straight after it, and Add to library, then opens and
+    closes the Library and presses Undo. It leaves both rectangles for the scenarios after it.
+    `80` picks Web Embed and drags a box, typing no link, then Escape and Undo; Draw to shape with
+    one closed loop, then Undo; and Bucket fill, tapping inside a transparent rectangle before and
+    after asking for Blue, then Undo. `81` places a sticky note, types the self-authored text
+    "Planewright note" into it, drags its bottom-right handle, with Undo, and deletes it.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
