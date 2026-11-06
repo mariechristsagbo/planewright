@@ -80,6 +80,32 @@ async function touchDrag(ctx, step) {
   return { fingers: from.length };
 }
 
+// One finger through every point in order, `steps` moves per segment (1 to 50, default 4), so a
+// stroke can bend; touchDrag moves its fingers in straight lines only.
+async function touchPath(ctx, step) {
+  const steps = step.steps ?? 4;
+  if (!Array.isArray(step.points) || step.points.length < 2) {
+    throw new Error('touchPath needs at least two points.');
+  }
+  if (!Number.isInteger(steps) || steps < 1 || steps > 50) {
+    throw new Error('touchPath needs an integer steps from 1 to 50.');
+  }
+  const points = step.points.map(point);
+  await touch(ctx, 'touchStart', [points[0]]);
+  for (const [k, to] of points.slice(1).entries()) {
+    const from = points[k];
+    for (let i = 1; i <= steps; i += 1) {
+      const t = i / steps;
+      await touch(ctx, 'touchMove', [
+        { x: from.x + (to.x - from.x) * t, y: from.y + (to.y - from.y) * t },
+      ]);
+      await sleep(16);
+    }
+  }
+  await touch(ctx, 'touchEnd', []);
+  return { points: points.length };
+}
+
 async function tap(ctx, step) {
   const at = point(step.at);
   await touch(ctx, 'touchStart', [at]);
@@ -119,4 +145,5 @@ export const inputHandlers = {
   wheel,
   tap,
   touchDrag,
+  touchPath,
 };

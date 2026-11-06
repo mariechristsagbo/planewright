@@ -257,7 +257,7 @@ describe('placeSession', () => {
 describe('the drawing summary of placeSession', () => {
   it('summarises the drawing steps: counts, entries during them and the next entry after', () => {
     const { drawing } = placeSession(rows, [request(11), request(20.5), request(25)]);
-    expect(Object.keys(drawing.steps)).toEqual(DRAWING);
+    expect(Object.keys(drawing.steps)).toEqual(DRAWING.filter((kind) => kind !== 'touchPath'));
     expect(drawing.steps).toEqual({ drag: 1, path: 0, touchDrag: 1 });
     expect(drawing.entries_during).toBe(1);
     expect(drawing.next_entry_ms).toEqual({ min: 500, max: 500 });

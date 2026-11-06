@@ -10,8 +10,11 @@
 // and whether its URL had a fragment. No query keys or values, headers, bodies or payloads.
 import { redactSecrets } from './sanitise.mjs';
 
-/** The step kinds that draw on the canvas: mouse drags, freehand paths and touch drags. */
-export const DRAWING = ['drag', 'path', 'touchDrag'];
+/** The step kinds that draw on the canvas: mouse drags, freehand paths, touch drags and paths. */
+export const DRAWING = ['drag', 'path', 'touchDrag', 'touchPath'];
+// Counted in a summary only when a session has one, so the summaries of the sessions run before
+// the step existed are unchanged.
+const LATER_KINDS = new Set(['touchPath']);
 
 const EVENTS = new Set([
   'request',
@@ -169,7 +172,9 @@ function drawingSummary(steps, times) {
   const known = gaps.filter((gap) => gap !== null);
   return {
     steps: Object.fromEntries(
-      DRAWING.map((kind) => [kind, drawing.filter((s) => s.do === kind).length]),
+      DRAWING.map((kind) => [kind, drawing.filter((s) => s.do === kind).length]).filter(
+        ([kind, count]) => count > 0 || !LATER_KINDS.has(kind),
+      ),
     ),
     entries_during: times.filter((t) => isDrawing(steps[latestStep(steps, t)])).length,
     next_entry_ms: known.length > 0 ? { min: Math.min(...known), max: Math.max(...known) } : null,

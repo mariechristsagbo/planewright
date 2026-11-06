@@ -107,3 +107,26 @@ describe('netlog-steps.mjs', () => {
     );
   });
 });
+
+describe('netlog-steps.mjs drawing kinds', () => {
+  it('names touchPath among the drawing steps only when a session has one', () => {
+    const path = {
+      do: 'touchPath',
+      points: [
+        [0, 0],
+        [1, 1],
+      ],
+    };
+    const traced = [rows[0], { ...rows[1], step: path }, rows[2]];
+    session('s-drag', lines(rows), lines(entries));
+    session('s-path', lines(traced), lines(entries));
+    const run = build('path.json', 's-drag', 's-path');
+    expect(run.status, run.stderr).toBe(0);
+    const index = JSON.parse(readFileSync(join(root, 'path.json'), 'utf8'));
+    expect(index.drawing_steps).toEqual(['drag', 'path', 'touchDrag', 'touchPath']);
+    expect(index.sessions.map((s) => s.drawing.steps)).toEqual([
+      { drag: 1, path: 0, touchDrag: 0 },
+      { drag: 0, path: 0, touchDrag: 0, touchPath: 1 },
+    ]);
+  });
+});

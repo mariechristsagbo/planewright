@@ -41,11 +41,15 @@ const [root, output, ...sessions] = process.argv.slice(2);
 if (!root || !output || sessions.length === 0) {
   throw new Error('Usage: netlog-steps.mjs <sessions-root> <output.json> <session...>');
 }
+const placed = sessions.map((session) => sessionPlacement(root, session));
+// The drawing kinds that the sessions' summaries count, in DRAWING order: a kind counted only
+// when present (touchPath) is named only when a session has one.
+const counted = new Set(placed.flatMap((s) => Object.keys(s.drawing.steps)));
 const index = {
   schema: 'planewright-research-netlog-steps/v1',
   generated_by: 'research/excalidraw/netlog-steps.mjs',
-  drawing_steps: DRAWING,
-  sessions: sessions.map((session) => sessionPlacement(root, session)),
+  drawing_steps: DRAWING.filter((kind) => counted.has(kind)),
+  sessions: placed,
 };
 const total = index.sessions.reduce((sum, s) => sum + s.netlog_entries, 0);
 writeFileSync(output, `${JSON.stringify(index, null, 2)}\n`);
