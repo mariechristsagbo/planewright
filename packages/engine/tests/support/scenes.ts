@@ -1,6 +1,10 @@
+import { worldBounds } from '../../src/geometry/world-bounds.ts';
 import { TAU } from '../../src/math/angle.ts';
+import { aabbIntersects } from '../../src/math/aabb.ts';
+import type { Aabb } from '../../src/math/aabb.ts';
 import { randomBetween, randomInt } from '../../src/math/random.ts';
 import type { Random } from '../../src/math/random.ts';
+import type { Vec } from '../../src/math/vector.ts';
 import type { Attachment, Element, Point } from '../../src/model/elements.ts';
 import type { ElementId, GroupId } from '../../src/model/ids.ts';
 import { KEY_DIGITS, compareDrawingOrder } from '../../src/model/order-key.ts';
@@ -120,10 +124,54 @@ export function anySceneElement(random: Random, id: ElementId, refs: SceneRefs):
   };
 }
 
+/** A query box, sometimes on cell edges, sometimes empty, sometimes larger than the scene. */
+export function anyQueryBox(random: Random): Aabb {
+  if (chance(random, 0.3)) {
+    return {
+      x: 512 * randomInt(random, -10, 10),
+      y: 512 * randomInt(random, -10, 10),
+      width: 512 * randomInt(random, 0, 4),
+      height: 512 * randomInt(random, 0, 4),
+    };
+  }
+  const huge = chance(random, 0.15);
+  return {
+    x: coordinate(random, huge ? 60_000 : 6_000),
+    y: coordinate(random, huge ? 60_000 : 6_000),
+    width: huge ? randomBetween(random, 0, 120_000) : size(random),
+    height: huge ? randomBetween(random, 0, 120_000) : size(random),
+  };
+}
+
+export const anyQueryPoint = (
+  random: Random,
+): { readonly point: Vec; readonly radius: number } => ({
+  point: { x: coordinate(random, 6_000), y: coordinate(random, 6_000) },
+  radius: chance(random, 0.2) ? 0 : randomBetween(random, 0, 800),
+});
+
 // Brute-force scans: the definitions that the indexes must agree with.
+
+/** Sorted, so that two lists of candidates compare as sets. */
+export const sortedIds = <T extends string>(ids: Iterable<T>): T[] => [...ids].sort();
 
 export const bruteOrder = (elements: Iterable<Element>): ElementId[] =>
   [...elements].sort(compareDrawingOrder).map(({ id }) => id);
+
+export const bruteBox = (elements: Iterable<Element>, box: Aabb): ElementId[] =>
+  sortedIds([...elements].filter((e) => aabbIntersects(worldBounds(e), box)).map(({ id }) => id));
+
+/** The distance from a point to a box, 0 inside it. */
+function distanceToBox(point: Vec, box: Aabb): number {
+  const dx = Math.max(box.x - point.x, 0, point.x - box.x - box.width);
+  const dy = Math.max(box.y - point.y, 0, point.y - box.y - box.height);
+  return Math.hypot(dx, dy);
+}
+
+export const brutePoint = (elements: Iterable<Element>, point: Vec, radius: number): ElementId[] =>
+  sortedIds(
+    [...elements].filter((e) => distanceToBox(point, worldBounds(e)) <= radius).map(({ id }) => id),
+  );
 
 /**
  * One random step over the scene held in `elements`, which it updates: some elements added, some
