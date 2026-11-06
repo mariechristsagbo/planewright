@@ -238,7 +238,9 @@ export type TextEdit =
 
 ```ts
 export interface KeyChord {
+  /** The produced character in lower case or, with `physical`, a `KeyboardEvent.code`. */
   readonly key: string;
+  readonly physical?: true;
   readonly mod?: true;
   readonly shift?: true;
   readonly alt?: true;
@@ -274,8 +276,12 @@ registry. P0 commands and their shortcuts; digits follow the order of Planewrigh
 | Cancel, clear selection     | Escape               | REQ-S10      |
 
 Letter shortcuts match the produced character in lower case and fall back to the physical key on
-layouts without Latin letters. The editor prevents the browser's default action only for chords it
-handles while the canvas host or a toolbar has focus, so browser zoom stays available elsewhere.
+layouts without Latin letters. Digit shortcuts, Mod+0 included, match the physical key (`Digit0` to
+`Digit9`), so they work on layouts such as AZERTY where a digit needs Shift, and `1` and `Shift+1`
+stay apart by the Shift modifier alone. Zoom in accepts the produced `=` or `+`, and zoom out `-`,
+`−` or `_`, with or without Shift, wherever the layout puts them. The editor prevents the browser's
+default action only for chords it handles while the canvas host or a toolbar has focus, so browser
+zoom stays available elsewhere.
 
 ## Requirements served
 
