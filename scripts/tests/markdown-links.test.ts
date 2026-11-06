@@ -86,3 +86,35 @@ describe('findBrokenLinks', () => {
     expect(findBrokenLinks('docs/a.md', reader(target))).toEqual([]);
   });
 });
+
+describe('findBrokenLinks at the repository boundary', () => {
+  it('reports a target outside the repository without reading it', () => {
+    const files = {
+      'docs/a.md':
+        '[up](../README.md) [out](../../outside.md) [root](../..) [dev](../../../dev/zero)',
+      'README.md': '# Readme\n',
+      '../outside.md': '# Exists on this machine only\n',
+    };
+    const read = reader(files);
+    const requested: string[] = [];
+    const recording: ReadTarget = (path) => {
+      requested.push(path);
+      return read(path);
+    };
+    expect(findBrokenLinks('docs/a.md', recording)).toEqual([
+      'docs/a.md: broken link ../../outside.md (outside the repository)',
+      'docs/a.md: broken link ../.. (outside the repository)',
+      'docs/a.md: broken link ../../../dev/zero (outside the repository)',
+    ]);
+    expect(requested).toEqual(['docs/a.md', 'README.md']);
+  });
+
+  it('reports malformed percent-encoding instead of throwing', () => {
+    const files = { 'docs/a.md': '[bad](bad%zz.md) [nul](nul%00.md) [ok](ok%20file.md)' };
+    const target = { ...files, 'docs/ok file.md': '# Ok\n' };
+    expect(findBrokenLinks('docs/a.md', reader(target))).toEqual([
+      'docs/a.md: broken link bad%zz.md (malformed percent-encoding)',
+      'docs/a.md: broken link nul%00.md (malformed percent-encoding)',
+    ]);
+  });
+});
