@@ -14,7 +14,10 @@ The encoded form and the limits are in the [domain model](domain-model.md#invari
 | Binary files (P2)                   | IndexedDB, keyed by SHA-256                         | when an image is inserted                                            | REQ-P04          |
 | History, the active tool            | nowhere                                             | never                                                                | REQ-H03, REQ-P02 |
 
-Session state does not raise the document revision and is never a history entry.
+Session state is never a history entry and never raises the stored revision. A save that carries
+only session state skips the revision check and writes only the session field of the document
+record, so it can neither be refused as stale nor make another tab's next save stale; a selection
+that names elements another tab has removed since is filtered when it is loaded.
 
 ## Repository port
 
@@ -28,7 +31,8 @@ export interface SessionState {
 
 export interface StoredDocument {
   readonly id: DocumentId;
-  readonly document: DocumentState; // its `rev` is the stored revision
+  readonly rev: number; // the stored revision, assigned by the repository
+  readonly document: DocumentState;
   readonly session: SessionState;
 }
 
@@ -38,10 +42,7 @@ export type LoadResult =
   | { readonly type: 'invalid'; readonly errors: readonly CodecError[] }
   | { readonly type: 'unavailable' };
 
-export interface SaveDelta {
-  readonly id: DocumentId;
-  readonly baseRev: number; // the revision this editor last loaded or saved
-  readonly rev: number; // the revision being written
+export interface DocumentDelta {
   readonly upserts: readonly Element[];
   readonly removals: readonly ElementId[];
   readonly groups: {
@@ -49,26 +50,58 @@ export interface SaveDelta {
     readonly removals: readonly GroupId[];
   };
   readonly canvas: CanvasState;
-  readonly session: SessionState;
 }
 
+export type SaveRequest =
+  | {
+      /** The changes since the last save. */
+      readonly type: 'delta';
+      readonly id: DocumentId;
+      readonly baseRev: number; // the stored revision this editor last loaded or wrote
+      readonly delta: DocumentDelta;
+      readonly session: SessionState;
+    }
+  | {
+      /** The whole document, written over the stored one when the user keeps this version. */
+      readonly type: 'replace';
+      readonly id: DocumentId;
+      readonly baseRev: number; // the stored revision that the refused save reported
+      readonly document: DocumentState;
+      readonly session: SessionState;
+    }
+  | {
+      /** Camera and selection only: no revision check and no new revision. */
+      readonly type: 'session';
+      readonly id: DocumentId;
+      readonly session: SessionState;
+    };
+
 export type SaveResult =
-  | { readonly ok: true }
-  | { readonly ok: false; readonly reason: 'stale' | 'quota' | 'unavailable' | 'failed' };
+  | { readonly ok: true; readonly rev: number } // the stored revision after the save
+  | { readonly ok: false; readonly reason: 'stale'; readonly storedRev: number }
+  | { readonly ok: false; readonly reason: 'quota' | 'unavailable' | 'failed' };
 
 export interface DocumentRepository {
   load(): Promise<LoadResult>;
-  save(delta: SaveDelta): Promise<SaveResult>;
+  save(request: SaveRequest): Promise<SaveResult>;
 }
 ```
 
-A save succeeds only if the stored revision still equals `baseRev`; otherwise it changes nothing
-and returns `stale` (REQ-P06). The in-memory test repository applies the same rule.
+The repository owns the stored revision; the editor never chooses one, and the in-memory
+`DocumentState.rev` is a different counter that is never saved. A document with no record yet is
+at revision 0. Inside one transaction, a `delta` or `replace` save checks that the stored revision
+still equals `baseRev`: if it does, the save writes and sets the stored revision to `baseRev + 1`,
+which it returns; if not, it changes nothing and returns `stale` with the stored revision
+(REQ-P06). Every write raises the stored revision, so a base that has been passed never matches
+again, whatever the other tab's own edits. A `session` save writes only the session field and
+keeps the revision. The in-memory test repository applies the same rules.
 
 ## Autosave
 
 The `persistence` layer's scheduler tracks the elements and groups changed since the last save,
-from scene updates of every origin except `load`; transient previews never count (REQ-P01).
+from scene updates of every origin except `load`; transient previews never count (REQ-P01). It
+keeps the stored revision returned by the load or by the last successful save as the base of the
+next one.
 
 | State  | On a committed change                                                          | On the timer                | On the save's result                                           |
 | ------ | ------------------------------------------------------------------------------ | --------------------------- | -------------------------------------------------------------- |
@@ -81,11 +114,18 @@ from scene updates of every origin except `load`; transient previews never count
 - **Failures** (`quota`, `unavailable`, `failed`) keep the changes pending, retry after 1, 2, 4, 8,
   16 and then every 30 s, and raise a notice that stays until a save succeeds (REQ-P05). Editing
   continues in memory meanwhile.
-- **Stale** stops autosave and raises a notice: another tab saved a newer version. The user chooses
-  to load the newer version, discarding unsaved changes here, or to keep this one, which saves with
-  the stored revision as the new base. Nothing is overwritten without that choice (REQ-P06).
+- **Stale** stops autosave, session saves included, and raises a notice: another tab saved a newer
+  version. Nothing is overwritten without the user's choice (REQ-P06):
+  - **Load the newer version** discards this tab's unsaved changes and loads the stored document as
+    a reload would: its camera and selection, the Selection tool and an empty history.
+  - **Keep this one** saves this tab's whole document as a `replace` whose base is the revision the
+    `stale` result reported. The repository removes every stored element and group that the
+    document does not hold and writes the rest, so storage then holds exactly this tab's document
+    at a new revision, and the other tab's next save is refused as stale in turn. If yet another
+    save landed in between, the replacement is stale too and the notice comes back.
 - A save serialises only the changed elements, so its main-thread cost depends on the change, not on
-  the document's size (REQ-F03).
+  the document's size (REQ-F03). A replacement writes every element, so it issues its writes in
+  batches, each started when the previous one completes, and no main-thread task exceeds a frame.
 
 ## Loading
 
@@ -110,10 +150,12 @@ The web adapter opens the database `planewright`, version 1, with three object s
 | `elements`  | `[documentId, elementId]` | the encoded element, as in the file format; indexed by document   |
 | `files`     | SHA-256 of the bytes (P2) | media type, byte length, the bytes as a `Blob`                    |
 
-A save is one `readwrite` transaction over `documents` and `elements`: it reads the document
-record, aborts with `stale` if its revision differs from `baseRev`, then writes the upserts, deletes
-the removals and writes the record with the new revision. Database upgrades run migrations inside
-the version-change transaction.
+A save is one `readwrite` transaction over `documents` and `elements`. A delta or a replacement
+reads the document record and aborts with `stale` if its revision differs from `baseRev`. A delta
+then writes the upserts and deletes the removals; a replacement deletes every element record of the
+document and writes all of its elements. Both write the record with the revision `baseRev + 1`, the
+canvas, the groups and the session. A session save writes only the record's session field and update
+time. Database upgrades run migrations inside the version-change transaction.
 
 ## The codec boundary
 

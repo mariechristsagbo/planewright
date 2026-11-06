@@ -40,7 +40,9 @@ are not a design input beyond the behaviour they explain.
    (REQ-M04).
 7. **Identifiers and revisions.** Identifiers are random 128-bit values written as 22 base64url
    characters (REQ-K02). Each element has a revision number that every change increments, and the
-   document has a revision that every committed change set increments (REQ-P06, REQ-K01).
+   document has an in-memory revision that every applied change set increments (REQ-K01). The
+   stored revision that refuses stale saves belongs to the repository
+   ([ADR 0009](0009-persistence-and-interchange.md)).
 8. **No tombstones in saved documents.** A removal is an explicit change; the saved document holds
    only live elements (REQ-P03).
 9. **Colours** are stored as theme-independent sRGB hex strings; a theme changes how they are
@@ -69,4 +71,4 @@ are not a design input beyond the behaviour they explain.
 - Layer commands, inserts and paste only assign keys; they never renumber the document.
 - The arrow, note, image and frame kinds of P1 and P2 add kinds and optional fields to this model
   without changing its rules.
-- Requirements served: REQ-K02, REQ-M01 to REQ-M10, REQ-P03, REQ-P06 and REQ-P07.
+- Requirements served: REQ-K02, REQ-M01 to REQ-M10, REQ-P03 and REQ-P07.
