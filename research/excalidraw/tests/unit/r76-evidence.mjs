@@ -14,8 +14,25 @@ export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
 // Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
 // records of the tenth to twelfth reviews cover only the files committed before them.
-// Evidence files committed after 74977c3, by the context-menu, tools and snap batch (s74–s78).
+// Evidence files committed after 82b93e8, by the menu items, tools and clipboard batch (s79–s82).
+export const COMMITTED_AFTER_82B93E8 = [
+  'netlog-steps-s79-s82.json',
+  ...[
+    's79-mobile-menu-items-clipboard',
+    's80-mobile-menu-items-clipboard-2',
+    's81-mobile-flip-arrow-grid',
+    's82-mobile-flip-arrow-grid-2',
+  ].map((name) => `probes-${name}.json`),
+  ...['app-root', 'static-canvas', 'html', 'body'].map(
+    (k) => `rea-listeners-s82-${k}.summary.json`,
+  ),
+  'rea-windows-s79-s82.json',
+  'sessions-s79-s82.json',
+];
+// Evidence files committed after 74977c3, by the context-menu, tools and snap batch (s74–s78)
+// and later.
 export const COMMITTED_AFTER_74977C3 = [
+  ...COMMITTED_AFTER_82B93E8,
   'netlog-steps-s74-s78.json',
   ...[
     's74-mobile-context-tools',
