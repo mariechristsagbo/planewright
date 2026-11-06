@@ -1,0 +1,15 @@
+{
+  "name": "@planewright/engine",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Planewright's canvas engine: ECMAScript-only TypeScript with no DOM or Node.js APIs, reached through ports.",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
+}

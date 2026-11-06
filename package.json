@@ -16,6 +16,7 @@
   "type": "module",
   "workspaces": [
     "packages/protocol",
+    "packages/engine",
     "apps/collab",
     "apps/web"
   ],
