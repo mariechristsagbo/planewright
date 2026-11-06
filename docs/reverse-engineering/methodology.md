@@ -93,6 +93,12 @@ read again for 403 responses on 2026-11-06, the retained records show that s16's
 HTTP 403 for two script chunks, which the netlog wrote as aborted, and that at s49's load the
 manifest got HTTP 403 twice, three minutes before s50's verification page. The gates of those
 sessions checked documents and verification paths only, so neither stopped a session.
+The replay batch s65–s67 ran on 2026-11-06 at 05:21–05:33 UTC, one load per session and no reload,
+and is indexed in `evidence/sessions-s65-s67.json`. From s65 the gate stops live contact on a 403
+or 429 of any request type, on a verification path, on an aborted request to the reference origin
+and on a REA window that is not ok or holds such a response; a watcher reads the netlog every
+0.5 s and stops the browser at once, and the netlog and the REA window are read again after every
+scenario.
 
 ## Division of labour
 

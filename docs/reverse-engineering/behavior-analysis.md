@@ -1262,8 +1262,8 @@ value is a value the page had saved locally.
 
 ## Keyboard, offline, layout and menu features (mobile)
 
-These entries come from the keyboard, offline and layout batch (s58–s64), on mobile 390×844 at DPR
-3 with touch unless the entry says otherwise. The keyboard is the driver's, standing in for an
+These entries come from the keyboard, offline and layout batch (s58–s64) and its replays in
+s65–s67, on mobile 390×844 at DPR 3 with touch unless the entry says otherwise. The keyboard is the driver's, standing in for an
 external one.
 
 ### B-43 Keyboard focus and Tab order
@@ -1294,9 +1294,8 @@ external one.
 - **Edge cases:** Tab from other controls than Selection and the Library button, and a keyboard
   shortcut while a control holds the focus: Not observed (R-27).
 - **Desktop/mobile:** the desktop Tab order and focus return: Not observed (R-27).
-- **Reproduction:** scenario 49 (s59, s62) and 56 (s62).
-- **Confidence:** [O] high for 49 (s59 and s62 identical); medium for 56 (one session, as live
-  contact stopped before s65).
+- **Reproduction:** scenario 49 (s59, s62, s65) and 56 (s62, s65).
+- **Confidence:** [O] high for 49 (s59, s62 and s65 identical) and for 56 (s62 and s65 identical).
 - **Limitations:** emulated mobile with a CDP keyboard and no screen reader; why Tab does not
   leave the container is [H] (a key handler of the app that keeps Tab).
 
@@ -1347,9 +1346,9 @@ external one.
 - **Undo/redo:** not applicable (a resize changes no element or history entry).
 - **Edge cases:** the exact switch point and what shows the shortcut letters: Not observed (R-23).
 - **Desktop/mobile:** a desktop client at these sizes: Not observed (R-23).
-- **Reproduction:** scenario 52 (s59, s62) and 57 (s62).
-- **Confidence:** [O] high for 52 (s59 and s62 identical but for a choice popover that 56 left
-  open in s62); medium for 57 (one session).
+- **Reproduction:** scenario 52 (s59, s62, s65) and 57 (s62, s65).
+- **Confidence:** [O] high for 52 (s59, s62 and s65 identical but for a choice popover that 56 left
+  open in s62 and s65) and for 57 (s62 and s65 identical).
 - **Limitations:** emulated with DPR 3, touch and a phone user agent at every size (R-23).
 
 ### B-46 Find on canvas
@@ -1369,8 +1368,8 @@ external one.
 - **Undo/redo:** not applicable (the search changes no element or history entry).
 - **Edge cases:** a match outside the view and no match: Not observed (R-05).
 - **Desktop/mobile:** Ctrl+F and the desktop panel: Not observed (R-05).
-- **Reproduction:** scenario 53 (s61, s64).
-- **Confidence:** [O] high (s61 and s64 identical).
+- **Reproduction:** scenario 53 (s61, s64, s66, s67).
+- **Confidence:** [O] high (s61, s64, s66 and s67 identical).
 - **Limitations:** two words, both already in view.
 
 ### B-47 Language switch
@@ -1405,13 +1404,13 @@ external one.
 - **Undo/redo:** Not observed (R-15).
 - **Edge cases:** export, import and a second item: Not observed (R-15).
 - **Desktop/mobile:** the desktop: Not observed (R-15).
-- **Reproduction:** scenario 58 (s64).
-- **Confidence:** [O] medium (one session; live contact stopped before its replay).
+- **Reproduction:** scenario 58 (s64, s66).
+- **Confidence:** [O] high (s64 and s66 identical, although s66 ran it without 54 before it).
 - **Limitations:** the tile was tapped at a point measured on s61's capture.
 
 ### B-49 Canvas background colour
 
-- **Initial state:** mobile, after 58 in s64 (scenario 59).
+- **Initial state:** mobile, after 58 in s64 and s66 (scenario 59).
 - **Action:** Canvas background from the main menu, its hex box selected with Control+A and
   `ffc9c9` typed with Enter; a tap on empty canvas; Undo; Redo.
 - **Immediate result:** the stored background became `#ffc9c9` (`59-typed`) [O].
@@ -1423,8 +1422,8 @@ external one.
   [H].
 - **Edge cases:** a swatch instead of a typed code: Not observed (R-05).
 - **Desktop/mobile:** the desktop: Not observed (R-05).
-- **Reproduction:** scenario 59 (s64).
-- **Confidence:** [O] medium (one session).
+- **Reproduction:** scenario 59 (s64, s66).
+- **Confidence:** [O] high (s64 and s66 identical).
 - **Limitations:** one colour, typed.
 
 ## Desktop and mobile differences (summary)

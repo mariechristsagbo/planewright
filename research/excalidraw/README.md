@@ -242,7 +242,10 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Menus (`s61`)          | 09 → 53 → 54 → 55 → 16                                                                                                                                                                                                                                 |
 | Keyboard (`s62`)       | 09 → 49 → 56 → 52 → 57 → 16                                                                                                                                                                                                                            |
 | Offline (`s63`)        | 09 → 50 → 51 → 24 → 16                                                                                                                                                                                                                                 |
-| Menus (`s64`)          | 09 → 53 → 54 → 58 → 59 → 16; a 403 on 54's locale chunk then stopped live contact, so the planned s65 never ran                                                                                                                                        |
+| Menus (`s64`)          | 09 → 53 → 54 → 58 → 59 → 16; a 403 on 54's locale chunk then stopped live contact, so the s65 planned then never ran                                                                                                                                   |
+| Replays (`s65`)        | 09 → 49 → 56 → 52 → 57 → 16                                                                                                                                                                                                                            |
+| Replays (`s66`)        | 09 → 53 → 58 → 59 → 16                                                                                                                                                                                                                                 |
+| Replays (`s67`)        | 09 → 53 → 55 → 16                                                                                                                                                                                                                                      |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
@@ -324,6 +327,8 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     the library with the add tile at (136,214), where s61's capture shows it, and places the item
     from the same point. `59` types a hex code into the box named Canvas background; it stops at
     its first failed step, so nothing is typed unless that box was clicked.
+  - The replay batch (s65–s67) ran s62's chain again, and s64's and s61's without 54, whose locale
+    chunk got HTTP 403 in s64: 58 and 59 after 53 (s66), and 55 after 53 (s67).
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

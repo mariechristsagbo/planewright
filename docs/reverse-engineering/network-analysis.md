@@ -222,6 +222,17 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Replay batch (s65–s67) [O]
+
+- **Loads.** Each of the three loads got its document with HTTP 200 from the network, and each
+  netlog holds 20 entries, all placed in 09's load and the wait after it, with no 403, 429 or
+  failed request, no request under `/.well-known/vercel/` and no `.map` request
+  (`evidence/sessions-s65-s67.json`, `evidence/netlog-steps-s65-s67.json`).
+- **No traffic during the replays.** The 9 REA windows over 49, 56, 52, 57, 53, 58, 59 and 55,
+  allowing 7 origins, kept 0 requests, 0 WebSocket connections and 0 console events
+  (`evidence/rea-windows-s65-s67.json`); 54, the one scenario of these chains that had asked for
+  a chunk, did not run.
+
 ### Keyboard, offline and layout batch (s58–s64) [O]
 
 - **Loads.** Each of the 7 loads, on 2026-11-06 at 02:34–03:20 UTC, got its document with HTTP 200

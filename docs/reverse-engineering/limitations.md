@@ -68,7 +68,9 @@
    show that s16's REA window kept HTTP 403 for the two script chunks of Mermaid to Excalidraw,
    which the netlog wrote as aborted (as in s12, where no window was open), and that at s49's load
    the manifest got HTTP 403 twice, three minutes before s50's verification page. Those gates passed
-   both.
+   both. About two hours after s64, s65–s67 (05:21–05:33 UTC) loaded the app normally under a gate
+   that stops on a 403 of any request type, and met none; whether the protection depends on rate,
+   time or the requests asked for is not known [H].
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -181,6 +183,9 @@
     ARIA line counts, capture digests and request metadata.
   - found on 2026-11-06, the HTTP 403 of the two script chunks in s16, which only REA's raw record
     keeps: the committed index has them as failed requests (network analysis).
+  - in s65–s67, the byte-identical ARIA of the replay pairs, and that the 6 snapshots that differ do
+    so only in a query value of the off-site Browse libraries link, which changes per session and
+    is kept in no committed file.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

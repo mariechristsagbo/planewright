@@ -244,6 +244,25 @@ window spans a reload.
 | `s64-mobile-find-library`          | `r04-inspect-during-58.json` | `ev_9a429301`     | `inspect_web_page`, 03:22:37.459–03:23:27.644, 7 origins. Armed 3394 ms before scenario 58's first step; all its 40 steps inside it |
 | `s64-mobile-find-library`          | `r05-inspect-during-59.json` | `ev_fe536c38`     | `inspect_web_page`, 03:23:31.515–03:24:11.782, 7 origins. Armed 3135 ms before scenario 59's first step; all its 26 steps inside it |
 
+**Replay records** (s65–s67, on 2026-11-06, times UTC). Each session listed the target after 09
+and ran each scenario but 16 inside its own window; no window spans a reload, and every window
+kept 0 requests, 0 WebSocket connections and 0 console events.
+
+| Session                           | File                         | Evidence (prefix) | Operation and window                                                                                                                |
+| --------------------------------- | ---------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `s65-mobile-keyboard-resize-3`    | `r01-targets.json`           | `ev_3dcd4acb`     | `list_browser_targets`                                                                                                              |
+| `s65-mobile-keyboard-resize-3`    | `r02-inspect-during-49.json` | `ev_2a51174b`     | `inspect_web_page`, 05:22:03.185–05:22:49.148, 7 origins. Armed 2580 ms before scenario 49's first step; all its 83 steps inside it |
+| `s65-mobile-keyboard-resize-3`    | `r03-inspect-during-56.json` | `ev_b988a682`     | `inspect_web_page`, 05:22:53.294–05:23:53.687, 7 origins. Armed 3002 ms before scenario 56's first step; all its 83 steps inside it |
+| `s65-mobile-keyboard-resize-3`    | `r04-inspect-during-52.json` | `ev_4c28087b`     | `inspect_web_page`, 05:23:58.458–05:25:18.920, 7 origins. Armed 2967 ms before scenario 52's first step; all its 73 steps inside it |
+| `s65-mobile-keyboard-resize-3`    | `r05-inspect-during-57.json` | `ev_dddd7e63`     | `inspect_web_page`, 05:25:23.895–05:26:44.629, 7 origins. Armed 2130 ms before scenario 57's first step; all its 72 steps inside it |
+| `s66-mobile-library-background-2` | `r01-targets.json`           | `ev_b26a1d36`     | `list_browser_targets`                                                                                                              |
+| `s66-mobile-library-background-2` | `r02-inspect-during-53.json` | `ev_27303737`     | `inspect_web_page`, 05:27:52.782–05:28:43.327, 7 origins. Armed 2892 ms before scenario 53's first step; all its 52 steps inside it |
+| `s66-mobile-library-background-2` | `r03-inspect-during-58.json` | `ev_08df0661`     | `inspect_web_page`, 05:28:49.186–05:29:39.445, 7 origins. Armed 1604 ms before scenario 58's first step; all its 40 steps inside it |
+| `s66-mobile-library-background-2` | `r04-inspect-during-59.json` | `ev_5c87cffe`     | `inspect_web_page`, 05:29:43.280–05:30:23.555, 7 origins. Armed 3203 ms before scenario 59's first step; all its 26 steps inside it |
+| `s67-mobile-library-sidebar-2`    | `r01-targets.json`           | `ev_3a54f1b2`     | `list_browser_targets`                                                                                                              |
+| `s67-mobile-library-sidebar-2`    | `r02-inspect-during-53.json` | `ev_54d70f15`     | `inspect_web_page`, 05:31:31.548–05:32:22.078, 7 origins. Armed 3320 ms before scenario 53's first step; all its 52 steps inside it |
+| `s67-mobile-library-sidebar-2`    | `r03-inspect-during-55.json` | `ev_e3e0d241`     | `inspect_web_page`, 05:32:26.209–05:33:06.664, 7 origins. Armed 2806 ms before scenario 55's first step; all its 28 steps inside it |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
