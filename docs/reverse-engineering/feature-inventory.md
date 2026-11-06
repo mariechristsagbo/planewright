@@ -71,15 +71,19 @@ effects are in [behaviour](behavior-analysis.md#b-37-view-modes-and-toggles). On
 the main menu's Preferences submenu, with the Select on and Input radios and Tool lock; s71 and s72
 used each from there but Snap to midpoints and Canvas & Shape properties, with Undo after Toggle
 grid and a theme change and a reload with zen, snap, Overlap and Mouse on (B-37, B-12, B-28) [O,
-high: both runs identical].
+high: both runs identical]. s74–s78 toggled Snap to midpoints there and showed what it does to an
+arrow's end, and what Snap to objects does to a drag (B-37) [O, high].
 
 ## 4. Element types created in this baseline [O, high]
 
 `rectangle`, `ellipse`, `diamond`, `arrow`, `line`, `freedraw`, `text`, `stickynote` (with an
-auto-created bound `text`), and `image` (by file drop). Frame, embed, laser, bucket fill, lasso,
-draw-to-shape and the generation tools appear in the inventory but were **not exercised** [U],
-except on mobile in s12 and s16: Mermaid to Excalidraw inserted its offered example as rectangles, a
-diamond, arrows and labels (B-38), and Wireframe to code switched to a frame tool (B-39).
+auto-created bound `text`), `image` (by file drop) and, on mobile, `frame` (by Frame tool and by
+Wrap selection in frame, s74–s76; B-34). Embed, bucket fill, draw-to-shape and the generation tools
+appear in the inventory but were **not exercised** [U], except on mobile in s12 and s16: Mermaid to
+Excalidraw inserted its offered example as rectangles, a diamond, arrows and labels (B-38), and
+Wireframe to code switched to a frame tool (B-39). On mobile the laser pointer drew a red trail that
+had faded 1.65 s later and stored no element, and the lasso selected what its loop enclosed
+(s74–s76; B-12) [O].
 
 ## 5. Keyboard shortcuts listed by the Help dialog [O, high as listed; behaviour verified only where noted]
 
@@ -170,6 +174,25 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   with a Close button. Preferences opens as a submenu with the same items as on desktop, shown
   without shortcut text. [O, high]: the s7 and s11 snapshots are identical, and the Help,
   Command palette and Clear canvas captures are byte-identical.
+- **Context menus (s74–s78):** a long press of 800 ms on a shape, selected or not, opens the
+  element context menu, with the same items as a right click: Cut, Copy, Paste / Wrap selection in
+  frame / Copy to clipboard as PNG, as SVG / Copy styles, Paste styles / Add to library / Flip
+  horizontal, Flip vertical / Add link, Copy link to object / Duplicate, Lock (Unlock on a locked
+  shape) / Delete, with no layer commands and no shortcut text. A long press on empty canvas opens
+  nothing; a right click there opens the canvas menu: Paste / Copy to clipboard as PNG, as SVG /
+  Select all / Toggle grid, Snap to objects, "✓ Arrow binding", "✓ Snap to midpoints", View mode,
+  Canvas & Shape properties, without Zen mode, the check marks being part of the accessible names
+  (B-34) [O, high: the menus' sections are identical in s74–s76, the whole snapshots differing only
+  in Redo's disabled state]. On a fresh load the welcome screen's entries lie across the middle of
+  the canvas, and a hold at (200,560) landed on Live collaboration… and opened its pre-session
+  dialog (s74–s76) [O].
+- **More tools and the command palette (s74–s76):** More tools lists Insert image, Sticky note,
+  Frame tool, Web Embed, Draw to shape, Laser pointer, Bucket fill and, under "Generate", Text to
+  diagram AI, Mermaid to Excalidraw and Wireframe to code AI; the Lasso is the Selection tool's
+  choice instead (raw ARIA) [O, high]. Frame tool, Laser pointer and Sticky note were used from it
+  (B-08). The command palette, opened from the main menu, ran Zoom to selection, Reset zoom and Zoom
+  to fit all elements when their names were typed into its search box and Enter was pressed (B-36)
+  [O, high].
 
 ## 7. Theme coverage [O, high]
 

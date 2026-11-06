@@ -107,7 +107,13 @@ from the page turned `navigator.onLine` true again in a local test. The preferen
 eraser batch s71–s73 ran on 2026-11-06 at 07:30–07:47 UTC under the same gate and is indexed in
 `evidence/sessions-s71-s73.json`. Its probe summaries are the first built with `--modes`, which
 keeps the stored mode flags and the tool lock, and its `role` steps open the Preferences submenu
-with `unlessExpanded`, so a reopened menu never collapses it.
+with `unlessExpanded`, so a reopened menu never collapses it. The context-menu, tools and snap
+batch s74–s78 ran on 2026-11-06 at 09:16–09:57 UTC under the same gate and is indexed in
+`evidence/sessions-s74-s78.json`. It added the `touchHold` step, one finger held still for a set
+time, and the `cssScale` option of the screenshot step, which clips the capture to the viewport at
+1/DPR so that it has the size of a REA capture. `rea-extract.mjs` reduces its one REA listener
+inspection to listener types and flags and script paths, because the record also holds the
+script's source text, which stays in the raw tree.
 
 ## Division of labour
 

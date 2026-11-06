@@ -13,7 +13,7 @@ reference. 09b first ran in s68 and s69, and s5 records an aborted rerun. It is 
 | [feature-inventory.md](feature-inventory.md)             | Desktop and mobile UI inventory, menus, dialogs, shortcuts                 |
 | [behavior-analysis.md](behavior-analysis.md)             | Behaviours B-01…B-37, each with the eleven issue #1 fields                 |
 | [network-analysis.md](network-analysis.md)               | Observed traffic, storage and workers, separated from backend hypotheses   |
-| [architecture-hypotheses.md](architecture-hypotheses.md) | Labelled inferences and hypotheses A-01…A-13                               |
+| [architecture-hypotheses.md](architecture-hypotheses.md) | Labelled inferences and hypotheses A-01…A-15                               |
 | [rea-findings.md](rea-findings.md)                       | What REA established, what needed the driver or inference                  |
 | [limitations.md](limitations.md)                         | Inaccessible and unverified behaviour                                      |
 | [residual-matrix.md](residual-matrix.md)                 | Tracked coverage gaps with priorities                                      |

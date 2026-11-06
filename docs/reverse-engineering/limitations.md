@@ -71,7 +71,7 @@
    both. About two hours after s64, s65–s67 (05:21–05:33 UTC) loaded the app normally under a gate
    that stops on a 403 of any request type, and met none, nor did s68–s70 (06:21–06:33 UTC), where
    54 got its locale chunk with HTTP 200, or s71–s73 (07:30–07:47 UTC); whether the protection depends on rate, time or the
-   requests asked for is not known [H].
+   requests asked for is not known [H]. Nor did s74–s78 (09:16–09:57 UTC, five loads).
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -89,6 +89,11 @@
     exactly, but the fixed point along the pinch axis lay 34.5–111.5 px from the midpoint and
     differed between the sessions; that this comes from the order in which the fingers' moves reach
     the page, one finger after the other in each move, is a hypothesis [H]. No real device was used.
+    A long press (s74–s78) is one CDP touch held still for 800 ms. On a self-authored fixture page
+    neither that nor CDP's synthetic tap gesture held for 1 s made this headless Chromium fire
+    `contextmenu`, so the menus that opened on the reference opened from the page's own timing of
+    the press [I]; how it handles a phone's long press, where the browser itself may fire
+    `contextmenu`, was not tried.
 12. **Named controls are clicked, not tapped.** The driver's `role` step clicks a button with
     Playwright's mouse-event click at its centre, so in s17–s36 the popover buttons, the Undo and
     Redo buttons and the tool choices received mouse events while every canvas input was touch.
@@ -97,14 +102,17 @@
     capture; that layout held in s26 and s31, where every touch changed the intended value. In
     s37–s49 the same holds for the popover buttons, Diamond, Ellipse, Edit arrow and the dialogs'
     Insert buttons; scenario 39 touched the unnamed Arrow type radios at the centres measured on
-    s34's capture, and each touch stored a different arrow type in s40 and s44.
+    s34's capture, and each touch stored a different arrow type in s40 and s44. In s74–s78 the
+    context-menu items, the More tools entries and the command palette's search box were clicked
+    the same way, and 68's right clicks are mouse events by design.
 13. **The keyboard stands in for the phone's.** The word typed into new texts (s37, s41, s45–s47),
     the hex code with Ctrl+A and Enter (s41, s45) and the generation prompt with Enter (s49) were
     sent as CDP key events to the focused field. No virtual keyboard was shown or used, so its
     layout, autocorrection and the view's reaction to it were not observed. The Tab, Shift+Tab,
     Enter, Space and Escape presses of 49 and 56 (s59, s62) are CDP key events too: they show how
     the page handles an external keyboard's keys, and no screen reader or assistive technology
-    took part, so what one would announce was not observed.
+    took part, so what one would announce was not observed. The command names typed into the
+    command palette (s74–s76) are CDP key events too.
 14. **Offline emulation.** The `offline` step sets Chromium's network conditions for the page and
     the service workers Playwright attached (s60, s63), and from s68 for the page on the driver's
     own session too. Set by Playwright alone, they held for requests across a reload, which still
@@ -117,6 +125,14 @@
     `prefers-color-scheme` emulated through CDP, which also asks for reduced motion, and the wheel
     turns are the driver's mouse wheel on a page with touch emulation; a phone's own dark-mode
     switch and a mouse or trackpad on a real device were not tried.
+16. **Where a long press lands.** On a fresh load the welcome screen's Open, Help, Live
+    collaboration and Sign up entries lie across the middle of the canvas, so 67's first hold, at
+    (200,560), opened the pre-session Live collaboration dialog instead of testing the canvas
+    (s74–s76); 75 held there again only after drawing had removed it. In s76 every long press at
+    (220,490) on 77's right-hand rectangle selected it but left no menu item to pick within 5 s,
+    and the capture after shows no menu, while presses at (40,490), (40,252), (220,252) and
+    (120,375) opened the menu each time; why is not known [U], and 78 moved the presses to 75's
+    height.
 
 ## Tooling limits
 
@@ -203,6 +219,11 @@
   - in s71–s73, the byte-identical ARIA of the replay pairs, the menu left open after a Preferences
     choice, the controls that zen and view mode leave, and the Preferences items that show a check
     mark but expose no checked state.
+  - in s74–s78, the items of the context menus, More tools and the command palette, and their
+    identical sections in the replays (the committed index keeps ARIA line counts); the absence of
+    a menu in the capture after s76's failed paste; the slanted arrow end in 72's captures; the
+    laser trail in 70's; the analytics beacon's query; and the listener record's script source
+    text, source-map URL declaration and callback locations.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

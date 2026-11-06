@@ -222,6 +222,25 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Context-menu, tools and snap batch (s74–s78) [O]
+
+- **Loads.** Each of the five loads got its document with HTTP 200 from the network, and none
+  reloaded; no netlog holds a 403, 429, request under `/.well-known/vercel/`, `.map` request or
+  failed request on the reference origin (`evidence/sessions-s74-s78.json`).
+- **A font when More tools opens.** In s74, s75 and s76 the wait after the tap on More tools in 70
+  holds one request, for the CascadiaCode font on the font CDN, served through the service worker,
+  and REA's window over 70 kept it with HTTP 200 [O]. That the menu's text needs it is [I].
+- **A beacon per command-palette use.** In each of s74–s76 the four openings of the command palette
+  in 71 were each followed, 0.2–0.5 s later, by one analytics beacon (`simple.gif` on the analytics
+  queue origin, HTTP 202; its query is not kept), and REA's window over 71 kept four [O]. Typing a
+  command and running it sent nothing more.
+- **No other traffic while drawing or using the menus.** None of the 110 request starts fell in one
+  of the 80 drawing steps, and the long presses, the context-menu items, Clear canvas, the snaps,
+  the laser pointer, the sticky note and the right clicks made no request; the pre-session Live
+  collaboration dialog that 67's first hold opened made none either. The other 26 REA windows kept
+  0 requests, and none kept a WebSocket or console event (`evidence/netlog-steps-s74-s78.json`,
+  `evidence/rea-windows-s74-s78.json`).
+
 ### Preferences, modes and eraser batch (s71–s73) [O]
 
 - **Loads and reloads.** Each of the three loads got its document with HTTP 200 from the network,

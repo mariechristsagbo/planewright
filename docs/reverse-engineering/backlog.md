@@ -35,7 +35,10 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      disagree between s2 and s6 [O, raw timelines only]; that they read the saved state before
      it caught up is [H] (B-01). The freedraw tool stayed active across clicks
      after Escape (B-29) [O]. On mobile Tool lock kept the Rectangle tool over two drags and left
-     the new rectangles unselected (s71, s72; B-37) [O]; on desktop it is **open** (R-02).
+     the new rectangles unselected (s71, s72; B-37) [O]; on desktop it is **open** (R-02). On
+     mobile, read 800 ms after a touch drag, each of rectangle, diamond, ellipse, line and arrow
+     left the new element selected with the Selection tool, while Freedraw stayed active with
+     nothing selected (s74–s76; B-01) [O].
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
 3. **Selection model.** Ref: B-10 to B-14.
@@ -63,7 +66,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
    - Each observed operation is one undo step [O]. On a fresh page both buttons were disabled,
      and Undo became enabled after the first change [O]; the buttons' state after everything is
      undone, and when Redo enables, are **open** (R-04, R-52). History across a reload is open
-     (R-52).
+     (R-52). On mobile one Undo removes a shape just drawn, a sticky note, a frame, a pasted style,
+     a lock, a deletion from the context menu and a cleared canvas (s74–s78) [O].
 6. **Local persistence.** Ref: B-30, B-31.
    - The scene and the scroll position survive a reload [O, scenario 06 in s1 and s6]. Zoom and
      selection across a reload, and a mobile reload, are **open** (R-54).
@@ -101,8 +105,11 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
     - Group and ungroup with shortcuts; groups move as a unit [O].
     - Locked elements cannot be selected or moved by pointer [O].
     - An element context menu offers the clipboard, style, layer, flip, link, duplicate, lock and
-      delete commands with their shortcuts [O]. Layer, flip and style effects are **open**
-      (R-09, R-50).
+      delete commands with their shortcuts [O]. Layer and flip effects are **open** (R-09, R-50).
+      On touch a long press on a shape opens it, without the layer commands; Copy styles and
+      Paste styles carry the background to another shape, Lock leaves a shape unselectable and
+      unerasable until Unlock, and Wrap selection in frame adds a frame 16 px larger on each side,
+      each undoable (s74–s78; B-19, B-27, B-34) [O].
 11. **Clipboard.** Ref: B-26.
     - Copy produces a typed JSON payload [O, raw timelines only], and paste centres the copies
       on the pointer, with 2 of the 3 copies selected [O]. The committed probes keep the count
@@ -122,7 +129,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
 ## P2: application features
 
 13. **Menus, command palette and help.** Ref: [feature inventory](feature-inventory.md).
-    - Every command is reachable from the palette with its shortcut.
+    - Every command is reachable from the palette with its shortcut. On mobile the reference's
+      palette ran a command typed by name with Enter (s74–s76; B-36) [O]; a canvas context menu
+      reached only by a right click there is a gap to close, not to copy (R-08).
     - Help lists shortcuts consistently with the palette (avoid the reference's Shift+2/Shift+3
       discrepancy).
 14. **Themes and view modes.** Ref: [B-37](behavior-analysis.md#b-37-view-modes-and-toggles),
