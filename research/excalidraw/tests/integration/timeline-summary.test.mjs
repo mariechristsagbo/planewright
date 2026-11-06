@@ -107,3 +107,60 @@ describe('timeline-summary.mjs elbowed flag', () => {
     for (const element of elementsOf(run)) expect('elbowed' in element).toBe(false);
   });
 });
+
+describe('timeline-summary.mjs text fields', () => {
+  const texts = {
+    started: '2026-01-01T00:00:01.000Z',
+    step: { do: 'scene', label: 'texts' },
+    result: {
+      elements: [
+        { type: 'text', fontSize: 28, fontFamily: 5, textAlign: 'center' },
+        { type: 'rectangle' },
+      ],
+    },
+  };
+  const elementsOf = (run) => JSON.parse(run.stdout)[0].elements;
+
+  it('keeps a text element’s font size, family and alignment only with --text', () => {
+    const run = summarise('text', [texts], ['--text']);
+    expect(run.status).toBe(0);
+    const [text, rectangle] = elementsOf(run);
+    expect(text.font).toEqual([28, 5, 'center']);
+    expect('font' in rectangle).toBe(false);
+  });
+
+  it('leaves the font out by default, as in the summaries built before it', () => {
+    const run = summarise('no-text', [texts]);
+    expect(run.status).toBe(0);
+    for (const element of elementsOf(run)) expect('font' in element).toBe(false);
+  });
+});
+
+describe('timeline-summary.mjs link and pressure fields', () => {
+  const link = { origin: 'https://example.com', path: '/a' };
+  const read = (fields) => ({
+    started: '2026-01-01T00:00:01.000Z',
+    step: { do: 'scene', label: 'later' },
+    result: { elements: [{ type: 'freedraw', ...fields }, { type: 'rectangle' }] },
+  });
+  const elementsOf = (run) => JSON.parse(run.stdout)[0].elements;
+
+  it('keeps a link and the pressure fields of an element whose probe read them', () => {
+    const fields = { link, simulatePressure: false, pressures: 7, strokeOptions: { a: 1 } };
+    const run = summarise('later', [read(fields)]);
+    expect(run.status).toBe(0);
+    const [stroke, rectangle] = elementsOf(run);
+    expect(stroke).toMatchObject(fields);
+    for (const key of Object.keys(fields)) expect(key in rectangle).toBe(false);
+  });
+
+  it('adds none of them for a probe that did not read them, as in the earlier timelines', () => {
+    const run = summarise('later-absent', [read({})]);
+    expect(run.status).toBe(0);
+    for (const element of elementsOf(run)) {
+      for (const key of ['link', 'simulatePressure', 'pressures', 'strokeOptions']) {
+        expect(key in element).toBe(false);
+      }
+    }
+  });
+});

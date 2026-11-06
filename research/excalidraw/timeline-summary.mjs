@@ -6,10 +6,13 @@
 // that has points (a line, an arrow or a freehand stroke) keeps its point count too; the summaries
 // committed before the touch-control batch were built without it. An arrow whose probe read its
 // elbowed flag keeps it; the scene probe reads it only in sessions run after s37, so the earlier
-// timelines, and the summaries built from them, have none.
+// timelines, and the summaries built from them, have none. In the same way an element keeps its
+// link shape and a freehand stroke its pressure flag, pressure count and stroke options, which the
+// probe reads only from s51 on. With --text a text element keeps its font size, family and
+// alignment; the summaries committed before s51 were built without it.
 //
 // Usage: node research/excalidraw/timeline-summary.mjs <timeline.jsonl> [--since ISO] [--json]
-//        [--points]
+//        [--points] [--text]
 import { readFileSync } from 'node:fs';
 import { parseArgs } from 'node:util';
 
@@ -19,6 +22,7 @@ const { values, positionals } = parseArgs({
     since: { type: 'string' },
     json: { type: 'boolean', default: false },
     points: { type: 'boolean', default: false },
+    text: { type: 'boolean', default: false },
   },
 });
 const [file] = positionals;
@@ -30,6 +34,11 @@ const rows = readFileSync(file, 'utf8')
   .map((line) => JSON.parse(line))
   // Failed steps carry "error" instead of "result" and are not probe summaries.
   .filter((row) => row.result && row.step.label && (!values.since || row.started >= values.since));
+
+// Fields that only the probes of later sessions read, each kept when its probe read it.
+const LATER = ['elbowed', 'link', 'simulatePressure', 'pressures', 'strokeOptions'];
+const later = (e) =>
+  Object.fromEntries(LATER.filter((k) => e[k] !== undefined).map((k) => [k, e[k]]));
 
 const element = (e) => ({
   type: e.type,
@@ -52,7 +61,8 @@ const element = (e) => ({
     e.roundness,
   ],
   ...(values.points && e.points !== undefined && { points: e.points }),
-  ...(e.elbowed !== undefined && { elbowed: e.elbowed }),
+  ...(values.text && e.fontSize !== undefined && { font: [e.fontSize, e.fontFamily, e.textAlign] }),
+  ...later(e),
 });
 
 const summary = new Map();

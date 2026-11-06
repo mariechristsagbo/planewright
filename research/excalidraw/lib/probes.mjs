@@ -26,6 +26,28 @@ function summariseScene(key) {
   const raw = localStorage.getItem(key);
   if (!raw) return { present: false };
   const round = (n) => (typeof n === 'number' ? Math.round(n * 10) / 10 : n);
+  // A link keeps its origin and path only (an HTTP(S) URL), or its scheme or length.
+  const linkShape = (link) => {
+    try {
+      const url = new URL(link);
+      const web = url.protocol === 'https:' || url.protocol === 'http:';
+      return web ? { origin: url.origin, path: url.pathname } : { scheme: url.protocol };
+    } catch {
+      return { unparseable: true, chars: String(link).length };
+    }
+  };
+  // Stroke options as read when their JSON is short, else that JSON's length only.
+  const brief = (value) => {
+    const text = JSON.stringify(value);
+    return text.length <= 160 ? value : { jsonChars: text.length };
+  };
+  // Read only by the probes of later sessions; undefined, so left out, when an element has none.
+  const later = (e) => ({
+    link: e.link ? linkShape(e.link) : undefined,
+    simulatePressure: e.simulatePressure,
+    pressures: Array.isArray(e.pressures) ? e.pressures.length : undefined,
+    strokeOptions: e.strokeOptions === undefined ? undefined : brief(e.strokeOptions),
+  });
   const elements = JSON.parse(raw).map((e) => ({
     type: e.type,
     x: round(e.x),
@@ -43,6 +65,7 @@ function summariseScene(key) {
     points: Array.isArray(e.points) ? e.points.length : undefined,
     // Only arrows carry it; a sharp and an elbow arrow both have no roundness.
     elbowed: e.elbowed,
+    ...later(e),
     strokeColor: e.strokeColor,
     backgroundColor: e.backgroundColor,
     fillStyle: e.fillStyle,
