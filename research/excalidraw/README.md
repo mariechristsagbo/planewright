@@ -395,6 +395,13 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     welcome screen, and by long presses clear of the handles picks Copy styles, Paste styles,
     Wrap selection in frame and Lock, each with Undo; it then taps and erases the locked shape
     and tries Unlock and Unlock all. Neither uses a clipboard item, types or follows a link.
+  - `77` (from s76 on) follows s75, where the background picked for 75's first shape became the
+    default, so its second shape was drawn yellow and Paste styles changed nothing. It draws two
+    shapes in the lower band, and only then gives one the Yellow background; by long presses it
+    copies and pastes the styles, with Undo and Redo, and deletes each shape from the menu, the
+    first time with Undo, so the scene ends as it began. It runs after a scenario that has drawn,
+    because on a fresh load the welcome screen's Open, Help, Live collaboration and Sign up
+    entries lie across that band, and while the default background is still transparent.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
