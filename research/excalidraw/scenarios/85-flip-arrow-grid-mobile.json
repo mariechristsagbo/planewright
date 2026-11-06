@@ -1,0 +1,389 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-09 and R-08: follows s79, where a long press on one of two selected rectangles left only that one selected, so Flip changed nothing stored, and the second Toggle grid found no item of that name, as the canvas menu names an active toggle with a check mark. Runs right after 09 and draws first, at a height clear of the welcome screen's entries. Picks Arrow by name and draws an arrow from (60,240) to (200,320), then deselects; by a long press on the arrow at (95,260), a quarter of the way along it, picks Flip horizontal and then Flip vertical, each with Undo straight after it. Draws A [40,400,60,90] and B [200,400,120,60], picks Select all from the canvas menu of a right click at (200,560), then right-clicks A's left stroke at (40,422), a mouse event on the touch-emulated page, saving the ARIA, and picks Flip horizontal, with Undo. Last it picks Toggle grid from the canvas menu and then, saving that menu's ARIA, the item named with a check mark. It types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 240]],
+      "to": [[200, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "85-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "85-arrow"
+    },
+    {
+      "do": "touchHold",
+      "at": [95, 260],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "85-arrow-hold"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Flip horizontal",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-flip-h"
+    },
+    {
+      "do": "appState",
+      "label": "85-flip-h"
+    },
+    {
+      "do": "screenshot",
+      "name": "m85-01-flip-h"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-flip-h-undo"
+    },
+    {
+      "do": "appState",
+      "label": "85-flip-h-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [95, 260],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Flip vertical",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-flip-v"
+    },
+    {
+      "do": "appState",
+      "label": "85-flip-v"
+    },
+    {
+      "do": "screenshot",
+      "name": "m85-02-flip-v"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-flip-v-undo"
+    },
+    {
+      "do": "appState",
+      "label": "85-flip-v-undo"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 400]],
+      "to": [[100, 490]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 400]],
+      "to": [[320, 460]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "85-three"
+    },
+    {
+      "do": "appState",
+      "label": "85-three"
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Select all",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-select-all"
+    },
+    {
+      "do": "appState",
+      "label": "85-select-all"
+    },
+    {
+      "do": "click",
+      "at": [40, 422],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "85-right-selected"
+    },
+    {
+      "do": "aria",
+      "save": "m85-03-element-right"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Flip horizontal",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-flip-all"
+    },
+    {
+      "do": "appState",
+      "label": "85-flip-all"
+    },
+    {
+      "do": "screenshot",
+      "name": "m85-04-flip-all"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "85-flip-all-undo"
+    },
+    {
+      "do": "appState",
+      "label": "85-flip-all-undo"
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Toggle grid",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "85-grid-on"
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m85-05-canvas-menu-grid"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "✓ Toggle grid",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "85-grid-off"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "85-end"
+    },
+    {
+      "do": "appState",
+      "label": "85-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

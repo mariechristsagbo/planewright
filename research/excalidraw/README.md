@@ -429,6 +429,12 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     then spreads and pinches them, saving the ARIA once zoomed. `84` repeats 77's two shapes and
     holds at (40,490) and at (220,490), where every press in s76 left no menu item to pick, saving
     the ARIA after each and picking nothing.
+  - `85` (from s81 on) follows s79, where a long press on one of two selected rectangles left only
+    that one selected, so 79's flips changed nothing stored, and the second Toggle grid found no
+    item of that name. Right after `09` it draws an arrow and, by long presses on it, flips it
+    horizontally and vertically, each with Undo; it draws two rectangles, picks Select all, and by a
+    right click on a selected one flips all three, with Undo; last it turns the grid on and off
+    again by the item named with a check mark, saving that menu's ARIA.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
