@@ -5,6 +5,7 @@ import type { Aabb } from '../../src/math/aabb.ts';
 import { randomBetween, randomInt } from '../../src/math/random.ts';
 import type { Random } from '../../src/math/random.ts';
 import type { Vec } from '../../src/math/vector.ts';
+import type { GroupRecord } from '../../src/model/document.ts';
 import type { Attachment, Element, Point } from '../../src/model/elements.ts';
 import type { ElementId, GroupId } from '../../src/model/ids.ts';
 import { KEY_DIGITS, compareDrawingOrder } from '../../src/model/order-key.ts';
@@ -124,6 +125,18 @@ export function anySceneElement(random: Random, id: ElementId, refs: SceneRefs):
   };
 }
 
+/** Up to `max` group records forming a forest: each parent comes earlier in the list. */
+export function anyGroups(random: Random, max: number): GroupRecord[] {
+  const ids = Array.from({ length: randomInt(random, 0, max) }, (_, index) => sceneGroupId(index));
+  return ids.map((id, index) => ({
+    id,
+    ...optional(
+      'parent',
+      index > 0 && chance(random, 0.6) ? pick(random, ids.slice(0, index)) : undefined,
+    ),
+  }));
+}
+
 /** A query box, sometimes on cell edges, sometimes empty, sometimes larger than the scene. */
 export function anyQueryBox(random: Random): Aabb {
   if (chance(random, 0.3)) {
@@ -171,6 +184,32 @@ function distanceToBox(point: Vec, box: Aabb): number {
 export const brutePoint = (elements: Iterable<Element>, point: Vec, radius: number): ElementId[] =>
   sortedIds(
     [...elements].filter((e) => distanceToBox(point, worldBounds(e)) <= radius).map(({ id }) => id),
+  );
+
+/** The groups from an element's innermost group to its outermost one. */
+export function groupChain(groups: ReadonlyMap<GroupId, GroupRecord>, element: Element): GroupId[] {
+  const chain: GroupId[] = [];
+  for (let id = element.group; id !== undefined; id = groups.get(id)?.parent) chain.push(id);
+  return chain;
+}
+
+export const bruteOutermost = (
+  groups: ReadonlyMap<GroupId, GroupRecord>,
+  element: Element,
+): GroupId | undefined => groupChain(groups, element).at(-1);
+
+export const bruteMembers = (
+  elements: Iterable<Element>,
+  groups: ReadonlyMap<GroupId, GroupRecord>,
+  group: GroupId,
+): ElementId[] =>
+  sortedIds([...elements].filter((e) => groupChain(groups, e).includes(group)).map(({ id }) => id));
+
+export const bruteConnectors = (elements: Iterable<Element>, target: ElementId): ElementId[] =>
+  sortedIds(
+    [...elements]
+      .filter((e) => e.kind === 'arrow' && (e.start?.target === target || e.end?.target === target))
+      .map(({ id }) => id),
   );
 
 /**
