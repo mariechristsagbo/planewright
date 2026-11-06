@@ -1,7 +1,9 @@
 // Bounded reads of state created by the research session itself: storage key inventory,
-// a structural summary of the locally persisted scene, clipboard text shape, the URL shape and
-// the computed style of the document root. Values are reduced to shapes, counts and geometry.
+// a structural summary of the locally persisted scene, clipboard text shape, the clipboard items'
+// types and sizes, the URL shape and the computed style of the document root. Values are reduced
+// to shapes, counts and geometry.
 // The focus, connectivity and layout reads of s59 on live in view-probes.mjs.
+import { HEAD_BYTES, readClipboardItems, shapeClipboardItems } from './clipboard-items.mjs';
 import { clipboardShapeOf, urlShapeOf } from './sanitise.mjs';
 import { viewProbes } from './view-probes.mjs';
 
@@ -158,6 +160,11 @@ async function clipboardProbe(ctx) {
   return clipboardShapeOf(await ctx.page.evaluate(() => navigator.clipboard.readText()));
 }
 
+// Every clipboard item's types, shaped in this process as clipboard-items.mjs describes (s79 on).
+async function clipboardItemsProbe(ctx) {
+  return shapeClipboardItems(await ctx.page.evaluate(readClipboardItems, HEAD_BYTES));
+}
+
 export const probes = {
   url: urlProbe,
   storage: async (ctx) => ctx.page.evaluate(summariseStorage),
@@ -165,6 +172,7 @@ export const probes = {
   appState: async (ctx, step) =>
     ctx.page.evaluate(summariseAppState, step.key ?? 'excalidraw-state'),
   clipboard: clipboardProbe,
+  clipboardItems: clipboardItemsProbe,
   rootStyle: async (ctx) => ctx.page.evaluate(rootStyle),
   ...viewProbes,
 };
