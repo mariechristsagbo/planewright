@@ -25,7 +25,7 @@ export type HistoryLabel =
 export interface Transaction {
   /** Apply a transient change: drawn and hit-tested, not recorded or saved. */
   preview(changes: ChangeSet): void;
-  /** Fold every preview into one net change set and record it; null when nothing changed. */
+  /** Revert the previews, apply their net change set once and record it; null if unchanged. */
   commit(label: HistoryLabel, options?: { readonly mergeKey?: string }): HistoryEntry | null;
   /** Revert every preview. */
   cancel(): void;
@@ -37,6 +37,11 @@ export interface Transaction {
 - The net change set compares, per touched field, the first `before` with the current value; fields
   that ended where they started drop out. A tap with the Selection tool or a zero-length move
   therefore records nothing.
+- `commit` is the only place that records: it reverts the previews with a transient change,
+  applies the net change set with the `local` origin
+  ([transient previews](scene-and-viewport.md#transient-previews)) and calls `History.record` with
+  the label, the merge key and the selection before and after. The scene layer supplies the revert
+  and the net set (ENG-03); recording is the history layer's (ENG-04).
 - Only one transaction is open at a time. Undo and redo requested while one is open are ignored
   (REQ-H06).
 

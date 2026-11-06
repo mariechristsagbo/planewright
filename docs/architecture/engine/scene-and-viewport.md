@@ -65,8 +65,9 @@ Applying a change set is atomic:
 2. Element revisions and the document revision increase; the indexes are updated incrementally for
    the changed elements only.
 3. One `SceneUpdate` is emitted with the origin, the set, the changed identifiers and the new
-   document revision. History records `local` updates, autosave saves every origin but `load`, and
-   the editor marks the render layers dirty.
+   document revision. Autosave saves every origin but `load`, and the editor marks the render
+   layers dirty. History does not watch updates: the transaction that commits a `local` set records
+   it ([history](history.md#transactions)), so no set is recorded twice.
 
 A change set is always complete: the transaction that builds it adds the derived changes before it
 is applied, such as re-routing connectors whose target moved (P1, REQ-M01), dropping attachments to
@@ -78,9 +79,12 @@ a removed target, or removing a group that lost its last member. Inverting a com
 During a gesture the tool previews its result in the scene, so the renderer and hit testing see it.
 The store applies such changes with a `transient` flag: indexes update, but nothing is recorded or
 saved. The transaction remembers the first `before` value of every field it touched. On commit it
-emits one net change set from those values to the current ones and history records it; on cancel it
-applies the remembered values back as another transient change. A transient change never reaches
-autosave, so a reload in the middle of a drag restores the last committed state (REQ-P01).
+computes the net change set from those values to the current ones, reverts the previews with one
+transient change, and applies the net set once with the `local` origin: the store is back at the
+start, so the set's `before` check holds, and autosave sees that one set. Both happen before the
+next frame is built, so the reverted state is never drawn. On cancel it applies the remembered
+values back as a transient change and nothing else. A transient change never reaches autosave, so
+a reload in the middle of a drag restores the last committed state (REQ-P01).
 
 ## Store interface
 
