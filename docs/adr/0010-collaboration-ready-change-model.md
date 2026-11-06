@@ -18,7 +18,8 @@ harder than building them in.
    `local`, `history`, `load` or `remote`. Only `local` changes create history entries; `load` and
    `remote` changes never do; autosave saves every origin except `load` (REQ-K01).
 2. **Plain data.** Change sets contain only JSON values: no functions, class instances, maps or
-   sets. A remote change set will pass through the same validating decoder as a file.
+   sets. Removing an optional field is written as `null` in a patch, never as `undefined`. A remote
+   change set will pass through the same validating decoder as a file.
 3. **Authorship.** Each editor session has a random client identifier; each change set carries it
    and a per-client sequence number.
 4. **Revisions and order.** Element revisions, order keys, group records and single-sided

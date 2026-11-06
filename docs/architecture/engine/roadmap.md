@@ -100,6 +100,8 @@ and ENG-14.
   sets ([scene and viewport](scene-and-viewport.md#change-sets)).
 - **Acceptance criteria:**
   - a change set with one invalid change leaves the store unchanged;
+  - a patch whose `after` sets an optional field to `null` removes it, survives a JSON round trip,
+    and its inverse restores the field;
   - index queries agree with a brute-force scan over random scenes;
   - a cancelled transaction leaves the document equal to its start, and a committed one reverts
     its previews and applies one net change set, whose `before` check passes and which inverts
