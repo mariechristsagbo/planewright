@@ -28,11 +28,15 @@ Node.js too, and image export may one day run in a worker.
    file access, and the accessibility layer. It depends on both packages.
 4. **Ports.** The engine reaches the platform only through interfaces passed when an editor is
    created: a clock, a frame scheduler, an identifier source, a text measurer, a document
-   repository and an announcer. Tests pass deterministic fakes.
+   repository and an announcer. Tests pass deterministic fakes. Each port is defined in the lowest
+   layer whose types it needs and arrives with the issue that first uses it: the clock, scheduler
+   and identifier source in a `ports` module beside `math`, the text measurer in `geometry`
+   (it measures a model font), the repository in `persistence` and the announcer in `editor`. The
+   renderer port, which the web app calls with the editor's frames, is defined in `editor`.
 5. **Layers inside the engine.** Modules import only from the layers below them, in this order:
-   `math`; `model`; `geometry` and `camera`; `scene`; `history`, `selection` and `transform`;
-   `input` and `tools`; `commands`; `persistence` and `collab`; `editor`. The first engine issue
-   adds a test that fails on an import against this order.
+   `math` and `ports`; `model`; `geometry` and `camera`; `scene`; `history`, `selection` and
+   `transform`; `input` and `tools`; `commands`; `persistence` and `collab`; `editor`. The first
+   engine issue adds a test that fails on an import against this order.
 6. **Protocol direction.** The protocol package stays independent of the engine for now. When
    collaboration is designed it may import the engine's serialisable change types, never the
    reverse, and the collaboration service may import the engine's document validation.

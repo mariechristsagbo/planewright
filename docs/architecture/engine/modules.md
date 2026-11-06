@@ -28,7 +28,7 @@ violation.
 
 | Layer | Modules                             | Responsibility                                                                                                  |
 | ----- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| 1     | `math`                              | vectors, affine matrices, axis-aligned and oriented boxes, angles, tolerances, a seeded random source for tests |
+| 1     | `math`, `ports`                     | vectors, affine matrices, boxes, angles, tolerances, a seeded random source; the ports that need no model types |
 | 2     | `model`                             | identifiers, element kinds, styles, documents, order keys, defaults, the codec and its limits                   |
 | 3     | `geometry`, `camera`                | per-kind outlines, bounds and distance functions; screen and scene transforms, zoom rules                       |
 | 4     | `scene`                             | the scene store, change sets, transient previews and the order, spatial, attachment and group indexes           |
@@ -44,16 +44,18 @@ apply, so a layer is a directory of focused files, each with its unit test.
 ## Ports
 
 The engine touches the platform only through these interfaces, passed to `createEditor`. Each has a
-deterministic fake for tests.
+deterministic fake for tests. A port is defined in the lowest layer whose types it needs, so the
+layer check holds for it too, and it is added by the issue that first uses it
+([roadmap](roadmap.md#order-and-dependencies)).
 
-| Port                 | Purpose                                                     | Web implementation                                                    | Test fake                           |
-| -------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------- |
-| `Clock`              | current time in milliseconds                                | `performance.now()`                                                   | a manually advanced clock           |
-| `Scheduler`          | run a task after a delay, or on the next frame; cancellable | `setTimeout`, `requestAnimationFrame`                                 | a queue flushed by the test         |
-| `IdSource`           | new 128-bit identifiers as 22 base64url characters          | `crypto.getRandomValues`                                              | a counter-based sequence            |
-| `TextMeasurer`       | width and line metrics of a string in a font                | an offscreen 2D context's `measureText`                               | fixed advance per character         |
-| `DocumentRepository` | load a document; save a delta against an expected revision  | IndexedDB ([ADR 0009](../../adr/0009-persistence-and-interchange.md)) | an in-memory map with the same rule |
-| `Announcer`          | send a message to assistive technology                      | a polite live region                                                  | a recording array                   |
+| Port                 | Purpose                                                     | Defined in (layer) | Added by | Web implementation                                                    | Test fake                           |
+| -------------------- | ----------------------------------------------------------- | ------------------ | -------- | --------------------------------------------------------------------- | ----------------------------------- |
+| `Clock`              | current time in milliseconds                                | `ports` (1)        | ENG-01   | `performance.now()`                                                   | a manually advanced clock           |
+| `Scheduler`          | run a task after a delay, or on the next frame; cancellable | `ports` (1)        | ENG-01   | `setTimeout`, `requestAnimationFrame`                                 | a queue flushed by the test         |
+| `IdSource`           | new 128-bit identifiers as 22 base64url characters          | `ports` (1)        | ENG-01   | `crypto.getRandomValues`                                              | a counter-based sequence            |
+| `TextMeasurer`       | width and line metrics of a string in a font                | `geometry` (3)     | ENG-06   | an offscreen 2D context's `measureText`                               | fixed advance per character         |
+| `DocumentRepository` | load a document; save changes against a stored revision     | `persistence` (8)  | ENG-13   | IndexedDB ([ADR 0009](../../adr/0009-persistence-and-interchange.md)) | an in-memory map with the same rule |
+| `Announcer`          | send a message to assistive technology                      | `editor` (9)       | ENG-14   | a polite live region                                                  | a recording array                   |
 
 ```ts
 export interface Clock {
@@ -86,8 +88,15 @@ export interface Announcer {
 }
 ```
 
-`FontSpec` is defined in the [domain model](domain-model.md#text); `DocumentRepository` and
-`AnnouncementKey` are defined with persistence and accessibility.
+`TextMeasurer` sits in `geometry` because it measures a model `FontSpec`
+([domain model](domain-model.md#text)) for `layoutText`. `DocumentRepository` is specified in
+[persistence](persistence.md#repository-port). `AnnouncementKey`, the message an announcement
+sends, is defined with the editor, which makes every announcement.
+
+The renderer port (`Renderer`, with the `RenderFrame` it draws) is not passed to the editor: the web
+app hands it the editor's frames
+([rendering](rendering-and-hit-testing.md#render-frame-and-renderer-port)). It is defined in
+`editor`, which builds the frames, and added by ENG-07.
 
 ## Public surface
 
@@ -120,6 +129,9 @@ export interface Editor {
 
 export function createEditor(ports: EditorPorts, stored?: StoredDocument): Editor;
 ```
+
+`EditorPorts` gains each port with the issue that adds it. `repository` and `announcer` stay
+optional, so that tests and the issues before ENG-13 and ENG-14 can create an editor without them.
 
 React reads `editor.view` through `useSyncExternalStore` with `editor.subscribe`; it never reaches
 into the scene store directly.

@@ -54,15 +54,18 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
 - **Delivers:** the `packages/engine` workspace as in [modules](modules.md#packages); its Vitest
   projects; an ESLint block that forbids DOM and Node.js globals, `Math.random`, `Date.now` and
   timers in the engine; engine coverage thresholds of 95, 90, 95 and 95 %; the commitlint scopes
-  `engine` and `render-canvas`; the port interfaces as types; the `math` layer; the seeded random
-  generator for property tests; and the test that enforces the layer order.
+  `engine` and `render-canvas`; the `ports` module with the `Clock`, `Scheduler` and `IdSource`
+  interfaces; the `math` layer; the seeded random generator for property tests; and the test that
+  enforces the layer order. The other ports need model types and arrive with the issues that first
+  use them ([modules](modules.md#ports)): the text measurer with ENG-06, the renderer with ENG-07,
+  the repository with ENG-13 and the announcer with ENG-14.
 - **Acceptance criteria:**
   - a planted import from a lower layer and a planted `window` reference each fail a check, as
     recorded in the pull request, and the clean tree passes;
   - every `math` function has unit tests and the layer has full branch coverage;
   - `npm run validate` passes with the new workspace.
 - **Requirements:** none directly; every later issue builds on it.
-- **Out of scope:** any model, geometry or UI code.
+- **Out of scope:** any model, geometry or UI code, and the ports that need model types.
 
 ### ENG-02 Document model, order keys and codec
 
@@ -120,8 +123,9 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
 ### ENG-06 Geometry, hit testing and text layout
 
 - **Delivers:** outlines, bounds and distance functions for the P0 kinds; `hitTest` with its order
-  and tolerances; marquee enclosure; handle layout and hit squares; `layoutText` over the text
-  measurer port ([rendering and hit testing](rendering-and-hit-testing.md#geometry)).
+  and tolerances; marquee enclosure; handle layout and hit squares; `layoutText` and the
+  `TextMeasurer` port it measures through
+  ([rendering and hit testing](rendering-and-hit-testing.md#geometry)).
 - **Acceptance criteria:**
   - the REQ-S03 ladder: at zoom 1 with a 2-unit stroke, 4 and 5 px from the centre line hit and 8
     and 9 px miss, for mouse and touch tolerances; and the same ladder at zoom 2 in screen pixels;
@@ -135,8 +139,8 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
 ### ENG-07 Canvas renderer and render loop
 
 - **Delivers:** the `packages/render-canvas` workspace implementing the renderer port with the
-  scene and overlay layers and the path cache; render frames, dirty tracking and frame scheduling
-  in the editor façade ([ADR 0006](../../adr/0006-canvas-rendering.md)).
+  scene and overlay layers and the path cache; the `Renderer` port, render frames, dirty tracking
+  and frame scheduling in the editor façade ([ADR 0006](../../adr/0006-canvas-rendering.md)).
 - **Acceptance criteria:**
   - recorded draw calls for fixture scenes match their expected sequences, including the device
     pixel ratio transform;
@@ -221,8 +225,9 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
 
 ### ENG-13 Local persistence and autosave
 
-- **Delivers:** the autosave scheduler, the IndexedDB repository, loading, the notices for failed,
-  stale and unavailable storage, and the preferences entry ([persistence](persistence.md)).
+- **Delivers:** the `DocumentRepository` port, the autosave scheduler, the IndexedDB repository,
+  loading, the notices for failed, stale and unavailable storage, and the preferences entry
+  ([persistence](persistence.md)).
 - **Acceptance criteria:**
   - scheduler tests with a fake clock: saved within 300 ms of the last change and at most 1 s after
     the first; transient previews never saved; retries and notices on failure;
@@ -235,7 +240,7 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
 
 ### ENG-14 Accessible element list, live region and focus order
 
-- **Delivers:** the element list, the live region with the announcer port, focus order and
+- **Delivers:** the element list, the `Announcer` port with its live region, focus order and
   indicators, Escape focus return, and keyboard creation ([quality](quality.md#accessibility)).
 - **Acceptance criteria:**
   - keyboard-only end-to-end test: create each P0 kind, select, nudge and delete from the list, undo
