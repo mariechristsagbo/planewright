@@ -46,24 +46,53 @@ export function relativeTargets(markdown: string): string[] {
   return targets.filter((target) => !SCHEME.test(target));
 }
 
-function isBroken(source: string, target: string, read: ReadTarget): boolean {
-  const [file = '', anchor] = target.split('#');
-  const path = file === '' ? source : normalize(join(dirname(source), decodeURIComponent(file)));
-  const resolved = read(path);
-  if (resolved.kind === 'missing') {
-    return true;
+/** Decodes a target's file part, or returns undefined when its percent-encoding is malformed. */
+function decodePath(file: string): string | undefined {
+  try {
+    const decoded = decodeURIComponent(file);
+    return decoded.includes('\0') ? undefined : decoded;
+  } catch {
+    return undefined;
   }
-  const checksAnchor = anchor !== undefined && anchor !== '' && path.endsWith('.md');
-  return checksAnchor && (resolved.kind !== 'file' || !headingAnchors(resolved.text).has(anchor));
 }
 
-/** Lists the relative links of `source` whose file or heading anchor does not exist. */
+/** Resolves a target's file part against its source, or names why it cannot be followed. */
+function resolveTarget(source: string, file: string): { path: string } | { problem: string } {
+  const decoded = decodePath(file);
+  if (decoded === undefined) {
+    return { problem: 'malformed percent-encoding' };
+  }
+  const path = normalize(join(dirname(source), decoded));
+  const outside = path === '..' || path.startsWith('../');
+  return outside ? { problem: 'outside the repository' } : { path };
+}
+
+/** Names what is wrong with one link, or returns undefined when it resolves. */
+function linkProblem(source: string, target: string, read: ReadTarget): string | undefined {
+  const [file = '', anchor] = target.split('#');
+  const resolved = file === '' ? { path: source } : resolveTarget(source, file);
+  if ('problem' in resolved) {
+    return `broken link ${target} (${resolved.problem})`;
+  }
+  const found = read(resolved.path);
+  const checksAnchor = anchor !== undefined && anchor !== '' && resolved.path.endsWith('.md');
+  const anchorMissing =
+    checksAnchor && (found.kind !== 'file' || !headingAnchors(found.text).has(anchor));
+  return found.kind === 'missing' || anchorMissing ? `broken link ${target}` : undefined;
+}
+
+/**
+ * Lists the relative links of `source` whose file or heading anchor does not exist. A target
+ * that resolves outside the repository or has malformed percent-encoding is reported without
+ * being read.
+ */
 export function findBrokenLinks(source: string, read: ReadTarget): string[] {
   const own = read(source);
   if (own.kind !== 'file') {
     return [`${source}: the document itself cannot be read`];
   }
   return relativeTargets(own.text)
-    .filter((target) => isBroken(source, target, read))
-    .map((target) => `${source}: broken link ${target}`);
+    .map((target) => linkProblem(source, target, read))
+    .filter((problem): problem is string => problem !== undefined)
+    .map((problem) => `${source}: ${problem}`);
 }
