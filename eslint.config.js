@@ -27,6 +27,8 @@ const TIMER_MESSAGE =
 const CLOCK_MESSAGE = 'Engine code never reads the time directly: it asks the Clock port.';
 const RANDOM_MESSAGE =
   'Engine code is deterministic: identifiers come from the IdSource port and test values from a seeded random source.';
+const AMBIENT_MESSAGE =
+  'The engine is ECMAScript only (ADR 0004): an ambient declaration could hide a platform global from these rules.';
 const TIMERS = [
   'setTimeout',
   'clearTimeout',
@@ -49,9 +51,15 @@ const PLATFORM_GLOBALS = [
 
 /**
  * The engine's boundary (ADR 0004 and docs/architecture/engine/quality.md): no platform global,
- * not even through `globalThis`, and no clock, randomness or timer except through its ports.
+ * not even through `globalThis`, and no clock, randomness or timer except through its ports. No
+ * triple-slash directive may add a library, ambient types or a file to its ECMAScript-only build,
+ * and no ambient declaration may stand in for a platform global.
  */
 const engineBoundary = {
+  '@typescript-eslint/triple-slash-reference': [
+    'error',
+    { lib: 'never', path: 'never', types: 'never' },
+  ],
   'no-restricted-globals': [
     'error',
     ...TIMERS.map((name) => ({ name, message: TIMER_MESSAGE })),
@@ -66,6 +74,7 @@ const engineBoundary = {
     'error',
     { selector: "NewExpression[callee.name='Date'][arguments.length=0]", message: CLOCK_MESSAGE },
     { selector: "CallExpression[callee.name='Date']", message: CLOCK_MESSAGE },
+    { selector: '[declare=true]', message: AMBIENT_MESSAGE },
   ],
 };
 

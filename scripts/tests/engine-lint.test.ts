@@ -2,12 +2,16 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { ESLint, Linter } from 'eslint';
+import tseslint from 'typescript-eslint';
 import { beforeAll, describe, expect, it } from 'vitest';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 
+const TRIPLE_SLASH = '@typescript-eslint/triple-slash-reference';
+
 // The rules that draw the engine's boundary; every other rule is irrelevant to these snippets.
 const BOUNDARY_RULES = new Set([
+  TRIPLE_SLASH,
   'no-restricted-globals',
   'no-restricted-imports',
   'no-restricted-properties',
@@ -26,9 +30,11 @@ async function boundaryRulesFor(path: string): Promise<Linter.RulesRecord> {
   return rules;
 }
 
+// Engine files are TypeScript, so the snippets go through the same parser and plugin as they do.
 function lint(code: string, rules: Linter.RulesRecord): Linter.LintMessage[] {
   return new Linter().verify(code, {
-    languageOptions: { ecmaVersion: 'latest', sourceType: 'module' },
+    languageOptions: { parser: tseslint.parser, ecmaVersion: 'latest', sourceType: 'module' },
+    plugins: { '@typescript-eslint': tseslint.plugin },
     rules,
   });
 }
@@ -60,12 +66,35 @@ const FORBIDDEN_EVERYWHERE: readonly (readonly [string, string])[] = [
   ['Date();', 'no-restricted-syntax'],
 ];
 
-// ECMAScript that the engine may use freely.
+// One-line escapes that type checking accepts: a directive that adds a library, ambient types or a
+// file to the ECMAScript-only build, or an ambient declaration that hides a global from the rules.
+const ESCAPES: readonly (readonly [string, string])[] = [
+  ['/// <reference lib="dom" />', TRIPLE_SLASH],
+  ['/// <reference types="node" />', TRIPLE_SLASH],
+  ['/// <reference path="./platform.d.ts" />', TRIPLE_SLASH],
+  ['declare const window: { innerWidth: number }; window.innerWidth;', 'no-restricted-syntax'],
+  [
+    'declare function setTimeout(task: () => void, delay: number): number; setTimeout(() => 0, 10);',
+    'no-restricted-syntax',
+  ],
+  ['export {}; declare global { const process: { env: object } }', 'no-restricted-syntax'],
+  [
+    'declare module "node:fs" { function readFileSync(path: string): string; }',
+    'no-restricted-syntax',
+  ],
+  ['declare namespace NodeJS { interface ProcessEnv { HOME: string } }', 'no-restricted-syntax'],
+  ['declare class Worker { constructor(url: string); }', 'no-restricted-syntax'],
+];
+
+// ECMAScript and erasable TypeScript that the engine may use freely.
 const ALLOWED = [
   'Math.max(1, 2) + Math.hypot(3, 4) + Number.EPSILON;',
   'new Date(0).getTime() + Date.UTC(2026, 10, 6);',
   'Object.freeze(new Map([[1, new Set([2])]]));',
-  'export const twice = (value) => value * 2;',
+  'export const twice = (value: number): number => value * 2;',
+  'const brand: unique symbol = Symbol("brand");',
+  'export type Id = string & { readonly [brand]: "Id" };',
+  'export interface Size { readonly width: number }',
 ].join('\n');
 
 describe('the engine source boundary in ESLint', () => {
@@ -75,6 +104,10 @@ describe('the engine source boundary in ESLint', () => {
   });
 
   it.each(FORBIDDEN_EVERYWHERE)('rejects %s', (code, rule) => {
+    expect(ruleIds(code, rules)).toEqual([rule]);
+  });
+
+  it.each(ESCAPES)('rejects the escape %s', (code, rule) => {
     expect(ruleIds(code, rules)).toEqual([rule]);
   });
 
@@ -101,6 +134,12 @@ describe('the engine source boundary in ESLint', () => {
     expect(messages('Math.random();')).toEqual([expect.stringContaining('IdSource port')]);
     expect(messages('window;')).toEqual([expect.stringContaining('ADR 0004')]);
   });
+
+  it('says why an ambient declaration is forbidden', () => {
+    expect(lint('declare const window: object;', rules).map(({ message }) => message)).toEqual([
+      expect.stringContaining('ambient declaration'),
+    ]);
+  });
 });
 
 describe('the engine test boundary in ESLint', () => {
@@ -113,6 +152,10 @@ describe('the engine test boundary in ESLint', () => {
     expect(ruleIds(code, rules)).toEqual([rule]);
   });
 
+  it.each(ESCAPES)('rejects the escape %s', (code, rule) => {
+    expect(ruleIds(code, rules)).toEqual([rule]);
+  });
+
   it('lets tests import their runner', () => {
     expect(lint('import { it } from "vitest";', rules)).toEqual([]);
   });
@@ -122,7 +165,12 @@ describe('the boundary outside the engine', () => {
   it.each(['apps/web/src/App.tsx', 'apps/collab/src/server.ts', 'packages/protocol/src/index.ts'])(
     'does not apply to %s',
     async (path) => {
-      expect(await boundaryRulesFor(path)).toEqual({});
+      const rules = await boundaryRulesFor(path);
+      // Only typescript-eslint's shared directive rule, whose options allow libraries and types.
+      expect(Object.keys(rules)).toEqual([TRIPLE_SLASH]);
+      const code =
+        '/// <reference lib="dom" />\n/// <reference types="node" />\ndeclare const a: 1;';
+      expect(lint(code, rules)).toEqual([]);
     },
   );
 });
