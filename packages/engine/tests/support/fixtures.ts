@@ -45,8 +45,12 @@ export interface JsonObject {
   [key: string]: Json;
 }
 
-/** A fresh copy of the encoded fixture, safe to change. */
+/** A fresh deep copy of the encoded fixture, safe to change. */
 export function fixtureJson(): JsonObject {
+  return JSON.parse(JSON.stringify(encodedFixture())) as JsonObject;
+}
+
+function encodedFixture(): JsonObject {
   return {
     format: 'planewright',
     schema: 1,
@@ -166,4 +170,21 @@ export function fixtureDocument(): DocumentState {
     canvas: json.canvas,
     rev: 0,
   };
+}
+
+/** A copy of the fixture with the value at `path` replaced, or removed when `value` is undefined. */
+export function changed(path: readonly (string | number)[], value: Json | undefined): string {
+  const json = fixtureJson();
+  let parent: Json = json;
+  for (const step of path.slice(0, -1)) {
+    parent = (parent as Record<string | number, Json>)[step] ?? null;
+  }
+  const last = path.at(-1) ?? '';
+  const target = parent as Record<string | number, Json>;
+  if (value === undefined) {
+    Reflect.deleteProperty(target, last);
+  } else {
+    target[last] = value;
+  }
+  return JSON.stringify(json);
 }
