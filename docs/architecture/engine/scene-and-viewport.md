@@ -200,7 +200,8 @@ units.
 | any                       | pinch to ratios 0.05 and 40            | zoom 0.1 and 30                                           | scenario 26 limits          |
 
 The Mod+wheel factor differs from the reference's 1.1 by design: Planewright uses one continuous
-curve for wheels and trackpads; the test accepts zoom in `[1.09, 1.12]`.
+curve for wheels and trackpads ([REQ-V04](requirements.md#intentional-differences)); the test
+accepts zoom in `[1.09, 1.12]`.
 
 ## Requirements served
 
