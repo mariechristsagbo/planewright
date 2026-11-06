@@ -402,6 +402,10 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     first time with Undo, so the scene ends as it began. It runs after a scenario that has drawn,
     because on a fresh load the welcome screen's Open, Help, Live collaboration and Sign up
     entries lie across that band, and while the default background is still transparent.
+  - `78` (from s77 on) repeats 77 at 75's geometry, because in s76 every long press on 77's
+    right-hand rectangle at (220,490) selected it but left no menu item to pick, while its presses
+    at (40,490) and all of 75's at a height of 252 worked. It runs after 72 and 76, in a session
+    without 75, while the default background is still transparent.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

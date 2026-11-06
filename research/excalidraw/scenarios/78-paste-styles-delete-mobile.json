@@ -1,0 +1,343 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-53 and R-09: 77's Copy styles, Paste styles and Delete at 75's geometry. In s76 every long press on 77's right-hand rectangle at (220,490) selected it but left no menu item to pick, so Paste styles and its Deletes did nothing, while the presses at (40,490) and all of 75's presses at y 252 worked. Runs after 72 and 76, whose rectangles end above y 220, in a session without 75, and with the default background still transparent. Draws P2 [40,230,100,90] and Q2 [220,230,100,90], and only then selects P2 by a tap on its left stroke and gives it the Yellow background by name. By a long press on a left stroke each time, 22 px below its corner, picks Copy styles on P2 and Paste styles on Q2, with Undo and Redo; Delete on Q2, with Undo; then Delete on Q2 and on P2, so the scene ends as it began. It types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 230]],
+      "to": [[140, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 230]],
+      "to": [[320, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "78-two"
+    },
+    {
+      "do": "appState",
+      "label": "78-two"
+    },
+    {
+      "do": "tap",
+      "at": [40, 252]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "78-p-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Yellow — c",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "78-p-yellow"
+    },
+    {
+      "do": "appState",
+      "label": "78-p-yellow"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Copy styles",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-copied"
+    },
+    {
+      "do": "appState",
+      "label": "78-copied"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Paste styles",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-pasted"
+    },
+    {
+      "do": "appState",
+      "label": "78-pasted"
+    },
+    {
+      "do": "screenshot",
+      "name": "m78-01-pasted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-pasted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "78-pasted-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-pasted-redo"
+    },
+    {
+      "do": "appState",
+      "label": "78-pasted-redo"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-deleted-q"
+    },
+    {
+      "do": "appState",
+      "label": "78-deleted-q"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-deleted-q-undo"
+    },
+    {
+      "do": "appState",
+      "label": "78-deleted-q-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-deleted-q-again"
+    },
+    {
+      "do": "appState",
+      "label": "78-deleted-q-again"
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "78-deleted-p"
+    },
+    {
+      "do": "appState",
+      "label": "78-deleted-p"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "78-end"
+    },
+    {
+      "do": "appState",
+      "label": "78-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
