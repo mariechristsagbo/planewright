@@ -26,6 +26,9 @@ issue below; the P1 and P2 requirements that the P0 design already accommodates 
 
 ## Order and dependencies
 
+An issue's dependencies, with theirs in turn, include every issue whose deliverables its acceptance
+criteria use.
+
 | Issue  | Title                                                         | Depends on             |
 | ------ | ------------------------------------------------------------- | ---------------------- |
 | ENG-01 | Engine package, math primitives and layer check               | none                   |
@@ -33,18 +36,20 @@ issue below; the P1 and P2 requirements that the P0 design already accommodates 
 | ENG-03 | Scene store, change sets and transactions                     | ENG-02                 |
 | ENG-04 | Undo and redo history                                         | ENG-03                 |
 | ENG-05 | Camera and viewport controller                                | ENG-01                 |
-| ENG-06 | Geometry, hit testing and text layout                         | ENG-02, ENG-05         |
+| ENG-06 | Geometry, hit testing and text layout                         | ENG-02, ENG-03, ENG-05 |
 | ENG-07 | Canvas renderer and render loop                               | ENG-03, ENG-05, ENG-06 |
 | ENG-08 | Editor surface: canvas host, input, gestures and commands     | ENG-04, ENG-07         |
 | ENG-09 | Selection tool and selection chrome                           | ENG-06, ENG-08         |
 | ENG-10 | Transforms: move, resize, rotate, duplicate, delete and nudge | ENG-09                 |
 | ENG-11 | Shape, line and freehand creation tools                       | ENG-09                 |
 | ENG-12 | Text tool and text editing                                    | ENG-11                 |
-| ENG-13 | Local persistence and autosave                                | ENG-08                 |
-| ENG-14 | Accessible element list, live region and focus order          | ENG-09                 |
-| ENG-15 | Performance harness and budgets                               | ENG-07                 |
+| ENG-13 | Local persistence and autosave                                | ENG-08 to ENG-11       |
+| ENG-14 | Accessible element list, live region and focus order          | ENG-09 to ENG-12       |
+| ENG-15 | Performance harness and budgets                               | ENG-07, ENG-08, ENG-13 |
 
-ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to ENG-12.
+Beyond these dependencies nothing fixes the order: ENG-05 can run beside ENG-02 to ENG-04, ENG-04
+beside ENG-05 to ENG-07, ENG-10 beside ENG-11 and ENG-12, and ENG-13, then ENG-15, beside ENG-12
+and ENG-14.
 
 ## Issues
 
@@ -122,10 +127,12 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
 
 ### ENG-06 Geometry, hit testing and text layout
 
-- **Delivers:** outlines, bounds and distance functions for the P0 kinds; `hitTest` with its order
-  and tolerances; marquee enclosure; handle layout and hit squares; `layoutText` and the
-  `TextMeasurer` port it measures through
-  ([rendering and hit testing](rendering-and-hit-testing.md#geometry)).
+- **Delivers:** in `geometry`, outlines, bounds and distance functions for the P0 kinds,
+  `layoutText` and the `TextMeasurer` port it measures through
+  ([rendering and hit testing](rendering-and-hit-testing.md#geometry)); in `selection`, the
+  selection state, `hitTest` with its order and tolerances over the scene's spatial index, marquee
+  enclosure, and handle layout and hit squares
+  ([hit testing](rendering-and-hit-testing.md#hit-testing)).
 - **Acceptance criteria:**
   - the REQ-S03 ladder: at zoom 1 with a 2-unit stroke, 4 and 5 px from the centre line hit and 8
     and 9 px miss, for mouse and touch tolerances; and the same ladder at zoom 2 in screen pixels;
@@ -175,8 +182,9 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
   Escape behaviour; the selection outline and handles on the overlay.
 - **Acceptance criteria:**
   - tool reducer tests for every transition in [Selection tool](interaction.md#selection-tool);
-  - end to end on desktop and the emulated phone: press, Shift+press, marquee and Mod+A select as
-    specified; a press on empty canvas and Escape clear;
+  - editor integration tests over a fixture document, with mouse and touch input: press,
+    Shift+press, marquee and Mod+A select as specified, and a press on empty canvas and Escape
+    clear (end to end in ENG-11, the first issue whose users can draw elements to select);
   - eight handles and the rotation handle show, side handles hide on small boxes, and a two-point
     line shows end handles;
   - selection changes create no undo step.
@@ -206,6 +214,8 @@ ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to EN
   - after a shape or line the Selection tool is active with the new element selected, and with tool
     lock the tool stays and nothing is selected; freehand stays active;
   - a freehand stroke's box is its input's extent and a tap makes a dot;
+  - end to end on desktop and the emulated phone: drawn elements are selected by press,
+    Shift+press, marquee and Mod+A, and a press on empty canvas and Escape clear the selection;
   - each creation is one undo step that leaves nothing selected when undone.
 - **Requirements:** REQ-C01, REQ-C02, REQ-C03, REQ-C04, REQ-C05, REQ-C06, REQ-C07, REQ-C13.
 - **Out of scope:** pressure-sensitive width, arrows, notes.

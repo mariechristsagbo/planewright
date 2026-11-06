@@ -30,9 +30,9 @@ violation.
 | ----- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | 1     | `math`, `ports`                     | vectors, affine matrices, boxes, angles, tolerances, a seeded random source; the ports that need no model types |
 | 2     | `model`                             | identifiers, element kinds, styles, documents, order keys, defaults, the codec and its limits                   |
-| 3     | `geometry`, `camera`                | per-kind outlines, bounds and distance functions; screen and scene transforms, zoom rules                       |
+| 3     | `geometry`, `camera`                | per-kind outlines, bounds, distance functions and text layout; screen and scene transforms, zoom rules          |
 | 4     | `scene`                             | the scene store, change sets, transient previews and the order, spatial, attachment and group indexes           |
-| 5     | `history`, `selection`, `transform` | transactions and the undo stack; selection state and queries; move, resize, rotate and duplicate maths          |
+| 5     | `history`, `selection`, `transform` | transactions, undo stack; selection state, hit testing, handle layout; move, resize, rotate and duplicate maths |
 | 6     | `input`, `tools`                    | engine input events and the gesture recogniser; one reducer per tool                                            |
 | 7     | `commands`                          | the command registry, the keymap and the default commands                                                       |
 | 8     | `persistence`, `collab`             | the autosave scheduler over the repository port; the collaboration-ready types                                  |

@@ -136,6 +136,10 @@ the box centre. `bounds` (world, axis-aligned) comes from the rotated local box 
 
 ## Hit testing
 
+Hit testing belongs to the `selection` module (layer 5), not to `geometry`: it reads the scene's
+spatial index and the current selection's handles, and applies the geometry's distance functions to
+the candidates. Handle layout, the handles' hit squares and marquee enclosure live there too.
+
 `hitTest(at, pointer)` resolves a screen point in this order and returns the first match:
 
 1. **Handles** of the current selection, by their screen hit squares.
