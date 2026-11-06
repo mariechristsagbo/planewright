@@ -42,3 +42,12 @@ export const changeSet = (
 });
 
 export const color = (text: string): Color => text as Color;
+
+/** A document without its revisions, which only grow: what "equal to its start" compares. */
+export const contentOf = ({ elements, groups, canvas }: DocumentState) => ({
+  elements: [...elements.values()]
+    .map((element) => ({ ...element, rev: 0 }))
+    .sort((a, b) => (a.id < b.id ? -1 : 1)),
+  groups: [...groups.values()].sort((a, b) => (a.id < b.id ? -1 : 1)),
+  canvas,
+});
