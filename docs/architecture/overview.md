@@ -43,14 +43,26 @@ Logs are JSON lines on stdout.
 Runtime-agnostic TypeScript definitions with no DOM or Node.js dependencies. Protocol version 0
 contains only the server hello and error messages and has no compatibility guarantees.
 
-## Open decisions
+## Decisions and what stays open
 
-These are intentionally undecided until the behavioural investigation is complete. Each will be
-settled by an ADR:
+The [canvas-engine architecture](engine/README.md) (issue #3) proposes how the editor is built,
+traced to the behavioural baseline of issue #1. Until its pull request merges, its ADRs are
+Proposed and nothing of it is implemented:
 
-- Scene and element model, and how documents are versioned and serialised.
-- Rendering approach (Canvas 2D, WebGL or a hybrid), hit testing and viewport virtualisation.
-- Input handling, tool architecture and undo/redo model.
-- Collaboration model (operational transformation, CRDT or server-authoritative), presence,
-  room lifecycle, authentication and persistence.
-- File import and export formats.
+- scene and element model, and how documents are versioned and serialised:
+  [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
+- rendering approach, hit testing and viewport culling: [ADR 0006](../adr/0006-canvas-rendering.md);
+- input handling, tool architecture and undo/redo model:
+  [ADR 0007](../adr/0007-history-model.md) and [ADR 0008](../adr/0008-input-tools-and-commands.md);
+- package boundaries for the engine and its renderer:
+  [ADR 0004](../adr/0004-canvas-engine-package-boundaries.md);
+- file formats: Planewright's own document and clipboard formats
+  ([ADR 0009](../adr/0009-persistence-and-interchange.md)); no other application's format.
+
+Still open, each for its own issue and ADR:
+
+- the collaboration model (merge policy, transport, presence, room lifecycle, authentication and
+  server persistence); [ADR 0010](../adr/0010-collaboration-ready-change-model.md) only fixes the
+  interfaces that the engine keeps ready for it;
+- the fonts behind the text families, the sketch styles and the dark-theme colour mapping, decided
+  in the feature issues that need them.
