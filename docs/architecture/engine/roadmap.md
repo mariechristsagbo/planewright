@@ -3,7 +3,7 @@
 The P0 engine is split into fifteen issues, each delivered by one pull request on its own branch,
 in the milestone **v0.1.0 — Engine Core**. Each issue is opened only when the one before it in the
 order below has merged or no longer blocks it, and only after this architecture has been reviewed
-and merged. ENG-01 is issue #5; the others are not open yet.
+and merged. ENG-01 is issue #5 and ENG-02 issue #7; the others are not open yet.
 
 Every P0 requirement of the [requirements trace](requirements.md) is delivered by exactly one
 issue below; the P1 and P2 requirements that the P0 design already accommodates are listed under
