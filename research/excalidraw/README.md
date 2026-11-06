@@ -283,6 +283,13 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     requests to one. `44` uploads the scene once with Export to Link; run it once, right after
     `09` in its own fresh session, with no REA call during or after it, because REA records keep
     URL fragments and DOM attributes, and in no other session.
+  - `45` and `46` run right after `09`, each in a fresh session: 45 touches the unnamed Font size,
+    Text align, Stroke width and Pressure radios at the centres measured on s46's and s41's captures
+    and draws an Autoshape stroke with `touchPath`, 46 taps Delete, adds a fourth point to a sharp
+    arrow and deletes a point in Edit arrow, and aligns a group with a rectangle, with Undo after each
+    change. `47` runs right after 46 in the same session and adds a self-authored link on a reserved
+    example domain; it stops at its first failed step, so nothing is typed unless its textbox was
+    clicked, and it never follows the link.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

@@ -1,0 +1,701 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-10 and R-43: the unnamed radios that s41 and s46 saved and no scenario touched, and the Draw tool's Autoshape choice that s37 saved. Places the word Plan with the Text tool at (60,300), commits it by a tap on empty canvas, selects it by a tap at (75,303) and opens Text align. Touches its Font size radios S, M, L and XL and its Text align radios left, centre and right at the centres measured on s46's capture, (88,632), (128,632), (168,632), (208,632), (88,690), (128,690) and (168,690): L with Undo and Redo, XL, S, centre with Undo, and right, each but the first from a fresh popover after a deselecting tap and a tap on the text. Draws a stroke with the Draw tool from (60,420) to (300,470), selects it by a tap at (180,445), opens its second Stroke button and touches the Stroke width radios bold (141,561), with Undo and Redo, and thin (62,561), and the second Pressure radio (101,620), with Undo and Redo, at the centres measured on s41's capture, each from a fresh popover. Then picks Autoshape by name from the Draw tool's choice, draws a closed rough rectangle with one finger through nine points between (58,527) and (302,633), and presses Undo. Reads the scene, with the text's font fields and the stroke's pressure fields, and the app state after each step. The keyboard types the word, standing in for the phone's own. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [309, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "type",
+      "text": "Plan"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "45-text"
+    },
+    {
+      "do": "appState",
+      "label": "45-text"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Text align",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m45-01-text-align"
+    },
+    {
+      "do": "screenshot",
+      "name": "m45-01-text-align"
+    },
+    {
+      "do": "tap",
+      "at": [168, 632]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-size-l"
+    },
+    {
+      "do": "appState",
+      "label": "45-size-l"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-size-l-undo"
+    },
+    {
+      "do": "appState",
+      "label": "45-size-l-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-size-l-redo"
+    },
+    {
+      "do": "appState",
+      "label": "45-size-l-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Text align",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [208, 632]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-size-xl"
+    },
+    {
+      "do": "appState",
+      "label": "45-size-xl"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Text align",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [88, 632]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-size-s"
+    },
+    {
+      "do": "appState",
+      "label": "45-size-s"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Text align",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [128, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-align-centre"
+    },
+    {
+      "do": "appState",
+      "label": "45-align-centre"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-align-centre-undo"
+    },
+    {
+      "do": "appState",
+      "label": "45-align-centre-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Text align",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [168, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-align-right"
+    },
+    {
+      "do": "appState",
+      "label": "45-align-right"
+    },
+    {
+      "do": "aria",
+      "save": "m45-02-align-right"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [127, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 420]],
+      "to": [[300, 470]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [180, 445]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "45-freedraw"
+    },
+    {
+      "do": "appState",
+      "label": "45-freedraw"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m45-03-freedraw-style"
+    },
+    {
+      "do": "screenshot",
+      "name": "m45-03-freedraw-style"
+    },
+    {
+      "do": "tap",
+      "at": [141, 561]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-width-bold"
+    },
+    {
+      "do": "appState",
+      "label": "45-width-bold"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-width-bold-undo"
+    },
+    {
+      "do": "appState",
+      "label": "45-width-bold-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-width-bold-redo"
+    },
+    {
+      "do": "appState",
+      "label": "45-width-bold-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [180, 445]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [62, 561]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-width-thin"
+    },
+    {
+      "do": "appState",
+      "label": "45-width-thin"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [180, 445]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [101, 620]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-pressure-2"
+    },
+    {
+      "do": "appState",
+      "label": "45-pressure-2"
+    },
+    {
+      "do": "aria",
+      "save": "m45-04-pressure-2"
+    },
+    {
+      "do": "screenshot",
+      "name": "m45-04-pressure-2"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-pressure-2-undo"
+    },
+    {
+      "do": "appState",
+      "label": "45-pressure-2-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-pressure-2-redo"
+    },
+    {
+      "do": "appState",
+      "label": "45-pressure-2-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [127, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m45-05-draw-choice"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Autoshape",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [60, 530],
+        [180, 527],
+        [300, 532],
+        [302, 580],
+        [298, 630],
+        [180, 633],
+        [62, 628],
+        [58, 580],
+        [61, 534]
+      ],
+      "steps": 4
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "45-autoshape"
+    },
+    {
+      "do": "appState",
+      "label": "45-autoshape"
+    },
+    {
+      "do": "aria",
+      "save": "m45-06-autoshape"
+    },
+    {
+      "do": "screenshot",
+      "name": "m45-06-autoshape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-autoshape-undo"
+    },
+    {
+      "do": "appState",
+      "label": "45-autoshape-undo"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "45-end"
+    },
+    {
+      "do": "appState",
+      "label": "45-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
