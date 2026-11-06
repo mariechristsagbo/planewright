@@ -1,0 +1,680 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-11, R-30 and R-51: Delete from the Actions popover, a fourth point and deleting a point, and a group's alignment. Draws a rectangle [40,110,120,60], taps Delete in its Actions popover, then Undo and Redo. Draws an arrow by a drag from (60,250) to (300,250), makes it sharp with the first Arrow type radio at (70,690), as s40 did, so its segments are straight, and after a deselecting tap and a tap on it at (100,250) drags from its middle to (180,190), which adds a third point (B-40), and from the middle of its first segment, (120,220), to (120,280), then Undo and Redo. Taps Edit arrow, taps the point at (120,280), taps Delete in the Actions popover and Undo, then taps empty canvas twice. Draws rectangles [40,330,100,50] and [200,400,100,50], selects both by a one-finger drag from (25,320) to (315,465) on empty canvas and groups them with Group selection, draws a wider rectangle [20,500,320,60], selects all three by a drag from (10,315) to (360,575), and taps Align left, then Undo, and, from a fresh selection, Align bottom, then Undo. Reads the scene, with each arrow's point count, and the app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 110]],
+      "to": [[160, 170]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-rect"
+    },
+    {
+      "do": "appState",
+      "label": "46-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m46-01-actions-one"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-delete"
+    },
+    {
+      "do": "appState",
+      "label": "46-delete"
+    },
+    {
+      "do": "aria",
+      "save": "m46-02-after-delete"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-delete-undo"
+    },
+    {
+      "do": "appState",
+      "label": "46-delete-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-delete-redo"
+    },
+    {
+      "do": "appState",
+      "label": "46-delete-redo"
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 250]],
+      "to": [[300, 250]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "46-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow type",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [70, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-sharp"
+    },
+    {
+      "do": "appState",
+      "label": "46-sharp"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [100, 250]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 250]],
+      "to": [[180, 190]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-point-3"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-3"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[120, 220]],
+      "to": [[120, 280]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-point-4"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-4"
+    },
+    {
+      "do": "aria",
+      "save": "m46-03-four-points"
+    },
+    {
+      "do": "screenshot",
+      "name": "m46-03-four-points"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-point-4-undo"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-4-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-point-4-redo"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-4-redo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Edit arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-edit"
+    },
+    {
+      "do": "appState",
+      "label": "46-edit"
+    },
+    {
+      "do": "aria",
+      "save": "m46-04-edit-arrow"
+    },
+    {
+      "do": "tap",
+      "at": [120, 280]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "46-point-selected"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-selected"
+    },
+    {
+      "do": "aria",
+      "save": "m46-05-point-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m46-05-point-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m46-06-actions-editing"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-point-delete"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-delete"
+    },
+    {
+      "do": "aria",
+      "save": "m46-07-after-point-delete"
+    },
+    {
+      "do": "screenshot",
+      "name": "m46-07-after-point-delete"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-point-delete-undo"
+    },
+    {
+      "do": "appState",
+      "label": "46-point-delete-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-edit-end"
+    },
+    {
+      "do": "appState",
+      "label": "46-edit-end"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 330]],
+      "to": [[140, 380]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 400]],
+      "to": [[300, 450]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[25, 320]],
+      "to": [[315, 465]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-two-selected"
+    },
+    {
+      "do": "appState",
+      "label": "46-two-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Group selection",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-grouped"
+    },
+    {
+      "do": "appState",
+      "label": "46-grouped"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 500]],
+      "to": [[340, 560]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-third"
+    },
+    {
+      "do": "appState",
+      "label": "46-third"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[10, 315]],
+      "to": [[360, 575]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-three-selected"
+    },
+    {
+      "do": "appState",
+      "label": "46-three-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m46-08-actions-group"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Align left",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-align-left"
+    },
+    {
+      "do": "appState",
+      "label": "46-align-left"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-align-left-undo"
+    },
+    {
+      "do": "appState",
+      "label": "46-align-left-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[10, 315]],
+      "to": [[360, 575]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Align bottom",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-align-bottom"
+    },
+    {
+      "do": "appState",
+      "label": "46-align-bottom"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-align-bottom-undo"
+    },
+    {
+      "do": "appState",
+      "label": "46-align-bottom-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "46-end"
+    },
+    {
+      "do": "appState",
+      "label": "46-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

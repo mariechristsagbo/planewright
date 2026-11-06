@@ -1,0 +1,26 @@
+{
+  "description": "Mobile 390x844, DPR 3, touch: reload the page and assert the emulated metrics, for use if an assertMetrics step aborts after a tool reset the emulated metrics; a navigation restores the override that 09 applied before its first navigation. It first ran in s68 and s69, after 60; s3, s4 and s7 record no reload, and 24 reuses its reload, wait and assertion (R-54).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

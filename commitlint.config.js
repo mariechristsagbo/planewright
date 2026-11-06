@@ -7,7 +7,18 @@ export default {
     'scope-enum': [
       2,
       'always',
-      ['collab', 'deps', 'deps-dev', 'docs', 'github', 'protocol', 'repo', 'tooling', 'web'],
+      [
+        'collab',
+        'deps',
+        'deps-dev',
+        'docs',
+        'github',
+        'protocol',
+        'repo',
+        'research',
+        'tooling',
+        'web',
+      ],
     ],
   },
 };

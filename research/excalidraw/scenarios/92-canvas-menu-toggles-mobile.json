@@ -1,0 +1,305 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-08: the canvas-menu items that s79-s82 left unused. Runs after 91, last before 16 since view mode hides controls, with A on the canvas and nothing selected. By right clicks on empty canvas at (200,180), above A's row, a mouse event on the touch-emulated page, it picks Snap to objects and then, named with its check mark, ✓ Snap to objects; ✓ Arrow binding and Arrow binding; ✓ Snap to midpoints and Snap to midpoints, reading the app state after each and saving the menu's ARIA before the first two picks. Then Canvas & Shape properties, saving the ARIA and a capture of what opens, and Escape; last View mode, reading the app state and the boxes of the Undo, Selection and Library buttons and saving the ARIA and a capture, then the canvas menu in view mode, saving its ARIA, and ✓ View mode, reading and saving again. It types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m92-01-canvas-menu"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-snap-on"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m92-02-canvas-menu-snap"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "✓ Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-snap-off"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "✓ Arrow binding",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-binding-off"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow binding",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-binding-on"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "✓ Snap to midpoints",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-midpoints-off"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Snap to midpoints",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-midpoints-on"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Canvas & Shape properties",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-properties"
+    },
+    {
+      "do": "aria",
+      "save": "m92-03-properties"
+    },
+    {
+      "do": "screenshot",
+      "name": "m92-03-properties"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "92-properties-escape"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "View mode",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-view"
+    },
+    {
+      "do": "layout",
+      "label": "92-view",
+      "buttons": ["Undo", "Selection", "Library"]
+    },
+    {
+      "do": "aria",
+      "save": "m92-04-view"
+    },
+    {
+      "do": "screenshot",
+      "name": "m92-04-view"
+    },
+    {
+      "do": "click",
+      "at": [200, 180],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m92-05-view-menu"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "✓ View mode",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "92-view-off"
+    },
+    {
+      "do": "layout",
+      "label": "92-view-off",
+      "buttons": ["Undo", "Selection", "Library"]
+    },
+    {
+      "do": "aria",
+      "save": "m92-06-view-off"
+    },
+    {
+      "do": "screenshot",
+      "name": "m92-06-view-off"
+    },
+    {
+      "do": "scene",
+      "label": "92-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

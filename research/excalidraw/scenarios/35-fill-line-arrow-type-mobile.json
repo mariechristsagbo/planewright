@@ -1,0 +1,320 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-10, R-39 and R-30: cases that s26 and s27 left open. Draws a rectangle [40,120,120,80], gives it the Yellow background by name, and then, each after a deselecting tap and a tap on its left stroke (40,160), picks the fill styles Hachure (Alt-Click) and Cross-hatch by name in the style popover, whose Fill group s26 saved. Picks the Line tool from the Arrow tool's choice, draws a line by a drag from (60,420) to (300,420), which leaves it selected, and drags from its middle to (180,360) with no double tap first. Picks Arrow from the same choice, draws an arrow from (60,560) to (300,560), saves the ARIA of the bar for the selected arrow and opens the Arrow type popover, which s27 saw in the bar, saving its ARIA and a capture; no arrow type is changed. Reads the scene, with each line's point count, and the app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[160, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Yellow — c",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-filled"
+    },
+    {
+      "do": "appState",
+      "label": "35-filled"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [40, 160]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Hachure (Alt-Click)",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-fill-hachure"
+    },
+    {
+      "do": "appState",
+      "label": "35-fill-hachure"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [40, 160]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Cross-hatch",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-fill-cross-hatch"
+    },
+    {
+      "do": "appState",
+      "label": "35-fill-cross-hatch"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Line",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 420]],
+      "to": [[300, 420]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-line-drag"
+    },
+    {
+      "do": "appState",
+      "label": "35-line-drag"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 420]],
+      "to": [[180, 360]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-line-middle-drag"
+    },
+    {
+      "do": "appState",
+      "label": "35-line-middle-drag"
+    },
+    {
+      "do": "aria",
+      "save": "m35-01-line-middle-drag"
+    },
+    {
+      "do": "screenshot",
+      "name": "m35-01-line-middle-drag"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 560]],
+      "to": [[300, 560]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-arrow-drag"
+    },
+    {
+      "do": "appState",
+      "label": "35-arrow-drag"
+    },
+    {
+      "do": "aria",
+      "save": "m35-02-arrow-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow type",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m35-03-arrow-type"
+    },
+    {
+      "do": "screenshot",
+      "name": "m35-03-arrow-type"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "35-end"
+    },
+    {
+      "do": "appState",
+      "label": "35-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

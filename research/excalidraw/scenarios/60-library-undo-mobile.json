@@ -1,0 +1,291 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-15 and R-52: Undo and Redo after adding a selection to the library and after placing the item. Draws a rectangle [20,600,60,80], which stays selected, opens the Library by its exact name and taps the add tile at (136,214), as 58 does, and taps Close, so that no sidebar covers the Undo button; reads the scene and the app state, then presses Undo and Redo by name, reading both after each. It then deselects with a tap on empty canvas, opens the Library again, saves its ARIA and taps the first tile at the same point, which s64 and s66 found places a copy centred in the view and closes the sidebar; reads, with ARIA and a capture, and presses Undo and Redo again, reading after each. Last it deselects, opens the Library to save what it holds after the Undo and Redo, and taps Close. It types nothing and follows no link (Browse libraries leads off-site). Runs right after 09, with an empty library and nothing on the canvas where it draws or taps.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 600]],
+      "to": [[80, 680]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "60-rect"
+    },
+    {
+      "do": "appState",
+      "label": "60-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [136, 214]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m60-01-added"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "60-added"
+    },
+    {
+      "do": "appState",
+      "label": "60-added"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "60-added-undo"
+    },
+    {
+      "do": "appState",
+      "label": "60-added-undo"
+    },
+    {
+      "do": "aria",
+      "save": "m60-02-added-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m60-02-added-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "60-added-redo"
+    },
+    {
+      "do": "appState",
+      "label": "60-added-redo"
+    },
+    {
+      "do": "tap",
+      "at": [300, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "60-deselected"
+    },
+    {
+      "do": "appState",
+      "label": "60-deselected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m60-03-items"
+    },
+    {
+      "do": "tap",
+      "at": [136, 214]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "60-placed"
+    },
+    {
+      "do": "appState",
+      "label": "60-placed"
+    },
+    {
+      "do": "aria",
+      "save": "m60-04-placed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m60-04-placed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "60-placed-undo"
+    },
+    {
+      "do": "appState",
+      "label": "60-placed-undo"
+    },
+    {
+      "do": "aria",
+      "save": "m60-05-placed-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m60-05-placed-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "60-placed-redo"
+    },
+    {
+      "do": "appState",
+      "label": "60-placed-redo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m60-06-placed-redo"
+    },
+    {
+      "do": "tap",
+      "at": [300, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m60-07-library-after"
+    },
+    {
+      "do": "screenshot",
+      "name": "m60-07-library-after"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "60-end"
+    },
+    {
+      "do": "appState",
+      "label": "60-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

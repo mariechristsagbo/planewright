@@ -1,0 +1,16 @@
+{
+  "kind": "rea-screenshot",
+  "evidence_id": "ev_771c96a0efd411f444f6c86aa274cb24cfc06fd9e4e988743aeca9e10bc23376",
+  "captured_at": "2026-11-06T09:47:35.676Z",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "png": {
+    "sha256": "063480e14ecd8e9cd75035b7baf8e31a676788653fcef9f574e71b7c1143ce9f",
+    "bytes": 13444,
+    "width": 390,
+    "height": 844
+  },
+  "dimensions_match_viewport": true
+}

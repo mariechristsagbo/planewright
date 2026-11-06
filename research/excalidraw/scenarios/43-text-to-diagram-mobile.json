@@ -1,0 +1,160 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-63: one Text to diagram generation on mobile, which s12 and s16 opened but never used. Opens Text to diagram from More tools, types one self-authored prompt into its named prompt box and presses Enter once, which its placeholder names as the way to submit (Shift+Enter makes a new line); the keyboard stands in for the phone's own. Waits 25 s, saves the ARIA and a capture of the result, taps Insert if the dialog offers a button of that name, closes the dialog with its Close button and presses Undo, reading the scene after each step. It never retries, signs in, accepts a consent or follows a link. Run it at most once per session, after 42 in the same session, and only in one session, to keep the generation requests to one.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Text to diagram AI",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "aria",
+      "save": "m43-01-dialog"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Start typing your diagram idea here... (Shift + Enter for new line)",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "type",
+      "text": "A flowchart with three steps: plan, build, test"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m43-02-typed"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 25000
+    },
+    {
+      "do": "aria",
+      "save": "m43-03-result"
+    },
+    {
+      "do": "screenshot",
+      "name": "m43-03-result"
+    },
+    {
+      "do": "scene",
+      "label": "43-before-insert"
+    },
+    {
+      "do": "appState",
+      "label": "43-before-insert"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Insert",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "aria",
+      "save": "m43-04-after-insert"
+    },
+    {
+      "do": "scene",
+      "label": "43-inserted"
+    },
+    {
+      "do": "appState",
+      "label": "43-inserted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m43-05-closed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "43-inserted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "43-inserted-undo"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

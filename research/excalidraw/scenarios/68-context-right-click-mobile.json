@@ -1,0 +1,114 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-08 and R-09: the context menus opened by a right click, a mouse event on the touch-emulated page and not a phone gesture, so that their items can be listed even where a long press opens nothing. Runs after 67, whose rectangle [120,330,120,90] is on the canvas. Right-clicks empty canvas at (200,560) and the rectangle's left stroke at (120,375), saving the ARIA and a capture of each and pressing Escape after each. It picks no menu item, types nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "click",
+      "at": [200, 560],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m68-01-canvas-right"
+    },
+    {
+      "do": "screenshot",
+      "name": "m68-01-canvas-right"
+    },
+    {
+      "do": "appState",
+      "label": "68-canvas-right"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m68-02-canvas-escape"
+    },
+    {
+      "do": "click",
+      "at": [120, 375],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m68-03-element-right"
+    },
+    {
+      "do": "screenshot",
+      "name": "m68-03-element-right"
+    },
+    {
+      "do": "scene",
+      "label": "68-element-right"
+    },
+    {
+      "do": "appState",
+      "label": "68-element-right"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "68-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

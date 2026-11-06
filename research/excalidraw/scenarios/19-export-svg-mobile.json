@@ -1,0 +1,120 @@
+{
+  "description": "Mobile 390x844, DPR 3, touch, R-64: draw one rectangle by touch, open Export image from the main menu and tap Export to SVG only, never Export to PNG, then wait 3 s. Requires 09 first in a fresh session; run with a REA window armed before its first step. The download step is expected to time out after 8 s in headless Chromium (B-32).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "touchDrag",
+      "from": [[120, 250]],
+      "to": [[260, 350]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "19-drawn"
+    },
+    {
+      "do": "tap",
+      "at": [300, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Export image...",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "aria",
+      "save": "m19-01-export-dialog"
+    },
+    {
+      "do": "download",
+      "name": "m19-export",
+      "timeout": 8000,
+      "trigger": [
+        {
+          "do": "role",
+          "role": "button",
+          "name": "Export to SVG",
+          "exact": true
+        }
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "aria",
+      "save": "m19-02-after-export"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "appState",
+      "label": "19-end"
+    }
+  ]
+}

@@ -1,0 +1,386 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch: a second inventory, of the controls that the next mobile scenarios need and s22 did not save (R-10, R-11, R-30, R-56). Draws a rectangle [40,120,120,80], opens its Stroke colour popover and picks Blue by name, saving the ARIA and a capture of the popover with a colour that has shades. With the Text tool, taps (60,300), types the self-authored word Plan, saves the editor, commits it by a tap on empty canvas, taps the text at (75,303) and saves the bar for a selected text. With the Draw tool, saves the bar for the tool, draws a stroke by a drag from (60,420) to (300,470), selects it with the Selection tool by a tap at (180,445) and saves the bar for a selected stroke. Draws an arrow from (60,660) to (300,660), taps Edit arrow and saves the result, then taps empty canvas. Finally opens Save to... from the main menu and saves the dialog without touching any of its entries, so no file is saved and nothing is uploaded, and closes it with its Close button. Every capture is taken before any upload, so none can show a link. Reads the scene and app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[160, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "36-rect"
+    },
+    {
+      "do": "appState",
+      "label": "36-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 0
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Blue — s",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m36-01-stroke-blue"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-01-stroke-blue"
+    },
+    {
+      "do": "scene",
+      "label": "36-stroke-blue"
+    },
+    {
+      "do": "appState",
+      "label": "36-stroke-blue"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [309, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "type",
+      "text": "Plan"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m36-02-text-editing"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-02-text-editing"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "36-text"
+    },
+    {
+      "do": "appState",
+      "label": "36-text"
+    },
+    {
+      "do": "aria",
+      "save": "m36-03-text-committed"
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m36-04-text-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-04-text-selected"
+    },
+    {
+      "do": "scene",
+      "label": "36-text-selected"
+    },
+    {
+      "do": "appState",
+      "label": "36-text-selected"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [127, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m36-05-draw-tool"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-05-draw-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 420]],
+      "to": [[300, 470]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "36-freedraw"
+    },
+    {
+      "do": "appState",
+      "label": "36-freedraw"
+    },
+    {
+      "do": "aria",
+      "save": "m36-06-freedraw-drawn"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [180, 445]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m36-07-freedraw-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-07-freedraw-selected"
+    },
+    {
+      "do": "scene",
+      "label": "36-freedraw-selected"
+    },
+    {
+      "do": "appState",
+      "label": "36-freedraw-selected"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 660]],
+      "to": [[300, 660]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "36-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "36-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Edit arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m36-08-edit-arrow"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-08-edit-arrow"
+    },
+    {
+      "do": "scene",
+      "label": "36-edit-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "36-edit-arrow"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m36-09-after-edit-arrow"
+    },
+    {
+      "do": "scene",
+      "label": "36-after-edit-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "36-after-edit-arrow"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Save to...",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "aria",
+      "save": "m36-10-save-to"
+    },
+    {
+      "do": "screenshot",
+      "name": "m36-10-save-to"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m36-11-after-close"
+    },
+    {
+      "do": "scene",
+      "label": "36-end"
+    },
+    {
+      "do": "appState",
+      "label": "36-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

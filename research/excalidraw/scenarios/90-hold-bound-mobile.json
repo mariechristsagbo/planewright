@@ -1,0 +1,633 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-09: bounds where a long press stops opening the element menu, between (40,490), where the presses of s76, s79 and s80 opened it, and (220,490), where none did. Runs after 89, with A on the canvas and nothing selected. For each x of 40, 70, 100, 130, 160, 190 and 220 in turn it draws a rectangle [x,470,100,80], deselects, holds on its left stroke at (x,490), 20 px below its corner, for 800 ms, reads the app state and the boxes of the menu's Cut, Copy and Delete buttons, saves the ARIA and a capture, presses Escape, and deletes the rectangle by a tap at the same point and the Delete key. It picks no menu item, types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 470]],
+      "to": [[140, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-40"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-40",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-01-hold-40"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-01-hold-40"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [40, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[70, 470]],
+      "to": [[170, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [70, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-70"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-70",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-02-hold-70"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-02-hold-70"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [70, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[100, 470]],
+      "to": [[200, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [100, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-100"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-100",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-03-hold-100"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-03-hold-100"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [100, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[130, 470]],
+      "to": [[230, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [130, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-130"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-130",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-04-hold-130"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-04-hold-130"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [130, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[160, 470]],
+      "to": [[260, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [160, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-160"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-160",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-05-hold-160"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-05-hold-160"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [160, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[190, 470]],
+      "to": [[290, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [190, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-190"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-190",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-06-hold-190"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-06-hold-190"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [190, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 470]],
+      "to": [[320, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "90-hold-220"
+    },
+    {
+      "do": "layout",
+      "label": "90-hold-220",
+      "buttons": ["Cut", "Copy", "Delete"]
+    },
+    {
+      "do": "aria",
+      "save": "m90-07-hold-220"
+    },
+    {
+      "do": "screenshot",
+      "name": "m90-07-hold-220"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [220, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "90-end"
+    },
+    {
+      "do": "appState",
+      "label": "90-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

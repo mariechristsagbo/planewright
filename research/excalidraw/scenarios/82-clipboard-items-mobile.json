@@ -1,0 +1,372 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-53: the clipboard items of the context menus. First grants clipboard read and write to the reference origin only. Runs after 84, with 79's rectangles at y 230 to 320, and draws C [60,340,100,70], then deselects. By a long press on C's left stroke each time, 22 px below its corner, picks Copy and reads the clipboard text shape and items, then pastes by Paste in the canvas menu of a right click at (300,380), with Undo; picks Cut, reads the clipboard, pastes the same way and presses Undo twice; then picks Copy to clipboard as PNG and Copy to clipboard as SVG, reading the clipboard items after each and saving the ARIA after the PNG copy. Last it selects C by a tap and deletes it with the Delete key. Clipboard reads keep types, sizes and shapes only. It types nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "grantClipboard"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 340]],
+      "to": [[160, 410]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "82-c"
+    },
+    {
+      "do": "appState",
+      "label": "82-c"
+    },
+    {
+      "do": "touchHold",
+      "at": [60, 362],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Copy",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "clipboard",
+      "label": "82-copy"
+    },
+    {
+      "do": "clipboardItems",
+      "label": "82-copy-items"
+    },
+    {
+      "do": "appState",
+      "label": "82-copy"
+    },
+    {
+      "do": "click",
+      "at": [300, 380],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Paste",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "82-pasted"
+    },
+    {
+      "do": "appState",
+      "label": "82-pasted"
+    },
+    {
+      "do": "screenshot",
+      "name": "m82-01-pasted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "82-pasted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "82-pasted-undo"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [60, 362],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Cut",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "82-cut"
+    },
+    {
+      "do": "appState",
+      "label": "82-cut"
+    },
+    {
+      "do": "clipboard",
+      "label": "82-cut"
+    },
+    {
+      "do": "click",
+      "at": [300, 380],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Paste",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "82-cut-pasted"
+    },
+    {
+      "do": "appState",
+      "label": "82-cut-pasted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "82-cut-pasted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "82-cut-pasted-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "82-cut-undo"
+    },
+    {
+      "do": "appState",
+      "label": "82-cut-undo"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [60, 362],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Copy to clipboard as PNG",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "clipboardItems",
+      "label": "82-png"
+    },
+    {
+      "do": "aria",
+      "save": "m82-02-png"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [60, 362],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Copy to clipboard as SVG",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "clipboardItems",
+      "label": "82-svg"
+    },
+    {
+      "do": "clipboard",
+      "label": "82-svg-text"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [60, 362]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "82-end"
+    },
+    {
+      "do": "appState",
+      "label": "82-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

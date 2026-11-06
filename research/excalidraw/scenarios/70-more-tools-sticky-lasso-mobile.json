@@ -1,0 +1,315 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-17 and R-41: More tools entries. Runs after 67, whose rectangle [120,330,120,90] is on the canvas. Picks Frame tool and drags a frame from (40,460) to (180,640), then Undo; picks Laser pointer and draws a stroke, capturing 150 ms and 1.65 s after it; picks Sticky note and taps (195,180), reads, presses Escape, reads, then Undo; picks Lasso from the Selection tool's choice and draws a loop around the rectangle, then deselects and picks Selection again. It types nothing, uploads nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m70-01-more-tools"
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Frame tool",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "70-frame-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 460]],
+      "to": [[180, 640]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "screenshot",
+      "name": "m70-02-frame"
+    },
+    {
+      "do": "scene",
+      "label": "70-frame"
+    },
+    {
+      "do": "appState",
+      "label": "70-frame"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "70-frame-undo"
+    },
+    {
+      "do": "appState",
+      "label": "70-frame-undo"
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Laser pointer",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "70-laser-tool"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [60, 150],
+        [180, 230],
+        [300, 160]
+      ],
+      "steps": 8
+    },
+    {
+      "do": "wait",
+      "ms": 150
+    },
+    {
+      "do": "screenshot",
+      "name": "m70-03-laser"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "70-laser"
+    },
+    {
+      "do": "appState",
+      "label": "70-laser"
+    },
+    {
+      "do": "screenshot",
+      "name": "m70-04-laser-later"
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Sticky note",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "70-sticky-tool"
+    },
+    {
+      "do": "tap",
+      "at": [195, 180]
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "scene",
+      "label": "70-sticky"
+    },
+    {
+      "do": "appState",
+      "label": "70-sticky"
+    },
+    {
+      "do": "aria",
+      "save": "m70-05-sticky"
+    },
+    {
+      "do": "screenshot",
+      "name": "m70-05-sticky"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "screenshot",
+      "name": "m70-06-sticky-escape"
+    },
+    {
+      "do": "scene",
+      "label": "70-sticky-escape"
+    },
+    {
+      "do": "appState",
+      "label": "70-sticky-escape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "70-sticky-undo"
+    },
+    {
+      "do": "appState",
+      "label": "70-sticky-undo"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Lasso",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "70-lasso-tool"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [100, 315],
+        [260, 315],
+        [260, 435],
+        [100, 435],
+        [100, 315]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "70-lasso"
+    },
+    {
+      "do": "screenshot",
+      "name": "m70-07-lasso"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Selection",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "70-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

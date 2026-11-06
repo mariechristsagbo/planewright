@@ -1,0 +1,427 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-42: arrow binding by touch at zoom 1. Draws rectangles P [40,120,100,80], Q [250,120,100,80] and a tall R [250,260,100,260], then with the Arrow tool drags from P's centre (90,160) to Q's centre (300,160), reads the binding, undoes and redoes the arrow with the Undo and Redo buttons, and moves Q 40 px up by a one-finger drag from its top stroke (300,120). Then draws six horizontal arrows from empty canvas at x 40 to R's left stroke (x 250), at y 310 to 460, ending 16 px inside it, on it, and 8, 16, 24 and 40 px outside it, each after a deselecting tap and a tap on the Arrow tool, and reads the scene and app state after each. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[140, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[250, 120]],
+      "to": [[350, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[250, 260]],
+      "to": [[350, 520]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-shapes"
+    },
+    {
+      "do": "appState",
+      "label": "29-shapes"
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[90, 160]],
+      "to": [[300, 160]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-arrow-centres"
+    },
+    {
+      "do": "appState",
+      "label": "29-arrow-centres"
+    },
+    {
+      "do": "aria",
+      "save": "m29-01-arrow-centres"
+    },
+    {
+      "do": "screenshot",
+      "name": "m29-01-arrow-centres"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-arrow-undo"
+    },
+    {
+      "do": "appState",
+      "label": "29-arrow-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-arrow-redo"
+    },
+    {
+      "do": "appState",
+      "label": "29-arrow-redo"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[300, 120]],
+      "to": [[300, 80]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-target-moved"
+    },
+    {
+      "do": "appState",
+      "label": "29-target-moved"
+    },
+    {
+      "do": "aria",
+      "save": "m29-02-target-moved"
+    },
+    {
+      "do": "screenshot",
+      "name": "m29-02-target-moved"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 310]],
+      "to": [[266, 310]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end-m16"
+    },
+    {
+      "do": "appState",
+      "label": "29-end-m16"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 340]],
+      "to": [[250, 340]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end-0"
+    },
+    {
+      "do": "appState",
+      "label": "29-end-0"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 370]],
+      "to": [[242, 370]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end-p8"
+    },
+    {
+      "do": "appState",
+      "label": "29-end-p8"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 400]],
+      "to": [[234, 400]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end-p16"
+    },
+    {
+      "do": "appState",
+      "label": "29-end-p16"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 430]],
+      "to": [[226, 430]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end-p24"
+    },
+    {
+      "do": "appState",
+      "label": "29-end-p24"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 460]],
+      "to": [[210, 460]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end-p40"
+    },
+    {
+      "do": "appState",
+      "label": "29-end-p40"
+    },
+    {
+      "do": "tap",
+      "at": [150, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "29-end"
+    },
+    {
+      "do": "appState",
+      "label": "29-end"
+    },
+    {
+      "do": "aria",
+      "save": "m29-03-end"
+    },
+    {
+      "do": "screenshot",
+      "name": "m29-03-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

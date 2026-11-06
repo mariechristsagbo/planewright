@@ -1,0 +1,289 @@
+{
+  "description": "Desktop: wheel pan (vertical, Shift horizontal), Ctrl+wheel zoom, keyboard zoom, zoom to fit, Space+drag and hand-tool pan, zen/view/grid/snap toggles. From s6 on, its emulate step is an assertMetrics step and only 00 emulates. In s5 the re-applied override read back the headless default screen (800x600) because the preceding Playwright screenshot had reset the emulated screen metrics; that was later reproduced on a self-authored fixture, and the driver now captures through CDP instead.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "v"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-start"
+    },
+    {
+      "do": "wheel",
+      "at": [640, 360],
+      "dy": 200
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-wheel-down-200"
+    },
+    {
+      "do": "wheel",
+      "at": [640, 360],
+      "dy": 200,
+      "modifiers": ["Shift"]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-shift-wheel-200"
+    },
+    {
+      "do": "wheel",
+      "at": [640, 360],
+      "dy": -100,
+      "modifiers": ["Control"]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-ctrl-wheel-up-100"
+    },
+    {
+      "do": "key",
+      "key": "Control+0"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-ctrl-0"
+    },
+    {
+      "do": "key",
+      "key": "Control+Equal"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-ctrl-plus"
+    },
+    {
+      "do": "key",
+      "key": "Control+Minus"
+    },
+    {
+      "do": "key",
+      "key": "Control+Minus"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-ctrl-minus-x2"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Digit1"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-shift-1-fit"
+    },
+    {
+      "do": "keyDown",
+      "key": "Space"
+    },
+    {
+      "do": "drag",
+      "from": [900, 500],
+      "to": [800, 450]
+    },
+    {
+      "do": "keyUp",
+      "key": "Space"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-space-drag"
+    },
+    {
+      "do": "key",
+      "key": "h"
+    },
+    {
+      "do": "drag",
+      "from": [900, 500],
+      "to": [950, 550]
+    },
+    {
+      "do": "key",
+      "key": "v"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-hand-drag"
+    },
+    {
+      "do": "key",
+      "key": "Alt+z"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "screenshot",
+      "name": "view-01-zen"
+    },
+    {
+      "do": "aria",
+      "save": "view-01-zen"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-zen-on"
+    },
+    {
+      "do": "key",
+      "key": "Alt+z"
+    },
+    {
+      "do": "key",
+      "key": "Alt+r"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "screenshot",
+      "name": "view-02-viewmode"
+    },
+    {
+      "do": "aria",
+      "save": "view-02-viewmode"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-view-on"
+    },
+    {
+      "do": "key",
+      "key": "Alt+r"
+    },
+    {
+      "do": "key",
+      "key": "Control+Quote"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "screenshot",
+      "name": "view-03-grid"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-grid-on"
+    },
+    {
+      "do": "key",
+      "key": "Control+Quote"
+    },
+    {
+      "do": "key",
+      "key": "Alt+s"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-snap-toggled"
+    },
+    {
+      "do": "key",
+      "key": "Alt+s"
+    },
+    {
+      "do": "key",
+      "key": "Control+0"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Digit1"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "05-end"
+    }
+  ]
+}

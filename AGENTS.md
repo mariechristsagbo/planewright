@@ -63,6 +63,12 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   Node.js APIs.
 - `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
   `scripts/tests`.
+- `research/excalidraw`: issue #1 behavioural-research tooling (loopback driver, scenarios,
+  evidence builders, container browser, isolation check and self-test), plain Node.js `.mjs`
+  under its own ESLint block `planewright/research` with Node and browser globals. Its tests run
+  in the `research:unit` and `research:integration` Vitest projects, and the driver uses the
+  root devDependency `playwright-core`. Sanitised outputs live in `docs/reverse-engineering`; raw
+  evidence stays outside the repository.
 
 ## Coding conventions
 

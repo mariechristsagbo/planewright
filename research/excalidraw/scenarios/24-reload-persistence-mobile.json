@@ -1,0 +1,75 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-54 (and R-19 for the theme): reload a drawn scene with no input. It reads the stored scene and app state and captures the view, reloads the page with 09b's reload, wait and metrics assertion, then reads and captures again, so the stored state and the visible view can be compared across the reload. Runs after a scenario that leaves a drawn scene (planned after 22 and 16).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "scene",
+      "label": "24-before-reload"
+    },
+    {
+      "do": "appState",
+      "label": "24-before-reload"
+    },
+    {
+      "do": "aria",
+      "save": "m24-01-before-reload"
+    },
+    {
+      "do": "screenshot",
+      "name": "m24-01-before-reload"
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "scene",
+      "label": "24-after-reload"
+    },
+    {
+      "do": "appState",
+      "label": "24-after-reload"
+    },
+    {
+      "do": "aria",
+      "save": "m24-02-after-reload"
+    },
+    {
+      "do": "screenshot",
+      "name": "m24-02-after-reload"
+    }
+  ]
+}

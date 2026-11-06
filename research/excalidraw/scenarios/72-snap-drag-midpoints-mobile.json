@@ -1,0 +1,468 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-19: what snapping does to a drag. Draws rectangles A [40,120,80,80] and B [200,140,80,80], selects B by a tap on its left stroke and drags it up by 17 px, to 3 px below A's top, reading the scene, then Undo; turns Snap to objects on, repeats the same drag, then Undo, and turns it off. It then draws an arrow from (86,270) to (86,206), 6 px right of the midpoint of A's bottom stroke and 6 px below it, then Undo; toggles Snap to midpoints, draws the same arrow, Undo, and toggles it back. Each menu choice keeps Preferences expanded and is closed by a tap at (330,300). It types nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "appState",
+      "label": "72-start"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[120, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 140]],
+      "to": [[280, 220]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-two"
+    },
+    {
+      "do": "appState",
+      "label": "72-two"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [200, 180]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "72-moved-free-selected"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 180]],
+      "to": [[200, 163]],
+      "steps": 10
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-moved-free"
+    },
+    {
+      "do": "appState",
+      "label": "72-moved-free"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-moved-free-undo"
+    },
+    {
+      "do": "appState",
+      "label": "72-moved-free-undo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "72-snap-on"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [200, 180]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "72-moved-snap-selected"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 180]],
+      "to": [[200, 163]],
+      "steps": 10
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-moved-snap"
+    },
+    {
+      "do": "appState",
+      "label": "72-moved-snap"
+    },
+    {
+      "do": "screenshot",
+      "name": "m72-01-moved-snap"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-moved-snap-undo"
+    },
+    {
+      "do": "appState",
+      "label": "72-moved-snap-undo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "72-snap-off"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[86, 270]],
+      "to": [[86, 206]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-arrow-first"
+    },
+    {
+      "do": "appState",
+      "label": "72-arrow-first"
+    },
+    {
+      "do": "screenshot",
+      "name": "m72-02-arrow-first"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-arrow-first-undo"
+    },
+    {
+      "do": "appState",
+      "label": "72-arrow-first-undo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to midpoints",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "72-midpoints-toggled"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[86, 270]],
+      "to": [[86, 206]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-arrow-second"
+    },
+    {
+      "do": "appState",
+      "label": "72-arrow-second"
+    },
+    {
+      "do": "screenshot",
+      "name": "m72-03-arrow-second"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "72-arrow-second-undo"
+    },
+    {
+      "do": "appState",
+      "label": "72-arrow-second-undo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to midpoints",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "72-midpoints-restored"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

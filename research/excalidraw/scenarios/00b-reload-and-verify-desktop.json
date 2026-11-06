@@ -1,0 +1,25 @@
+{
+  "description": "Desktop 1280x720: reload the page and assert the emulated metrics. A navigation restores the override that 00 applied before the first navigation. Used in s6 after REA calls and after Playwright screenshots; the drift seen there (headless default screen 800x600) was traced to Playwright's page.screenshot(), which the driver no longer uses. This reload is not a persistence observation: what scenario 06's reload restored is in behaviour B-30, and what else a reload keeps is not observed (R-54).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 2500
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

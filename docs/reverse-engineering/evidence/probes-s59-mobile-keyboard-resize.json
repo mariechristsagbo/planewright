@@ -1,0 +1,1154 @@
+[
+  {
+    "label": "49-start",
+    "at": "2026-11-06T02:54:49.248Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-01",
+    "at": "2026-11-06T02:54:49.283Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-02",
+    "at": "2026-11-06T02:54:49.536Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-03",
+    "at": "2026-11-06T02:54:49.561Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-04",
+    "at": "2026-11-06T02:54:49.586Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-05",
+    "at": "2026-11-06T02:54:49.822Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-06",
+    "at": "2026-11-06T02:54:49.851Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-07",
+    "at": "2026-11-06T02:54:49.881Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-08",
+    "at": "2026-11-06T02:54:49.908Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-09",
+    "at": "2026-11-06T02:54:50.178Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-10",
+    "at": "2026-11-06T02:54:50.201Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-11",
+    "at": "2026-11-06T02:54:50.269Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-12",
+    "at": "2026-11-06T02:54:50.292Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-13",
+    "at": "2026-11-06T02:54:50.531Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-14",
+    "at": "2026-11-06T02:54:50.557Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-15",
+    "at": "2026-11-06T02:54:50.586Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-16",
+    "at": "2026-11-06T02:54:50.606Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-17",
+    "at": "2026-11-06T02:54:50.636Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-18",
+    "at": "2026-11-06T02:54:50.662Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-19",
+    "at": "2026-11-06T02:54:50.691Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-20",
+    "at": "2026-11-06T02:54:50.710Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-21",
+    "at": "2026-11-06T02:54:50.973Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-22",
+    "at": "2026-11-06T02:54:50.995Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-23",
+    "at": "2026-11-06T02:54:51.026Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-24",
+    "at": "2026-11-06T02:54:51.050Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-25",
+    "at": "2026-11-06T02:54:51.080Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-26",
+    "at": "2026-11-06T02:54:51.122Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-27",
+    "at": "2026-11-06T02:54:51.152Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-28",
+    "at": "2026-11-06T02:54:51.179Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-29",
+    "at": "2026-11-06T02:54:51.208Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-tab-30",
+    "at": "2026-11-06T02:54:51.228Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-back-1",
+    "at": "2026-11-06T02:54:51.277Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-back-2",
+    "at": "2026-11-06T02:54:51.329Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-back-3",
+    "at": "2026-11-06T02:54:51.367Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-back-4",
+    "at": "2026-11-06T02:54:51.406Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-escape",
+    "at": "2026-11-06T02:54:52.184Z",
+    "focused": {
+      "tag": "DIV",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 198,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [0, 0, 390, 844],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "49-end",
+    "at": "2026-11-06T02:54:52.199Z",
+    "elements": [],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "52-390x844-start",
+    "at": "2026-11-06T02:55:38.501Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[336, 794, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[63, 794, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[18, 794, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-480x844",
+    "at": "2026-11-06T02:55:40.884Z",
+    "layout": {
+      "viewport": [480, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[199, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[436, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[319, 748, 32, 32]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[425, 794, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[64, 794, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[19, 794, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-600x960",
+    "at": "2026-11-06T02:55:43.836Z",
+    "layout": {
+      "viewport": [600, 960],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[205, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[654, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 908, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[554, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[167, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[129, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-768x1024",
+    "at": "2026-11-06T02:55:47.039Z",
+    "layout": {
+      "viewport": [768, 1024],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[252, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[716, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 972, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[601, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[214, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[176, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-820x1180",
+    "at": "2026-11-06T02:55:50.432Z",
+    "layout": {
+      "viewport": [820, 1180],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[278, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[768, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 1128, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[627, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[240, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[202, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-1024x1366",
+    "at": "2026-11-06T02:55:54.675Z",
+    "layout": {
+      "viewport": [1024, 1366],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[344, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[972, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 1314, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[713, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[304, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[264, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-1024x768",
+    "at": "2026-11-06T02:55:58.138Z",
+    "layout": {
+      "viewport": [1024, 768],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[380, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[972, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 716, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[729, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[342, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[304, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-1180x820",
+    "at": "2026-11-06T02:56:01.258Z",
+    "layout": {
+      "viewport": [1180, 820],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[458, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[1128, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 768, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[807, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[420, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[382, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-1280x800",
+    "at": "2026-11-06T02:56:05.135Z",
+    "layout": {
+      "viewport": [1280, 800],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[502, 20, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[1228, 16, 36, 36]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[158, 748, 36, 36]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[871, 20, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[462, 20, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[422, 20, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-844x390",
+    "at": "2026-11-06T02:56:08.235Z",
+    "layout": {
+      "viewport": [844, 390],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[381, 340, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[800, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[577, 294, 32, 32]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[607, 340, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[246, 340, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[201, 340, 36, 36]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "52-390x844-end",
+    "at": "2026-11-06T02:56:10.832Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        },
+        {
+          "name": "More tools",
+          "boxes": [[336, 794, 36, 36]]
+        },
+        {
+          "name": "Selection",
+          "boxes": [[63, 794, 36, 36]]
+        },
+        {
+          "name": "Hand (panning tool)",
+          "boxes": [[18, 794, 36, 36]]
+        }
+      ]
+    }
+  }
+]

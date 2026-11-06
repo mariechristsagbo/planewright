@@ -1,0 +1,18 @@
+# script=isolation-check.sh
+# head=67a7b03fceb6b2ad8cf195447b069ee4646e0b33
+# started=2026-11-06T12:10:25Z
+# ended=2026-11-06T12:11:13Z
+# exit=0
+PASS published only on 127.0.0.1:9242
+PASS run network pw-isocheck-net has inter-container traffic disabled
+PASS host reaches DevTools on 127.0.0.1:9242
+PASS default-bridge-probe->browser-forwarder: UNREACHABLE:timeout
+PASS same-network-probe->browser-forwarder: UNREACHABLE:timeout
+PASS same-network-probe->browser-devtools-loopback-port: UNREACHABLE:timeout
+PASS default-bridge-probe->bridge-gateway-published-port: UNREACHABLE:timeout
+PASS control: shared-namespace probe reaches 127.0.0.1:9222
+PASS forwarder peer filter: non-gateway source UNREACHABLE:ECONNRESET
+INFO forwarder refusals logged: 1
+PASS container pw-isocheck removed
+PASS network pw-isocheck-net removed
+failures: 0

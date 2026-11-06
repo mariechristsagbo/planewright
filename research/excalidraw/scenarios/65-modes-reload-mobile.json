@@ -1,0 +1,278 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-19 and R-54: the theme and modes across a reload. It picks the Dark mode radio and turns Snap to objects and Zen mode on from the main menu, with Toggle grid still on from 63 and Overlap and Mouse from 64, reading the app state after each choice and saving the ARIA and a capture in zen mode; then reloads with 09b's reload, wait and metrics assertion and reads, saves and captures again. It then opens the menu, saving its ARIA to show whether zen mode left it, turns View mode on from Preferences, reads and captures, and reloads once more, reading and capturing after it. It types nothing and follows no link. Runs after 64 in the same session, last before 16, since zen and view mode hide controls.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "radio",
+      "name": "Dark mode",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "65-dark"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "65-snap"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Zen mode",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "65-zen"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m65-01-zen"
+    },
+    {
+      "do": "screenshot",
+      "name": "m65-01-zen"
+    },
+    {
+      "do": "scene",
+      "label": "65-before-reload"
+    },
+    {
+      "do": "appState",
+      "label": "65-before-reload"
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "scene",
+      "label": "65-after-reload"
+    },
+    {
+      "do": "appState",
+      "label": "65-after-reload"
+    },
+    {
+      "do": "aria",
+      "save": "m65-02-after-reload"
+    },
+    {
+      "do": "screenshot",
+      "name": "m65-02-after-reload"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m65-03-menu"
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "View mode",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "65-view"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m65-04-view"
+    },
+    {
+      "do": "screenshot",
+      "name": "m65-04-view"
+    },
+    {
+      "do": "reload"
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "scene",
+      "label": "65-view-reloaded"
+    },
+    {
+      "do": "appState",
+      "label": "65-view-reloaded"
+    },
+    {
+      "do": "aria",
+      "save": "m65-05-view-reloaded"
+    },
+    {
+      "do": "screenshot",
+      "name": "m65-05-view-reloaded"
+    }
+  ]
+}

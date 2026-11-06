@@ -1,0 +1,27 @@
+# script=selftest.sh
+# head=b21edd4fc5069479371cde3dfe859f6d03ce1816
+# started=2026-11-05T17:54:28Z
+# ended=2026-11-05T17:54:45Z
+# exit=0
+PASS token file has mode 600
+PASS desktop emulation passes its read-back assertion
+PASS mobile fixture reads 390x844 portrait at DPR 3 with a matching canvas backing store
+PASS navigation outside the reference origin is refused
+PASS ARIA snapshot is redacted before it is written
+PASS no room-shaped value reaches the ARIA file
+PASS masked screenshot is written with 2 masks at device-pixel size (1170 px wide)
+PASS a capture leaves DPR 3 and the emulated screen intact
+PASS a mask that matches nothing writes no file
+PASS a metrics mismatch is fatal and stops the batch
+PASS selftest-masked.png unmasked/sampled: 0/13312 0/8281
+masked screenshots: 1, failed: 0
+PASS masked regions are fully painted in the written PNG (pixel check)
+PASS a screenshot is refused while a refuseIf element is present
+PASS a refused screenshot writes no file
+PASS every step, including failures, is in the timeline
+PASS failed rows carry a sanitised error
+PASS unauthenticated POST /quit is refused (401)
+PASS authenticated quit stops the driver
+PASS browser container removed
+PASS browser network removed
+failures: 0

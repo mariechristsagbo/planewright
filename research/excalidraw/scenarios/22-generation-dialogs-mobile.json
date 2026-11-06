@@ -1,0 +1,170 @@
+{
+  "description": "Mobile 390x844, DPR 3, touch, R-63: open Mermaid to Excalidraw, Text to diagram and Wireframe to code from More tools and record each dialog; in the Mermaid dialog tap Insert with whatever definition it offers and probe the scene. Nothing is generated, typed, signed in or accepted. Runs after 09 (and after 10 and 16 in s12).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m22-00-more-tools"
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Mermaid to Excalidraw",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 2000
+    },
+    {
+      "do": "aria",
+      "save": "m22-01-mermaid"
+    },
+    {
+      "do": "screenshot",
+      "name": "m22-01-mermaid"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Insert",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "scene",
+      "label": "22-mermaid-inserted"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Text to diagram",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 2000
+    },
+    {
+      "do": "aria",
+      "save": "m22-02-ttd"
+    },
+    {
+      "do": "screenshot",
+      "name": "m22-02-ttd"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Wireframe to code",
+      "exact": false
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "aria",
+      "save": "m22-03-wireframe"
+    },
+    {
+      "do": "screenshot",
+      "name": "m22-03-wireframe"
+    },
+    {
+      "do": "appState",
+      "label": "22-wireframe"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,194 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-11: Add link with a self-authored URL that is never followed. Runs right after 46 in the same session, so 46's elements stay on the canvas. Draws a rectangle [200,100,120,60], taps Add link in its Actions popover and saves the ARIA and a capture of what opens, clicks the one textbox, which is unnamed, types https://example.com/planewright-r11 on a reserved example domain with the keyboard standing in for the phone's own, and presses Enter. Then Undo and Redo, and a tap on empty canvas. Never touches the element's corners or any link it shows. Stops at the first failed step, so nothing is typed unless the textbox was clicked. Reads the scene, with the element's link origin and path, and the app state after each step.",
+  "continueOnError": false,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 100]],
+      "to": [[320, 160]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "47-rect"
+    },
+    {
+      "do": "appState",
+      "label": "47-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Add link",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m47-01-link-editor"
+    },
+    {
+      "do": "screenshot",
+      "name": "m47-01-link-editor"
+    },
+    {
+      "do": "scene",
+      "label": "47-editor"
+    },
+    {
+      "do": "appState",
+      "label": "47-editor"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "type",
+      "text": "https://example.com/planewright-r11"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "47-link"
+    },
+    {
+      "do": "appState",
+      "label": "47-link"
+    },
+    {
+      "do": "aria",
+      "save": "m47-02-after-link"
+    },
+    {
+      "do": "screenshot",
+      "name": "m47-02-after-link"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "47-link-undo"
+    },
+    {
+      "do": "appState",
+      "label": "47-link-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "47-link-redo"
+    },
+    {
+      "do": "appState",
+      "label": "47-link-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m47-03-deselected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m47-03-deselected"
+    },
+    {
+      "do": "scene",
+      "label": "47-end"
+    },
+    {
+      "do": "appState",
+      "label": "47-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

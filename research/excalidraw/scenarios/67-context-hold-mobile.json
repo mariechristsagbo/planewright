@@ -1,0 +1,200 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-08, R-09 and R-33: the long press. Runs right after 09 on an empty canvas. Holds one finger still for 800 ms on empty canvas at (200,560), then saves the ARIA, a capture and the app state, and presses Escape. Draws a rectangle [120,330,120,90], deselects it with a tap at (330,640), and holds on its left stroke at (120,375) the same way, reading the scene too; then selects it with a tap there and holds again. A local fixture run found that this headless Chromium fires no contextmenu for a held touch, so a menu shows only if the page times the press itself. It picks no menu item, types nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "appState",
+      "label": "67-start"
+    },
+    {
+      "do": "touchHold",
+      "at": [200, 560],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m67-01-canvas-hold"
+    },
+    {
+      "do": "screenshot",
+      "name": "m67-01-canvas-hold"
+    },
+    {
+      "do": "appState",
+      "label": "67-canvas-hold"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[120, 330]],
+      "to": [[240, 420]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "67-rect"
+    },
+    {
+      "do": "appState",
+      "label": "67-rect"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "67-deselected"
+    },
+    {
+      "do": "touchHold",
+      "at": [120, 375],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m67-02-element-hold"
+    },
+    {
+      "do": "screenshot",
+      "name": "m67-02-element-hold"
+    },
+    {
+      "do": "scene",
+      "label": "67-element-hold"
+    },
+    {
+      "do": "appState",
+      "label": "67-element-hold"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "67-element-escape"
+    },
+    {
+      "do": "tap",
+      "at": [120, 375]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "67-selected"
+    },
+    {
+      "do": "touchHold",
+      "at": [120, 375],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m67-03-selected-hold"
+    },
+    {
+      "do": "screenshot",
+      "name": "m67-03-selected-hold"
+    },
+    {
+      "do": "scene",
+      "label": "67-selected-hold"
+    },
+    {
+      "do": "appState",
+      "label": "67-selected-hold"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "67-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

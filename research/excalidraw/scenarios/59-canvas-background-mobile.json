@@ -1,0 +1,140 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-05: the canvas background. Opens the main menu and Canvas background by its exact name, which s61 found opens a hex code box of that name; clicks that box, selects its text with Control+A and types the hex code ffc9c9 with Enter, reading the stored background, ARIA and a capture; closes the picker with a tap on empty canvas, then presses Undo and Redo, reading the background after each. It stops at its first failed step, so nothing is typed unless the named box was clicked, and an Undo that cannot be pressed ends it. The keyboard stands in for the phone's. Runs right after 09, or after 54 or 58.",
+  "continueOnError": false,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Canvas background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m59-01-picker"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Canvas background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "type",
+      "text": "ffc9c9"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "59-typed"
+    },
+    {
+      "do": "aria",
+      "save": "m59-02-typed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m59-02-typed"
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "59-closed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "59-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "59-redo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m59-03-redo"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

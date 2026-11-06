@@ -1,0 +1,329 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-30: a fourth point and deleting a point, in Edit arrow. Runs right after 45 in the same session, so 45's text and stroke stay on the canvas. Draws an arrow by a drag from (60,200) to (300,200), makes it sharp with the first Arrow type radio at (70,690), and after a deselecting tap and a tap on it at (100,200) drags from its middle to (180,140), which adds a third point (B-40). s54 found that a selected arrow with three points shows no midpoint handles, and that Edit arrow shows one in the middle of each segment, so it taps Edit arrow and drags from the first segment's midpoint handle, (120,170), to (120,230), then presses Undo and Redo. Taps the new point at (120,230), taps Delete in the Actions popover and presses Undo, then taps empty canvas twice. Reads the scene, with the arrow's point count, and the app state after each step.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 200]],
+      "to": [[300, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "48-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Arrow type",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [70, 690]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-sharp"
+    },
+    {
+      "do": "appState",
+      "label": "48-sharp"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [100, 200]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 200]],
+      "to": [[180, 140]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-point-3"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-3"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Edit arrow",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-edit"
+    },
+    {
+      "do": "appState",
+      "label": "48-edit"
+    },
+    {
+      "do": "aria",
+      "save": "m48-01-edit-arrow"
+    },
+    {
+      "do": "screenshot",
+      "name": "m48-01-edit-arrow"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[120, 170]],
+      "to": [[120, 230]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-point-4"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-4"
+    },
+    {
+      "do": "aria",
+      "save": "m48-02-point-4"
+    },
+    {
+      "do": "screenshot",
+      "name": "m48-02-point-4"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-point-4-undo"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-4-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-point-4-redo"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-4-redo"
+    },
+    {
+      "do": "aria",
+      "save": "m48-03-after-redo"
+    },
+    {
+      "do": "tap",
+      "at": [120, 230]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "48-point-selected"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-selected"
+    },
+    {
+      "do": "aria",
+      "save": "m48-04-point-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m48-04-point-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m48-05-actions-editing"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-point-delete"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-delete"
+    },
+    {
+      "do": "aria",
+      "save": "m48-06-after-point-delete"
+    },
+    {
+      "do": "screenshot",
+      "name": "m48-06-after-point-delete"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-point-delete-undo"
+    },
+    {
+      "do": "appState",
+      "label": "48-point-delete-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-edit-end"
+    },
+    {
+      "do": "appState",
+      "label": "48-edit-end"
+    },
+    {
+      "do": "aria",
+      "save": "m48-07-edit-end"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "48-end"
+    },
+    {
+      "do": "appState",
+      "label": "48-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

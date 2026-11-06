@@ -1,0 +1,292 @@
+{
+  "description": "Mobile emulation 390x844 DPR3 touch: draw rectangle with touch drag, tap-select, pinch zoom, two-finger pan, main menu, more tools, library, prefers-color-scheme dark versus explicit dark theme. Requires 09 first. s3 ran an earlier version whose first step re-applied the emulation; devicePixelRatio then read 1. The cause was the Playwright screenshot at the end of 09, not the re-emulation (see scenario 11 and the limitations). This version asserts the metrics at its start and end instead of re-emulating.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m02-rect-tool-active"
+    },
+    {
+      "do": "screenshot",
+      "name": "m02-rect-tool-active"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[120, 250]],
+      "to": [[260, 350]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "m-rect-touch"
+    },
+    {
+      "do": "appState",
+      "label": "m-rect-touch"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m03-rect-drawn"
+    },
+    {
+      "do": "screenshot",
+      "name": "m03-rect-drawn"
+    },
+    {
+      "do": "tap",
+      "at": [300, 600]
+    },
+    {
+      "do": "tap",
+      "at": [120, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "m-tap-select-stroke"
+    },
+    {
+      "do": "appState",
+      "label": "m-tap-select-stroke"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m04-rect-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m04-rect-selected"
+    },
+    {
+      "do": "tap",
+      "at": [300, 600]
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [150, 500],
+        [240, 500]
+      ],
+      "to": [
+        [100, 500],
+        [290, 500]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "m-pinch-out"
+    },
+    {
+      "do": "appState",
+      "label": "m-pinch-out"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [150, 500],
+        [240, 500]
+      ],
+      "to": [
+        [150, 420],
+        [240, 420]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "m-two-finger-pan"
+    },
+    {
+      "do": "appState",
+      "label": "m-two-finger-pan"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m05-main-menu"
+    },
+    {
+      "do": "screenshot",
+      "name": "m05-main-menu"
+    },
+    {
+      "do": "tap",
+      "at": [300, 700]
+    },
+    {
+      "do": "tap",
+      "at": [353, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m06-more-tools"
+    },
+    {
+      "do": "screenshot",
+      "name": "m06-more-tools"
+    },
+    {
+      "do": "tap",
+      "at": [300, 700]
+    },
+    {
+      "do": "tap",
+      "at": [362, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m07-library"
+    },
+    {
+      "do": "screenshot",
+      "name": "m07-library"
+    },
+    {
+      "do": "tap",
+      "at": [362, 28]
+    },
+    {
+      "do": "tap",
+      "at": [300, 700]
+    },
+    {
+      "do": "colorScheme",
+      "value": "dark"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "m-dark-scheme-emulated"
+    },
+    {
+      "do": "appState",
+      "label": "m-dark-scheme-emulated"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "role",
+      "role": "radio",
+      "name": "Dark mode"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "m-dark-via-menu"
+    },
+    {
+      "do": "appState",
+      "label": "m-dark-via-menu"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m08-dark-menu"
+    },
+    {
+      "do": "screenshot",
+      "name": "m08-dark-menu"
+    },
+    {
+      "do": "tap",
+      "at": [300, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "screenshot",
+      "name": "m09-dark-canvas"
+    },
+    {
+      "do": "aria",
+      "save": "m09-dark-canvas"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

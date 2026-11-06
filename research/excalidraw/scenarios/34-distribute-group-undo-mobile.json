@@ -1,0 +1,429 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-49, R-51 and R-52: cases that s25 left open. Draws a row of three 60x60 rectangles at x 20, 100 and 300 (gaps 20 and 140), box-selects it with a one-finger drag from (10,100) to (375,200) and applies Distribute horizontally from the Actions popover, then Undo and Redo; draws a column of three 60x40 rectangles at y 260, 320 and 520 (gaps 20 and 160), box-selects it from (20,240) to (120,580) and applies Distribute vertically, then Undo. Box-selects the row again, groups it and presses Undo straight after, then Redo. Finally deselects with a tap on empty canvas and presses Undo, to see whether a selection change is undone. Reads the scene and app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 120]],
+      "to": [[80, 180]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[100, 120]],
+      "to": [[160, 180]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[300, 120]],
+      "to": [[360, 180]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[10, 100]],
+      "to": [[375, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-row-selected"
+    },
+    {
+      "do": "appState",
+      "label": "34-row-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Distribute horizontally",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-distribute-horizontally"
+    },
+    {
+      "do": "appState",
+      "label": "34-distribute-horizontally"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-distribute-horizontally-undo"
+    },
+    {
+      "do": "appState",
+      "label": "34-distribute-horizontally-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-distribute-horizontally-redo"
+    },
+    {
+      "do": "appState",
+      "label": "34-distribute-horizontally-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 260]],
+      "to": [[100, 300]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 320]],
+      "to": [[100, 360]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 520]],
+      "to": [[100, 560]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 240]],
+      "to": [[120, 580]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-column-selected"
+    },
+    {
+      "do": "appState",
+      "label": "34-column-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Distribute vertically",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-distribute-vertically"
+    },
+    {
+      "do": "appState",
+      "label": "34-distribute-vertically"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-distribute-vertically-undo"
+    },
+    {
+      "do": "appState",
+      "label": "34-distribute-vertically-undo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[10, 100]],
+      "to": [[375, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-row-reselected"
+    },
+    {
+      "do": "appState",
+      "label": "34-row-reselected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Group selection",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-grouped"
+    },
+    {
+      "do": "appState",
+      "label": "34-grouped"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-group-undo"
+    },
+    {
+      "do": "appState",
+      "label": "34-group-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-group-redo"
+    },
+    {
+      "do": "appState",
+      "label": "34-group-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-deselected"
+    },
+    {
+      "do": "appState",
+      "label": "34-deselected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "34-deselect-undo"
+    },
+    {
+      "do": "appState",
+      "label": "34-deselect-undo"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

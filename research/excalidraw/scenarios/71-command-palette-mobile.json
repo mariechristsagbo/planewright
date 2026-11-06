@@ -1,0 +1,240 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-07: commands run from the command palette. Runs after 67, whose rectangle [120,330,120,90] is on the canvas. Selects it with a tap on its left stroke, then four times opens the palette from the main menu, clicks its search box by name, types a command name and presses Enter, reading the app state: Zoom to selection, Reset zoom, Zoom to fit all elements and Reset zoom. It stops at its first failed step, so nothing is typed unless the search box was clicked. It follows no link.",
+  "continueOnError": false,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [120, 375]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "71-selected"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Command palette",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m71-01-palette"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Search menus, commands, and discover hidden gems",
+      "exact": true
+    },
+    {
+      "do": "type",
+      "text": "Zoom to selection"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m71-02-query-selection"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "71-zoom-selection"
+    },
+    {
+      "do": "screenshot",
+      "name": "m71-03-zoom-selection"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Command palette",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Search menus, commands, and discover hidden gems",
+      "exact": true
+    },
+    {
+      "do": "type",
+      "text": "Reset zoom"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "71-reset-zoom"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Command palette",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Search menus, commands, and discover hidden gems",
+      "exact": true
+    },
+    {
+      "do": "type",
+      "text": "Zoom to fit all elements"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "71-zoom-fit"
+    },
+    {
+      "do": "screenshot",
+      "name": "m71-04-zoom-fit"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Command palette",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Search menus, commands, and discover hidden gems",
+      "exact": true
+    },
+    {
+      "do": "type",
+      "text": "Reset zoom"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "appState",
+      "label": "71-reset-zoom-again"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

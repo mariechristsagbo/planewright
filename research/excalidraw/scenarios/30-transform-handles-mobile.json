@@ -1,0 +1,310 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-36: transform handles by touch at zoom 1. Draws four 120x80 rectangles, each left selected by the Rectangle tool, and drags one handle of each with one finger: the south-east corner of [30,100] by (30,30), the north-west corner of [240,110] by (-20,-20), the east side of [30,280] by (40,0) and the north side of [240,290] by (0,-30), starting each drag 4 px outside the element, where s12's capture of a selected rectangle shows the handles; then undoes and redoes the last resize with the Undo and Redo buttons. Draws a fifth rectangle [135,470,120,80], saves a capture of its handles, drags the rotation handle 20 px above its top edge to 100 px right of its centre (a quarter turn if the pointer angle is followed), and undoes and redoes the rotation. Reads the scene and app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[30, 100]],
+      "to": [[150, 180]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[154, 184]],
+      "to": [[184, 214]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-se"
+    },
+    {
+      "do": "appState",
+      "label": "30-se"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[240, 110]],
+      "to": [[360, 190]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[236, 106]],
+      "to": [[216, 86]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-nw"
+    },
+    {
+      "do": "appState",
+      "label": "30-nw"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[30, 280]],
+      "to": [[150, 360]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[154, 320]],
+      "to": [[194, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-e"
+    },
+    {
+      "do": "appState",
+      "label": "30-e"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[240, 290]],
+      "to": [[360, 370]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[300, 286]],
+      "to": [[300, 256]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-n"
+    },
+    {
+      "do": "appState",
+      "label": "30-n"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-n-undo"
+    },
+    {
+      "do": "appState",
+      "label": "30-n-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-n-redo"
+    },
+    {
+      "do": "appState",
+      "label": "30-n-redo"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[135, 470]],
+      "to": [[255, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m30-01-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m30-01-selected"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[195, 450]],
+      "to": [[295, 510]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-rotate"
+    },
+    {
+      "do": "appState",
+      "label": "30-rotate"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-rotate-undo"
+    },
+    {
+      "do": "appState",
+      "label": "30-rotate-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-rotate-redo"
+    },
+    {
+      "do": "appState",
+      "label": "30-rotate-redo"
+    },
+    {
+      "do": "tap",
+      "at": [195, 680]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "30-end"
+    },
+    {
+      "do": "appState",
+      "label": "30-end"
+    },
+    {
+      "do": "aria",
+      "save": "m30-02-end"
+    },
+    {
+      "do": "screenshot",
+      "name": "m30-02-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

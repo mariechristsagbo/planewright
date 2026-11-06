@@ -1,0 +1,321 @@
+// Runs browser.sh, isolation-check.sh, lib/probe-outcome.sh, lib/resource-state.sh and
+// lib/selftest-checks.sh against stub
+// `docker`, `curl` and `sleep` commands placed first on PATH. No container or browser is started
+// and no website is contacted; the stubs only print canned answers and log their arguments.
+import { spawnSync } from 'node:child_process';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { afterAll, beforeEach, describe, expect, it } from 'vitest';
+
+const HERE = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+const dir = mkdtempSync(join(tmpdir(), 'pw-shell-test-'));
+const bin = join(dir, 'bin');
+const log = join(dir, 'docker.log');
+const NET_ID = 'a'.repeat(64);
+const CID = 'c'.repeat(64);
+afterAll(() => rmSync(dir, { recursive: true, force: true }));
+
+const DOCKER = `#!/usr/bin/env bash
+echo "$1 $2 $3" >>"$FAKE_LOG"
+case "$1 $2" in
+  "network create") [[ "\${FAKE_NET_CREATE:-ok}" == ok ]] || exit 1; echo "$FAKE_NET_ID" ;;
+  "network inspect")
+    case "$*" in
+      *" bridge "*) echo 172.17.0.1 ;;
+      *Gateway*) echo 172.30.0.1 ;;
+      *enable_icc*) echo false ;;
+      *) [[ -n "\${FAKE_NET_LABEL:-}" ]] || exit 1; echo "$FAKE_NET_LABEL" ;;
+    esac ;;
+  "container inspect") [[ -n "\${FAKE_CONTAINER_LABEL:-}" ]] || exit 1; echo "$FAKE_CONTAINER_LABEL" ;;
+  "rm -f") [[ "\${FAKE_RM:-ok}" == ok ]] || exit 1 ;;
+  "network rm") [[ "\${FAKE_NET_RM:-ok}" == ok ]] || exit 1 ;;
+  "run -d") [[ "\${FAKE_RUN:-ok}" == ok ]] || exit 125; echo "$FAKE_CONTAINER_ID" ;;
+  "run --rm") printf '%s' "\${FAKE_PROBE_OUT:-}"; exit "\${FAKE_PROBE_EXIT:-0}" ;;
+  "ps -a" | "network ls") [[ "\${FAKE_LIST:-ok}" == ok ]] || exit 1; printf '%s\\n' \${FAKE_NAMES:-} ;;
+  inspect\\ *) echo "\${FAKE_BROWSER_IP-172.30.0.2}" ;;
+  port\\ *) echo "127.0.0.1:9242" ;;
+esac
+exit 0
+`;
+mkdirSync(bin);
+writeFileSync(join(bin, 'docker'), DOCKER, { mode: 0o755 });
+const curl = [
+  '#!/usr/bin/env bash',
+  '[[ -z "${FAKE_CURL_EXIT:-}" ]] || exit "$FAKE_CURL_EXIT"',
+  '[[ "${FAKE_CURL:-ok}" == ok ]] || exit 7',
+  'echo \'{"Browser": "Stub/1"}\'',
+  '',
+].join('\n');
+writeFileSync(join(bin, 'curl'), curl, { mode: 0o755 });
+writeFileSync(join(bin, 'sleep'), '#!/usr/bin/env bash\nexit 0\n', { mode: 0o755 });
+beforeEach(() => writeFileSync(log, ''));
+
+function sh(script, args, env = {}) {
+  const base = { PATH: `${bin}:${process.env.PATH}`, FAKE_LOG: log, FAKE_NET_ID: NET_ID };
+  const run = spawnSync('bash', [join(HERE, script), ...args], {
+    encoding: 'utf8',
+    env: { ...base, FAKE_CONTAINER_ID: CID, ...env },
+  });
+  const removals = readFileSync(log, 'utf8')
+    .split('\n')
+    .filter((line) => /^(?:rm |network rm )/u.test(line));
+  return { status: run.status, stdout: run.stdout, stderr: run.stderr, removals };
+}
+
+describe('browser.sh owned cleanup', () => {
+  it('removes only the network it created when the container fails to start', () => {
+    const { status, removals } = sh('browser.sh', ['start', 'pw-t'], { FAKE_RUN: 'fail' });
+    expect(status).not.toBe(0);
+    expect(removals).toEqual([`network rm ${NET_ID}`]);
+  });
+
+  it('removes its own container and network, by ID, when DevTools never comes up', () => {
+    const { status, removals } = sh('browser.sh', ['start', 'pw-t'], { FAKE_CURL: 'fail' });
+    expect(status).not.toBe(0);
+    expect(removals).toEqual([`rm -f ${CID}`, `network rm ${NET_ID}`]);
+  });
+
+  it('removes nothing when the network name is already taken', () => {
+    const { status, removals } = sh('browser.sh', ['start', 'pw-t'], { FAKE_NET_CREATE: 'no' });
+    expect(status).not.toBe(0);
+    expect(removals).toEqual([]);
+  });
+
+  it('keeps everything after a successful start', () => {
+    const { status, stdout, removals } = sh('browser.sh', ['start', 'pw-t']);
+    expect(status).toBe(0);
+    expect(stdout).toContain('"Browser"');
+    expect(removals).toEqual([]);
+  });
+
+  it('stops only resources with the research label', () => {
+    const env = { FAKE_CONTAINER_LABEL: `${CID} <no value>`, FAKE_NET_LABEL: `${NET_ID} 1` };
+    const { status, removals } = sh('browser.sh', ['stop', 'pw-t'], env);
+    expect(status).toBe(0);
+    expect(removals).toEqual([`network rm ${NET_ID}`]);
+  });
+});
+
+describe('browser.sh stop report', () => {
+  const labelled = { FAKE_CONTAINER_LABEL: `${CID} 1`, FAKE_NET_LABEL: `${NET_ID} 1` };
+
+  it('reports each removal it made', () => {
+    const { status, stdout } = sh('browser.sh', ['stop', 'pw-t'], labelled);
+    expect(status).toBe(0);
+    expect(stdout).toBe('removed container pw-t\nremoved network pw-t-net\n');
+  });
+
+  it('says so when it finds nothing to remove, and claims no removal', () => {
+    const { status, stdout, removals } = sh('browser.sh', ['stop', 'pw-t']);
+    expect(status).toBe(0);
+    expect(removals).toEqual([]);
+    expect(stdout).toContain('no container pw-t with the research label');
+    expect(stdout).toContain('no network pw-t-net with the research label');
+    expect(stdout).not.toMatch(/removed/u);
+  });
+
+  it.each([
+    ['container', 'pw-t'],
+    ['network', 'pw-t-net'],
+  ])('fails, claiming nothing, when docker cannot say whether the %s exists', (kind, name) => {
+    // No daemon or no permission: inspect and the listing both fail.
+    const { status, stdout, stderr, removals } = sh('browser.sh', ['stop', 'pw-t'], {
+      FAKE_LIST: 'fail',
+    });
+    expect(status).not.toBe(0);
+    expect(removals).toEqual([]);
+    expect(stderr).toContain(`${kind} ${name}: state UNKNOWN`);
+    expect(stdout).not.toContain(`no ${kind} ${name}`);
+  });
+
+  it.each([
+    ['container', { FAKE_RM: 'fail' }, 'could not remove container pw-t'],
+    ['network', { FAKE_NET_RM: 'fail' }, 'could not remove network pw-t-net'],
+  ])('fails, without claiming it, when the %s cannot be removed', (kind, env, message) => {
+    const { status, stdout, stderr } = sh('browser.sh', ['stop', 'pw-t'], { ...labelled, ...env });
+    expect(status).not.toBe(0);
+    expect(stderr).toContain(message);
+    expect(stdout).not.toContain(`removed ${kind}`);
+  });
+});
+
+describe('isolation-check.sh probe failures', () => {
+  const labelled = { FAKE_CONTAINER_LABEL: `${CID} 1`, FAKE_NET_LABEL: `${NET_ID} 1` };
+
+  it.each([
+    ['the probe container cannot run', { FAKE_PROBE_EXIT: '125' }, 'PROBE-ERROR:exit-125'],
+    ['the probe target is bad', { FAKE_PROBE_OUT: 'UNREACHABLE:ENOTFOUND' }, 'PROBE-ERROR:'],
+  ])('reports FAIL, never isolation, when %s', (_label, env, marker) => {
+    const { status, stdout } = sh('isolation-check.sh', ['9242'], { ...labelled, ...env });
+    expect(status).not.toBe(0);
+    const probeLines = stdout.split('\n').filter((line) => line.includes('probe->'));
+    expect(probeLines).toHaveLength(4);
+    for (const line of probeLines) expect(line).toMatch(new RegExp(`^FAIL .*${marker}`, 'u'));
+  });
+
+  it.each([
+    ['the docker listing fails', { FAKE_LIST: 'fail' }, 'UNKNOWN'],
+    ['the resources are still listed', { FAKE_NAMES: 'pw-isocheck pw-isocheck-net' }, 'PRESENT'],
+  ])('fails the removal checks when %s', (_label, env, state) => {
+    const { status, stdout } = sh('isolation-check.sh', ['9242'], { ...labelled, ...env });
+    expect(status).not.toBe(0);
+    expect(stdout).toContain(`FAIL container pw-isocheck after stop: ${state}`);
+    expect(stdout).toContain(`FAIL network pw-isocheck-net after stop: ${state}`);
+    expect(stdout).not.toMatch(/PASS .* removed/u);
+  });
+
+  it('passes the removal checks only when a successful listing omits both names', () => {
+    const { stdout } = sh('isolation-check.sh', ['9242'], {
+      ...labelled,
+      FAKE_NAMES: 'pw-isocheck-other unrelated-net',
+    });
+    expect(stdout).toContain('PASS container pw-isocheck removed');
+    expect(stdout).toContain('PASS network pw-isocheck-net removed');
+  });
+
+  it('stops before probing when the browser address cannot be read', () => {
+    const { status, stdout } = sh('isolation-check.sh', ['9242'], {
+      ...labelled,
+      FAKE_BROWSER_IP: '',
+    });
+    expect(status).not.toBe(0);
+    expect(stdout).toMatch(/FAIL could not read/u);
+    expect(stdout).not.toMatch(/probe->/u);
+  });
+});
+
+describe('probe_outcome', () => {
+  const classify = (code, output) =>
+    spawnSync(
+      'bash',
+      [
+        '-c',
+        `. "${join(HERE, 'lib/probe-outcome.sh')}"; probe_outcome "$1" "$2"`,
+        '_',
+        code,
+        output,
+      ],
+      { encoding: 'utf8' },
+    ).stdout.trim();
+
+  it.each([
+    ['0', 'REACHABLE', 'REACHABLE'],
+    ['0', 'UNREACHABLE:ECONNREFUSED', 'UNREACHABLE:ECONNREFUSED'],
+    ['0', 'UNREACHABLE:timeout', 'UNREACHABLE:timeout'],
+    ['0', 'UNREACHABLE:EAI_AGAIN', 'PROBE-ERROR:unexpected-output'],
+    ['0', 'UNREACHABLE:undefined', 'PROBE-ERROR:unexpected-output'],
+    ['0', '', 'PROBE-ERROR:unexpected-output'],
+    ['0', 'REACHABLE\nUNREACHABLE:timeout', 'PROBE-ERROR:unexpected-output'],
+    ['1', 'UNREACHABLE:timeout', 'PROBE-ERROR:exit-1'],
+  ])('classifies exit %s with output %j as %s', (code, output, expected) => {
+    expect(classify(code, output)).toBe(expected);
+  });
+});
+
+describe('resource_state', () => {
+  const state = (kind, name, env = {}) =>
+    spawnSync(
+      'bash',
+      [
+        '-c',
+        `. "${join(HERE, 'lib/resource-state.sh')}"; resource_state "$1" "$2"`,
+        '_',
+        kind,
+        name,
+      ],
+      { encoding: 'utf8', env: { PATH: `${bin}:${process.env.PATH}`, FAKE_LOG: log, ...env } },
+    ).stdout.trim();
+
+  it.each([
+    ['container', 'pw-x', { FAKE_NAMES: 'pw-x' }, 'PRESENT'],
+    ['network', 'pw-x-net', { FAKE_NAMES: 'pw-x pw-x-net' }, 'PRESENT'],
+    ['container', 'pw-x', { FAKE_NAMES: 'pw-x-net pw-xy' }, 'ABSENT'],
+    ['network', 'pw-x-net', {}, 'ABSENT'],
+    ['container', 'pw-x', { FAKE_LIST: 'fail' }, 'UNKNOWN'],
+    ['network', 'pw-x-net', { FAKE_LIST: 'fail' }, 'UNKNOWN'],
+    ['volume', 'pw-x', {}, 'UNKNOWN'],
+  ])('reports a %s named %s as %s', (kind, name, env, expected) => {
+    expect(state(kind, name, env)).toBe(expected);
+  });
+
+  it('reports UNKNOWN when there is no docker command at all', () => {
+    const empty = mkdtempSync(join(dir, 'no-docker-'));
+    const run = spawnSync(
+      '/bin/bash',
+      ['-c', `. "${join(HERE, 'lib/resource-state.sh')}"; resource_state container pw-x`],
+      { encoding: 'utf8', env: { PATH: empty } },
+    );
+    expect(run.stdout.trim()).toBe('UNKNOWN');
+  });
+});
+
+describe('selftest.sh checks', () => {
+  // Runs one function of lib/selftest-checks.sh and returns its exit status.
+  const status = (fn, args, env = {}, path = `${bin}:${process.env.PATH}`) =>
+    spawnSync(
+      '/bin/bash',
+      ['-c', `. "${join(HERE, 'lib/selftest-checks.sh')}"; ${fn} "$@"`, '_', ...args],
+      { encoding: 'utf8', env: { PATH: path, FAKE_LOG: log, ...env } },
+    ).status;
+
+  it.each([
+    ['the connection is refused (curl exit 7)', { FAKE_CURL_EXIT: '7' }, 0],
+    ['the driver still answers (curl exit 0)', {}, 1],
+    ['the request times out (curl exit 28)', { FAKE_CURL_EXIT: '28' }, 1],
+    ['curl cannot run (exit 127)', { FAKE_CURL_EXIT: '127' }, 1],
+  ])('driver_stopped passes only when %s', (_label, env, expected) => {
+    expect(status('driver_stopped', ['9353'], env)).toBe(expected);
+  });
+
+  it('driver_stopped fails when there is no curl command at all', () => {
+    const empty = mkdtempSync(join(dir, 'no-curl-'));
+    for (const tool of ['dirname', 'grep']) {
+      writeFileSync(join(empty, tool), `#!/bin/sh\nexec /usr/bin/${tool} "$@"\n`, { mode: 0o755 });
+    }
+    expect(status('driver_stopped', ['9353'], {}, empty)).toBe(1);
+  });
+
+  const aria = (name, text) => {
+    const file = join(dir, `${name}.yml`);
+    if (text !== null) writeFileSync(file, text);
+    return file;
+  };
+  const ROOM_SHAPED = `- textbox: https://x.invalid/#room=${'Z'.repeat(20)},${'Y'.repeat(22)}\n`;
+
+  it.each([
+    ['a redacted file', aria('redacted', '- textbox: https://x.invalid/#room=<redacted>\n'), 0, 0],
+    ['a file with a room value', aria('leaky', ROOM_SHAPED), 1, 1],
+    ['an empty file', aria('empty', ''), 1, 1],
+    ['a missing file', aria('missing', null), 1, 1],
+    ['a file without any room text', aria('plain', '- button "Copy link"\n'), 1, 0],
+  ])('judges %s', (_label, file, redacted, withoutValue) => {
+    expect(status('aria_redacted', [file])).toBe(redacted);
+    expect(status('aria_without_room_value', [file])).toBe(withoutValue);
+  });
+
+  it.each([
+    ['absent from a successful listing', { FAKE_NAMES: 'pw-other' }, 0],
+    ['still listed', { FAKE_NAMES: 'pw-selftest' }, 1],
+    ['unknown because the listing failed', { FAKE_LIST: 'fail' }, 1],
+  ])('resource_removed passes only for a container %s', (_label, env, expected) => {
+    expect(status('resource_removed', ['container', 'pw-selftest'], env)).toBe(expected);
+  });
+
+  it('are the functions selftest.sh uses, with no inline shell checks left', () => {
+    const selftest = readFileSync(join(HERE, 'selftest.sh'), 'utf8');
+    expect(selftest).toContain('. "$HERE/lib/selftest-checks.sh"');
+    for (const call of [
+      'driver_stopped "$DRIVER_PORT"',
+      'aria_redacted "$OUT/aria/selftest-dialog.yml"',
+      'aria_without_room_value "$OUT/aria/selftest-dialog.yml"',
+      'resource_removed container "$NAME"',
+      'resource_removed network "$NAME-net"',
+    ]) {
+      expect(selftest).toContain(call);
+    }
+    expect(selftest).not.toMatch(/bash -c|! docker/u);
+  });
+});

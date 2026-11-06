@@ -1,0 +1,145 @@
+{
+  "schema": "planewright-research-netlog-steps/v1",
+  "generated_by": "research/excalidraw/netlog-steps.mjs",
+  "drawing_steps": ["drag", "path", "touchDrag"],
+  "sessions": [
+    {
+      "session": "s83-mobile-final-batch",
+      "timeline_rows": 429,
+      "netlog_entries": 21,
+      "drawing": {
+        "steps": {
+          "drag": 0,
+          "path": 0,
+          "touchDrag": 11
+        },
+        "entries_during": 0,
+        "next_entry_ms": {
+          "min": 133304,
+          "max": 135821
+        },
+        "without_later_entry": 9,
+        "last_started": "2026-11-06T12:24:03.838Z",
+        "request_starts": {
+          "known": 20,
+          "unknown": 0,
+          "during_drawing": 0
+        }
+      },
+      "before_first_step": [],
+      "placements": [
+        {
+          "line": 3,
+          "started": "2026-11-06T12:19:18.650Z",
+          "do": "goto",
+          "entries": [
+            "+316 navigated https://excalidraw.com/",
+            "+749 request document 200 https://excalidraw.com/ start+132",
+            "+756 request script 200 https://excalidraw.com/assets/bundler-helpers-DA6W-a70.js start+512",
+            "+881 request stylesheet 200 https://excalidraw.com/assets/index-D0I-IbtP.css start+516",
+            "+886 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2 start+506",
+            "+909 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2 start+484",
+            "+919 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2 start+484",
+            "+924 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-SemiBold.woff2 start+485",
+            "+1235 request manifest 200 https://excalidraw.com/manifest.webmanifest start+911",
+            "+1246 request script 200 https://scripts.simpleanalyticscdn.com/latest.js start+887",
+            "+1291 request script 200 https://excalidraw.com/assets/index-COQVqmE8.js start+510",
+            "+2880 request script 200 https://excalidraw.com/assets/workbox-window.prod.es5-B9K5rw8f.js start+2524"
+          ]
+        },
+        {
+          "line": 4,
+          "started": "2026-11-06T12:19:21.570Z",
+          "do": "wait",
+          "entries": [
+            "+621 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q23 start+73",
+            "+673 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Regular.woff2 start+563",
+            "+691 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Medium.woff2 start+569",
+            "+719 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Bold.woff2 start+564",
+            "+742 request script 200 https://excalidraw.com/assets/roundRect-0PYZxl1G.js start+50",
+            "+866 request fetch 200 https://sentry.io/api/5179260/envelope/ q3 start-396",
+            "+943 request other 200 https://excalidraw.com/favicon-32x32.png start+856",
+            "+1039 request other 200 https://excalidraw.com/apple-touch-icon.png start+873"
+          ]
+        },
+        {
+          "line": 114,
+          "started": "2026-11-06T12:22:02.257Z",
+          "do": "wait",
+          "entries": [
+            "+65 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/CascadiaCode/CascadiaCode-Regular.woff2 sw start+46"
+          ]
+        }
+      ]
+    },
+    {
+      "session": "s84-mobile-final-batch-2",
+      "timeline_rows": 429,
+      "netlog_entries": 21,
+      "drawing": {
+        "steps": {
+          "drag": 0,
+          "path": 0,
+          "touchDrag": 11
+        },
+        "entries_during": 0,
+        "next_entry_ms": {
+          "min": 128971,
+          "max": 130925
+        },
+        "without_later_entry": 9,
+        "last_started": "2026-11-06T12:32:28.902Z",
+        "request_starts": {
+          "known": 20,
+          "unknown": 0,
+          "during_drawing": 0
+        }
+      },
+      "before_first_step": [],
+      "placements": [
+        {
+          "line": 3,
+          "started": "2026-11-06T12:27:56.320Z",
+          "do": "goto",
+          "entries": [
+            "+132 navigated https://excalidraw.com/",
+            "+191 request document 200 https://excalidraw.com/ start+62",
+            "+279 request stylesheet 200 https://excalidraw.com/assets/index-D0I-IbtP.css start+151",
+            "+300 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2 start+150",
+            "+307 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2 start+148",
+            "+312 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-SemiBold.woff2 start+149",
+            "+315 request manifest 200 https://excalidraw.com/manifest.webmanifest start+198",
+            "+317 request script 200 https://excalidraw.com/assets/bundler-helpers-DA6W-a70.js start+151",
+            "+321 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2 start+147",
+            "+416 request script 200 https://scripts.simpleanalyticscdn.com/latest.js start+318",
+            "+533 request script 200 https://excalidraw.com/assets/index-COQVqmE8.js start+150",
+            "+1084 request image 202 https://queue.simpleanalyticscdn.com/simple.gif q23 start+464"
+          ]
+        },
+        {
+          "line": 4,
+          "started": "2026-11-06T12:27:57.573Z",
+          "do": "wait",
+          "entries": [
+            "+37 request script 200 https://excalidraw.com/assets/workbox-window.prod.es5-B9K5rw8f.js start-242",
+            "+644 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Medium.woff2 start+510",
+            "+666 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Regular.woff2 start+499",
+            "+678 request script 200 https://excalidraw.com/assets/roundRect-0PYZxl1G.js start+9",
+            "+713 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/Assistant/Assistant-Bold.woff2 start+509",
+            "+1016 request other 200 https://excalidraw.com/favicon-32x32.png start+667",
+            "+1033 request fetch 200 https://sentry.io/api/5179260/envelope/ q3 start-428",
+            "+1058 request other 200 https://excalidraw.com/apple-touch-icon.png start+803"
+          ]
+        },
+        {
+          "line": 114,
+          "started": "2026-11-06T12:30:26.533Z",
+          "do": "wait",
+          "entries": [
+            "+35 request font 200 https://excalidraw.nyc3.cdn.digitaloceanspaces.com/oss/fonts/CascadiaCode/CascadiaCode-Regular.woff2 sw start+7"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "description": "Re-capture recorded in s1 after 07 (whose panel click missed): select the rectangle by its stroke in dark theme, capture the panel, then capture the idle frame paired with the REA screenshot (dark-06-idle-for-rea). Requires the end state of 07 (scroll 90,45). Overwrites the 07 files of the same names. In s1 this batch reused the names dark-03-props-panel and dark-06-idle-for-rea and overwrote 07's captures; from s5 on it uses the -b names and the driver refuses to overwrite any capture.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "click",
+      "at": [430, 420]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "dark-03b-props-panel"
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-03b-props-panel"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [1150, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "screenshot",
+      "name": "dark-06b-idle-for-rea"
+    }
+  ]
+}

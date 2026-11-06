@@ -1,0 +1,18 @@
+{
+  "description": "Selection chrome capture recorded in s1: select the resized rectangle by its stroke and screenshot the handles (sel-02-rect-handles). Requires the end state of 03 (rectangle at 340,240 sized 180x150; no scroll).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "click",
+      "at": [340, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "screenshot",
+      "name": "sel-02-rect-handles"
+    }
+  ]
+}

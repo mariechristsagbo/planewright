@@ -1,0 +1,454 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-26, R-12, R-33 and R-19: the System theme with an emulated colour scheme, the Overlap selection mode, Arrow binding off and on, and the wheel under each input device. With prefers-color-scheme emulated dark it picks System mode in the main menu, then emulates light and dark again, reading the app state and capturing after each. It drags a selection box over the top-left quarter of 63's rectangle at [200,400,80,80] from empty canvas, once in the default Wrap mode and once after picking Overlap, reading the selection. It turns Arrow binding off, draws an arrow from the centre of 63's first rectangle to its second's, turns it back on and draws a second one 20 px lower, reading the scene after each. Last it turns the wheel down and up at (300,300), first with the default Trackpad input and then after picking Mouse, reading the zoom and scroll after each turn. Each menu choice reopens the menu and closes it with a tap on empty canvas at (330,300). It types nothing and follows no link. Runs after 63 in the same session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "colorScheme",
+      "value": "dark"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "radio",
+      "name": "System mode",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-system-dark"
+    },
+    {
+      "do": "aria",
+      "save": "m64-01-system-dark"
+    },
+    {
+      "do": "screenshot",
+      "name": "m64-01-system-dark"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "colorScheme",
+      "value": "light"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-system-light"
+    },
+    {
+      "do": "screenshot",
+      "name": "m64-02-system-light"
+    },
+    {
+      "do": "colorScheme",
+      "value": "dark"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-system-dark-again"
+    },
+    {
+      "do": "screenshot",
+      "name": "m64-03-system-dark-again"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 380]],
+      "to": [[240, 440]]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "64-wrap-partial"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "radio",
+      "name": "Overlap",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-overlap"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchDrag",
+      "from": [[180, 380]],
+      "to": [[240, 440]]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "64-overlap-partial"
+    },
+    {
+      "do": "appState",
+      "label": "64-overlap-partial"
+    },
+    {
+      "do": "screenshot",
+      "name": "m64-04-overlap-partial"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Arrow binding",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-binding-off"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[80, 600]],
+      "to": [[240, 600]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "64-arrow-unbound"
+    },
+    {
+      "do": "appState",
+      "label": "64-arrow-unbound"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Arrow binding",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-binding-on"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[80, 620]],
+      "to": [[240, 620]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "64-arrow-bound"
+    },
+    {
+      "do": "appState",
+      "label": "64-arrow-bound"
+    },
+    {
+      "do": "screenshot",
+      "name": "m64-05-arrows"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "wheel",
+      "at": [300, 300],
+      "dy": 120
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "64-wheel-trackpad"
+    },
+    {
+      "do": "wheel",
+      "at": [300, 300],
+      "dy": -120
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "64-wheel-trackpad-back"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "radio",
+      "name": "Mouse",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "64-mouse"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "wheel",
+      "at": [300, 300],
+      "dy": 120
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "64-wheel-mouse"
+    },
+    {
+      "do": "screenshot",
+      "name": "m64-06-wheel-mouse"
+    },
+    {
+      "do": "wheel",
+      "at": [300, 300],
+      "dy": -120
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "64-wheel-mouse-back"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

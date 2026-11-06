@@ -1,0 +1,145 @@
+{
+  "description": "Desktop 1280x720 light, R-56: on a synthetic one-rectangle scene, open Live collaboration... and click Export to Link once, which uploads the scene. The resulting link is a secret: no screenshot is taken while any dialog is open (refuseIf), ARIA text is redacted by the driver, the clipboard permission is never granted and the URL probe keeps key names and lengths only. Then close the dialog, probe the scene, undo and redo, and read the storage inventory. Requires 00 first in a fresh session; no REA call runs during it, because REA records keep URL fragments and DOM attributes.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [520, 300],
+      "to": [760, 460]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "20-drawn"
+    },
+    {
+      "do": "click",
+      "at": [1100, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "screenshot",
+      "name": "link-00-before",
+      "refuseIf": ["[role=dialog]"]
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Live collaboration...",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "link-01-share-dialog"
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Export to Link",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 5000
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "aria",
+      "save": "link-02-after-export"
+    },
+    {
+      "do": "appState",
+      "label": "20-after-export"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "link-03-after-close"
+    },
+    {
+      "do": "screenshot",
+      "name": "link-03-after-close",
+      "refuseIf": ["[role=dialog]"]
+    },
+    {
+      "do": "scene",
+      "label": "20-after-close"
+    },
+    {
+      "do": "key",
+      "key": "Control+z"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "20-after-undo"
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+z"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "20-after-redo"
+    },
+    {
+      "do": "storage"
+    }
+  ]
+}

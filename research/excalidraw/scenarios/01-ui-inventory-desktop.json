@@ -1,0 +1,227 @@
+{
+  "description": "Desktop 1280x720 light: open each secondary menu, dialog and sidebar on an empty canvas, capture ARIA snapshot and screenshot, then dismiss. From s6 on, its emulate step is an assertMetrics step and only 00 emulates. In s5 the re-applied override read back the headless default screen (800x600) because the preceding Playwright screenshot had reset the emulated screen metrics; that was later reproduced on a self-authored fixture, and the driver now captures through CDP instead.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "colorScheme",
+      "value": "light"
+    },
+    {
+      "do": "click",
+      "at": [34, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-01-main-menu"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-01-main-menu"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [889, 38]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-02-more-tools"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-02-more-tools"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [640, 600]
+    },
+    {
+      "do": "key",
+      "key": "?"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-03-help-dialog"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-03-help-dialog"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1246, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-04-library-sidebar"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-04-library-sidebar"
+    },
+    {
+      "do": "click",
+      "at": [1246, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [640, 600]
+    },
+    {
+      "do": "key",
+      "key": "Control+/"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-05-command-palette"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-05-command-palette"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [1198, 34]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-06-share-dialog"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-06-share-dialog"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [640, 600],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-07-context-menu-canvas"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-07-context-menu-canvas"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "click",
+      "at": [640, 600]
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+E"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "ui-08-export-image-dialog"
+    },
+    {
+      "do": "screenshot",
+      "name": "ui-08-export-image-dialog"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    }
+  ]
+}

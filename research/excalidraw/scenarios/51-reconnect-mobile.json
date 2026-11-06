@@ -1,0 +1,109 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-57: the reconnection after 50, in the same session and still offline. It asserts the metrics first, so it stops unless the app started offline, reads the connection state, draws a second rectangle [60,400,160,120] offline and deselects it, and reads the scene, the app state, ARIA and a capture. It then sets the context back online with the offline step (navigator.onLine read back), waits 6 s with no input, so that a REA window and the netlog show what the page fetches when the connection returns, and reads the connection state, the scene, the app state, ARIA and a capture. It never reloads; 24 then reloads online.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "connectivity",
+      "label": "51-offline"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 400]],
+      "to": [[220, 520]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "51-offline-drawn"
+    },
+    {
+      "do": "appState",
+      "label": "51-offline-drawn"
+    },
+    {
+      "do": "aria",
+      "save": "m51-01-offline-drawn"
+    },
+    {
+      "do": "screenshot",
+      "name": "m51-01-offline-drawn"
+    },
+    {
+      "do": "offline",
+      "value": false
+    },
+    {
+      "do": "wait",
+      "ms": 6000
+    },
+    {
+      "do": "connectivity",
+      "label": "51-online-again"
+    },
+    {
+      "do": "scene",
+      "label": "51-online-again"
+    },
+    {
+      "do": "appState",
+      "label": "51-online-again"
+    },
+    {
+      "do": "aria",
+      "save": "m51-02-online-again"
+    },
+    {
+      "do": "screenshot",
+      "name": "m51-02-online-again"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

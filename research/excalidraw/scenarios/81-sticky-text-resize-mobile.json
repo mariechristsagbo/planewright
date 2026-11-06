@@ -1,0 +1,200 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-41: a sticky note with typed text, resized. Runs after 80, with 79's rectangles at y 230 to 320. Picks Sticky note from More tools and taps (195,560), which places a 250 px note centred there, as 70's tap at (195,180) did; types the self-authored text \"Planewright note\" into its bound text, presses Escape, and drags the bottom-right handle, 4 px outside the corner, from (324,689) to (364,729), with Undo straight after it. Then it deletes the note by a long press inside it, clear of its handles, and Delete from the menu. It follows no link and uses no clipboard item.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Sticky note",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "81-sticky-tool"
+    },
+    {
+      "do": "tap",
+      "at": [195, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "81-note"
+    },
+    {
+      "do": "appState",
+      "label": "81-note"
+    },
+    {
+      "do": "aria",
+      "save": "m81-01-note"
+    },
+    {
+      "do": "type",
+      "text": "Planewright note"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "81-typed"
+    },
+    {
+      "do": "appState",
+      "label": "81-typed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m81-01-typed"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "81-escape"
+    },
+    {
+      "do": "appState",
+      "label": "81-escape"
+    },
+    {
+      "do": "screenshot",
+      "name": "m81-02-escape"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[324, 689]],
+      "to": [[364, 729]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "81-resized"
+    },
+    {
+      "do": "appState",
+      "label": "81-resized"
+    },
+    {
+      "do": "screenshot",
+      "name": "m81-03-resized"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "81-resized-undo"
+    },
+    {
+      "do": "appState",
+      "label": "81-resized-undo"
+    },
+    {
+      "do": "touchHold",
+      "at": [100, 470],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "81-deleted"
+    },
+    {
+      "do": "appState",
+      "label": "81-deleted"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "81-end"
+    },
+    {
+      "do": "appState",
+      "label": "81-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

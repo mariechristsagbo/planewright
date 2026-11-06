@@ -1,0 +1,174 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-56: one Export to Link upload, from the Save to... dialog that s37 saved on mobile. Draws one rectangle [40,120,120,80] and deselects it, reads the scene, the storage inventory and the URL shape, and takes a capture that is refused if any dialog is open. Opens Save to... from the main menu, saves its ARIA, and taps Export to Link once, which uploads the scene. The resulting link is a secret: the driver redacts link values in ARIA text, every capture is refused while a dialog is open or the URL fragment holds a link value, the clipboard permission is never granted, the URL probe keeps key names and value lengths only, and no REA call runs during it, because REA records keep URL fragments and DOM attributes. Then closes the dialogs with their Close buttons (a second Close fails without stopping the scenario if one was enough), reads the URL shape, the scene and the storage inventory again, and takes a guarded capture. Never touches Save to file or the Excalidraw+ entry. Run it once, in its own fresh session right after 09, and in no other session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[160, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "44-drawn"
+    },
+    {
+      "do": "appState",
+      "label": "44-drawn"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "screenshot",
+      "name": "m44-00-before",
+      "refuseIf": ["[role=dialog]"]
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Save to...",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "aria",
+      "save": "m44-01-save-to"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Export to Link",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 6000
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "aria",
+      "save": "m44-02-after-export"
+    },
+    {
+      "do": "scene",
+      "label": "44-after-export"
+    },
+    {
+      "do": "appState",
+      "label": "44-after-export"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m44-03-after-close"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m44-04-after-second-close"
+    },
+    {
+      "do": "url"
+    },
+    {
+      "do": "screenshot",
+      "name": "m44-05-after-close",
+      "refuseIf": ["[role=dialog]"]
+    },
+    {
+      "do": "scene",
+      "label": "44-after-close"
+    },
+    {
+      "do": "appState",
+      "label": "44-after-close"
+    },
+    {
+      "do": "storage"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

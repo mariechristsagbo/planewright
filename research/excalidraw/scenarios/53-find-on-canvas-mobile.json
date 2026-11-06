@@ -1,0 +1,239 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-05: Find on canvas. Writes the self-authored words Plan at (60,300) and Planet at (60,500) with the Text tool, each committed by a tap on empty canvas, opens the main menu and Find on canvas by its exact name, and saves the ARIA, a capture, the focused element and the app state. It then clicks the one textbox, which is unnamed, types Plan, and reads the app state (selection, zoom, scroll), the focus, ARIA and a capture; presses Enter twice, reading after each, then Escape. It stops at its first failed step, so nothing is typed unless the textbox was clicked. The keyboard stands in for the phone's. Runs right after 09 in a fresh session.",
+  "continueOnError": false,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [309, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "type",
+      "text": "Plan"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [309, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 500]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "type",
+      "text": "Planet"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "53-texts"
+    },
+    {
+      "do": "appState",
+      "label": "53-texts"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Find on canvas",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m53-01-find-open"
+    },
+    {
+      "do": "screenshot",
+      "name": "m53-01-find-open"
+    },
+    {
+      "do": "focus",
+      "label": "53-find-open"
+    },
+    {
+      "do": "appState",
+      "label": "53-find-open"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "type",
+      "text": "Plan"
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "aria",
+      "save": "m53-02-find-typed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m53-02-find-typed"
+    },
+    {
+      "do": "appState",
+      "label": "53-find-typed"
+    },
+    {
+      "do": "focus",
+      "label": "53-find-typed"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "53-find-enter-1"
+    },
+    {
+      "do": "screenshot",
+      "name": "m53-03-enter-1"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "53-find-enter-2"
+    },
+    {
+      "do": "aria",
+      "save": "m53-04-enter-2"
+    },
+    {
+      "do": "screenshot",
+      "name": "m53-04-enter-2"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m53-05-after-escape"
+    },
+    {
+      "do": "screenshot",
+      "name": "m53-05-after-escape"
+    },
+    {
+      "do": "focus",
+      "label": "53-after-escape"
+    },
+    {
+      "do": "scene",
+      "label": "53-end"
+    },
+    {
+      "do": "appState",
+      "label": "53-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

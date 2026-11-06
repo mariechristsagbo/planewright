@@ -1,0 +1,38 @@
+{
+  "description": "Diagnostic recorded in s1 after 04: two clicks while the freedraw tool was still active (they create dots), panel ARIA, then the persisted scene. Requires the end state of 04. The original ARIA attempt used an ambiguous selector and failed; this is the successful form.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "click",
+      "at": [1000, 600]
+    },
+    {
+      "do": "click",
+      "at": [340, 400]
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "aria",
+      "save": "panel-selected-a"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "diag-after-eraser"
+    },
+    {
+      "do": "appState",
+      "label": "diag-after-eraser"
+    },
+    {
+      "do": "screenshot",
+      "name": "diag-after-eraser"
+    }
+  ]
+}

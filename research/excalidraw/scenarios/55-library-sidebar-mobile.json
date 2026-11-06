@@ -1,0 +1,149 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-15: the Library sidebar on mobile. Opens it with the Library button by its exact name and saves its ARIA, a capture and the focused element, then taps Close; draws a rectangle [60,200,160,120], which stays selected, opens the Library again and saves what it offers for a selection, with the app state, and taps Close. It adds nothing to the library and follows no link (Browse libraries leads off-site). Runs right after 09 in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m55-01-library-empty"
+    },
+    {
+      "do": "screenshot",
+      "name": "m55-01-library-empty"
+    },
+    {
+      "do": "focus",
+      "label": "55-library-open"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m55-02-closed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m55-02-closed"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 200]],
+      "to": [[220, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "55-rect"
+    },
+    {
+      "do": "appState",
+      "label": "55-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m55-03-library-selection"
+    },
+    {
+      "do": "screenshot",
+      "name": "m55-03-library-selection"
+    },
+    {
+      "do": "appState",
+      "label": "55-library-selection"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m55-04-closed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m55-04-closed"
+    },
+    {
+      "do": "scene",
+      "label": "55-end"
+    },
+    {
+      "do": "appState",
+      "label": "55-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

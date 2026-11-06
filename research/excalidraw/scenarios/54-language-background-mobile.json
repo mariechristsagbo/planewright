@@ -1,0 +1,197 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-05: the language list and the canvas background. Opens the main menu and picks Français in the Select language list with selectOption, then reads the layout (the document language and direction and the boxes of named buttons), the app state, ARIA and a capture; picks English in the one list, whose name has changed with the language, and reads again; then closes the menu by a tap on empty canvas, reopens it and picks English once more, in case the first pick had closed the menu. Finally it opens the menu and taps Canvas background, saves the ARIA and a capture of what opens, and closes it by a tap on empty canvas without picking a colour. It never follows a link. Runs right after 09 in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "layout",
+      "label": "54-start",
+      "buttons": ["Rectangle", "Library", "Undo"]
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m54-01-menu"
+    },
+    {
+      "do": "selectOption",
+      "role": "combobox",
+      "name": "Select language",
+      "exact": true,
+      "label": "Français"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "layout",
+      "label": "54-fr",
+      "buttons": ["Rectangle", "Library", "Undo"]
+    },
+    {
+      "do": "aria",
+      "save": "m54-02-fr"
+    },
+    {
+      "do": "screenshot",
+      "name": "m54-02-fr"
+    },
+    {
+      "do": "appState",
+      "label": "54-fr"
+    },
+    {
+      "do": "selectOption",
+      "role": "combobox",
+      "exact": true,
+      "label": "English"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "layout",
+      "label": "54-back",
+      "buttons": ["Rectangle", "Library", "Undo"]
+    },
+    {
+      "do": "aria",
+      "save": "m54-03-back"
+    },
+    {
+      "do": "screenshot",
+      "name": "m54-03-back"
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "selectOption",
+      "role": "combobox",
+      "exact": true,
+      "label": "English"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "layout",
+      "label": "54-back-2",
+      "buttons": ["Rectangle", "Library", "Undo"]
+    },
+    {
+      "do": "aria",
+      "save": "m54-04-back-2"
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "54-english"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Canvas background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m54-05-background"
+    },
+    {
+      "do": "screenshot",
+      "name": "m54-05-background"
+    },
+    {
+      "do": "tap",
+      "at": [350, 650]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m54-06-closed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m54-06-closed"
+    },
+    {
+      "do": "appState",
+      "label": "54-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

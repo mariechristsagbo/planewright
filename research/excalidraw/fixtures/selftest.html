@@ -1,0 +1,55 @@
+<!doctype html>
+<!-- Self-authored fixture for the driver self-test. It imitates nothing from any reference: a
+     viewport meta tag, a canvas sized to CSS size x DPR, and a dialog whose link and image hold
+     a synthetic room-shaped value that the driver must redact or mask. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Planewright driver self-test</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      canvas {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      [role='dialog'] {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #fff;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas class="selftest"></canvas>
+    <div role="dialog" aria-label="Self-test dialog">
+      <label>Link <input id="link" readonly size="40" /></label>
+      <img id="code" alt="Synthetic code" width="64" height="64" />
+    </div>
+    <script>
+      const canvas = document.querySelector('canvas');
+      const size = () => {
+        canvas.width = Math.round(canvas.clientWidth * devicePixelRatio);
+        canvas.height = Math.round(canvas.clientHeight * devicePixelRatio);
+      };
+      size();
+      addEventListener('resize', size);
+      // Synthetic value with the shape of a room id (20) and key (22), assembled at run time.
+      const id = 'Z'.repeat(20);
+      const key = 'Y'.repeat(22);
+      document.getElementById('link').value = `https://selftest.invalid/#room=${id},${key}`;
+      const c = document.createElement('canvas');
+      c.width = c.height = 64;
+      c.getContext('2d').fillRect(8, 8, 48, 48);
+      document.getElementById('code').src = c.toDataURL();
+    </script>
+  </body>
+</html>

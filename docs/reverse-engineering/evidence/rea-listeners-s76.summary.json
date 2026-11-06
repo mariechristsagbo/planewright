@@ -1,0 +1,48 @@
+{
+  "kind": "rea-event-listeners",
+  "evidence_id": "ev_43fb2de02687ebc47d33d1969ff8bd0a363c3b657b8426de7fa6c9213bf2bb69",
+  "selector": "canvas.interactive",
+  "matched": true,
+  "listeners": [
+    {
+      "type": "click",
+      "use_capture": false,
+      "passive": false,
+      "once": false,
+      "execution": "unknown",
+      "script": "https://excalidraw.com/assets/index-COQVqmE8.js"
+    },
+    {
+      "type": "touchstart",
+      "use_capture": false,
+      "passive": false,
+      "once": false,
+      "execution": "unknown",
+      "script": "https://excalidraw.com/assets/index-COQVqmE8.js"
+    },
+    {
+      "type": "touchend",
+      "use_capture": false,
+      "passive": false,
+      "once": false,
+      "execution": "unknown",
+      "script": "https://excalidraw.com/assets/index-COQVqmE8.js"
+    }
+  ],
+  "sources": [
+    {
+      "script": "https://excalidraw.com/assets/index-COQVqmE8.js",
+      "language": "JavaScript",
+      "state": "captured",
+      "utf8_bytes": 1913698
+    }
+  ],
+  "cleanup": "confirmed",
+  "limitations": [
+    "Inspects listeners registered directly on the first native CSS match in the selected main document. Delegated ancestor listeners, descendants, closed shadow roots and framework registries are not enumerated.",
+    "Native CDP listener descriptors report callback locations; registration time, dispatch history and UI causality remain unknown. REA does not dispatch an event, evaluate JavaScript or invoke a handler.",
+    "Source identity uses this session's script ID and proven main-frame default-world metadata. Isolated or unknown worlds cannot establish website callback/source joins. A URL or sourceURL declaration never establishes identity or execution.",
+    "Source text is retained inline with its independently computed UTF-8 digest; the producer hash is preserved separately. Missing source ownership or collected scripts remain explicit.",
+    "REA releases its remote object group, disables enabled domains and detaches its transport; the externally owned page remains open."
+  ]
+}

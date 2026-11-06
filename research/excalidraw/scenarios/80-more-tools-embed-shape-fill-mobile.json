@@ -1,0 +1,379 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-17: the More tools entries Web Embed, Draw to shape and Bucket fill. Runs after 79, whose rectangles stay at y 230 to 320, and works below them. Picks Web Embed and drags a box from (40,340) to (340,440), saving the ARIA and a capture; it types no link, presses Escape and then Undo. Picks Draw to shape and draws a closed loop through four corners with one finger, then Undo. Draws a transparent rectangle R [60,340,240,90], deselects, picks Bucket fill, saving the ARIA, and taps inside R; then asks for the Background button and its Blue colour by name, taps inside R again, and presses Undo. Last it picks the Selection tool, selects R by a tap on its left stroke and deletes it with the Delete key. It loads no embed, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Web Embed",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "80-embed-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 340]],
+      "to": [[340, 440]]
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "80-embed"
+    },
+    {
+      "do": "appState",
+      "label": "80-embed"
+    },
+    {
+      "do": "aria",
+      "save": "m80-01-embed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m80-01-embed"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "80-embed-escape"
+    },
+    {
+      "do": "appState",
+      "label": "80-embed-escape"
+    },
+    {
+      "do": "screenshot",
+      "name": "m80-02-embed-escape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "80-embed-undo"
+    },
+    {
+      "do": "appState",
+      "label": "80-embed-undo"
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Draw to shape",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "80-shape-tool"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [60, 350],
+        [300, 350],
+        [300, 430],
+        [60, 430],
+        [62, 352]
+      ],
+      "steps": 8
+    },
+    {
+      "do": "wait",
+      "ms": 1200
+    },
+    {
+      "do": "scene",
+      "label": "80-shape"
+    },
+    {
+      "do": "appState",
+      "label": "80-shape"
+    },
+    {
+      "do": "screenshot",
+      "name": "m80-03-shape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "80-shape-undo"
+    },
+    {
+      "do": "appState",
+      "label": "80-shape-undo"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 340]],
+      "to": [[300, 430]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "80-fill-target"
+    },
+    {
+      "do": "appState",
+      "label": "80-fill-target"
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Bucket fill",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "80-fill-tool"
+    },
+    {
+      "do": "aria",
+      "save": "m80-04-fill-tool"
+    },
+    {
+      "do": "tap",
+      "at": [180, 385]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "80-fill-first"
+    },
+    {
+      "do": "appState",
+      "label": "80-fill-first"
+    },
+    {
+      "do": "screenshot",
+      "name": "m80-05-fill-first"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Blue — s",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "80-fill-colour"
+    },
+    {
+      "do": "tap",
+      "at": [180, 385]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "80-fill-blue"
+    },
+    {
+      "do": "appState",
+      "label": "80-fill-blue"
+    },
+    {
+      "do": "screenshot",
+      "name": "m80-06-fill-blue"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "80-fill-undo"
+    },
+    {
+      "do": "appState",
+      "label": "80-fill-undo"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Selection",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 362]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "80-end"
+    },
+    {
+      "do": "appState",
+      "label": "80-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

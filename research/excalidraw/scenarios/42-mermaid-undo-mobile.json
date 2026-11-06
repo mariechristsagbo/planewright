@@ -1,0 +1,136 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-63: the undo of the Mermaid insert, which s12 and s16 did not probe. Opens Mermaid to Excalidraw from More tools, taps Insert with the definition the dialog offers, as scenario 22 did, saves the ARIA, and closes the dialog with its Close button if it is still open (the step fails, without stopping the scenario, if the insert closed it). Then presses Undo and Redo and reads the scene after each; nothing is typed, generated or followed, and none of the dialog's links is touched. Runs right after 09 in a fresh session.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "More tools",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Mermaid to Excalidraw",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 2000
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Insert",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "aria",
+      "save": "m42-01-after-insert"
+    },
+    {
+      "do": "scene",
+      "label": "42-inserted"
+    },
+    {
+      "do": "appState",
+      "label": "42-inserted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "aria",
+      "save": "m42-02-closed"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "42-inserted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "42-inserted-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "42-inserted-redo"
+    },
+    {
+      "do": "appState",
+      "label": "42-inserted-redo"
+    },
+    {
+      "do": "aria",
+      "save": "m42-03-end"
+    },
+    {
+      "do": "screenshot",
+      "name": "m42-03-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

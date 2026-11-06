@@ -1,0 +1,249 @@
+{
+  "description": "Desktop 1280x720 light, local-save timing for behaviour B-30: after a shape drag ends, read the persisted scene immediately and after about 100, 200, 300, 500 and 1500 ms; three independent shapes. The timeline's step start times give the real offsets (each probe also takes a few ms). Clears the canvas first and leaves it empty. Runs after 12. Requires 00 first in the session (the only emulate step).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "click",
+      "at": [640, 600]
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "13-cleared"
+    },
+    {
+      "do": "key",
+      "key": "o"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [600, 200],
+      "to": [720, 300]
+    },
+    {
+      "do": "scene",
+      "label": "13a-t0"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13a-t100"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13a-t200"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13a-t300"
+    },
+    {
+      "do": "wait",
+      "ms": 200
+    },
+    {
+      "do": "scene",
+      "label": "13a-t500"
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "13a-t1500"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [300, 400],
+      "to": [400, 480]
+    },
+    {
+      "do": "scene",
+      "label": "13b-t0"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13b-t100"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13b-t200"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13b-t300"
+    },
+    {
+      "do": "wait",
+      "ms": 200
+    },
+    {
+      "do": "scene",
+      "label": "13b-t500"
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "13b-t1500"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "key",
+      "key": "d"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [800, 400],
+      "to": [900, 500]
+    },
+    {
+      "do": "scene",
+      "label": "13c-t0"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13c-t100"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13c-t200"
+    },
+    {
+      "do": "wait",
+      "ms": 100
+    },
+    {
+      "do": "scene",
+      "label": "13c-t300"
+    },
+    {
+      "do": "wait",
+      "ms": 200
+    },
+    {
+      "do": "scene",
+      "label": "13c-t500"
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "13c-t1500"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 1500
+    },
+    {
+      "do": "scene",
+      "label": "13-end"
+    }
+  ]
+}

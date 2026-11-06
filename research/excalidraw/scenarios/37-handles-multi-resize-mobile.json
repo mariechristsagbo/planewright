@@ -1,0 +1,360 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-36: the four resize handles that s24 and s29 left, and a two-element resize. Draws four 120x80 rectangles, each left selected by the Rectangle tool, and drags one handle of each with one finger, starting 4 px outside the element as scenario 30 did: the south-west corner of [40,100] by (-20,30), the north-east corner of [220,110] by (20,-20), the west side of [40,280] by (-20,0) and the south side of [220,290] by (0,30); then undoes and redoes the last resize with the Undo and Redo buttons. Draws two 80x60 rectangles [40,460] and [160,500], box-selects both with a one-finger drag from (20,440) to (260,580), saves a capture of the selection, and drags its south-east handle, measured 6 px outside the pair's corner on s22's capture of a two-element selection, from (246,566) by (100,20), a different ratio across and down, then Undo and Redo. Reads the scene and app state after each step. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 100]],
+      "to": [[160, 180]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[36, 184]],
+      "to": [[16, 214]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-sw"
+    },
+    {
+      "do": "appState",
+      "label": "37-sw"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 110]],
+      "to": [[340, 190]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[344, 106]],
+      "to": [[364, 86]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-ne"
+    },
+    {
+      "do": "appState",
+      "label": "37-ne"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 280]],
+      "to": [[160, 360]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[36, 320]],
+      "to": [[16, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-w"
+    },
+    {
+      "do": "appState",
+      "label": "37-w"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 290]],
+      "to": [[340, 370]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "touchDrag",
+      "from": [[280, 374]],
+      "to": [[280, 404]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-s"
+    },
+    {
+      "do": "appState",
+      "label": "37-s"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-s-undo"
+    },
+    {
+      "do": "appState",
+      "label": "37-s-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-s-redo"
+    },
+    {
+      "do": "appState",
+      "label": "37-s-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 460]],
+      "to": [[120, 520]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[160, 500]],
+      "to": [[240, 560]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 440]],
+      "to": [[260, 580]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-pair-selected"
+    },
+    {
+      "do": "appState",
+      "label": "37-pair-selected"
+    },
+    {
+      "do": "aria",
+      "save": "m37-01-pair-selected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m37-01-pair-selected"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[246, 566]],
+      "to": [[346, 586]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-pair-se"
+    },
+    {
+      "do": "appState",
+      "label": "37-pair-se"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-pair-se-undo"
+    },
+    {
+      "do": "appState",
+      "label": "37-pair-se-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-pair-se-redo"
+    },
+    {
+      "do": "appState",
+      "label": "37-pair-se-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "37-end"
+    },
+    {
+      "do": "appState",
+      "label": "37-end"
+    },
+    {
+      "do": "aria",
+      "save": "m37-02-end"
+    },
+    {
+      "do": "screenshot",
+      "name": "m37-02-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

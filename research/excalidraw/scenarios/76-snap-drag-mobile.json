@@ -1,0 +1,230 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-19: what Snap to objects does to a drag. Runs right after 72, whose rectangles A [40,120,80,80] and B [200,140,80,80] stay on the canvas with Snap to objects off. s74 found that 72's drag from (200,180), the middle of B's left stroke where a resize handle sits once B is selected, moved nothing; so 76 selects B by a tap on its top stroke at (220,140), 20 px from the corner and from the middle, and drags from there 17 px up, so B's top ends 3 px below A's, reading the scene, then Undo. It turns Snap to objects on, repeats the tap and the drag, then Undo, and turns it off. Each menu choice keeps Preferences expanded and is closed by a tap at (330,300). It types nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "scene",
+      "label": "76-start"
+    },
+    {
+      "do": "appState",
+      "label": "76-start"
+    },
+    {
+      "do": "tap",
+      "at": [220, 140]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "76-moved-free-selected"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 140]],
+      "to": [[220, 123]],
+      "steps": 10
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "76-moved-free"
+    },
+    {
+      "do": "appState",
+      "label": "76-moved-free"
+    },
+    {
+      "do": "screenshot",
+      "name": "m76-01-moved-free"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "76-moved-free-undo"
+    },
+    {
+      "do": "appState",
+      "label": "76-moved-free-undo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "76-snap-on"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [220, 140]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "76-moved-snap-selected"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 140]],
+      "to": [[220, 123]],
+      "steps": 10
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "76-moved-snap"
+    },
+    {
+      "do": "appState",
+      "label": "76-moved-snap"
+    },
+    {
+      "do": "screenshot",
+      "name": "m76-02-moved-snap"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "76-moved-snap-undo"
+    },
+    {
+      "do": "appState",
+      "label": "76-moved-snap-undo"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Preferences",
+      "exact": true,
+      "unlessExpanded": true
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Snap to objects",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "76-snap-off"
+    },
+    {
+      "do": "tap",
+      "at": [330, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

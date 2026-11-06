@@ -1,0 +1,368 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-27: keyboard focus from controls, after 49 found that Tab never leaves the app container on the first load. Clicks the Library button by its exact name, which s61 found then holds the focus, and presses Enter and then Space on it, reading the focus and saving ARIA after each; taps Close. Clicks Selection and presses Tab 8 times and Shift+Tab twice; opens the main menu with a tap and presses Tab 5 times and Escape; opens Help from the menu and presses Tab 6 times and Escape. The focused element and the live regions are read after every press. Enter and Space are pressed only on the clicked Library button, before any Tab, so no link or unknown control is activated. Runs right after 09 or 49.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Library",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "focus",
+      "label": "56-library-clicked"
+    },
+    {
+      "do": "aria",
+      "save": "m56-01-library"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "focus",
+      "label": "56-library-enter"
+    },
+    {
+      "do": "aria",
+      "save": "m56-02-after-enter"
+    },
+    {
+      "do": "key",
+      "key": "Space"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "focus",
+      "label": "56-library-space"
+    },
+    {
+      "do": "aria",
+      "save": "m56-03-after-space"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Close",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Selection",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "focus",
+      "label": "56-selection-clicked"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-01"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-02"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-03"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-04"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-05"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-06"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-07"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-tab-08"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-back-1"
+    },
+    {
+      "do": "key",
+      "key": "Shift+Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-back-2"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-open"
+    },
+    {
+      "do": "aria",
+      "save": "m56-04-menu"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-tab-1"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-tab-2"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-tab-3"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-tab-4"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-tab-5"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "focus",
+      "label": "56-menu-escape"
+    },
+    {
+      "do": "aria",
+      "save": "m56-05-menu-escape"
+    },
+    {
+      "do": "tap",
+      "at": [28, 28]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Help",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "focus",
+      "label": "56-help-open"
+    },
+    {
+      "do": "aria",
+      "save": "m56-06-help"
+    },
+    {
+      "do": "screenshot",
+      "name": "m56-06-help"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-help-tab-1"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-help-tab-2"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-help-tab-3"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-help-tab-4"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-help-tab-5"
+    },
+    {
+      "do": "key",
+      "key": "Tab"
+    },
+    {
+      "do": "focus",
+      "label": "56-help-tab-6"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "focus",
+      "label": "56-help-escape"
+    },
+    {
+      "do": "aria",
+      "save": "m56-07-help-escape"
+    },
+    {
+      "do": "screenshot",
+      "name": "m56-07-help-escape"
+    },
+    {
+      "do": "scene",
+      "label": "56-end"
+    },
+    {
+      "do": "appState",
+      "label": "56-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

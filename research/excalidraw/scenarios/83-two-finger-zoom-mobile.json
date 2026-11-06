@@ -1,0 +1,113 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-33 and R-04: what two fingers do over shapes, and which canvas action buttons show once zoomed. Runs last before 16, after 82, with 79's rectangles A and B at y 230 to 320 and nothing selected. Moves two fingers together from A's and B's left strokes 80 px down, reading the scene and app state; then spreads two fingers from 90 px to 170 px apart, saving the ARIA and a capture at that zoom, and pinches them back. It types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "appState",
+      "label": "83-start"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [40, 260],
+        [200, 260]
+      ],
+      "to": [
+        [40, 340],
+        [200, 340]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "83-two-finger"
+    },
+    {
+      "do": "appState",
+      "label": "83-two-finger"
+    },
+    {
+      "do": "screenshot",
+      "name": "m83-01-two-finger"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [150, 500],
+        [240, 500]
+      ],
+      "to": [
+        [110, 500],
+        [280, 500]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "83-spread"
+    },
+    {
+      "do": "aria",
+      "save": "m83-02-zoomed"
+    },
+    {
+      "do": "screenshot",
+      "name": "m83-02-zoomed"
+    },
+    {
+      "do": "touchDrag",
+      "from": [
+        [110, 500],
+        [280, 500]
+      ],
+      "to": [
+        [150, 500],
+        [240, 500]
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "appState",
+      "label": "83-pinched"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,440 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch: inventory of the compact property bar's popovers for R-10, R-39 and R-49-R-51, and a first multi-point arrow by taps for R-30. Draws a rectangle [40,120,120,80], which stays selected, opens and closes in turn the Stroke colour popover (the first button named Stroke), the style popover (the second) and the Actions popover, saving the ARIA and a capture of each; draws a second rectangle [230,140,120,80], selects both with a one-finger box drag from (20,90) to (370,240) and opens Actions and the style popover again; draws an arrow by a drag from (60,400) to (300,400) and opens its style popover; then, with the Arrow tool, taps (60,560), (200,620) and (320,560), and taps (320,560) once more; finally taps the Rectangle tool twice to see whether it opens a shape choice. Each popover is closed by clicking its own button again. Buttons are clicked by role and name with a Playwright click, every canvas input is touch. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[160, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-rect-a"
+    },
+    {
+      "do": "appState",
+      "label": "28-rect-a"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 0
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-01-stroke-colour-rect"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-01-stroke-colour-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 0
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-02-style-rect"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-02-style-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-03-actions-one"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-03-actions-one"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-04-closed"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[230, 140]],
+      "to": [[350, 220]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-rect-b"
+    },
+    {
+      "do": "appState",
+      "label": "28-rect-b"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[20, 90]],
+      "to": [[370, 240]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-box-selected"
+    },
+    {
+      "do": "appState",
+      "label": "28-box-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-05-actions-two"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-05-actions-two"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-06-style-two"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-06-style-two"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 400]],
+      "to": [[300, 400]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-arrow-drag"
+    },
+    {
+      "do": "appState",
+      "label": "28-arrow-drag"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-07-style-arrow"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-07-style-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [200, 620]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [320, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-arrow-taps"
+    },
+    {
+      "do": "appState",
+      "label": "28-arrow-taps"
+    },
+    {
+      "do": "aria",
+      "save": "m28-08-arrow-taps"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-08-arrow-taps"
+    },
+    {
+      "do": "tap",
+      "at": [320, 560]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-arrow-taps-again"
+    },
+    {
+      "do": "appState",
+      "label": "28-arrow-taps-again"
+    },
+    {
+      "do": "aria",
+      "save": "m28-09-arrow-taps-again"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-09-arrow-taps-again"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-10-rect-tool"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m28-11-rect-tool-again"
+    },
+    {
+      "do": "screenshot",
+      "name": "m28-11-rect-tool-again"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 700]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "28-end"
+    },
+    {
+      "do": "appState",
+      "label": "28-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

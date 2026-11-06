@@ -1,0 +1,1084 @@
+[
+  {
+    "label": "62-before",
+    "at": "2026-11-06T07:45:35.697Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-eraser",
+    "at": "2026-11-06T07:45:36.474Z",
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-free",
+    "at": "2026-11-06T07:45:37.617Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-free-undo",
+    "at": "2026-11-06T07:45:38.913Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-free-redo",
+    "at": "2026-11-06T07:45:39.994Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-bound",
+    "at": "2026-11-06T07:45:41.165Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-bound-undo",
+    "at": "2026-11-06T07:45:42.440Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-bound-redo",
+    "at": "2026-11-06T07:45:43.769Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-arrow",
+    "at": "2026-11-06T07:45:44.959Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-erased-arrow-undo",
+    "at": "2026-11-06T07:45:46.060Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "62-escape",
+    "at": "2026-11-06T07:45:46.862Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-eraser",
+    "at": "2026-11-06T07:46:32.372Z",
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-erased-target",
+    "at": "2026-11-06T07:46:33.624Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-erased-target-undo",
+    "at": "2026-11-06T07:46:34.934Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-erased-target-redo",
+    "at": "2026-11-06T07:46:36.212Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-target-restored",
+    "at": "2026-11-06T07:46:37.294Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-eraser-again",
+    "at": "2026-11-06T07:46:37.901Z",
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-erased-arrow",
+    "at": "2026-11-06T07:46:39.094Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-erased-arrow-undo",
+    "at": "2026-11-06T07:46:40.347Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [40, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [220, 150, 80, 80],
+        "angle": 0,
+        "groups": 0,
+        "bound": ["arrow"],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "arrow",
+        "box": [80, 190, 180, 0],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": true,
+        "endBound": true,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 2],
+        "points": 2,
+        "elbowed": false
+      },
+      {
+        "type": "rectangle",
+        "box": [40, 270, 80, 70],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "eraser",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  },
+  {
+    "label": "66-escape",
+    "at": "2026-11-06T07:46:41.522Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "modes": {
+      "grid": false,
+      "zen": false,
+      "snap": false,
+      "binding": true,
+      "midpointSnap": true,
+      "boxSelection": "contain",
+      "input": "auto",
+      "toolLocked": false
+    }
+  }
+]

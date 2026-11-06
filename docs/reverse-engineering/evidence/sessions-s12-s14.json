@@ -1,0 +1,1684 @@
+{
+  "schema": "planewright-research-evidence/v1",
+  "generated_by": "research/excalidraw/build-evidence.mjs",
+  "sessions": [
+    {
+      "session": "s12-mobile-draw-rea",
+      "steps": {
+        "total": 105,
+        "failed": 0,
+        "failures": [],
+        "first": "2026-11-05T16:51:08.748Z",
+        "last": "2026-11-05T16:52:26.693Z",
+        "byKind": {
+          "emulate": 1,
+          "colorScheme": 2,
+          "goto": 1,
+          "wait": 26,
+          "metrics": 1,
+          "assertMetrics": 5,
+          "rootStyle": 1,
+          "aria": 13,
+          "screenshot": 12,
+          "tap": 13,
+          "touchDrag": 3,
+          "scene": 7,
+          "appState": 7,
+          "role": 8,
+          "key": 4,
+          "storage": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 980,
+            "innerHeight": 2121,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": []
+          },
+          {
+            "innerWidth": 390,
+            "innerHeight": 844,
+            "devicePixelRatio": 3,
+            "screenWidth": 390,
+            "screenHeight": 844,
+            "maxTouchPoints": 5,
+            "coarsePointer": true,
+            "canvases": [
+              {
+                "cls": "excalidraw__canvas static",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              },
+              {
+                "cls": "excalidraw__canvas interactive",
+                "width": 1170,
+                "height": 2532,
+                "clientWidth": 390,
+                "clientHeight": 844
+              }
+            ]
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "m01-initial-light.png",
+          "sha256": "4ce1aaa455a97191616117e41071f157e1e4a619a6e7e51288346996977b011a",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m02-rect-tool-active.png",
+          "sha256": "3a8ea044dc425df72a4a9cf88b5d7c066042ea86a94e21ff91215154dc121c19",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m03-rect-drawn.png",
+          "sha256": "cf670e38d1625bdd0d853e7aad1d7ca24e1c8179439189de9a64ed6761fa1b6f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m04-rect-selected.png",
+          "sha256": "cf670e38d1625bdd0d853e7aad1d7ca24e1c8179439189de9a64ed6761fa1b6f",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m05-main-menu.png",
+          "sha256": "c9a64d77bd8433c8528880e6005d2387adafdfd925e8129b6969e5853025d993",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m06-more-tools.png",
+          "sha256": "cab9ea6e0d82048eb8e15e27ced6a10c9b2d27e28617efacd6d63618e51c8c83",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m07-library.png",
+          "sha256": "3dd27c31dd8416c0b82d725b5ad14a67c827802d42fced66a53e1d08e8136b74",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m08-dark-menu.png",
+          "sha256": "03e5cb2155f5a1608c1d1a462efee1cb45bcb27d3cf910602fcbb2d65297d5f3",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m09-dark-canvas.png",
+          "sha256": "72a6e07b40c435939d223fee302c1469fc03d00f9dd909d20188b60533b98c8b",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m22-01-mermaid.png",
+          "sha256": "748ec605e81e4f3d7e92de2fc9b6e23471f5419f3bcb6ee7fef87c1f70c8744e",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m22-02-ttd.png",
+          "sha256": "078edfadd64e16d19338b34608942d2483453d6d22c2204e805bf0d3850208f8",
+          "width": 1170,
+          "height": 2532
+        },
+        {
+          "name": "m22-03-wireframe.png",
+          "sha256": "b089f582eb5a57bc37ba9460eeaf4a0dcfa4fd02d40faf235cbc9ecf58bfc9ff",
+          "width": 1170,
+          "height": 2532
+        }
+      ],
+      "retired_screenshots": [],
+      "aria_snapshots": [
+        {
+          "name": "m01-initial-light.yml",
+          "lines": 24
+        },
+        {
+          "name": "m02-rect-tool-active.yml",
+          "lines": 25
+        },
+        {
+          "name": "m03-rect-drawn.yml",
+          "lines": 22
+        },
+        {
+          "name": "m04-rect-selected.yml",
+          "lines": 22
+        },
+        {
+          "name": "m05-main-menu.yml",
+          "lines": 64
+        },
+        {
+          "name": "m06-more-tools.yml",
+          "lines": 28
+        },
+        {
+          "name": "m07-library.yml",
+          "lines": 16
+        },
+        {
+          "name": "m08-dark-menu.yml",
+          "lines": 64
+        },
+        {
+          "name": "m09-dark-canvas.yml",
+          "lines": 16
+        },
+        {
+          "name": "m22-00-more-tools.yml",
+          "lines": 28
+        },
+        {
+          "name": "m22-01-mermaid.yml",
+          "lines": 49
+        },
+        {
+          "name": "m22-02-ttd.yml",
+          "lines": 27
+        },
+        {
+          "name": "m22-03-wireframe.yml",
+          "lines": 17
+        }
+      ],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/apple-touch-icon.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/24BXRY42-Bun-eCbs.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/4FHPYW2L-3CyPUP3T.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/4LWW3ZNH-cq6qHrdD.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/4LWW3ZNH-cq6qHrdD.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/5THPTBWS-D57irc_4.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/5XYWFMKW-PyWnTwUr.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/64PMEAB3-ChWfr_so.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/6BEWHPQE-Dw8zIur4.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/6PIGVMFT-DwUxGS3b.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/6PIGVMFT-DwUxGS3b.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/75JW6PN6-CIx5RcrF.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/7WLXJQOR-CHhKreq0.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/7WLXJQOR-CHhKreq0.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/7XWI72E6-DzVIUaXJ.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/BGW36YJW-DQNxLbq-.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/BGW36YJW-DQNxLbq-.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/bundler-helpers-DA6W-a70.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/CGIZI67J-BsPeWNq8.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/class-BzsAY4PK.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request-failed",
+          "method": "GET",
+          "type": "script",
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/codemirror.chunk-CLhMQAUm.js",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request-failed",
+          "method": "GET",
+          "type": "script",
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/CodeMirrorEditor-Bl85_JKK.js",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/DKTLEL5E-B7ILCVTH.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/DKTLEL5E-B7ILCVTH.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/DNNCRC2E-ITRMrTkh.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/E67EBMDD-b5f0ui5G.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/EFYWJBJK-Dj4eYI37.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/EFYWJBJK-Dj4eYI37.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/er-C7JRzxQk.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/EXE5EH6O-nNCEPinJ.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/flowchart-B-AtIEX4.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/flowchart-B-AtIEX4.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/FTXIJQGB-nrHdCfp7.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/FTXIJQGB-nrHdCfp7.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/G3MDBVQH-EkdejvdW.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/G6GPDDNC-2jrY9iqw.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/G76NGGFM-XWAvdsTK.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/gantt-CIj26a4k.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/GH6G3TJC-BjgZRXJy.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/helpers-C98AZoLf.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/helpers-C98AZoLf.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/HPNUA7RO-ws8NaPiS.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/HQRGC5D7-EMMIgq64.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-BFNtuejR.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-BFNtuejR.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-COQVqmE8.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "stylesheet",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/index-D0I-IbtP.css",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/IX6Z2TVR-CBEOCsKk.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/J77NQRCJ-BotfhdZJ.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/JAD36DTZ-C9T4IM06.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/LF3NJQAX-n2wWC_oo.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/LRZCOFJZ-BSA6PhwS.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/mermaid-chunks-DA-Q52Mr.json",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/N5NF2FGY-BVtHuUnY.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/N7OWWQHY-BUXnxE3P.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/NT5JY5WP-DW7NVBPX.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/NT5JY5WP-DW7NVBPX.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/OT7W3RNY-CAKCc0g4.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/P67P66DB-C7n3WpXo.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/PFLLLM7K-DOFJyxPu.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/PUAMC4MJ-Dvf_jtkE.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/PVFCHRLY-CztdcycK.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/QQW2P742-Cm5qF5Hd.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/QQW2P742-Cm5qF5Hd.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/quadrant-CtTXzHLJ.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/roundRect-0PYZxl1G.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/RVARI57O-CXmrUIiS.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/S63OEDPG-C81orfGq.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/sequence-COpB_oQG.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/SG5TVYLW-Ccu9Iwal.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/state-BHOYKTJ2.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/timeline-DU_gviY6.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/transformToExcalidrawSkeleton-BhBsKKQ3.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/transformToExcalidrawSkeleton-BhBsKKQ3.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/UGRSUGA2-Cxi1jK0R.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/V44WA6U7-B0Nym5FC.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/V67O4WWV-Cx0PDp2k.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/V67O4WWV-Cx0PDp2k.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/VBUCM3YD-D90Pv5D3.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/VBUCM3YD-D90Pv5D3.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/VINGRCPA-ulwFq5NR.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/WL6DNKX4-BETsq0sj.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/workbox-window.prod.es5-B9K5rw8f.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/WQ63CJYP-CsF1MvOk.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/XOYAOB3S-Ob36wuMJ.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/Y5LQLG3M-EpMakM9B.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/assets/YIK6JTN6-CflxyOAp.js",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "other",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/favicon-32x32.png",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "manifest",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/manifest.webmanifest",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Bold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Medium.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Assistant/Assistant-SemiBold.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/CascadiaCode/CascadiaCode-Regular.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": true,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/ComicShanns/ComicShanns-Regular-279a7b317d12eb88de06167bd672b4b4.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Excalifont/Excalifont-Regular-a88b72a24fb54c9f94e3b5fdaa7481c9.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "font",
+          "status": 200,
+          "origin": "https://excalidraw.nyc3.cdn.digitaloceanspaces.com",
+          "path": "/oss/fonts/Nunito/Nunito-Regular-XRXI3I6Li01BKofiOc5wtlZ2di8HDIkhdTQ3j6zbXWjgeg.woff2",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "src",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "image",
+          "status": 202,
+          "origin": "https://queue.simpleanalyticscdn.com",
+          "path": "/simple.gif",
+          "queryKeys": [
+            "brands",
+            "event",
+            "hostname",
+            "https",
+            "id",
+            "language",
+            "metadata",
+            "mobile",
+            "os_name",
+            "os_version",
+            "page_id",
+            "path",
+            "screen_height",
+            "screen_width",
+            "session_id",
+            "sri",
+            "time",
+            "timezone",
+            "type",
+            "ua",
+            "unique",
+            "version",
+            "viewport_height",
+            "viewport_width"
+          ],
+          "fromServiceWorker": false,
+          "count": 3
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://scripts.simpleanalyticscdn.com",
+          "path": "/latest.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "POST",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://sentry.io",
+          "path": "/api/5179260/envelope/",
+          "queryKeys": ["sentry_client", "sentry_key", "sentry_version"],
+          "fromServiceWorker": false,
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "r01-targets.json",
+          "evidence_id": "ev_c68bda39461af18e1f8720b0e979baae2deb72f0d5cb92c2adc28093287f1fb8",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r02-inspect-during-10.json",
+          "evidence_id": "ev_8f4584f511314387210cbe52337fa9ebd530ec206f142e8fa03dcdc0112e9261",
+          "operation": "inspect_web_page"
+        }
+      ]
+    },
+    {
+      "session": "s13-desktop-draw-rea",
+      "steps": {
+        "total": 11,
+        "failed": 2,
+        "failures": [
+          {
+            "step": "assertMetrics",
+            "error": "Metrics mismatch, run aborted: canvasBacking: no canvas on the page",
+            "fatal": true,
+            "count": 2
+          }
+        ],
+        "first": "2026-11-05T16:53:11.578Z",
+        "last": "2026-11-05T16:54:46.220Z",
+        "byKind": {
+          "emulate": 1,
+          "colorScheme": 1,
+          "goto": 1,
+          "wait": 1,
+          "metrics": 1,
+          "storage": 2,
+          "rootStyle": 1,
+          "screenshot": 1,
+          "assertMetrics": 2
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "screenWidth": 1280,
+            "screenHeight": 720,
+            "maxTouchPoints": 0,
+            "coarsePointer": false,
+            "canvases": []
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "screenWidth": 1280,
+            "screenHeight": 720,
+            "maxTouchPoints": 0,
+            "coarsePointer": false,
+            "canvases": []
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "d01-initial-light.png",
+          "sha256": "9dd241f60fb482cc29c35051e6c3077e2c09f8da30a535e40c42f2b9460fed6e",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "retired_screenshots": [],
+      "aria_snapshots": [],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 403,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request-failed",
+          "method": "POST",
+          "type": "fetch",
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/request-challenge",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "worker",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/static/challenge.v2.min.js",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/static/challenge.v2.min.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/static/challenge.v2.wasm",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "r01-targets.json",
+          "evidence_id": "ev_620d5b8fd675f314cf638f0b27c7186f37a6a89790cbb727a1e0bb752728ae4a",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r02-inspect-during-12.json",
+          "evidence_id": "ev_09d976c666b59bd6d7a839502f591e02017fbb8d355ad3b784c23e6fe31684e6",
+          "operation": "inspect_web_page"
+        },
+        {
+          "file": "r03-inspect-during-23.json",
+          "evidence_id": "ev_0fb0840dcf9f9769375203ba1e9826f6f14cafdf6aa3d8c9e551bcc28f5e0793",
+          "operation": "inspect_web_page"
+        }
+      ]
+    },
+    {
+      "session": "s14-desktop-svg-only",
+      "steps": {
+        "total": 9,
+        "failed": 1,
+        "failures": [
+          {
+            "step": "assertMetrics",
+            "error": "Metrics mismatch, run aborted: canvasBacking: no canvas on the page",
+            "fatal": true,
+            "count": 1
+          }
+        ],
+        "first": "2026-11-05T16:55:23.807Z",
+        "last": "2026-11-05T16:55:40.029Z",
+        "byKind": {
+          "emulate": 1,
+          "colorScheme": 1,
+          "goto": 1,
+          "wait": 1,
+          "metrics": 1,
+          "storage": 1,
+          "rootStyle": 1,
+          "screenshot": 1,
+          "assertMetrics": 1
+        },
+        "urlShapes": [],
+        "metrics": [
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "screenWidth": 1280,
+            "screenHeight": 720,
+            "maxTouchPoints": 0,
+            "coarsePointer": false,
+            "canvases": []
+          },
+          {
+            "innerWidth": 1280,
+            "innerHeight": 720,
+            "devicePixelRatio": 1,
+            "screenWidth": 1280,
+            "screenHeight": 720,
+            "maxTouchPoints": 0,
+            "coarsePointer": false,
+            "canvases": []
+          }
+        ]
+      },
+      "screenshots": [
+        {
+          "name": "d01-initial-light.png",
+          "sha256": "e1ffe6bfe2000172586ebd166c3d6a89157dc18b3e72f418a9561d996765bc2f",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "retired_screenshots": [],
+      "aria_snapshots": [],
+      "network": [
+        {
+          "event": "navigated",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "document",
+          "status": 403,
+          "origin": "https://excalidraw.com",
+          "path": "/",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request-failed",
+          "method": "POST",
+          "type": "fetch",
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/request-challenge",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "worker",
+          "method": null,
+          "type": null,
+          "status": null,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/static/challenge.v2.min.js",
+          "queryKeys": [],
+          "fromServiceWorker": null,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "script",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/static/challenge.v2.min.js",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        },
+        {
+          "event": "request",
+          "method": "GET",
+          "type": "fetch",
+          "status": 200,
+          "origin": "https://excalidraw.com",
+          "path": "/.well-known/vercel/security/static/challenge.v2.wasm",
+          "queryKeys": [],
+          "fromServiceWorker": false,
+          "count": 1
+        }
+      ],
+      "rea": [
+        {
+          "file": "r01-targets.json",
+          "evidence_id": "ev_11fa40c9ce0b2b7f8b43dab53eb73b3c96372ae505f5f9c5770d0429c7c731d9",
+          "operation": "list_browser_targets"
+        },
+        {
+          "file": "r02-inspect-during-17.json",
+          "evidence_id": "ev_0b415085bd4fd362329c28b918d70e6dd4c2d35aac68f0f2418d2c2437e8e043",
+          "operation": "inspect_web_page"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,306 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-44 and R-52: the eraser by touch, with a read before and after each stroke and Undo and Redo after it. Draws two rectangles at [40,150,80,80] and [220,150,80,80], an arrow from the first one's centre to the second's, which 29 found binds both ends, and a third rectangle at [40,270,80,70], then reads the scene and captures it. It picks the Eraser and draws one-finger strokes across a stroke of the free rectangle, then of the arrow's end target, then of the arrow, reading after each, and presses Undo and Redo by name after the first two and Undo after the third, reading after each; last it presses Escape and reads the tool. It types nothing, opens no menu and follows no link. Runs right after 09, on an empty canvas.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 150]],
+      "to": [[120, 230]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 150]],
+      "to": [[300, 230]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [263, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[80, 190]],
+      "to": [[260, 190]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 270]],
+      "to": [[120, 340]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-before"
+    },
+    {
+      "do": "appState",
+      "label": "62-before"
+    },
+    {
+      "do": "screenshot",
+      "name": "m62-01-before"
+    },
+    {
+      "do": "tap",
+      "at": [172, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "62-eraser"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [25, 305],
+        [55, 305]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-free"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-free"
+    },
+    {
+      "do": "screenshot",
+      "name": "m62-02-erased-free"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-free-undo"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-free-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-free-redo"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-free-redo"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [285, 170],
+        [315, 170]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-bound"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-bound"
+    },
+    {
+      "do": "screenshot",
+      "name": "m62-03-erased-bound"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-bound-undo"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-bound-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m62-04-erased-bound-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-bound-redo"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-bound-redo"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [150, 175],
+        [150, 205]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "62-erased-arrow-undo"
+    },
+    {
+      "do": "appState",
+      "label": "62-erased-arrow-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m62-05-erased-arrow-undo"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "62-escape"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "description": "Desktop 1280x720 light, R-64: draw one rectangle, open Export image and click Export to SVG only, never Export to PNG, then wait 3 s so that a worker the export starts is written before the dialog closes. Requires 00 first in a fresh session; run with a REA window armed before its first step. Headless Chromium fires no download (B-32), so the download step is expected to time out after 8 s.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 1280,
+        "innerHeight": 720,
+        "devicePixelRatio": 1,
+        "screenWidth": 1280,
+        "screenHeight": 720,
+        "maxTouchPoints": 0,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "key",
+      "key": "r"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "drag",
+      "from": [520, 300],
+      "to": [760, 460]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "17-drawn"
+    },
+    {
+      "do": "click",
+      "at": [1100, 650]
+    },
+    {
+      "do": "key",
+      "key": "Control+Shift+e"
+    },
+    {
+      "do": "wait",
+      "ms": 900
+    },
+    {
+      "do": "aria",
+      "save": "x17-01-export-dialog"
+    },
+    {
+      "do": "download",
+      "name": "x17-export",
+      "timeout": 8000,
+      "trigger": [
+        {
+          "do": "role",
+          "role": "button",
+          "name": "Export to SVG",
+          "exact": true
+        }
+      ]
+    },
+    {
+      "do": "wait",
+      "ms": 3000
+    },
+    {
+      "do": "aria",
+      "save": "x17-02-after-export"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 400
+    },
+    {
+      "do": "appState",
+      "label": "17-end"
+    },
+    {
+      "do": "scene",
+      "label": "17-end"
+    }
+  ]
+}

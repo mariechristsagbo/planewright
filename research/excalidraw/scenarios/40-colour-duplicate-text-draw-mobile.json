@@ -1,0 +1,462 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-11 and R-10: draws a rectangle [40,120,120,80], opens its Stroke colour popover, picks Blue and then the second of the five buttons named Shade that s37 saved; taps the hex box (the textbox named Stroke), selects its text with Ctrl+A, types the self-authored code 123abc and presses Enter, the keyboard standing in for the phone's own. After a deselecting tap and a tap on the rectangle's left stroke (40,160), taps Duplicate in the Actions popover, then Undo and Redo. Places the word Plan with the Text tool at (60,300) as s37 did, commits it by a tap on empty canvas, selects it by a tap at (75,303) and opens the second button named Stroke and Show font picker, each from a fresh selection; draws a stroke with the Draw tool from (60,420) to (300,470), selects it by a tap at (180,445) and opens its second Stroke button and Background, each from a fresh selection. Saves the ARIA and a capture of each popover and reads the scene and app state after each change. Runs right after 09 in a fresh session (zoom 1, scroll 0,0, empty canvas).",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 120]],
+      "to": [[160, 200]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-rect"
+    },
+    {
+      "do": "appState",
+      "label": "40-rect"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 0
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Blue — s",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Shade",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-shade"
+    },
+    {
+      "do": "appState",
+      "label": "40-shade"
+    },
+    {
+      "do": "aria",
+      "save": "m40-01-shade"
+    },
+    {
+      "do": "screenshot",
+      "name": "m40-01-shade"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "name": "Stroke",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "key",
+      "key": "Control+a"
+    },
+    {
+      "do": "type",
+      "text": "123abc"
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-hex"
+    },
+    {
+      "do": "appState",
+      "label": "40-hex"
+    },
+    {
+      "do": "aria",
+      "save": "m40-02-hex"
+    },
+    {
+      "do": "screenshot",
+      "name": "m40-02-hex"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [40, 160]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Actions",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Duplicate",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-duplicate"
+    },
+    {
+      "do": "appState",
+      "label": "40-duplicate"
+    },
+    {
+      "do": "aria",
+      "save": "m40-03-after-duplicate"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-duplicate-undo"
+    },
+    {
+      "do": "appState",
+      "label": "40-duplicate-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-duplicate-redo"
+    },
+    {
+      "do": "appState",
+      "label": "40-duplicate-redo"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [309, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 300]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "type",
+      "text": "Plan"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "40-text-selected"
+    },
+    {
+      "do": "appState",
+      "label": "40-text-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m40-04-text-style"
+    },
+    {
+      "do": "screenshot",
+      "name": "m40-04-text-style"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [75, 303]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Show font picker",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m40-05-font-picker"
+    },
+    {
+      "do": "screenshot",
+      "name": "m40-05-font-picker"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [127, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 420]],
+      "to": [[300, 470]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [180, 445]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "scene",
+      "label": "40-freedraw-selected"
+    },
+    {
+      "do": "appState",
+      "label": "40-freedraw-selected"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Stroke",
+      "exact": true,
+      "nth": 1
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m40-06-freedraw-style"
+    },
+    {
+      "do": "screenshot",
+      "name": "m40-06-freedraw-style"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "tap",
+      "at": [180, 445]
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Background",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "aria",
+      "save": "m40-07-freedraw-background"
+    },
+    {
+      "do": "screenshot",
+      "name": "m40-07-freedraw-background"
+    },
+    {
+      "do": "tap",
+      "at": [350, 600]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "40-end"
+    },
+    {
+      "do": "appState",
+      "label": "40-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
