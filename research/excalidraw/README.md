@@ -446,7 +446,7 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     horizontally and vertically, each with Undo; it draws two rectangles, picks Select all, and by a
     right click on a selected one flips all three, with Undo; last it turns the grid on and off
     again by the item named with a check mark, saving that menu's ARIA.
-  - `86` to `88` (from s83 on) begin the last mobile batch before the readiness record. `86`
+  - `86` to `92` (from s83 on) are the last mobile scenarios before the readiness record. `86`
     runs right after `09`, draws A, which stays for the whole session so that the canvas is never
     empty and the welcome screen's entries stay away, and a second rectangle L; by a long press
     on L's left stroke it picks Add link, types `https://example.invalid/planewright-r09` (a
@@ -454,7 +454,15 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     It stops at its first failed step, and nothing ever touches the link icon or a shown link.
     `87` grants the clipboard, picks Copy link to object on L and reads the copied link's shape,
     then deletes L from the menu. `88` writes the self-authored text "Planewright plain text"
-    with `clipboardWrite` and pastes it from the canvas menu, with Undo, Redo and Undo.
+    with `clipboardWrite` and pastes it from the canvas menu, with Undo, Redo and Undo. `89`
+    repeats 80's empty Web Embed and its Bucket fill, each with Undo, Redo and Undo, picking no
+    colour. `90` draws a rectangle at each x of 40 to 220 in steps of 30, holds on its left stroke
+    at (x,490), reads the selection and the boxes of the menu's Cut, Copy and Delete buttons,
+    presses Escape and deletes it. `91` types six sentences and one 40-letter word into a sticky
+    note and deletes it. `92` runs last before 16, since view mode hides controls: by right
+    clicks at (200,180) it turns Snap to objects on and off, Arrow binding and Snap to midpoints
+    off and on, opens Canvas & Shape properties, and turns View mode on and, from the menu it
+    shows in view mode, off again.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

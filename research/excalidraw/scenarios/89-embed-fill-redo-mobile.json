@@ -1,0 +1,336 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-17: Redo after the Web Embed and Bucket fill undos that 80 observed. Runs after 88, with A on the canvas and nothing selected, and works below it as 80 did. Picks Web Embed and drags a box from (40,340) to (340,440), types no link, and presses Escape, Undo and Redo, reading after each and saving the ARIA and a capture after Redo, then Undo again. Draws a transparent rectangle R [60,340,240,90], deselects, picks Bucket fill and taps inside R at (180,385), then presses Undo, Redo and Undo, reading after each and saving a capture after the fill and after Redo. Last it picks the Selection tool, selects R by a tap on its left stroke and deletes it with the Delete key. It picks no colour, loads no embed, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Web Embed",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "89-embed-tool"
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 340]],
+      "to": [[340, 440]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-embed"
+    },
+    {
+      "do": "appState",
+      "label": "89-embed"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "89-embed-escape"
+    },
+    {
+      "do": "appState",
+      "label": "89-embed-escape"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-embed-undo"
+    },
+    {
+      "do": "appState",
+      "label": "89-embed-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-embed-redo"
+    },
+    {
+      "do": "appState",
+      "label": "89-embed-redo"
+    },
+    {
+      "do": "aria",
+      "save": "m89-01-embed-redo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m89-01-embed-redo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-embed-redo-undo"
+    },
+    {
+      "do": "appState",
+      "label": "89-embed-redo-undo"
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[60, 340]],
+      "to": [[300, 430]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "89-fill-target"
+    },
+    {
+      "do": "appState",
+      "label": "89-fill-target"
+    },
+    {
+      "do": "tap",
+      "at": [354, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "role",
+      "role": "menuitem",
+      "name": "Bucket fill",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "89-fill-tool"
+    },
+    {
+      "do": "tap",
+      "at": [180, 385]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-fill"
+    },
+    {
+      "do": "appState",
+      "label": "89-fill"
+    },
+    {
+      "do": "screenshot",
+      "name": "m89-02-fill"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-fill-undo"
+    },
+    {
+      "do": "appState",
+      "label": "89-fill-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-fill-redo"
+    },
+    {
+      "do": "appState",
+      "label": "89-fill-redo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m89-03-fill-redo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "89-fill-redo-undo"
+    },
+    {
+      "do": "appState",
+      "label": "89-fill-redo-undo"
+    },
+    {
+      "do": "tap",
+      "at": [81, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Selection",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "tap",
+      "at": [60, 362]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "89-end"
+    },
+    {
+      "do": "appState",
+      "label": "89-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}
