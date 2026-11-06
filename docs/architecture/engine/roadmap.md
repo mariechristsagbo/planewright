@@ -175,6 +175,8 @@ and ENG-14.
 - **Acceptance criteria:**
   - adapter tests map pointer, wheel (pixel, line and page modes) and key events, with Mod as Cmd on
     macOS and Ctrl elsewhere;
+  - keymap tests on a US and a French (AZERTY) layout: digits match by physical key, `1` and
+    `Shift+1` stay distinct, and Mod with `=`, `+`, `-` or `_` zooms;
   - recogniser tests cover drag thresholds, taps, double taps, long presses and the second touch
     pointer cancelling a tool gesture;
   - end to end: wheel, Shift+wheel, Mod+wheel, keyboard zoom, Space+drag, a middle-button drag, the

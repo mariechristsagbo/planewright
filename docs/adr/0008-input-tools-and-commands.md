@@ -33,7 +33,9 @@ commands avoids.
    enabled rule and a run function. The keymap, toolbar, menus, palette, help and accessible
    descriptions read the same registry (REQ-C14).
 7. **Keyboard rules.** Shortcuts pause while a text field has focus. Letter shortcuts match the
-   produced character, falling back to the physical key for layouts without Latin letters.
+   produced character, falling back to the physical key for layouts without Latin letters. Digit
+   shortcuts match the physical key, so they work where digits need Shift, and the zoom shortcuts
+   accept `=` or `+` and `-` or `_` on any layout.
 
 ## Alternatives considered
 
