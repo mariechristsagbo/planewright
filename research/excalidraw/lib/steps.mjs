@@ -23,7 +23,7 @@ import {
   readMetrics,
   screenOrientation,
 } from './metrics.mjs';
-import { redactSecrets } from './sanitise.mjs';
+import { redactSecrets, sanitiseUrl } from './sanitise.mjs';
 
 const metrics = (ctx) => ctx.page.evaluate(readMetrics);
 
@@ -51,6 +51,32 @@ async function emulate(ctx, step) {
   }
   const read = await metrics(ctx);
   return step.verify === false ? read : assertMetrics(expectedFromEmulation(step), read);
+}
+
+// Emulates a lost connection (R-57, from s59 on) through Playwright's context, which sends the CDP
+// network conditions to the page and to every service worker it has attached, then reads
+// navigator.onLine back for up to a second. A read that disagrees stops the batch, as a metrics
+// mismatch does. Nothing else is changed, the user agent included.
+async function offline(ctx, step) {
+  if (typeof step.value !== 'boolean') throw new FatalStepError('offline needs a boolean value.');
+  const context = ctx.page.context();
+  await context.setOffline(step.value);
+  let onLine = step.value;
+  for (let i = 0; i < 10 && onLine === step.value; i += 1) {
+    if (i > 0) await sleep(100);
+    onLine = await ctx.page.evaluate(() => navigator.onLine);
+  }
+  if (onLine === step.value) {
+    throw new FatalStepError(
+      `Offline emulation not read back, run aborted: navigator.onLine is ${String(onLine)}.`,
+    );
+  }
+  // The browser runs workers of its own too, so each worker is named by its origin and path.
+  const workers = context.serviceWorkers().map((worker) => {
+    const { origin, path, scheme } = sanitiseUrl(worker.url());
+    return origin ? `${origin}${path}` : String(scheme ?? 'unparseable');
+  });
+  return { offline: step.value, onLine, serviceWorkers: workers };
 }
 
 async function colorScheme(ctx, step) {
@@ -146,6 +172,19 @@ async function role(ctx, step) {
   return { role: step.role, name: step.name };
 }
 
+// Picks one option of a select element by its visible label, as a user does (the language list).
+async function selectOption(ctx, step) {
+  if (typeof step.label !== 'string' || step.label.length === 0) {
+    throw new Error('selectOption needs an option label.');
+  }
+  const role = step.role ?? 'combobox';
+  const locator = ctx.page.getByRole(role, { name: step.name, exact: step.exact ?? false });
+  const values = await locator
+    .first()
+    .selectOption({ label: step.label }, { timeout: step.timeout ?? 5000 });
+  return { role, name: step.name, label: step.label, values };
+}
+
 // ARIA text can contain collaboration links; it is redacted before it is written or returned.
 async function aria(ctx, step) {
   const text = redactSecrets(await ctx.page.locator(step.selector ?? 'body').ariaSnapshot());
@@ -167,6 +206,7 @@ async function fixture(ctx, step) {
 export const handlers = {
   ...inputHandlers,
   emulate,
+  offline,
   colorScheme,
   metrics,
   assertMetrics: async (ctx, step) => assertMetrics(step.expect ?? {}, await metrics(ctx)),
@@ -182,6 +222,7 @@ export const handlers = {
   fixture,
   reload: async (ctx) => ({ status: (await ctx.page.reload())?.status() ?? null }),
   role,
+  selectOption,
   selector: async (ctx, step) => {
     await ctx.page
       .locator(step.selector)

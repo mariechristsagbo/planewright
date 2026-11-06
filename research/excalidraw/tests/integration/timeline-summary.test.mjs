@@ -164,3 +164,57 @@ describe('timeline-summary.mjs link and pressure fields', () => {
     }
   });
 });
+
+describe('timeline-summary.mjs focus, connectivity, layout and background reads', () => {
+  const at = '2026-01-01T00:00:01.000Z';
+  const row = (kind, label, result) => ({ started: at, step: { do: kind, label }, result });
+  const focused = { tag: 'BUTTON', name: 'Rectangle', textChars: 1, focusVisible: true };
+  const online = { onLine: false, controlled: true, registration: null, readyState: 'complete' };
+  const layout = {
+    viewport: [390, 844],
+    lang: 'en',
+    dir: 'ltr',
+    appClass: 'raw only',
+    buttons: [],
+  };
+  const rows = [
+    row('focus', 'f', {
+      focused,
+      live: [{ role: 'status', live: 'polite', chars: 6, text: 'Copied' }],
+    }),
+    row('connectivity', 'c', online),
+    row('layout', 'l', layout),
+    row('appState', 'b', { selected: { viewBackgroundColor: '#ffc9c9' } }),
+  ];
+
+  it('keeps the focused element, live region lengths, connectivity, layout and background', () => {
+    const run = summarise('view', rows);
+    expect(run.status).toBe(0);
+    const [focus, connectivity, view, background] = JSON.parse(run.stdout);
+    expect(focus).toEqual({
+      label: 'f',
+      at,
+      focused,
+      live: [{ role: 'status', live: 'polite', chars: 6 }],
+    });
+    expect(connectivity).toEqual({ label: 'c', at, connectivity: online });
+    expect(view).toEqual({
+      label: 'l',
+      at,
+      layout: { viewport: [390, 844], lang: 'en', dir: 'ltr', buttons: [] },
+    });
+    expect(background).toMatchObject({ label: 'b', background: '#ffc9c9' });
+  });
+
+  it('copies no live region text and no app class name into the summary', () => {
+    const run = summarise('view-text', rows);
+    expect(run.stdout.includes('Copied')).toBe(false);
+    expect(run.stdout.includes('raw only')).toBe(false);
+  });
+
+  it('adds no background key for an app state read without one, as in the earlier timelines', () => {
+    const run = summarise('no-background', [appState(at, 'a', 'selection', {})]);
+    expect(run.status).toBe(0);
+    expect('background' in JSON.parse(run.stdout)[0]).toBe(false);
+  });
+});

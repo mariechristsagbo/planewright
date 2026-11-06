@@ -9,7 +9,11 @@
 // timelines, and the summaries built from them, have none. In the same way an element keeps its
 // link shape and a freehand stroke its pressure flag, pressure count and stroke options, which the
 // probe reads only from s51 on. With --text a text element keeps its font size, family and
-// alignment; the summaries committed before s51 were built without it.
+// alignment; the summaries committed before s51 were built without it. The focus, connectivity and
+// layout probes and the app state's canvas background are read only from s59 on, so the earlier
+// summaries have none of their rows or keys: a focus row keeps the focused element and each live
+// region's role, politeness and length, never its text, and a layout row leaves out the app root's
+// class.
 //
 // Usage: node research/excalidraw/timeline-summary.mjs <timeline.jsonl> [--since ISO] [--json]
 //        [--points] [--text]
@@ -65,6 +69,18 @@ const element = (e) => ({
   ...later(e),
 });
 
+// Rows of the probes that only the sessions of s59 on ran.
+const VIEW = {
+  focus: (r) => ({
+    focused: r.focused,
+    live: (r.live ?? []).map(({ role, live, chars }) => ({ role, live, chars })),
+  }),
+  connectivity: (r) => ({ connectivity: r }),
+  layout: (r) => ({
+    layout: { viewport: r.viewport, lang: r.lang, dir: r.dir, buttons: r.buttons },
+  }),
+};
+
 const summary = new Map();
 const reads = new Map();
 for (const row of rows) {
@@ -81,7 +97,9 @@ for (const row of rows) {
       typeof n === 'number' ? Math.round(n) : n,
     );
     entry.theme = selected.theme;
+    if (selected.viewBackgroundColor !== undefined) entry.background = selected.viewBackgroundColor;
   }
+  if (Object.hasOwn(VIEW, row.step.do)) Object.assign(entry, VIEW[row.step.do](row.result));
   summary.set(row.step.label, entry);
 }
 

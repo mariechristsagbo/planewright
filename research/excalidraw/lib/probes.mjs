@@ -1,7 +1,9 @@
 // Bounded reads of state created by the research session itself: storage key inventory,
 // a structural summary of the locally persisted scene, clipboard text shape, the URL shape and
 // the computed style of the document root. Values are reduced to shapes, counts and geometry.
+// The focus, connectivity and layout reads of s59 on live in view-probes.mjs.
 import { clipboardShapeOf, urlShapeOf } from './sanitise.mjs';
+import { viewProbes } from './view-probes.mjs';
 
 function summariseStorage() {
   const describe = (raw) => {
@@ -108,6 +110,8 @@ function summariseAppState(key) {
     'activeTool',
     'selectedElementIds',
     'name',
+    // Read from s59 on (the canvas background, R-05).
+    'viewBackgroundColor',
   ];
   const selected = Object.fromEntries(pick.filter((k) => k in state).map((k) => [k, state[k]]));
   if (selected.name) selected.name = `<${String(selected.name).length} chars>`;
@@ -157,4 +161,5 @@ export const probes = {
     ctx.page.evaluate(summariseAppState, step.key ?? 'excalidraw-state'),
   clipboard: clipboardProbe,
   rootStyle: async (ctx) => ctx.page.evaluate(rootStyle),
+  ...viewProbes,
 };

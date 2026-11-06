@@ -14,7 +14,7 @@ it never writes raw third-party content into this repository. See
 | `selftest.sh`            | End-to-end driver self-test on `about:blank` and `fixtures/selftest.html`; contacts no website.                                                                                                             |
 | `lib/server.mjs`         | HTTP wiring, request checks, body cap, batch admission (one at a time, `runLast` lock), step runner and token file.                                                                                         |
 | `lib/guard.mjs`          | Request, name, path, port and navigation rules.                                                                                                                                                             |
-| `lib/steps.mjs`          | Emulation with read-back assertions, navigation, fixtures, downloads, dialogs, ARIA.                                                                                                                        |
+| `lib/steps.mjs`          | Emulation with read-back assertions (offline included), navigation, fixtures, downloads, dialogs, select options, ARIA.                                                                                     |
 | `lib/capture.mjs`        | CDP screenshots with masks, and the refusal rules for captures.                                                                                                                                             |
 | `lib/files.mjs`          | Exclusive-create writes: an output name is never overwritten.                                                                                                                                               |
 | `lib/session-state.mjs`  | Keeps the `runLast` lock and the halt reason in `$OUT/driver-state.json`, so a driver restart keeps both.                                                                                                   |
@@ -27,6 +27,7 @@ it never writes raw third-party content into this repository. See
 | `lib/sanitise.mjs`       | URL shapes, query stripping, secret-shape counting and redaction.                                                                                                                                           |
 | `lib/png.mjs`            | Minimal PNG codec used to paint masks and to verify them.                                                                                                                                                   |
 | `lib/probes.mjs`         | Reads of session-created state: storage key inventory, scene and appState shape (an arrow's elbowed flag; a link's origin and path and freehand pressure fields), clipboard and URL fragment shape.         |
+| `lib/view-probes.mjs`    | The focused element and live regions, the connection and service worker state, and the language and named button boxes.                                                                                     |
 | `lib/netlog.mjs`         | Metadata-only network log (no headers, cookies, bodies or query values).                                                                                                                                    |
 | `scenarios/*.json`       | Replayable step batches; coordinates assume the stated viewport and default zoom.                                                                                                                           |
 | `check-masks.mjs`        | Verifies, without displaying images, that every masked region of every masked capture is painted.                                                                                                           |
@@ -116,6 +117,10 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
   `assertMetrics` checks a loaded page, including the screen orientation when expected and
   canvas backing store = CSS size × DPR. Any mismatch is fatal and stops the batch even with
   `continueOnError`.
+- **Offline.** `offline` sets the browser context offline or back online, which sends CDP network
+  conditions to the page and to each service worker Playwright has attached, and then reads
+  `navigator.onLine` back; a read that disagrees is fatal. It changes nothing else, the user agent
+  included, and the driver itself stays reachable, as it listens on the host's loopback.
 - **Screenshots** use CDP `Page.captureScreenshot` on the driver's own session. Playwright's
   `page.screenshot()` was found to reset emulated DPR and screen until the next navigation.
   `mask` selectors are painted onto the decoded image before writing. Every requested mask must
@@ -175,8 +180,8 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
 
 Most scenarios continue from the previous one's end state. `00` (desktop) and `09` (mobile) emulate
 before the first navigation; `00c` re-emulates after a driver restart, and `11` re-emulates on
-purpose to probe DPR. Every main scenario asserts the metrics before its first
-input (02 right after its own load; 00b, 00c and 09b after their reload); the short follow-on
+purpose to probe DPR; `52` re-emulates on purpose to resize the loaded page (R-23). Every main
+scenario asserts the metrics before its first input (02 right after its own load; 00b, 00c and 09b after their reload); the short follow-on
 scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 
 | Session                | Order                                                                                                                                                                                                                                                  |
@@ -293,6 +298,18 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
   - `48` runs right after 45 in the same session: s54 found midpoint handles on a three-point
     arrow only in Edit arrow, so 48 adds the fourth point from one there, with Undo and Redo, then
     taps the new point and Delete in the Actions popover, then Undo.
+  - `49` to `55` run right after `09`, each in a fresh session unless named below, and use only the
+    names that s7, s22 and s58 saved. `49` presses Tab 30 times and Shift+Tab 4 times and reads the
+    focus after each press; it presses no Enter or Space, so nothing is activated and no link is
+    followed. `50` draws, goes offline with the `offline` step and reloads offline, and sends no
+    input after its reload; `51` runs straight after it, still offline, asserts the metrics, draws,
+    and goes back online with no input after that; `24` then reloads online. `52` emulates ten
+    viewports in turn on the loaded page, with no input, no reload and no user agent, asserts each,
+    and ends at 390×844 portrait again. `53` writes two self-authored words and searches for one
+    with Find on canvas; it stops at its first failed step, so nothing is typed unless its textbox
+    was clicked. `54` switches the language to Français and back with `selectOption` and opens
+    Canvas background without picking a colour, and `55` opens the Library sidebar with and
+    without a selection, adding nothing and following no link.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
