@@ -22,9 +22,9 @@ REQ-Y06).
 
 **Element list.** Up and Down move through the options; Space toggles an element in the selection
 and Enter selects it alone; Delete deletes the selection; Alt+arrow keys nudge it by 1 unit and
-Alt+Shift+arrow keys by 10. Selection is shared with the canvas both ways. The list renders only
-the options near the focused one for large documents, with `aria-setsize` and `aria-posinset`, so
-its cost stays flat.
+Alt+Shift+arrow keys by 10. The list selects through `Editor.select` and reads the editor's view,
+so selection is shared with the canvas both ways. The list renders only the options near the
+focused one for large documents, with `aria-setsize` and `aria-posinset`, so its cost stays flat.
 
 **Keyboard creation.** With a creation tool active and the canvas focused, Enter creates the
 tool's default-size element at the centre of the viewport, so no element kind needs a pointer

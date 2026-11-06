@@ -113,12 +113,20 @@ export interface EditorPorts {
 }
 
 export interface Editor {
-  /** Read-only views of the document, selection, camera, tool and history availability. */
+  /** Read-only views: document, selection, camera, tool, history, text session, save status. */
   readonly view: EditorView;
   /** Feed one engine input event (pointer, wheel, key, pinch) from the input adapter. */
   input(event: InputEvent): void;
   /** Run a registered command, for example from a menu, the palette or a test. */
   run(command: CommandId): CommandOutcome;
+  /** Replace the selection, for example from the element list; never an undo step. */
+  select(ids: readonly ElementId[]): void;
+  /** Report the text area's whole value, or the end of the session, while a text is edited. */
+  editText(edit: TextEdit): void;
+  /** Start a save at once if anything is unsaved, for example when the page is hidden. */
+  saveNow(): void;
+  /** Carry out the user's choice after a save was refused as stale. */
+  resolveStale(choice: 'load-newer' | 'keep-this'): void;
   /** Report the canvas size in CSS pixels and the device pixel ratio. */
   resize(size: ViewportSize): void;
   /** The next frame to draw, or null when no layer is dirty. */

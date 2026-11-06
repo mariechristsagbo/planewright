@@ -214,9 +214,17 @@ The engine holds a text session: the element, whether it is new, and its startin
 app shows a text area over the canvas at the element's screen position, scaled by the zoom and
 rotated by the element, with the element hidden from the scene layer.
 
-- Each input updates the element transiently, re-measuring its size; a new left-aligned text keeps
-  its top-left corner after creation.
-- Enter inserts a line break. Escape, Mod+Enter, a press outside the text or a tool change commit.
+```ts
+export type TextEdit =
+  | { readonly type: 'value'; readonly text: string } // the text area's whole value
+  | { readonly type: 'commit' }; // Escape or Mod+Enter in the text area
+```
+
+- The web app sends each input as `editText({ type: 'value', text })`, which updates the element
+  transiently and re-measures its size; a new left-aligned text keeps its top-left corner after
+  creation.
+- Enter inserts a line break. Escape and Mod+Enter in the text area send a `commit` edit; a press
+  outside the text, which reaches the engine through `input`, and a tool change commit too.
 - A session is one history entry; a new text left empty is removed without an entry, and an
   existing text emptied is deleted as one entry (REQ-C10).
 - While the text area has focus, editor shortcuts are paused.

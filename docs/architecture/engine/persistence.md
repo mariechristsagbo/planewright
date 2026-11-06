@@ -109,15 +109,18 @@ next one.
 | dirty  | timer reset to 300 ms, but never later than 1 s after the first unsaved change | start a save, become saving | none                                                           |
 | saving | stays saving; the change waits                                                 | none                        | success: clean, or dirty if changes waited; failure: see below |
 
-- When the page is hidden or unloaded, a dirty scheduler starts a save at once. Writes during
-  unload are best effort, so the 1 s ceiling bounds what a crash can lose.
+- When the page is hidden or unloaded, the web app calls `Editor.saveNow`, and a dirty scheduler
+  starts a save at once. Writes during unload are best effort, so the 1 s ceiling bounds what a
+  crash can lose.
 - **Failures** (`quota`, `unavailable`, `failed`) keep the changes pending, retry after 1, 2, 4, 8,
   16 and then every 30 s, and raise a notice that stays until a save succeeds (REQ-P05). Editing
   continues in memory meanwhile.
 - **Stale** stops autosave, session saves included, and raises a notice: another tab saved a newer
-  version. Nothing is overwritten without the user's choice (REQ-P06):
+  version. Nothing is overwritten without the user's choice, which the notice passes to
+  `Editor.resolveStale` (REQ-P06):
   - **Load the newer version** discards this tab's unsaved changes and loads the stored document as
-    a reload would: its camera and selection, the Selection tool and an empty history.
+    a reload would, through a change set with the `load` origin: its camera and selection, the
+    Selection tool and an empty history.
   - **Keep this one** saves this tab's whole document as a `replace` whose base is the revision the
     `stale` result reported. The repository removes every stored element and group that the
     document does not hold and writes the rest, so storage then holds exactly this tab's document
