@@ -250,6 +250,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Replays (`s65`)        | 09 → 49 → 56 → 52 → 57 → 16                                                                                                                                                                                                                            |
 | Replays (`s66`)        | 09 → 53 → 58 → 59 → 16                                                                                                                                                                                                                                 |
 | Replays (`s67`)        | 09 → 53 → 55 → 16                                                                                                                                                                                                                                      |
+| Library undo (`s68`)   | 09 → 60 → 09b → 50 → 61 → 51 → 24 → 16                                                                                                                                                                                                                 |
+| Library undo (`s69`)   | 09 → 60 → 09b → 50 → 61 → 51 → 24 → 16                                                                                                                                                                                                                 |
+| Language (`s70`)       | 09 → 53 → 54 → 16                                                                                                                                                                                                                                      |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page
@@ -340,6 +343,10 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     before `51`. It sends no input: it reads the connection state that 50's offline reload left and
     repeats the `offline` step with the value 50 set, which the driver applies again on its own
     session, then waits 6 s and reads again, so 51 then draws offline in a page that reads offline.
+  - s68 and s69 ran 60 right after 09, then 09b, whose reload had never run, then 50, and 61 and 51
+    inside one REA window, because in a local test a DevTools session that detached from the page
+    turned `navigator.onLine` true again; 24 reloaded last. s70 ran 54 again after 53, last in the
+    batch, because its locale chunk got HTTP 403 in s64.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an

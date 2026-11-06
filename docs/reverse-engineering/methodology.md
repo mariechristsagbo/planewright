@@ -98,7 +98,12 @@ and is indexed in `evidence/sessions-s65-s67.json`. From s65 the gate stops live
 or 429 of any request type, on a verification path, on an aborted request to the reference origin
 and on a REA window that is not ok or holds such a response; a watcher reads the netlog every
 0.5 s and stops the browser at once, and the netlog and the REA window are read again after every
-scenario.
+scenario. The library undo, offline and language batch s68–s70 ran on 2026-11-06 at 06:21–06:33 UTC
+under the same gate and is indexed in `evidence/sessions-s68-s70.json`. From `56b88ff` the
+`offline` step also sends its network conditions to the page on the driver's own session, so a
+value that Playwright already holds is applied again, and in s68 and s69 the offline state then
+held across a reload; one REA window spans 61 and 51, because a DevTools session that detached
+from the page turned `navigator.onLine` true again in a local test.
 
 ## Division of labour
 

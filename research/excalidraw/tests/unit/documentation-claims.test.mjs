@@ -128,12 +128,12 @@ describe('persistence claims stay within the observations', () => {
     expect(backlog).not.toMatch(/persisted \[O\]|not persisted \[O\]/u);
   });
 
-  it('says that 09b never ran, because no mobile session reloaded', () => {
+  it('says that 09b first ran in s68 and s69, as the early mobile sessions never reloaded', () => {
     for (const name of ['s3-mobile', 's4-dpr-probe', 's7-mobile-fresh']) {
       expect(session(name).steps.byKind.reload ?? 0, name).toBe(0);
     }
     const mobile = flat(field(entry('B-30'), 'Desktop/mobile'));
-    expect(mobile).toContain('never ran');
+    expect(mobile).toContain('ran first in s68 and s69');
     expect(mobile).not.toContain('asserted layout');
   });
 

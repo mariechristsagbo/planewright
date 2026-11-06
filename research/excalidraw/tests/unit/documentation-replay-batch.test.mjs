@@ -90,16 +90,14 @@ describe('the replays of 55–59', () => {
     expect(section()).toContain('a query value of the off-site Browse libraries link');
   });
 
-  it('raise the entries and rows that rested on one run, and keep 54 open', () => {
+  it('raise the entries and rows that rested on one run', () => {
     for (const id of ['B-48', 'B-49'])
       expect(field(entry(id), 'Confidence'), id).toMatch(/^\[O\] high/u);
     expect(field(entry('B-43'), 'Reproduction')).toContain('56 (s62, s65)');
     expect(field(entry('B-45'), 'Reproduction')).toContain('57 (s62, s65)');
-    expect(field(entry('B-47'), 'Confidence')).toMatch(/^\[O\] medium/u);
     expect(cells('R-27')[8]).not.toContain('replay 56');
     expect(cells('R-27')[7]).not.toContain('56 ran once');
     expect(cells('R-23')[7]).not.toContain('57 ran once');
-    expect(cells('R-05')[8]).toContain('a second mobile run of 54');
     for (const [id, name] of [
       ['R-27', 's65'],
       ['R-23', 's65'],

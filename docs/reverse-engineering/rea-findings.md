@@ -244,6 +244,36 @@ window spans a reload.
 | `s64-mobile-find-library`          | `r04-inspect-during-58.json` | `ev_9a429301`     | `inspect_web_page`, 03:22:37.459–03:23:27.644, 7 origins. Armed 3394 ms before scenario 58's first step; all its 40 steps inside it |
 | `s64-mobile-find-library`          | `r05-inspect-during-59.json` | `ev_fe536c38`     | `inspect_web_page`, 03:23:31.515–03:24:11.782, 7 origins. Armed 3135 ms before scenario 59's first step; all its 26 steps inside it |
 
+**Library undo, offline and language records** (s68–s70, on 2026-11-06, times UTC). Each session
+listed the target after 09, and s68 and s69 again after 09b, 50 and 24; a session's listings
+returned the same record each time, so they share one Evidence ID. s68 and s69 ran 60 inside its
+own window and 61 and 51 inside one window, with a 3 s inspection after 09b's and 24's online
+reloads, and s70 ran 53 and 54 each inside its own window. No window spans a reload, and every
+window and inspection kept 0 requests, 0 WebSocket connections and 0 console events but s70's
+over 54, which kept the locale chunk's request, with HTTP 200.
+
+| Session                             | File                            | Evidence (prefix) | Operation and window                                                                                                                             |
+| ----------------------------------- | ------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `s68-mobile-library-undo-offline`   | `r01-targets.json`              | `ev_8ff765f2`     | `list_browser_targets`                                                                                                                           |
+| `s68-mobile-library-undo-offline`   | `r02-inspect-during-60.json`    | `ev_ec2f95e1`     | `inspect_web_page`, 06:21:19.315–06:22:19.910, 7 origins. Armed 3399 ms before scenario 60's first step; all its 61 steps inside it              |
+| `s68-mobile-library-undo-offline`   | `r03-targets-after-09b.json`    | `ev_8ff765f2`     | `list_browser_targets`                                                                                                                           |
+| `s68-mobile-library-undo-offline`   | `r04-inspect-after-09b.json`    | `ev_72b51e20`     | `inspect_web_page`, 06:22:30.551–06:22:33.992, 7 origins, after 09b's reload, with no step inside it                                             |
+| `s68-mobile-library-undo-offline`   | `r05-targets-after-50.json`     | `ev_8ff765f2`     | `list_browser_targets`                                                                                                                           |
+| `s68-mobile-library-undo-offline`   | `r06-inspect-during-61-51.json` | `ev_66ffa91e`     | `inspect_web_page`, 06:22:59.430–06:23:49.966, 7 origins. Armed 3552 ms before scenario 61's first step; all the 30 steps of 61 and 51 inside it |
+| `s68-mobile-library-undo-offline`   | `r08-targets-after-24.json`     | `ev_8ff765f2`     | `list_browser_targets`                                                                                                                           |
+| `s68-mobile-library-undo-offline`   | `r09-inspect-after-24.json`     | `ev_fa0eadd1`     | `inspect_web_page`, 06:24:02.063–06:24:05.596, 7 origins, after 24's reload, with no step inside it                                              |
+| `s69-mobile-library-undo-offline-2` | `r01-targets.json`              | `ev_f01852a0`     | `list_browser_targets`                                                                                                                           |
+| `s69-mobile-library-undo-offline-2` | `r02-inspect-during-60.json`    | `ev_4a9a35a9`     | `inspect_web_page`, 06:27:31.294–06:28:31.795, 7 origins. Armed 3140 ms before scenario 60's first step; all its 61 steps inside it              |
+| `s69-mobile-library-undo-offline-2` | `r03-targets-after-09b.json`    | `ev_f01852a0`     | `list_browser_targets`                                                                                                                           |
+| `s69-mobile-library-undo-offline-2` | `r04-inspect-after-09b.json`    | `ev_7fee0bf9`     | `inspect_web_page`, 06:28:42.659–06:28:46.152, 7 origins, after 09b's reload, with no step inside it                                             |
+| `s69-mobile-library-undo-offline-2` | `r05-targets-after-50.json`     | `ev_f01852a0`     | `list_browser_targets`                                                                                                                           |
+| `s69-mobile-library-undo-offline-2` | `r06-inspect-during-61-51.json` | `ev_0542a76e`     | `inspect_web_page`, 06:29:14.380–06:30:05.188, 7 origins. Armed 3052 ms before scenario 61's first step; all the 30 steps of 61 and 51 inside it |
+| `s69-mobile-library-undo-offline-2` | `r08-targets-after-24.json`     | `ev_f01852a0`     | `list_browser_targets`                                                                                                                           |
+| `s69-mobile-library-undo-offline-2` | `r09-inspect-after-24.json`     | `ev_c401f6f1`     | `inspect_web_page`, 06:30:19.399–06:30:22.974, 7 origins, after 24's reload, with no step inside it                                              |
+| `s70-mobile-language-2`             | `r01-targets.json`              | `ev_8d75a7e5`     | `list_browser_targets`                                                                                                                           |
+| `s70-mobile-language-2`             | `r02-inspect-during-53.json`    | `ev_e612455d`     | `inspect_web_page`, 06:31:15.854–06:32:06.713, 7 origins. Armed 3075 ms before scenario 53's first step; all its 52 steps inside it              |
+| `s70-mobile-language-2`             | `r03-inspect-during-54.json`    | `ev_5cffd529`     | `inspect_web_page`, 06:32:10.325–06:33:00.559, 7 origins. Armed 3307 ms before scenario 54's first step; all its 39 steps inside it              |
+
 **Replay records** (s65–s67, on 2026-11-06, times UTC). Each session listed the target after 09
 and ran each scenario but 16 inside its own window; no window spans a reload, and every window
 kept 0 requests, 0 WebSocket connections and 0 console events.

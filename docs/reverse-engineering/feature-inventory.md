@@ -107,7 +107,8 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   of the canvas with the desktop's four unnamed tabs and Close; empty, it shows a note and the
   off-site Browse libraries link, and with a selection a search box, Personal Library and an add
   tile, which adds the selection; an item's tile places a copy (s61, s64, s66, s67; B-48) [O, high:
-  each replay identical].
+  each replay identical]. Undo takes the placed copy back, and Redo restores it; after an add, Undo
+  takes back the step before it (s68, s69; B-48) [O, high: both runs identical].
 - **Layout by viewport:** the phone layout above holds at widths up to 580 px and heights up to
   450 px; from 600 px wide and 520 px high the desktop's layout shows, with the Shapes toolbar at
   the top, even on this touch client (s59, s62, s65; B-45) [O, high].
@@ -121,8 +122,8 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   Excalidraw+ entry were not used (R-46, R-62). Find on canvas opens a sidebar tab with a search
   box, a result count and a list of the matching texts (B-46); the Select language list changed
   the document language and, once its locale chunk arrived, the labels (B-47); Canvas background
-  opens a hex box of that name (B-49) (s61, s64, s66) [O, medium: the French labels loaded in one
-  of the two language runs; Find and the background are high, each replay identical].
+  opens a hex box of that name (B-49) (s61, s64, s66, s70) [O, high: the French labels loaded in
+  s61 and s70, not in s64, after a 403; Find and the background replayed identically].
 - **More tools on mobile:** Insert image, Sticky note, Frame tool, Web Embed, Draw to shape,
   Laser pointer, Bucket fill, and the three generation entries. Unlike desktop, there is **no
   Lasso selection**. Mermaid to Excalidraw and Text to diagram open one dialog with a tab each;

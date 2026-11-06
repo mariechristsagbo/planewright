@@ -42,11 +42,13 @@ describe('scenario descriptions', () => {
     }
   });
 
-  it('say that 09b never ran, because no mobile session reloaded', () => {
+  it('say that 09b first ran in s68 and s69, as the early mobile sessions never reloaded', () => {
     for (const name of ['s3-mobile', 's4-dpr-probe', 's7-mobile-fresh']) {
       expect(session(name).steps.byKind.reload ?? 0, name).toBe(0);
     }
-    expect(scenario('09b-reload-and-verify-mobile').description).toContain('It never ran');
+    expect(scenario('09b-reload-and-verify-mobile').description).toContain(
+      'It first ran in s68 and s69',
+    );
   });
 
   it('count the 00c runs in s6 from its emulate steps', () => {

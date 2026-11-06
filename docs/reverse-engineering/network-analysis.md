@@ -222,6 +222,24 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Library undo, offline and language batch (s68–s70) [O]
+
+- **Loads and reloads.** Each of the three loads got its document with HTTP 200 from the network,
+  and the three reloads of s68 and of s69 (09b's, 50's offline one and 24's) got theirs from the
+  service worker; no netlog holds a 403, 429, request under `/.well-known/vercel/` or `.map`
+  request (`evidence/sessions-s68-s70.json`).
+- **Offline.** 50's offline reload was served as in s60 and s63: the document, scripts,
+  stylesheet, fonts, manifest and icons from the service worker and the analytics script with 200
+  without it, while the analytics beacon and the error-report POST failed, once each per session.
+  Back online in 51, with `navigator.onLine` now turning from false to true, the page made no
+  request in the 6 s that followed (`evidence/netlog-steps-s68-s70.json`), and the REA windows over
+  61 and 51 kept none (`evidence/rea-windows-s68-s70.json`).
+- **The locale chunk.** In s70, picking Français in 54 asked for the `fr-FR` chunk once; it came
+  with HTTP 200 through the service worker 49 ms into the wait after the pick, as in s61, and
+  REA's window over 54 kept it with HTTP 200.
+- **No traffic while drawing or using the library.** None of the 152 request starts of s68 and s69
+  fell in a drawing step, and the windows over 60 and 53 kept 0 requests.
+
 ### Replay batch (s65–s67) [O]
 
 - **Loads.** Each of the three loads got its document with HTTP 200 from the network, and each

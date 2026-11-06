@@ -41,7 +41,7 @@
      recorded before s5.
    - All mobile claims now cite s7, where DPR 3 held at every assertion. s7 asserted the metrics at 5 points: after 09's load, and at the start and end of 10 and of 14. 10b's single capture falls between the end of 10 and the start of 14, and 11's emulate step asserts its own read-back. s11 asserted at the same 5 points, and DPR 3 held at each.
 5. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried, and
-   one other language, French, was picked (s61, s64); right-to-left layouts were not observed.
+   one other language, French, was picked (s61, s64, s70); right-to-left layouts were not observed.
 6. **Fixed coordinates.** Scenario coordinates depend on viewport and zoom. A layout change in the
    reference breaks replay (B-21 shows how a reflow redirected clicks).
 7. **Single collaboration client.** Only one guest client was used per room, so multi-user
@@ -69,8 +69,9 @@
    which the netlog wrote as aborted (as in s12, where no window was open), and that at s49's load
    the manifest got HTTP 403 twice, three minutes before s50's verification page. Those gates passed
    both. About two hours after s64, s65–s67 (05:21–05:33 UTC) loaded the app normally under a gate
-   that stops on a 403 of any request type, and met none; whether the protection depends on rate,
-   time or the requests asked for is not known [H].
+   that stops on a 403 of any request type, and met none, nor did s68–s70 (06:21–06:33 UTC), where
+   54 got its locale chunk with HTTP 200; whether the protection depends on rate, time or the
+   requests asked for is not known [H].
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -105,10 +106,13 @@
     the page handles an external keyboard's keys, and no screen reader or assistive technology
     took part, so what one would announce was not observed.
 14. **Offline emulation.** The `offline` step sets Chromium's network conditions for the page and
-    the service workers Playwright attached (s60, s63). It held for requests across a reload, which
-    still failed as offline, but navigator.onLine read true after a reload, so the reloaded app
-    was never shown an offline state; a real lost connection, a flaky one and a longer offline
-    period were not tried.
+    the service workers Playwright attached (s60, s63), and from s68 for the page on the driver's
+    own session too. Set by Playwright alone, they held for requests across a reload, which still
+    failed as offline, but navigator.onLine read true after a reload, so the reloaded app was never
+    shown an offline state. Set on the driver's session too, navigator.onLine stayed false across
+    the reload (s68, s69), but in a local test a DevTools session that detached from the page
+    turned it true again, so no REA call may end while a page should read offline. A real lost
+    connection, a flaky one and a longer offline period were not tried.
 
 ## Tooling limits
 
@@ -186,6 +190,9 @@
   - in s65–s67, the byte-identical ARIA of the replay pairs, and that the 6 snapshots that differ do
     so only in a query value of the off-site Browse libraries link, which changes per session and
     is kept in no committed file.
+  - in s68–s70, the byte-identical ARIA of the replay pairs and against s63 and s61, the 3 snapshots
+    that differ only in that query value, the Undo button disabled after 60's first Undo, the one
+    library item in each sidebar snapshot, and the local test reads of `navigator.onLine`.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.
@@ -252,9 +259,9 @@
   or that the local save delay is measured from pointer-up. See B-36, B-04 and B-30.
 - That every behaviour entry covers all issue #1 dimensions. Entries mark each dimension that was
   not observed.
-- That the theme, zen, grid or snap state survives a reload, or that a mobile reload keeps the
-  scene. No session reloaded while dark or with a mode on, and scenario `09b` never ran (R-19,
-  R-54).
+- That the zen, grid or snap state survives a reload, or the theme a desktop reload. No session
+  reloaded with a mode on, and no desktop session while dark (R-19); on mobile the reloads of 24
+  and 09b kept the stored scene, and s16's the dark theme (B-30, R-54).
 - That observed numeric thresholds (save delay, binding gap, handle offsets) are stable across
   versions. Several `index-*.js` chunks with different hashes were loaded across sessions. The
   one `index-*.js` script that every s1–s7 netlog requests is requested in no s8–s11 netlog,

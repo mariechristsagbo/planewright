@@ -1034,9 +1034,10 @@ value is a value the page had saved locally.
   with the same id on both sides [O, raw timeline]), zoom 1.5 and the scroll read the same after the
   reload, whose document again came from the service worker [O], and the captures show the same view
   with the selection's handles but for the Undo button [O, raw captures and ARIA]. Scenario `09b`
-  itself never ran (R-54).
+  ran first in s68 and s69, after 60: its reload, again from the service worker, kept every
+  emulated metric at its assertion, and 50 then read 60's two rectangles (`50-online`) [O].
 - **Reproduction:** scenario 13 (s6, s9: `13a-t0` … `13c-t1500`, `13-end`); scenario 06 (s1,
-  s6); scenario 24 (s16; after 27 in s17, s19 and s21).
+  s6); scenario 24 (s16; after 27 in s17, s19 and s21); scenario 09b, after 60 (s68, s69).
 - **Confidence:** [O] high for the scenario 06 reload and for deletion (s1 and s6; deletion also in
   s8 and s9); [O] medium for the timing: s6 and s9 differ at the third read of one of six trials,
   and an s1 timing reading is not in the committed index; [O] high for the mobile reload with a
@@ -1312,21 +1313,29 @@ external one.
   [O]. The analytics beacon and the error-report POST failed with
   `net::ERR_INTERNET_DISCONNECTED`; the analytics script loaded with 200 without the service
   worker, most likely from the HTTP cache [I].
-- **State and related effects:** no offline indicator in ARIA or the captures [O]. In the
-  reloaded page `navigator.onLine` read true although its requests still failed as offline
-  (`50-offline-reloaded`, `51-offline`) [O]; the emulated online state does not carry over a
-  reload [I], so the app started believing it was online. Back online, the page made no request in
-  the 6 s that followed, and REA's window over 51 kept none [O].
+- **State and related effects:** no offline indicator in ARIA or the captures [O]. With the
+  conditions set by Playwright alone, `navigator.onLine` read true in the reloaded page although
+  its requests still failed as offline (`50-offline-reloaded`, `51-offline`; s60, s63) [O]; that
+  emulated online state does not carry over a reload [I], so the app started believing it was
+  online. With the driver also setting them on its own session (s68, s69), it read false after the
+  offline reload and until 51 went back online [O], and the ARIA at every offline read was
+  identical to s63's byte for byte, so reading offline showed nothing more [O, raw ARIA]. Back
+  online, the page made no request in the 6 s that followed, and REA's windows over 51 kept none
+  [O].
 - **Persistence:** the rectangle drawn offline was stored (`51-offline-drawn`) and both stayed
   after 24's online reload, which the service worker served again, with the beacon sent
   (`24-after-reload`) [O].
 - **Undo/redo:** after the offline reload Undo was disabled, as after any reload (raw ARIA) [O].
-- **Edge cases:** a longer reconnection window and the offline state re-applied after the reload:
-  Not observed (R-57).
+- **Edge cases:** 61's repeated offline step after the reload changed nothing once the reload had
+  kept the offline state (`61-reapplied`, s68, s69) [O]; a longer reconnection window: Not observed
+  (R-57).
 - **Desktop/mobile:** the desktop: Not observed (R-57).
-- **Reproduction:** scenarios 50, 51 and 24 (s60, s63).
-- **Confidence:** [O] high (s60 and s63 identical in all 8 shared probe rows).
-- **Limitations:** Chromium's offline emulation, not a lost network; no collaboration room.
+- **Reproduction:** scenarios 50, 51 and 24 (s60, s63); 50, 61, 51 and 24 after 60 and 09b
+  (s68, s69).
+- **Confidence:** [O] high (s60 and s63 identical in all 8 shared probe rows, s68 and s69 in all 19).
+- **Limitations:** Chromium's offline emulation, not a lost network; no collaboration room. In s68
+  and s69 the first read came 4.5 s and 5.6 s after the offline reload, so whether the app read
+  offline from its start is not known.
 
 ### B-45 Layout by viewport
 
@@ -1376,17 +1385,19 @@ external one.
 
 - **Initial state:** mobile, the main menu open (scenario 54).
 - **Action:** Français picked in the Select language list, then English twice.
-- **Immediate result:** the document language became `fr-FR` (`54-fr`) [O]. In s61 the labels
-  turned French after one request for the `fr-FR` locale chunk, answered through the service
-  worker; in s64 that request got HTTP 403 and the labels stayed English (raw ARIA, netlog, REA)
-  [O]. English came back with no request (`54-back`) [O].
+- **Immediate result:** the document language became `fr-FR` (`54-fr`) [O]. In s61 and s70 the
+  labels turned French after one request for the `fr-FR` locale chunk, answered through the
+  service worker (with HTTP 200 in s70's REA window); in s64 that request got HTTP 403 and the
+  labels stayed English (raw ARIA, netlog, REA) [O]. English came back with no request (`54-back`)
+  [O].
 - **State and related effects:** the button boxes stayed where they were (`54-fr`) [O].
 - **Persistence:** reload after a switch: Not observed (R-05).
 - **Undo/redo:** Not observed (R-05).
 - **Edge cases:** a right-to-left language: Not observed (R-05).
 - **Desktop/mobile:** the desktop: Not observed (R-05).
-- **Reproduction:** scenario 54 (s61, s64).
-- **Confidence:** [O] medium (s61 and s64 differ, because of the 403).
+- **Reproduction:** scenario 54 (s61, s64, s70).
+- **Confidence:** [O] high (s61 and s70 identical in all 13 shared probe rows and 11 ARIA
+  snapshots; s64 differs, because of the 403).
 - **Limitations:** one language besides English.
 
 ### B-48 Library item added and placed
@@ -1400,12 +1411,18 @@ external one.
   next Close failed [O].
 - **State and related effects:** with a selection the sidebar shows a search box, Personal Library
   and the add tile; empty, a note and the off-site Browse libraries link (raw ARIA, s61) [O].
-- **Persistence:** the library across a reload: Not observed (R-15).
-- **Undo/redo:** Not observed (R-15).
+- **Persistence:** the placed copy stayed after 09b's reload (`50-online`, s68, s69) [O]; the
+  library across a reload: Not observed (R-15).
+- **Undo/redo:** Undo after the add did not take it back: it removed the rectangle itself, the step
+  before, so the stored scene held no element and Undo was disabled, and Redo restored it, selected
+  (`60-added-undo`, `60-added-redo`) [O]. Undo after placing removed the copy and cleared the
+  selection, and Redo restored it, selected (`60-placed-undo`, `60-placed-redo`) [O]. The library
+  held its one item throughout (raw ARIA) [O].
 - **Edge cases:** export, import and a second item: Not observed (R-15).
 - **Desktop/mobile:** the desktop: Not observed (R-15).
-- **Reproduction:** scenario 58 (s64, s66).
-- **Confidence:** [O] high (s64 and s66 identical, although s66 ran it without 54 before it).
+- **Reproduction:** scenario 58 (s64, s66); scenario 60 (s68, s69).
+- **Confidence:** [O] high (s64 and s66 identical, although s66 ran it without 54 before it; s68
+  and s69 identical).
 - **Limitations:** the tile was tapped at a point measured on s61's capture.
 
 ### B-49 Canvas background colour

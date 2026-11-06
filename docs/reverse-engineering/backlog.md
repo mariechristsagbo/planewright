@@ -155,8 +155,9 @@ feature issue is written.
       were inventoried [O].
     - On mobile the add tile put a selection into the library and cleared the selection, and the
       item's tile placed a copy centred in the viewport, selected [O, mobile, once; B-48].
-    - Desktop use, undo after placing, and exporting or importing a library file are **open**
-      (R-15).
+    - On mobile, Undo after placing removed the copy and Redo restored it; after an add, Undo took
+      back the step before it [O, mobile, two sessions; B-48].
+    - Desktop use and exporting or importing a library file are **open** (R-15).
 20. **Alignment and distribution.** Ref: B-23, R-51.
     - The Help dialog lists Ctrl+Shift+Arrow for alignment [O]. One press on two shapes that
       were already aligned changed nothing [O], which does not test alignment.
@@ -170,9 +171,10 @@ feature issue is written.
     - On mobile, after one online load, the app started offline from the service worker with the
       stored scene, kept a shape drawn offline, showed no offline indicator, and made no request
       in the 6 s after the connection returned [O, mobile, two sessions; B-44].
-    - The desktop, the app's own offline state (navigator.onLine read true after the offline
-      reload), reconnecting a collaboration session and what the UI shows meanwhile are **open**
-      (R-57, R-55).
+    - With the offline state kept across the reload, so that the app read offline, it still showed
+      no offline indicator [O, mobile, two sessions; B-44].
+    - The desktop, reconnecting a collaboration session and what the UI shows meanwhile are
+      **open** (R-57, R-55).
 22. **Keyboard accessibility.** Ref: R-27, R-28.
     - The unnamed and raw-named controls are listed in the next section [O].
     - On mobile, Tab never left the app container from the first load, which drew no ring; the
