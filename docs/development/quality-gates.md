@@ -26,8 +26,9 @@ The engine package adds its own gates ([ADR 0004](../adr/0004-canvas-engine-pack
 Coverage of `packages/engine/src` must reach 95 % of statements, 90 % of branches, 95 % of
 functions and 95 % of lines, and its `math` layer 100 % of each. The ESLint block
 `planewright/engine` forbids browser and Node.js globals, `Math.random`, `Date.now` and timers in
-the engine, whose tsconfig has the ECMAScript library only. `scripts/tests/engine-layers.test.ts`
-fails on an import against the engine's layer order.
+the engine, whose tsconfig has the ECMAScript library only, and the triple-slash directives and
+ambient declarations that could add a library or hide a global.
+`scripts/tests/engine-layers.test.ts` fails on an import against the engine's layer order.
 
 ## Complexity guardrails
 

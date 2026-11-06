@@ -19,7 +19,8 @@ Both new packages follow the protocol package's pattern: private, source-only, `
 `exports` pointing at `src/index.ts`, and erasable TypeScript with explicit `.ts` import extensions.
 The engine's `tsconfig.json` sets `lib` to the ECMAScript library only, so a reference to `window`,
 `document` or a DOM type fails type checking; an ESLint block for `packages/engine/**` also forbids
-browser and Node.js globals.
+browser and Node.js globals, and the triple-slash directives and ambient declarations that would get
+around either check.
 
 ## Engine layers
 
