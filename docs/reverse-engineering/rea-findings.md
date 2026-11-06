@@ -206,6 +206,44 @@ link. s53–s57 ran each scenario of 45–48 inside its own window, after 09 and
 | `s57-mobile-radios-points-2`  | `r02-inspect-during-45.json` | `ev_8cc6ab38`     | `inspect_web_page`, 01:21:26.968–01:23:07.570, 7 origins. Armed 3309 ms before scenario 45's first step; all its 156 steps inside it |
 | `s57-mobile-radios-points-2`  | `r03-inspect-during-48.json` | `ev_3767e260`     | `inspect_web_page`, 01:23:12.149–01:24:02.462, 7 origins. Armed 2499 ms before scenario 48's first step; all its 71 steps inside it  |
 
+**Keyboard, offline and layout records** (s58–s64, on 2026-11-06, times UTC). s58 listed the
+target and inspected the loaded page for 4 s with no input. s59–s64 ran each scenario but 50 and 24
+inside its own window, after 09 and before 16; s60 and s63 listed the target again after 50's
+offline reload and after 24's online reload, and inspected the page for 3 s after the latter. No
+window spans a reload.
+
+| Session                            | File                         | Evidence (prefix) | Operation and window                                                                                                                |
+| ---------------------------------- | ---------------------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `s58-mobile-load-gate`             | `r01-targets.json`           | `ev_e980d73f`     | `list_browser_targets`                                                                                                              |
+| `s58-mobile-load-gate`             | `r02-inspect-initial.json`   | `ev_96200773`     | `inspect_web_page`, 02:34:49.470–02:34:54.024, 7 origins, after 09, with no step inside it                                          |
+| `s59-mobile-keyboard-resize`       | `r01-targets.json`           | `ev_5639047e`     | `list_browser_targets`                                                                                                              |
+| `s59-mobile-keyboard-resize`       | `r02-inspect-during-49.json` | `ev_bb5ba53f`     | `inspect_web_page`, 02:54:45.988–02:55:31.702, 7 origins. Armed 3246 ms before scenario 49's first step; all its 83 steps inside it |
+| `s59-mobile-keyboard-resize`       | `r03-inspect-during-52.json` | `ev_e644f5bc`     | `inspect_web_page`, 02:55:35.175–02:56:55.322, 7 origins. Armed 3300 ms before scenario 52's first step; all its 73 steps inside it |
+| `s60-mobile-offline`               | `r01-targets.json`           | `ev_8b29ea77`     | `list_browser_targets`                                                                                                              |
+| `s60-mobile-offline`               | `r02-targets-after-50.json`  | `ev_8b29ea77`     | `list_browser_targets`                                                                                                              |
+| `s60-mobile-offline`               | `r03-inspect-during-51.json` | `ev_9ce1f9fb`     | `inspect_web_page`, 02:58:57.249–02:59:37.974, 7 origins. Armed 3484 ms before scenario 51's first step; all its 20 steps inside it |
+| `s60-mobile-offline`               | `r04-targets-after-24.json`  | `ev_8b29ea77`     | `list_browser_targets`                                                                                                              |
+| `s60-mobile-offline`               | `r05-inspect-after-24.json`  | `ev_a35d7ac5`     | `inspect_web_page`, 02:59:50.297–02:59:53.830, 7 origins, after 24's reload, with no step inside it                                 |
+| `s61-mobile-find-language-library` | `r01-targets.json`           | `ev_8fedb3bb`     | `list_browser_targets`                                                                                                              |
+| `s61-mobile-find-language-library` | `r02-inspect-during-53.json` | `ev_777d9a2d`     | `inspect_web_page`, 03:01:29.448–03:02:20.038, 7 origins. Armed 3624 ms before scenario 53's first step; all its 52 steps inside it |
+| `s61-mobile-find-language-library` | `r03-inspect-during-54.json` | `ev_23384398`     | `inspect_web_page`, 03:02:23.950–03:03:14.141, 7 origins. Armed 3342 ms before scenario 54's first step; all its 39 steps inside it |
+| `s61-mobile-find-language-library` | `r04-inspect-during-55.json` | `ev_43ff4bda`     | `inspect_web_page`, 03:03:18.300–03:03:58.876, 7 origins. Armed 2939 ms before scenario 55's first step; all its 28 steps inside it |
+| `s62-mobile-keyboard-resize-2`     | `r01-targets.json`           | `ev_82b5e491`     | `list_browser_targets`                                                                                                              |
+| `s62-mobile-keyboard-resize-2`     | `r02-inspect-during-49.json` | `ev_a288c981`     | `inspect_web_page`, 03:12:15.092–03:13:00.692, 7 origins. Armed 2746 ms before scenario 49's first step; all its 83 steps inside it |
+| `s62-mobile-keyboard-resize-2`     | `r03-inspect-during-56.json` | `ev_f273a495`     | `inspect_web_page`, 03:13:05.009–03:14:05.342, 7 origins. Armed 2803 ms before scenario 56's first step; all its 83 steps inside it |
+| `s62-mobile-keyboard-resize-2`     | `r04-inspect-during-52.json` | `ev_59732eb6`     | `inspect_web_page`, 03:14:08.925–03:15:29.089, 7 origins. Armed 3196 ms before scenario 52's first step; all its 73 steps inside it |
+| `s62-mobile-keyboard-resize-2`     | `r05-inspect-during-57.json` | `ev_5f800c40`     | `inspect_web_page`, 03:15:32.981–03:16:53.165, 7 origins. Armed 3301 ms before scenario 57's first step; all its 72 steps inside it |
+| `s63-mobile-offline-2`             | `r01-targets.json`           | `ev_c1d05cbc`     | `list_browser_targets`                                                                                                              |
+| `s63-mobile-offline-2`             | `r02-targets-after-50.json`  | `ev_c1d05cbc`     | `list_browser_targets`                                                                                                              |
+| `s63-mobile-offline-2`             | `r03-inspect-during-51.json` | `ev_fa398ccc`     | `inspect_web_page`, 03:19:02.766–03:19:43.500, 7 origins. Armed 2465 ms before scenario 51's first step; all its 20 steps inside it |
+| `s63-mobile-offline-2`             | `r04-targets-after-24.json`  | `ev_c1d05cbc`     | `list_browser_targets`                                                                                                              |
+| `s63-mobile-offline-2`             | `r05-inspect-after-24.json`  | `ev_ffe51881`     | `inspect_web_page`, 03:19:55.137–03:19:58.623, 7 origins, after 24's reload, with no step inside it                                 |
+| `s64-mobile-find-library`          | `r01-targets.json`           | `ev_a082474f`     | `list_browser_targets`                                                                                                              |
+| `s64-mobile-find-library`          | `r02-inspect-during-53.json` | `ev_5143ef22`     | `inspect_web_page`, 03:20:49.559–03:21:40.177, 7 origins. Armed 3097 ms before scenario 53's first step; all its 52 steps inside it |
+| `s64-mobile-find-library`          | `r03-inspect-during-54.json` | `ev_8f25d241`     | `inspect_web_page`, 03:21:43.812–03:22:33.998, 7 origins. Armed 3401 ms before scenario 54's first step; all its 39 steps inside it |
+| `s64-mobile-find-library`          | `r04-inspect-during-58.json` | `ev_9a429301`     | `inspect_web_page`, 03:22:37.459–03:23:27.644, 7 origins. Armed 3394 ms before scenario 58's first step; all its 40 steps inside it |
+| `s64-mobile-find-library`          | `r05-inspect-during-59.json` | `ev_fe536c38`     | `inspect_web_page`, 03:23:31.515–03:24:11.782, 7 origins. Armed 3135 ms before scenario 59's first step; all its 26 steps inside it |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
@@ -361,7 +399,9 @@ the committed index beyond their IDs.
     In s37–s49 the 14 windows kept as many requests as the netlog started on their 7 origins
     inside them, 0 to 82; over scenario 43 the netlog started one more, the generation request,
     on an origin outside the 7. In s51–s57 the 10 windows kept none, and the netlog started none
-    inside them.
+    inside them. In s58–s64 the 18 windows kept none but the two over 54, which kept its one
+    locale request each, as many as the netlog started inside them; REA's record of it holds
+    HTTP 200 in s61 and HTTP 403 in s64, where the netlog has only a failure (raw REA records).
 12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
     `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
     Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that

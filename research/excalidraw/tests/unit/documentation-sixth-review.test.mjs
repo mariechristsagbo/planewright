@@ -214,11 +214,12 @@ describe('architecture confidences', () => {
     expect(confidence).toMatch(/^high for the flat array; medium for the z-order/u);
   });
 
-  it('do not claim an offline start that was never attempted', () => {
-    expect(cells('R-57')[5]).toBe('❌');
+  it('rate the offline start no higher than the mobile sessions that attempted it', () => {
+    expect(cells('R-57')[5]).toBe('🟡');
+    expect(cells('R-57')[4]).toBe('❌/❌/🟡');
     const [, , statement] = hypothesis('A-07');
     expect(statement).not.toContain('for offline start');
-    expect(statement).toContain('(R-57)');
+    expect(statement).toContain('(s60, s63; R-57)');
   });
 
   it('mark the font id as raw-only, because no committed file holds it', () => {

@@ -1260,6 +1260,173 @@ value is a value the page had saved locally.
   single observations [O, medium]; the result text stays in the raw ARIA; the unnamed button has
   no accessible name (R-63).
 
+## Keyboard, offline, layout and menu features (mobile)
+
+These entries come from the keyboard, offline and layout batch (s58–s64), on mobile 390×844 at DPR
+3 with touch unless the entry says otherwise. The keyboard is the driver's, standing in for an
+external one.
+
+### B-43 Keyboard focus and Tab order
+
+- **Initial state:** mobile, the first load (scenario 49), or a fresh page with the Library
+  button, the Selection tool, the main menu or Help used first (scenario 56).
+- **Action:** Tab 30 times and Shift+Tab 4 times from the first load, then Escape (49); a click on
+  Library, then Enter and Space; a click on the active Selection tool, then Tab 8 times and
+  Shift+Tab twice; a tap on the main menu, then Tab 5 times and Escape; Help from the menu, then
+  Tab 6 times and Escape (56). The focused element and every live region were read after each
+  press.
+- **Immediate result:** from the first load the focus stayed on a full-viewport container, a `DIV`
+  with tab index 0, through every Tab and Shift+Tab (`49-start` to `49-escape`) [O]. After the
+  click, the Library button held the focus with no ring; Enter closed the sidebar and showed a
+  1 px box-shadow ring on the button, and Space changed nothing (`56-library-*`) [O]. The click on
+  Selection opened its Selection and Lasso choice, and Tab and Shift+Tab moved between those two
+  only, with a 2 px ring (`56-tab-*`) [O]. The main menu put the focus on its menu container,
+  which 5 Tab presses never left (`56-menu-*`) [O]. Help put the focus on the first of its four
+  links, and Tab went through the four links and Close and back to the first (`56-help-*`) [O].
+- **State and related effects:** Escape closed the menu and the dialog and left the focus on the
+  body, not on the control that had opened them [O]. No live region (`aria-live`, `status`, `alert`
+  or `log`) existed at any read, so nothing was announced [O]. The container matched
+  `:focus-visible` with an outline style of `none` and no box shadow, so no ring was drawn on it
+  [O]; the links in Help showed the browser's own outline [O].
+- **Persistence:** not applicable (moving the focus changes no stored state; the scene stayed empty
+  in 49).
+- **Undo/redo:** not applicable (moving the focus changes no element or history entry).
+- **Edge cases:** Tab from other controls than Selection and the Library button, and a keyboard
+  shortcut while a control holds the focus: Not observed (R-27).
+- **Desktop/mobile:** the desktop Tab order and focus return: Not observed (R-27).
+- **Reproduction:** scenario 49 (s59, s62) and 56 (s62).
+- **Confidence:** [O] high for 49 (s59 and s62 identical); medium for 56 (one session, as live
+  contact stopped before s65).
+- **Limitations:** emulated mobile with a CDP keyboard and no screen reader; why Tab does not
+  leave the container is [H] (a key handler of the app that keeps Tab).
+
+### B-44 Offline start and reconnection
+
+- **Initial state:** mobile, a fresh profile after one online load, with a rectangle
+  `[60,200,160,120]` drawn and the service worker active (scenario 50).
+- **Action:** the `offline` step (CDP network conditions for the page and its service workers),
+  a reload while offline, a second rectangle `[60,400,160,120]` drawn offline (51), the `offline`
+  step back online with a 6 s wait, then 24's online reload.
+- **Immediate result:** offline, `navigator.onLine` read false (`50-offline`) [O]. The offline
+  reload got HTTP 200 and the app started: its document, scripts, stylesheet, fonts, manifest and
+  icons came from the service worker, and the stored rectangle was drawn (`50-offline-reloaded`)
+  [O]. The analytics beacon and the error-report POST failed with
+  `net::ERR_INTERNET_DISCONNECTED`; the analytics script loaded with 200 without the service
+  worker, most likely from the HTTP cache [I].
+- **State and related effects:** no offline indicator in ARIA or the captures [O]. In the
+  reloaded page `navigator.onLine` read true although its requests still failed as offline
+  (`50-offline-reloaded`, `51-offline`) [O]; the emulated online state does not carry over a
+  reload [I], so the app started believing it was online. Back online, the page made no request in
+  the 6 s that followed, and REA's window over 51 kept none [O].
+- **Persistence:** the rectangle drawn offline was stored (`51-offline-drawn`) and both stayed
+  after 24's online reload, which the service worker served again, with the beacon sent
+  (`24-after-reload`) [O].
+- **Undo/redo:** after the offline reload Undo was disabled, as after any reload (raw ARIA) [O].
+- **Edge cases:** a longer reconnection window and the offline state re-applied after the reload:
+  Not observed (R-57).
+- **Desktop/mobile:** the desktop: Not observed (R-57).
+- **Reproduction:** scenarios 50, 51 and 24 (s60, s63).
+- **Confidence:** [O] high (s60 and s63 identical in all 8 shared probe rows).
+- **Limitations:** Chromium's offline emulation, not a lost network; no collaboration room.
+
+### B-45 Layout by viewport
+
+- **Initial state:** mobile 390×844 portrait after 09, an empty canvas (scenarios 52 and 57).
+- **Action:** live resizes on the loaded page, with no reload and 09's user agent: 19 viewports
+  from 390×844 to 1366×1024, portrait and landscape, each asserted and read.
+- **Immediate result:** the phone layout (tools at the bottom, Library at the top right) at
+  390×844, 480×844, 500, 540 and 580×960, 844×390 and 844×450; the wide layout (the Shapes toolbar
+  at the top, Canvas actions with zoom buttons, Undo at the bottom left) from 600×960 up and at
+  844×520 and above (`52-*`, `57-*`) [O]. So the switch lies at a width between 580 and 600 px and
+  a height between 450 and 520 px [I].
+- **State and related effects:** in the wide layout the hints showed at heights of 800 px and
+  more, not at 768 or less [O]; the shortcut letters and the trial banner showed at 1024×1366,
+  1280×800, 1280×720, 1366×1024 and 844×520 but not at 1024×768, 1180×820, 1100×1000 or 844×600,
+  which no single width or height explains [O]. The document language stayed `en` and `ltr` [O].
+- **Persistence:** not applicable (a resize changes no stored state).
+- **Undo/redo:** not applicable (a resize changes no element or history entry).
+- **Edge cases:** the exact switch point and what shows the shortcut letters: Not observed (R-23).
+- **Desktop/mobile:** a desktop client at these sizes: Not observed (R-23).
+- **Reproduction:** scenario 52 (s59, s62) and 57 (s62).
+- **Confidence:** [O] high for 52 (s59 and s62 identical but for a choice popover that 56 left
+  open in s62); medium for 57 (one session).
+- **Limitations:** emulated with DPR 3, touch and a phone user agent at every size (R-23).
+
+### B-46 Find on canvas
+
+- **Initial state:** mobile, the self-authored words Plan at (60,300) and Planet at (60,500)
+  (scenario 53).
+- **Action:** Find on canvas from the main menu, Plan typed into its search box, Enter twice,
+  Escape.
+- **Immediate result:** a sidebar tab opened with the focus in its search box, named "Find text on
+  canvas..." (`53-find-open`) [O]. Typing Plan listed both words and showed 1 / 2 results (raw
+  ARIA) [O].
+- **State and related effects:** Enter twice changed neither the selection nor the zoom or scroll
+  (`53-find-enter-1`, `53-find-enter-2`) [O]; Escape closed the sidebar and left the focus on the
+  body (`53-after-escape`) [O].
+- **Persistence:** not applicable (the search changes no stored element: `53-texts` and `53-end`
+  are the same).
+- **Undo/redo:** not applicable (the search changes no element or history entry).
+- **Edge cases:** a match outside the view and no match: Not observed (R-05).
+- **Desktop/mobile:** Ctrl+F and the desktop panel: Not observed (R-05).
+- **Reproduction:** scenario 53 (s61, s64).
+- **Confidence:** [O] high (s61 and s64 identical).
+- **Limitations:** two words, both already in view.
+
+### B-47 Language switch
+
+- **Initial state:** mobile, the main menu open (scenario 54).
+- **Action:** Français picked in the Select language list, then English twice.
+- **Immediate result:** the document language became `fr-FR` (`54-fr`) [O]. In s61 the labels
+  turned French after one request for the `fr-FR` locale chunk, answered through the service
+  worker; in s64 that request got HTTP 403 and the labels stayed English (raw ARIA, netlog, REA)
+  [O]. English came back with no request (`54-back`) [O].
+- **State and related effects:** the button boxes stayed where they were (`54-fr`) [O].
+- **Persistence:** reload after a switch: Not observed (R-05).
+- **Undo/redo:** Not observed (R-05).
+- **Edge cases:** a right-to-left language: Not observed (R-05).
+- **Desktop/mobile:** the desktop: Not observed (R-05).
+- **Reproduction:** scenario 54 (s61, s64).
+- **Confidence:** [O] medium (s61 and s64 differ, because of the 403).
+- **Limitations:** one language besides English.
+
+### B-48 Library item added and placed
+
+- **Initial state:** mobile, a rectangle `[20,600,60,80]` drawn and selected (scenario 58).
+- **Action:** the Library button, the add tile at (136,214), Close, a deselect, the Library
+  button again and a tap on the first tile at the same point.
+- **Immediate result:** the add tile put the selection into the personal library and cleared the
+  selection (`58-added`) [O]. The tile then placed a copy of the rectangle centred in the
+  viewport, at `[165,382,60,80]`, selected (`58-placed`), and the sidebar closed by itself, so the
+  next Close failed [O].
+- **State and related effects:** with a selection the sidebar shows a search box, Personal Library
+  and the add tile; empty, a note and the off-site Browse libraries link (raw ARIA, s61) [O].
+- **Persistence:** the library across a reload: Not observed (R-15).
+- **Undo/redo:** Not observed (R-15).
+- **Edge cases:** export, import and a second item: Not observed (R-15).
+- **Desktop/mobile:** the desktop: Not observed (R-15).
+- **Reproduction:** scenario 58 (s64).
+- **Confidence:** [O] medium (one session; live contact stopped before its replay).
+- **Limitations:** the tile was tapped at a point measured on s61's capture.
+
+### B-49 Canvas background colour
+
+- **Initial state:** mobile, after 58 in s64 (scenario 59).
+- **Action:** Canvas background from the main menu, its hex box selected with Control+A and
+  `ffc9c9` typed with Enter; a tap on empty canvas; Undo; Redo.
+- **Immediate result:** the stored background became `#ffc9c9` (`59-typed`) [O].
+- **State and related effects:** the tap on empty canvas closed the picker and deselected the
+  placed rectangle (`59-closed`) [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** Undo reselected the rectangle and Redo deselected it, while the background stayed
+  `#ffc9c9` (`59-undo`, `59-redo`) [O]; whether the change is recorded in the history at all is
+  [H].
+- **Edge cases:** a swatch instead of a typed code: Not observed (R-05).
+- **Desktop/mobile:** the desktop: Not observed (R-05).
+- **Reproduction:** scenario 59 (s64).
+- **Confidence:** [O] medium (one session).
+- **Limitations:** one colour, typed.
+
 ## Desktop and mobile differences (summary)
 
 All rows are [O] high (s1/s6 desktop, s3/s7 mobile) except where marked.

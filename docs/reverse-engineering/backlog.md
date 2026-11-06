@@ -153,8 +153,10 @@ feature issue is written.
 19. **Libraries.** Ref: feature inventory §2 (Library sidebar), R-15.
     - The sidebar, its four unnamed tabs, an empty state and a link to an external library site
       were inventoried [O].
-    - Adding a selection, placing an item, and exporting or importing a library file are
-      **open** (R-15).
+    - On mobile the add tile put a selection into the library and cleared the selection, and the
+      item's tile placed a copy centred in the viewport, selected [O, mobile, once; B-48].
+    - Desktop use, undo after placing, and exporting or importing a library file are **open**
+      (R-15).
 20. **Alignment and distribution.** Ref: B-23, R-51.
     - The Help dialog lists Ctrl+Shift+Arrow for alignment [O]. One press on two shapes that
       were already aligned changed nothing [O], which does not test alignment.
@@ -165,11 +167,21 @@ feature issue is written.
     - Desktop alignment and its undo are **open** (R-51).
 21. **Offline start and reconnection.** Ref: network analysis, R-57, R-55.
     - Reloads in a profile that had loaded the page were served by a service worker [O].
-    - Starting offline, reconnecting a collaboration session and what the UI shows meanwhile
-      are **open** (R-57, R-55).
+    - On mobile, after one online load, the app started offline from the service worker with the
+      stored scene, kept a shape drawn offline, showed no offline indicator, and made no request
+      in the 6 s after the connection returned [O, mobile, two sessions; B-44].
+    - The desktop, the app's own offline state (navigator.onLine read true after the offline
+      reload), reconnecting a collaboration session and what the UI shows meanwhile are **open**
+      (R-57, R-55).
 22. **Keyboard accessibility.** Ref: R-27, R-28.
     - The unnamed and raw-named controls are listed in the next section [O].
-    - Tab order, focus visibility and announcements are **open** (R-27).
+    - On mobile, Tab never left the app container from the first load, which drew no ring; the
+      Help dialog kept Tab within its links and Close; the main menu held the focus on its
+      container; Escape left the focus on the body; no live region existed [O, mobile; B-43].
+    - Desktop Tab order, focus return and screen-reader announcements are **open** (R-27).
+    - Do better: let Tab reach every control, draw a visible ring on every focused element,
+      return the focus to the opening control on Escape and announce state changes in a live
+      region.
 
 ## Accessibility requirements surfaced by the reference (do better)
 

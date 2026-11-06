@@ -81,6 +81,14 @@ arrow's elbowed flag. The mobile radio and edit batch s51–s57 ran on 2026-11-0
 each session loading the page once with no reload, s51 as a load check only. It is indexed in
 `evidence/sessions-s51-s57.json`, and its probe summaries also keep a text's font fields
 (`--text`), a link's origin and path and a freehand stroke's pressure fields.
+The keyboard, offline and layout batch s58–s64 ran on 2026-11-06 at 02:34–03:24 UTC, s58 as a load
+check only; s60 and s63 reloaded once offline and once online. It is indexed in
+`evidence/sessions-s58-s64.json`, and its probe summaries also keep the focused element and live
+region lengths (`focus`), the connection and service worker state (`connectivity`), the language and
+named button boxes (`layout`) and the canvas background. Resizes (52, 57) are emulate steps on the
+loaded page with the same metric assertions as a load, and the offline state is the `offline`
+step's, read back from `navigator.onLine`. After s64, a 403 on any request, not only on a document,
+is read as the provider's protection and stops live contact; the first was s64's locale chunk.
 
 ## Division of labour
 

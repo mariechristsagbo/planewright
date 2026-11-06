@@ -24,7 +24,10 @@
 2. **Container `--no-sandbox`.** Chromium's sandbox is disabled inside the container, which is the
    isolation boundary instead. Rendering could differ slightly from a sandboxed desktop browser.
 3. **Emulated mobile.** Device metrics, touch and user agent were emulated on desktop Chromium.
-   There was no real device, no iOS Safari, no virtual keyboard and no hardware pen.
+   There was no real device, no iOS Safari, no virtual keyboard and no hardware pen. The tablet and
+   wide viewports of 52 and 57 (s59, s62) kept DPR 3, touch, the mobile flag and the phone user
+   agent, so they show the layout this client gets at those sizes, not a tablet or a desktop
+   client.
 4. **DPR history (s1–s4).**
    - In s3 and s4, `window.devicePixelRatio` read 1 instead of 3 after the first screenshot. The
      earlier documents blamed re-applying the emulation; that was wrong.
@@ -37,8 +40,8 @@
      only `screen.width/height` was affected (DPR 1 is the default). Those values were not
      recorded before s5.
    - All mobile claims now cite s7, where DPR 3 held at every assertion. s7 asserted the metrics at 5 points: after 09's load, and at the start and end of 10 and of 14. 10b's single capture falls between the end of 10 and the start of 14, and 11's emulate step asserts its own read-back. s11 asserted at the same 5 points, and DPR 3 held at each.
-5. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried;
-   right-to-left layouts were not observed.
+5. **One locale (en-US) and the light/dark themes.** Only the language list was inventoried, and
+   one other language, French, was picked (s61, s64); right-to-left layouts were not observed.
 6. **Fixed coordinates.** Scenario coordinates depend on viewport and zoom. A layout change in the
    reference breaks replay (B-21 shows how a reflow redirected clicks).
 7. **Single collaboration client.** Only one guest client was used per room, so multi-user
@@ -56,7 +59,11 @@
    REA call or input, so its Export to Link upload never ran, and no later session ran that day.
    On 2026-11-06 one bounded load check in a fresh profile (s51, 00:39 UTC) loaded the app with
    HTTP 200 and no verification-page request, and so did the six mobile sessions after it
-   (s52–s57, 00:40–01:24 UTC); the desktop was not tried.
+   (s52–s57, 00:40–01:24 UTC); the desktop was not tried. A second load check (s58, 02:34 UTC)
+   and s59–s64 (to 03:24 UTC) loaded the app normally too, but in s64 the fr-FR locale chunk got
+   HTTP 403 (seen by REA; the driver's netlog has `net::ERR_ABORTED`), where s61 had got it through
+   the service worker. The gates checked documents and verification paths only, so s64 ran to its
+   end; the 403 is read as the same protection [H], live contact stopped, and s65 never ran.
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -86,7 +93,15 @@
 13. **The keyboard stands in for the phone's.** The word typed into new texts (s37, s41, s45–s47),
     the hex code with Ctrl+A and Enter (s41, s45) and the generation prompt with Enter (s49) were
     sent as CDP key events to the focused field. No virtual keyboard was shown or used, so its
-    layout, autocorrection and the view's reaction to it were not observed.
+    layout, autocorrection and the view's reaction to it were not observed. The Tab, Shift+Tab,
+    Enter, Space and Escape presses of 49 and 56 (s59, s62) are CDP key events too: they show how
+    the page handles an external keyboard's keys, and no screen reader or assistive technology
+    took part, so what one would announce was not observed.
+14. **Offline emulation.** The `offline` step sets Chromium's network conditions for the page and
+    the service workers Playwright attached (s60, s63). It held for requests across a reload, which
+    still failed as offline, but navigator.onLine read true after a reload, so the reloaded app
+    was never shown an offline state; a real lost connection, a flaky one and a longer offline
+    period were not tried.
 
 ## Tooling limits
 
@@ -152,6 +167,13 @@
     and the default stroke colour (B-06, B-20), and the 2.8 s between the generation request and
     its failure event (network analysis): the committed index keeps ARIA line counts, capture
     digests and request metadata without times.
+  - in s58–s64, the ARIA names behind the layout, menu, Find, library and Help facts (the hint
+    texts, the shortcut letters, the trial banner, 1 / 2 results, the library tiles; B-43, B-45 to
+    B-48), the absence of an offline indicator in the captures (B-44), the app root's class names
+    and the live region texts, which the summaries leave out, the HTTP 403 of the s64 locale chunk,
+    which only REA's raw record keeps, the byte-identical ARIA of the replay pairs, and the request
+    start times against the scenario steps (B-44, B-47): the committed files keep the probe rows,
+    ARIA line counts, capture digests and request metadata.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

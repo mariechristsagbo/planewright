@@ -103,7 +103,13 @@ own read-back. s3 ran at DPR 1 after its first
 screenshot (see [limitations](limitations.md)). The layout facts below were identical in s3 and s7, and all 16 s11 snapshots match s7's.
 
 - **Top bar:** main menu (left) and Library (right) only. There is no share button, no promotion
-  link, no zoom controls and no visible Help button.
+  link, no zoom controls and no visible Help button. The Library button opens a sidebar over most
+  of the canvas with the desktop's four unnamed tabs and Close; empty, it shows a note and the
+  off-site Browse libraries link, and with a selection a search box, Personal Library and an add
+  tile, which adds the selection; an item's tile places a copy (s61, s64; B-48) [O, medium].
+- **Layout by viewport:** the phone layout above holds at widths up to 580 px and heights up to
+  450 px; from 600 px wide and 520 px high the desktop's layout shows, with the Shapes toolbar at
+  the top, even on this touch client (s59, s62; B-45) [O, high for 52's sizes].
 - **Bottom toolbar (8):** Hand, Selection, Draw, Eraser, Rectangle, Arrow, Text, More tools.
   Undo and Redo float above it on the right.
 - **Main menu:** the same menu items as desktop. Save to... opens a dialog with three entries:
@@ -111,7 +117,11 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   Excalidraw+ (s37, raw ARIA) [O, medium: one session]. Export to Link was used once, in s52: the
   dialog became a Shareable link dialog with the link in a textbox, a Copy link button and a note
   on end-to-end encryption (B-41) [O, medium: one session, by design]; Save to file and the
-  Excalidraw+ entry were not used (R-46, R-62).
+  Excalidraw+ entry were not used (R-46, R-62). Find on canvas opens a sidebar tab with a search
+  box, a result count and a list of the matching texts (B-46); the Select language list changed
+  the document language and, once its locale chunk arrived, the labels (B-47); Canvas background
+  opens a hex box of that name (B-49) (s61, s64) [O, medium: the language and background differ or
+  ran once].
 - **More tools on mobile:** Insert image, Sticky note, Frame tool, Web Embed, Draw to shape,
   Laser pointer, Bucket fill, and the three generation entries. Unlike desktop, there is **no
   Lasso selection**. Mermaid to Excalidraw and Text to diagram open one dialog with a tab each;

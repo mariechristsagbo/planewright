@@ -213,6 +213,28 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Keyboard, offline and layout batch (s58–s64) [O]
+
+- **Loads.** Each of the 7 loads, on 2026-11-06 at 02:34–03:20 UTC, got its document with HTTP 200
+  from the network, with no request under `/.well-known/vercel/`; the 7 netlogs hold no `.map`
+  request (`evidence/sessions-s58-s64.json`).
+- **Offline reload (50, s60 and s63).** With the context offline, the reload's document, scripts,
+  stylesheet, fonts, manifest and icons were all served by the service worker with HTTP 200; the
+  analytics beacon and the error-report POST failed with `net::ERR_INTERNET_DISCONNECTED`, and the
+  analytics script loaded with 200 without the service worker, most likely from the HTTP cache
+  [I]. Back online (51), no request followed in 6 s; 24's online reload was served by the service
+  worker again, with the beacon sent (`evidence/sessions-s58-s64.json`,
+  `evidence/netlog-steps-s58-s64.json`).
+- **Language (54).** Picking Français started one request for the `fr-FR` locale chunk under
+  `/assets/locales/`, served through the service worker with HTTP 200 in s61 0.2 s after the pick
+  [I, raw netlog and timeline times]; English made no request. In s64 the same request failed:
+  REA's record holds HTTP 403 and the driver's netlog `net::ERR_ABORTED`, and the labels stayed
+  English. A 403 on an asset is read as the hosting provider's protection [H]; it stopped live
+  contact (see the checkpoint).
+- **No traffic during the keyboard, layout, Find, library and background scenarios.** 49, 52, 53,
+  55–59 started no request, the 30 resizes of 52 and 57 included
+  (`evidence/rea-windows-s58-s64.json`).
+
 ## 2. Storage [O]
 
 | Store          | Keys / names                                                                                                                                                                                                                                                         |
