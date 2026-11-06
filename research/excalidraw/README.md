@@ -290,6 +290,9 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     change. `47` runs right after 46 in the same session and adds a self-authored link on a reserved
     example domain; it stops at its first failed step, so nothing is typed unless its textbox was
     clicked, and it never follows the link.
+  - `48` runs right after 45 in the same session: s54 found midpoint handles on a three-point
+    arrow only in Edit arrow, so 48 adds the fourth point from one there, with Undo and Redo, then
+    taps the new point and Delete in the Actions popover, then Undo.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
