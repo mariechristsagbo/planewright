@@ -108,7 +108,10 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   Undo and Redo float above it on the right.
 - **Main menu:** the same menu items as desktop. Save to... opens a dialog with three entries:
   Save to file under Save to disk, Export to Link under Shareable link, and an Export button under
-  Excalidraw+ (s37, raw ARIA) [O, medium: one session]; none of them was used (R-46, R-56).
+  Excalidraw+ (s37, raw ARIA) [O, medium: one session]. Export to Link was used once, in s52: the
+  dialog became a Shareable link dialog with the link in a textbox, a Copy link button and a note
+  on end-to-end encryption (B-41) [O, medium: one session, by design]; Save to file and the
+  Excalidraw+ entry were not used (R-46, R-62).
 - **More tools on mobile:** Insert image, Sticky note, Frame tool, Web Embed, Draw to shape,
   Laser pointer, Bucket fill, and the three generation entries. Unlike desktop, there is **no
   Lasso selection**. Mermaid to Excalidraw and Text to diagram open one dialog with a tab each;
@@ -123,23 +126,29 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   picked the toolbar button was named Line (s27, s32, s34, s36) [O, high; raw ARIA]. Line,
   Diamond and Ellipse were all drawn from them, and after Diamond was picked the Rectangle tool's
   button was named Diamond (B-01, B-40; s39, s43) [O, high; R-24]. The Draw tool offers a choice
-  of Freedraw and Autoshape (s37, raw ARIA) [O, medium: one session].
-- **With an element selected,** a compact bar above the toolbar shows "Stroke", "Background",
-  a second "Stroke" (properties) and "Actions" buttons instead of the desktop side panel. The
-  Actions popover holds Add link, Duplicate and Delete (s7 and s11, `m17-dark-actions`,
-  identical snapshots) [O, high]. In s22–s36 the Stroke colour popover held 15 colours named with
-  a shortcut letter, a shades row and a hex box, like the Background popover; the style popover
-  Stroke width, Stroke style, Sloppiness and Edges groups of unnamed radios and an Opacity slider,
-  with a Fill group first once a background is set; and the Actions popover Layers, then Align
-  and Group selection for two elements and Distribute for three. A selected arrow's bar adds
-  "Arrow type" and "Edit arrow" (B-21, B-40; raw ARIA) [O, high]. Once a colour with shades is
-  picked, the shades row holds five buttons named Shade (s37, s41, s45). A text's bar holds
-  Stroke, a second Stroke with only Opacity, Show font picker, Text align (Font size and Text
-  align groups of unnamed radios) and, once selected, Actions; a selected freehand stroke's bar
-  holds Stroke, Background, a second Stroke with Stroke width, Pressure and Opacity, and Actions;
-  an elbow arrow's bar has no "Edit arrow" (B-21; s37, s40, s41, s44–s47, raw ARIA) [O, high:
-  the pairs' snapshots are identical]. The Draw tool's own bar, without Actions, was saved in s37
-  only [O, medium].
+  of Freedraw and Autoshape (s37, s53, s55, s57, raw ARIA) [O, high]; with Autoshape the tool is
+  stored as `autoshape`, and a closed rough rectangle drawn with it became a rectangle (B-05).
+- **With an element selected,** a compact bar above the toolbar shows "Stroke", "Background", a
+  second "Stroke" (properties) and "Actions" buttons instead of the desktop side panel. The Actions
+  popover holds Add link, Duplicate and Delete (s7 and s11, `m17-dark-actions`, identical snapshots)
+  [O, high]. Add link opens a textbox named "Type or paste your link here" beside a Link to object
+  button, and a linked element shows its link with Edit, Link to object and Remove buttons (B-42;
+  s54, s56, raw ARIA) [O, high]. In s22–s36 the Stroke colour popover held 15 colours named with a
+  shortcut letter, a shades row and a hex box, like the Background popover; the style popover Stroke
+  width, Stroke style, Sloppiness and Edges groups of unnamed radios and an Opacity slider, with a
+  Fill group first once a background is set; and the Actions popover Layers, then Align and Group
+  selection for two elements and Distribute for three. A selected arrow's bar adds "Arrow type" and
+  "Edit arrow" (B-21, B-40; raw ARIA) [O, high]. Once a colour with shades is picked, the shades row
+  holds five buttons named Shade (s37, s41, s45). A text's bar holds Stroke, a second Stroke with
+  only Opacity, Show font picker, Text align (Font size and Text align groups of unnamed radios)
+  and, once selected, Actions; a selected freehand stroke's bar holds Stroke, Background, a second
+  Stroke with Stroke width, Pressure and Opacity, and Actions; an elbow arrow's bar has no "Edit
+  arrow" (B-21; s37, s40, s41, s44–s47, raw ARIA) [O, high: the pairs' snapshots are identical]. By
+  their stored results the Font size radios are S, M, L and XL, the Text align radios left, centre
+  and right, a stroke's Stroke width radios 0.5, 1 and 2 and its Pressure radios two stroke-option
+  styles (B-05, B-06; s53, s55, s57) [O, high]. In Edit arrow the bar holds Stroke, a second Stroke
+  and Actions (s54–s57, raw ARIA) [O, high]. The Draw tool's own bar, without Actions, saved in s37
+  and again in s53, s55 and s57 (`m45-05-draw-choice`), is byte-identical in all four [O, high].
 - **Dark dialogs (s7, s11):** Help, Export image, Command palette (its search box only), the
   pre-session Live collaboration dialog and Clear canvas open from the main menu as dialogs
   with a Close button. Preferences opens as a submenu with the same items as on desktop, shown

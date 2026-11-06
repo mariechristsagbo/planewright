@@ -77,7 +77,10 @@ indexed in `evidence/sessions-s22-s36.json`, and its probe summaries keep point 
 session loading the page once with no reload; in s50 the document came with HTTP 403 and the
 verification page, after which the page navigated itself and got the app, and the load gate stopped
 the session. It is indexed in `evidence/sessions-s37-s50.json`, and its probe summaries also keep an
-arrow's elbowed flag.
+arrow's elbowed flag. The mobile radio and edit batch s51–s57 ran on 2026-11-06 at 00:39–01:24 UTC,
+each session loading the page once with no reload, s51 as a load check only. It is indexed in
+`evidence/sessions-s51-s57.json`, and its probe summaries also keep a text's font fields
+(`--text`), a link's origin and path and a freehand stroke's pressure fields.
 
 ## Division of labour
 

@@ -171,7 +171,7 @@ describe('the style and line records (R-10, R-39, R-30)', () => {
       const line = probe(name, label).elements.find((e) => e.type === 'line' && e.points === 3);
       expect(line.box).toEqual([60, 420, 240, 60]);
     }
-    expect(cells('R-30').slice(4, 6)).toEqual(['❌/❌/🟡', '🟡']);
+    expect(cells('R-30').slice(4, 6)).toEqual(['❌/❌/✅', '🟡']);
     expect(field(entry('B-40'), 'Immediate result')).toContain('with or without the double tap');
   });
 });

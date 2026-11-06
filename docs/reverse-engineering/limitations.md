@@ -5,8 +5,9 @@
 - Anything that needs an account: Excalidraw+, sign-up, persistent cloud scenes.
 - Nothing guest-accessible: on 2026-11-05 the maintainer placed every guest-accessible feature in
   scope, the generation features and "Export to Link" included. "Export to Link" uploads the
-  scene and creates a link with a key, so its scenario (20) treats the link as a secret; it has
-  not run, because of environment limit 8.
+  scene and creates a link with a key, so its scenarios (20 on desktop, 44 on mobile) treat the
+  link as a secret. 44 ran once, in s52, and no record keeps the link's value; 20 has not run,
+  because of environment limit 8.
 - Verification pages: a page that checks whether a human or an ordinary browser is present is
   never bypassed (no user-agent change, retry or waiting it out).
 - The reference source repository, its packages, source maps, and copied assets or text.
@@ -52,7 +53,10 @@
    client met it too in s50 (23:26 UTC), after 13 mobile sessions in s37–s49 had loaded the app:
    the document came with HTTP 403 and the challenge requests, after which the page navigated to
    `/` itself and got the app with HTTP 200 [O, raw netlog]. The load gate stopped s50 before any
-   REA call or input, so its Export to Link upload never ran, and no later session ran.
+   REA call or input, so its Export to Link upload never ran, and no later session ran that day.
+   On 2026-11-06 one bounded load check in a fresh profile (s51, 00:39 UTC) loaded the app with
+   HTTP 200 and no verification-page request, and so did the six mobile sessions after it
+   (s52–s57, 00:40–01:24 UTC); the desktop was not tried.
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.

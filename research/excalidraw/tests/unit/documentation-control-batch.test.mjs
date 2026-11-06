@@ -71,7 +71,7 @@ describe('the sessions and REA windows of the control batch', () => {
     ]);
     expect(index().find((s) => s.session === LINK).steps.total).toBe(9);
     expect(section()).toContain('no Export to Link upload happened and no link exists');
-    expect(cells('R-56').slice(4, 6)).toEqual(['❌/❌/❌', '❌']);
+    expect(cells('R-56')[6]).toContain('nor did 44 in s50');
   });
 
   it('state how early the windows armed and what each kept', () => {

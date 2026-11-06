@@ -196,6 +196,23 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   opened, with the Enter step and after the failure event [I, raw netlog and timeline times]. The
   REA window allowed the 7 earlier origins, so it kept the 3 beacons and not the generation request.
 
+### Mobile radio and edit batch (s51–s57) [O]
+
+- **Loads.** Each of the 7 loads, on 2026-11-06 at 00:39–01:21 UTC, got its document with HTTP 200
+  from the network, with no request under `/.well-known/vercel/`; the 7 netlogs hold no `.map`
+  request (`evidence/sessions-s51-s57.json`).
+- **Export to Link.** The one tap on Export to Link in s52 started one analytics beacon with an
+  `event` query key, one POST to `https://json.excalidraw.com/api/v2/post/` (HTTP 200), an origin
+  that no earlier netlog recorded, and the Firebase SDK chunk, served by the service worker, in
+  that order, 0.3, 0.3 and 0.7 s after the tap [I, raw netlog and timeline times]; no other
+  request followed in the scenario (`evidence/netlog-steps-s51-s57.json`). The netlog keeps no
+  body, so what was sent is not recorded; that the scene was encrypted before the upload, as the
+  dialog says, is [H]. No REA call ran during or after it.
+- **No traffic during the radio, edit and link scenarios.** In s51 and s53–s57 every netlog entry
+  belongs to the load: none was written during scenarios 45–48, their touch drags and touch paths
+  included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
+  The self-authored link of scenario 47 made no request to its origin.
+
 ## 2. Storage [O]
 
 | Store          | Keys / names                                                                                                                                                                                                                                                         |
@@ -233,7 +250,7 @@ references `OffscreenCanvas` and `Path2D`.
 ## 5. Unverified
 
 These are tracked in the [residual matrix](residual-matrix.md): reconnection and offline
-behaviour, "Export to Link" traffic, library browsing traffic, Text to diagram traffic beyond
-one mobile request, Wireframe to code traffic and Mermaid to Excalidraw on desktop,
-the precise trigger of each lazy chunk, and Sentry/analytics payload contents (deliberately not
-captured).
+behaviour, "Export to Link" traffic beyond one mobile upload and what it sent, library browsing
+traffic, Text to diagram traffic beyond one mobile request, Wireframe to code traffic and Mermaid
+to Excalidraw on desktop, the precise trigger of each lazy chunk, and Sentry/analytics payload
+contents (deliberately not captured).

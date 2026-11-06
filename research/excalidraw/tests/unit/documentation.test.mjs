@@ -67,8 +67,8 @@ const section = (text, heading) => text.split(heading)[1].split(/^## /mu)[0];
 describe('behaviour entries', () => {
   it('give every entry the eleven issue #1 fields once each, in order, each with content', () => {
     const entries = behaviourEntries();
-    // B-01 to B-40 and B-28a; a lost or duplicated heading changes the count.
-    expect(entries.map((e) => e.slice(0, 6).trim())).toHaveLength(41);
+    // B-01 to B-42 and B-28a; a lost or duplicated heading changes the count.
+    expect(entries.map((e) => e.slice(0, 6).trim())).toHaveLength(43);
     for (const entry of entries) {
       const fields = fieldsOf(entry);
       expect(

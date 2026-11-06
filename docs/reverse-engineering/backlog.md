@@ -160,8 +160,9 @@ feature issue is written.
       were already aligned changed nothing [O], which does not test alignment.
     - On mobile each of the six align commands lined up the selected boxes' edges or centres
       with the selection's, the two distribute commands equalised the gaps, and each was one undo
-      step [O, mobile, three elements; B-23].
-    - Desktop alignment and its undo, and aligning a group, are **open** (R-51).
+      step [O, mobile, three elements; B-23]. A group aligned with a rectangle moved as one unit,
+      and one undo restored it [O, mobile; B-23].
+    - Desktop alignment and its undo are **open** (R-51).
 21. **Offline start and reconnection.** Ref: network analysis, R-57, R-55.
     - Reloads in a profile that had loaded the page were served by a service worker [O].
     - Starting offline, reconnecting a collaboration session and what the UI shows meanwhile

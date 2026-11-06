@@ -103,12 +103,12 @@ describe('the verification page and the mobile generation dialogs', () => {
 });
 
 describe('the rows and criteria that the batch changed', () => {
-  it('close R-72 and R-73, keep R-63 partial and Export to Link unobserved', () => {
+  it('close R-72 and R-73, keep R-63 partial and Export to Link not done', () => {
     expect([row('R-72')[5], row('R-73')[5], row('R-63')[5], row('R-56')[5]]).toEqual([
       '✅',
       '✅',
       '🟡',
-      '❌',
+      '🟡',
     ]);
     expect(row('R-56')[9]).toBe('1');
   });

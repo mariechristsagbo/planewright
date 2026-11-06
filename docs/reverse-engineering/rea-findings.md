@@ -181,6 +181,31 @@ no REA record: its load met the verification page and the session stopped before
 | `s49-mobile-mermaid-generate` | `r02-inspect-during-42.json` | `ev_250c797f`     | `inspect_web_page`, 23:23:09.682–23:23:55.508, 7 origins. Armed 3470 ms before scenario 42's first step; all its 24 steps inside it  |
 | `s49-mobile-mermaid-generate` | `r03-inspect-during-43.json` | `ev_b0619a79`     | `inspect_web_page`, 23:23:59.397–23:25:14.645, 7 origins. Armed 3726 ms before scenario 43's first step; all its 30 steps inside it  |
 
+**Mobile radio and edit records** (s51–s57, on 2026-11-06, times UTC). s51 listed the target and
+inspected the loaded page for 4 s with no input. s52 listed the target before any input and made no
+REA call after it, because REA records keep URL fragments and DOM attributes and its export made a
+link. s53–s57 ran each scenario of 45–48 inside its own window, after 09 and before 16.
+
+| Session                       | File                         | Evidence (prefix) | Operation and window                                                                                                                 |
+| ----------------------------- | ---------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `s51-mobile-load-gate`        | `r01-targets.json`           | `ev_80930d1d`     | `list_browser_targets`                                                                                                               |
+| `s51-mobile-load-gate`        | `r02-inspect-initial.json`   | `ev_1f1ddf78`     | `inspect_web_page`, 00:39:51.944–00:39:56.544, 7 origins, after 09, with no step inside it                                           |
+| `s52-mobile-export-link`      | `r01-targets.json`           | `ev_cd31bf23`     | `list_browser_targets`, before any input                                                                                             |
+| `s53-mobile-radios-autoshape` | `r01-targets.json`           | `ev_d6343305`     | `list_browser_targets`                                                                                                               |
+| `s53-mobile-radios-autoshape` | `r02-inspect-during-45.json` | `ev_7031426d`     | `inspect_web_page`, 01:03:28.607–01:05:09.430, 7 origins. Armed 3231 ms before scenario 45's first step; all its 156 steps inside it |
+| `s54-mobile-edits-link`       | `r01-targets.json`           | `ev_256148b2`     | `list_browser_targets`                                                                                                               |
+| `s54-mobile-edits-link`       | `r02-inspect-during-46.json` | `ev_b714364f`     | `inspect_web_page`, 01:06:15.846–01:07:56.579, 7 origins. Armed 3181 ms before scenario 46's first step; all its 151 steps inside it |
+| `s54-mobile-edits-link`       | `r03-inspect-during-47.json` | `ev_d16c557a`     | `inspect_web_page`, 01:08:02.100–01:08:32.348, 7 origins. Armed 1626 ms before scenario 47's first step; all its 39 steps inside it  |
+| `s55-mobile-radios-points`    | `r01-targets.json`           | `ev_8bbc531d`     | `list_browser_targets`                                                                                                               |
+| `s55-mobile-radios-points`    | `r02-inspect-during-45.json` | `ev_334f7268`     | `inspect_web_page`, 01:14:43.089–01:16:24.019, 7 origins. Armed 2920 ms before scenario 45's first step; all its 156 steps inside it |
+| `s55-mobile-radios-points`    | `r03-inspect-during-48.json` | `ev_c8e8f942`     | `inspect_web_page`, 01:16:28.461–01:17:18.741, 7 origins. Armed 2684 ms before scenario 48's first step; all its 71 steps inside it  |
+| `s56-mobile-edits-link-2`     | `r01-targets.json`           | `ev_bd5c2259`     | `list_browser_targets`                                                                                                               |
+| `s56-mobile-edits-link-2`     | `r02-inspect-during-46.json` | `ev_e171f41f`     | `inspect_web_page`, 01:18:26.161–01:20:07.091, 7 origins. Armed 2826 ms before scenario 46's first step; all its 151 steps inside it |
+| `s56-mobile-edits-link-2`     | `r03-inspect-during-47.json` | `ev_602a38e4`     | `inspect_web_page`, 01:20:12.074–01:20:42.500, 7 origins. Armed 2285 ms before scenario 47's first step; all its 39 steps inside it  |
+| `s57-mobile-radios-points-2`  | `r01-targets.json`           | `ev_94e50382`     | `list_browser_targets`                                                                                                               |
+| `s57-mobile-radios-points-2`  | `r02-inspect-during-45.json` | `ev_8cc6ab38`     | `inspect_web_page`, 01:21:26.968–01:23:07.570, 7 origins. Armed 3309 ms before scenario 45's first step; all its 156 steps inside it |
+| `s57-mobile-radios-points-2`  | `r03-inspect-during-48.json` | `ev_3767e260`     | `inspect_web_page`, 01:23:12.149–01:24:02.462, 7 origins. Armed 2499 ms before scenario 48's first step; all its 71 steps inside it  |
+
 The three CLI screenshot records were checked against their own SHA-256 digests and byte counts
 (`rea-extract.mjs`). Bundle export exists only as the MCP `export_evidence_bundle` tool, so they
 were exported only in the observation batch, with every other CLI record of s5–s11 (R-73,
@@ -335,7 +360,8 @@ the committed index beyond their IDs.
     In s22–s36 the 15 windows kept none, and the netlog started none inside them.
     In s37–s49 the 14 windows kept as many requests as the netlog started on their 7 origins
     inside them, 0 to 82; over scenario 43 the netlog started one more, the generation request,
-    on an origin outside the 7.
+    on an origin outside the 7. In s51–s57 the 10 windows kept none, and the netlog started none
+    inside them.
 12. `inspect_web_page` cannot span a navigation. The s16 window armed before scenario 24 returned
     `target_unavailable` (reason `target_changed`) and no Evidence record once 24 reloaded the page.
     Its output is kept unchanged in the raw tree's `rea-failed/`. A reload needs one window that

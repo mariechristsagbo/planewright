@@ -31,7 +31,10 @@ is the first point. Reproduction handles name:
 **What the committed probes hold.** Each probe keeps type, box, angle, group count, bound
 element types, start and end binding flags, container flag, lock flag and eight style values,
 plus selection count, tool, zoom, scroll and theme. Point counts, font fields and text length
-were read from the raw timelines and are **not** in the committed summary. Scene and appState
+were read from the raw timelines and are **not** in the committed summary, except that the
+summaries of s22 on keep point counts (`--points`), those of s52–s57 a text's font size, family and
+alignment (`--text`), and those of s51 on a link's origin and path and a freehand stroke's
+pressure fields. Scene and appState
 probes read `localStorage["excalidraw"]` and `localStorage["excalidraw-state"]`, so every probe
 value is a value the page had saved locally.
 
@@ -209,19 +212,33 @@ value is a value the page had saved locally.
   because the driver interpolates moves; not in the committed summary.
 - **Persistence:** read from local storage [O].
 - **Undo/redo:** two Ctrl+Z at the start of scenario 05 removed the two dots made after the
-  eraser: the next scene probe (`06-paste`) has no freedraw element [O].
+  eraser: the next scene probe (`06-paste`) has no freedraw element [O]. On mobile Undo reversed
+  the bold stroke width and the second Pressure radio, Redo re-applied each, and Undo removed the
+  Autoshape rectangle (`45-width-bold-undo`, `45-width-bold-redo`, `45-pressure-2-undo`,
+  `45-pressure-2-redo`, `45-autoshape-undo`; s53, s55, s57) [O].
 - **Edge cases:** one click with the Draw tool creates a 0×0 freedraw "dot"
-  (`diag-after-eraser`: `[1000,600,0,0]` and `[340,400,0,0]`) [O]. Pressure: Not observed
-  (R-43).
+  (`diag-after-eraser`: `[1000,600,0,0]` and `[340,400,0,0]`) [O]. Pressure on desktop: Not
+  observed (R-43).
 - **Desktop/mobile:** on mobile a one-finger drag with the Draw tool from (60,420) to (300,470)
   gave a freedraw `[60,420,240,50]` with 12 stored points, stroke width 1 and no roundness
   (`36-freedraw`, s37; `40-freedraw-selected`, s41, s45) [O]. The Draw tool's bar offers a choice
   of Freedraw (pressed) and Autoshape, and a selected stroke's second Stroke button opens Stroke
-  width, Pressure and Opacity (s37, s41, s45, raw ARIA) [O]. Autoshape and pressure: Not observed
-  (R-43).
-- **Reproduction:** scenarios 02 (s2, s6), 04b (s1, s6), 05; on mobile 36 (s37) and 40 (s41, s45).
-- **Confidence:** [O] high (geometry s2 and s6; dots s1 and s6; mobile s41 and s45 identical).
-- **Limitations:** point count and smoothing not in the committed summary (R-43).
+  width, Pressure and Opacity (s37, s41, s45, raw ARIA) [O]. In scenario 45 (s53, s55, s57) the
+  Stroke width radios bold and thin, touched at the centres measured on s41's capture, gave stroke
+  widths 2 and 0.5 to a stroke drawn with 1, and the second Pressure radio changed its stored
+  stroke options' `variability` from `constant` to `variable`, `simulatePressure` staying false
+  with 12 pressures stored (`45-freedraw`, `45-width-bold`, `45-width-thin`, `45-pressure-2`) [O].
+  With Autoshape picked by name from the Draw tool's choice the tool became `autoshape`, and a
+  closed rough rectangle drawn with one finger through nine points between (58,527) and (302,633)
+  was stored as a `rectangle` `[58,527,244,106]`, the extent of the input, with stroke width 1 and
+  nothing selected (`45-autoshape`) [O].
+- **Reproduction:** scenarios 02 (s2, s6), 04b (s1, s6), 05; on mobile 36 (s37), 40 (s41, s45)
+  and 45 (s53, s55, s57).
+- **Confidence:** [O] high (geometry s2 and s6; dots s1 and s6; mobile s41 and s45 identical, and
+  scenario 45's 20 labels identical in s53, s55 and s57).
+- **Limitations:** on desktop the point count and smoothing are not in the committed summary; on
+  mobile one Autoshape input, a closed rough rectangle, was drawn, and the radios have no
+  accessible name, so which one is which is read from the stored results [I] (R-43).
 
 ### B-06 Text
 
@@ -230,10 +247,12 @@ value is a value the page had saved locally.
 - **Immediate result:** a `text` element `[820,407.5,43.2,25]`: its left edge is at the click
   and its vertical centre on it [O].
 - **State and related effects:** font size 20, font family id 5 and left alignment were read
-  from the raw timelines; not in the committed summary.
+  from the raw timelines; not in the committed summary on desktop (the mobile summaries of s53–s57
+  keep them).
 - **Persistence:** read from local storage [O].
 - **Undo/redo:** undo of text creation: Not observed (R-40). On mobile the Undo button reversed a
-  font change and Redo re-applied it (see Desktop/mobile).
+  font change, a font size and an alignment, and Redo re-applied the first two (see
+  Desktop/mobile).
 - **Edge cases:** re-edit by double-click, multiline, wrapping, an empty text on Escape and the
   desktop font picker: Not observed (R-40).
 - **Desktop/mobile:** dark desktop text: `15-text` `[910,572.5,40,25]` in s6 and
@@ -244,12 +263,20 @@ value is a value the page had saved locally.
   (`40-text-selected`, `41-text`; s41, s45, s46, s47) [O]. Nunito, picked in the font picker,
   widened it to 40.9, and Undo and Redo reversed and re-applied that (`41-nunito`,
   `41-nunito-undo`, `41-nunito-redo`; s46, s47) [O]; the stored font family went from 5 to 6 and
-  back [O, raw timelines].
+  back [O, raw timelines]. In scenario 45 (s53, s55, s57) the Font size radios S, L and XL of the
+  Text align popover, touched at the centres measured on s46's capture, stored font sizes 16, 28
+  and 36 (20 at first) and boxes `[60,290,32.4,20]`, `[60,282.5,56.7,35]` and `[60,277.5,72.9,45]`,
+  keeping the left edge and the vertical centre at y 300, and its Text align radios centre and
+  right stored `center` and `right` with the box unchanged (`45-size-l`, `45-size-xl`, `45-size-s`,
+  `45-align-centre`, `45-align-right`); Undo and Redo reversed and re-applied L, and Undo reversed
+  centre (`45-size-l-undo`, `45-size-l-redo`, `45-align-centre-undo`) [O].
 - **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`), scenario 15 (s6, s10); on mobile 36
-  (s37), 40 (s41, s45) and 41 (s46, s47).
+  (s37), 40 (s41, s45), 41 (s46, s47) and 45 (s53, s55, s57).
 - **Confidence:** [O] high for the geometry (s2 and s6 identical); medium for the dark text box
-  (s6 and s10 differ by the scroll, see the methodology's confidence rule).
-- **Limitations:** the width depends on the loaded font (R-40).
+  (s6 and s10 differ by the scroll, see the methodology's confidence rule); high for the mobile
+  radios (s53, s55 and s57 identical).
+- **Limitations:** the width depends on the loaded font; one one-line text, so an alignment inside
+  a wider box was not seen (R-40).
 
 ### B-07 Container label
 
@@ -326,7 +353,10 @@ value is a value the page had saved locally.
 - **Undo/redo:** on an arrow drawn from (60,560) to (300,560) (scenario 39), the Undo button
   removed the third point added by a drag from its middle and Redo restored it
   (`39-middle-drag-undo`, `39-middle-drag-redo`), and one Undo moved back an end point dragged
-  with Edit arrow (`39-edit-end-drag-undo`; s40, s44) [O].
+  with Edit arrow (`39-edit-end-drag-undo`; s40, s44) [O]. In Edit arrow, Undo removed a fourth
+  point and Redo restored it, the editing going on (no Edit arrow button in the bar,
+  `m48-03-after-redo`, raw ARIA), and Undo after Delete restored a deleted point
+  (`48-point-4-undo`, `48-point-4-redo`, `48-point-delete-undo`; s55, s57) [O].
 - **Edge cases:** so a multi-point line cannot be made by taps alone: a tap makes a 100-unit
   element and ends the tool [O]. The three Arrow type radios, touched at the centres measured on
   s34's capture, made the arrow sharp (no roundness), then elbowed (`elbowed` true, no
@@ -335,16 +365,28 @@ value is a value the page had saved locally.
   `39-elbow-redo`, `39-round`) [O]. Edit arrow hid its own button while editing, showed the ends
   as circles and a dot at the middle, and a drag of the end point from (300,560) to (330,620)
   moved it by the drag (`39-edit-end-drag`); a tap on empty canvas ended the editing and left the
-  arrow selected [O]. More than three points and deleting a point: Not observed (R-30).
+  arrow selected [O]. A selected sharp arrow with three points showed circles at its points and
+  no midpoint handle, and a drag from its first segment's middle, (120,220) to (120,280), moved the
+  whole arrow by 60 down instead of adding a point, Undo and Redo moving it back and down again
+  (`46-point-3`, `46-point-4`, `46-point-4-undo`, `46-point-4-redo`; s54, s56) [O]; in Edit arrow a
+  tap on that segment's midpoint and Delete in the Actions popover changed neither the arrow nor
+  its points (`46-point-selected`, `46-point-delete`) [O]. Edit arrow shows a filled midpoint
+  handle on each segment (`m46-05-point-selected`, raw capture) [O]: a drag from the first one,
+  (120,170) to (120,230), added a fourth point, and a tap on that point and Delete in the Actions
+  popover removed it, leaving the arrow with 3 points; the first tap on empty canvas then ended the
+  editing with the arrow selected (`48-point-4`, `48-point-delete`, `48-edit-end`; s55, s57) [O].
 - **Desktop/mobile:** desktop click sequences: Not observed (R-30).
-- **Reproduction:** scenarios 28 (s22), 33 (s27, s32), 35 (s34, s36) and 39 (s40, s44).
+- **Reproduction:** scenarios 28 (s22), 33 (s27, s32), 35 (s34, s36), 39 (s40, s44), 46 (s54,
+  s56) and 48 (s55, s57).
 - **Confidence:** [O] high for the 100-unit element made by a tap (s22, s27, s32), for the added
-  point (s27, s32, s34, s36) and for the arrow types, Edit arrow and the undo (s40 and s44
-  identical).
+  point (s27, s32, s34, s36), for the arrow types, Edit arrow and the undo (s40 and s44
+  identical), and for the moved arrow, the fourth point and the deleted point (s54 and s56, s55 and
+  s57 identical).
 - **Limitations:** the probe keeps each line's point count (from s22, `--points`), not the points,
   so where the third point lies is derived from the box [I]; taps last 40 ms with a 1 px contact
   radius; the Arrow type radios have no accessible name, so which one is which is read from the
-  stored results, not from a label [I] (R-30).
+  stored results, not from a label [I]; points were added and deleted on sharp arrows only
+  (R-30).
 
 ## Selection
 
@@ -546,6 +588,31 @@ value is a value the page had saved locally.
 - **Confidence:** [O] high.
 - **Limitations:** one element type (R-38).
 
+### B-42 Element link
+
+- **Initial state:** mobile, scenario 46's scene, then a rectangle `[200,100,120,60]` drawn and
+  left selected (scenario 47).
+- **Action:** Add link in the Actions popover, a click on the textbox it opened, the self-authored
+  URL `https://example.com/planewright-r11` typed with the keyboard standing in for the phone's
+  own, and Enter; then Undo, Redo and a tap on empty canvas.
+- **Immediate result:** Add link opened a textbox named "Type or paste your link here" beside a
+  Link to object button (raw ARIA) [O]. After Enter the element stored a link whose origin is
+  `https://example.com` and whose path is `/planewright-r11` (`47-link`), and the page showed it as
+  a link with Edit, Link to object and Remove buttons (raw ARIA) [O].
+- **State and related effects:** the element stayed selected (`47-link`) [O]; no request to the
+  link's origin, or any other, was written after the load (netlog) [O].
+- **Persistence:** read from local storage [O].
+- **Undo/redo:** one Undo removed the linked rectangle itself, leaving nothing selected, and Redo
+  restored the rectangle without its link (`47-link-undo`, `47-link-redo`; s54, s56) [O]; that the
+  link edit is not recorded in the history is [H].
+- **Edge cases:** Link to object, Edit, Remove and following the link: Not observed (R-11); the
+  link was never followed.
+- **Desktop/mobile:** links on desktop: Not observed (R-09).
+- **Reproduction:** scenario 47 (s54, s56), right after 46.
+- **Confidence:** [O] high (s54 and s56 identical).
+- **Limitations:** one URL, on a reserved example domain, typed with the keyboard; the probe
+  keeps a link's origin and path only (R-11).
+
 ## Style
 
 ### B-20 Style changes apply to the selection and become defaults
@@ -611,16 +678,22 @@ value is a value the page had saved locally.
   group of four and a Text align group of three unnamed radios, and Actions once the text is
   selected; for the Draw tool and a freehand stroke, Stroke, Background and a second Stroke
   holding Stroke width, Pressure and Opacity, and Actions once the stroke is selected; a selected
-  elbow arrow's bar has no Edit arrow (s37, s40, s41, s44–s47, raw ARIA) [O].
-- **Reproduction:** scenarios 04 (s1, s6) and 15 (s6, s10); on mobile 28 (s22), 36 (s37) and 39–41
-  (s40, s41, s44–s47).
+  elbow arrow's bar has no Edit arrow (s37, s40, s41, s44–s47, raw ARIA) [O]. By the stored
+  results of touching them (scenario 45; s53, s55, s57), the Font size radios are S, M, L and XL
+  (16, 20, 28 and 36), the Text align radios left, centre and right, a freehand stroke's Stroke
+  width radios 0.5, 1 and 2, and its Pressure radios constant and variable stroke options (B-05,
+  B-06) [O]. In Edit arrow the bar holds Stroke, a second Stroke and Actions, whose popover is the
+  same as the arrow's (s54–s57, raw ARIA) [O].
+- **Reproduction:** scenarios 04 (s1, s6) and 15 (s6, s10); on mobile 28 (s22), 36 (s37), 39–41
+  (s40, s41, s44–s47), 45 (s53, s55, s57) and 46 (s54, s56).
 - **Confidence:** [O] high for the Fill row (s1, s6); in s10, whose rectangle kept a
   transparent background, `dark-08` has no Fill group. High for the text section (`dark-11`
   identical in s6 and s10); medium for the rectangle and arrow sections, whose s10 snapshots
   differ from s6 in the Fill group and in which Sloppiness radio is checked, following the
   styles in use (raw comparisons).
-- **Limitations:** desktop light-theme per-type sections not captured (R-10); on mobile the text
-  and freehand popovers were opened but none of their unnamed radios was touched (R-10).
+- **Limitations:** desktop light-theme per-type sections not captured (R-10); on mobile the
+  radios have no accessible name, so they were touched at measured centres and which one is which
+  is read from the stored results [I] (R-10).
 
 ## Grouping, layers, alignment
 
@@ -641,8 +714,10 @@ value is a value the page had saved locally.
   (R-49).
 - **Desktop/mobile:** on mobile, Group selection in the Actions popover gave 3 box-selected
   rectangles one group each, and Ungroup selection removed it, the 3 staying selected
-  (`31-grouped`, `31-ungrouped`; s25, s30) [O].
-- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 31 (s25, s30) and 34 (s33, s35).
+  (`31-grouped`, `31-ungrouped`; s25, s30) [O], and two box-selected rectangles one group
+  (`46-grouped`; s54, s56) [O].
+- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 31 (s25, s30), 34 (s33, s35) and 46 (s54,
+  s56).
 - **Confidence:** [O] high.
 - **Limitations:** two elements (R-49).
 
@@ -673,16 +748,22 @@ value is a value the page had saved locally.
   restored every position, and Redo re-applied Distribute horizontally (`31-align-left-undo`,
   `31-align-top-undo`, `31-center-vertically-undo`, `34-distribute-horizontally-undo`,
   `34-distribute-horizontally-redo`, `34-distribute-vertically-undo`, `38-align-right-undo`,
-  `38-align-bottom-undo`, `38-center-horizontally-undo`) [O]. On desktop: Not observed (R-51).
+  `38-align-bottom-undo`, `38-center-horizontally-undo`, `46-align-left-undo`,
+  `46-align-bottom-undo`) [O]. On desktop: Not observed (R-51).
 - **Edge cases:** on mobile, Distribute horizontally on three rectangles already spaced evenly
   (scenario 31) changed nothing [O]; the alignments of scenario 38 treated a diamond and an
-  ellipse by their boxes, like the rectangle [O]. Alignment of a group: Not observed (R-51).
+  ellipse by their boxes, like the rectangle [O]. A group of two rectangles, `[40,330,100,50]`
+  and `[200,400,100,50]`, box-selected with a wider rectangle `[20,500,320,60]` (scenario 46),
+  moved as one unit: Align left put the group's left edge at 20, the members at x 20 and 180, and
+  Align bottom its bottom edge at 560, the members at y 440 and 510, the wider rectangle staying in
+  place (`46-align-left`, `46-align-bottom`; s54, s56) [O].
 - **Desktop/mobile:** desktop alignment of shapes that are not aligned: Not observed (R-51).
-- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 31 (s25, s30), 34 (s33, s35) and 38
-  (s39, s43).
+- **Reproduction:** scenario 03 (s1, s2, s6); scenarios 31 (s25, s30), 34 (s33, s35), 38
+  (s39, s43) and 46 (s54, s56).
 - **Confidence:** [O] high for the mobile results (each in two sessions, identical) and for
   desktop's "no change".
-- **Limitations:** on mobile three elements of one size per command, at zoom 1 (R-51).
+- **Limitations:** on mobile three elements of one size per command, or one group of two with
+  one rectangle, at zoom 1 (R-51).
 
 ### B-24 Layer order
 
@@ -720,12 +801,18 @@ value is a value the page had saved locally.
   the first change (ARIA) [O].
 - **Persistence:** history across a reload: Not observed (R-52).
 - **Undo/redo:** as above.
-- **Edge cases:** undo of style, delete, group and resize; Ctrl+Y: Not observed (R-52).
+- **Edge cases:** on desktop, undo of style, delete, group and resize, and Ctrl+Y: Not observed
+  (R-52).
 - **Desktop/mobile:** the mobile Undo and Redo buttons reverse and re-apply an arrow with its
   bindings (B-04), a resize and a rotation (B-16, B-17), a layer change (B-24), alignment and
   distribution (B-23) and grouping (B-22), and Undo also reverses a selection change (B-10,
-  B-12) (s23–s35) [O].
-- **Reproduction:** scenarios 03, 04, 05, 06 (s1, s2, s6).
+  B-12) (s23–s35) [O]. Delete in the Actions popover removed a selected rectangle, Undo restored it
+  selected and Redo removed it again (`46-delete`, `46-delete-undo`, `46-delete-redo`; s54, s56)
+  [O]. The buttons also reverse and re-apply a text's font size and alignment, a stroke width, a
+  pressure style and an Autoshape stroke (B-05, B-06), a fourth point and a deleted point (B-40)
+  and a group's alignment (B-23) (s53–s57) [O]. After Add link, Undo removed the linked element
+  and Redo restored it without the link (B-42).
+- **Reproduction:** scenarios 03, 04, 05, 06 (s1, s2, s6); on mobile 46 (s54, s56).
 - **Confidence:** [O] high.
 - **Limitations:** the undo stack depth was not probed (R-52).
 
@@ -1032,6 +1119,33 @@ value is a value the page had saved locally.
 - **Reproduction:** scenarios 08 and 08b (s1, s6), run last.
 - **Confidence:** as marked.
 - **Limitations:** one client per room; s1 captures retired; s6 captures masked (R-55).
+
+### B-41 Export to Link
+
+- **Initial state:** mobile, right after 09 in a fresh profile: a rectangle `[40,120,120,80]` drawn
+  and deselected (scenario 44, s52).
+- **Action:** Save to... in the main menu, then Export to Link, once; then Close.
+- **Immediate result:** the dialog became one headed Shareable link with a Link textbox holding a
+  URL of the reference origin with a `#json=` fragment, a Copy link button and a note that the
+  upload is end-to-end encrypted (raw ARIA, the fragment's value redacted by the driver) [O]. The
+  page's own URL kept no fragment (`url` probes) [O].
+- **State and related effects:** the tap started one analytics beacon with an `event` query key
+  and one POST to `https://json.excalidraw.com/api/v2/post/` (HTTP 200), 0.3 s after it, and the
+  Firebase SDK chunk, served by the service worker, 0.7 s after it [I, raw netlog and timeline
+  times]. One Close closed the dialog; the scenario's second Close found none and failed, as its
+  description allows [O].
+- **Persistence:** the stored scene, the tool and selection and the storage key inventory (6 keys,
+  the same value lengths) were the same before and after (`44-drawn`, `44-after-export`,
+  `44-after-close`) [O]. What the server keeps, and for how long, is [U] (R-56).
+- **Undo/redo:** not applicable (the export changed no element, selection or stored key).
+- **Edge cases:** Copy link, opening the link and its view: Not observed (R-56).
+- **Desktop/mobile:** desktop: Not observed (R-56); scenario 20 met the verification page in s13
+  and s14.
+- **Reproduction:** scenario 44 (s52), once, by design.
+- **Confidence:** [O] medium: one session, by design (one upload in total).
+- **Limitations:** the link is a secret: the driver redacted its value in ARIA text, every capture
+  was refused while a dialog was open, the clipboard was never granted and no REA call ran during
+  or after the export, so REA did not observe it and no record keeps the value (R-56).
 
 ## Element context menu and confirmations
 
