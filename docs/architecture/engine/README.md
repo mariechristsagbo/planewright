@@ -1,6 +1,6 @@
 # Canvas-engine architecture
 
-**Status: proposed in issue #3, not implemented.** These documents design Planewright's canvas
+**Status: accepted in issue #3, not implemented.** These documents design Planewright's canvas
 engine and split its first usable version into issues. No engine, renderer or editor code exists
 yet; the web app is still the foundation status page.
 

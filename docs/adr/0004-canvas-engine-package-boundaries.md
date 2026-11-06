@@ -1,6 +1,6 @@
 # ADR 0004: Canvas-engine package boundaries
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-06
 
 ## Context

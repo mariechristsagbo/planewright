@@ -1,6 +1,6 @@
 # ADR 0008: Input pipeline, tool state machines and one command registry
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-06
 
 ## Context

@@ -45,9 +45,9 @@ contains only the server hello and error messages and has no compatibility guara
 
 ## Decisions and what stays open
 
-The [canvas-engine architecture](engine/README.md) (issue #3) proposes how the editor is built,
-traced to the behavioural baseline of issue #1. Until its pull request merges, its ADRs are
-Proposed and nothing of it is implemented:
+The [canvas-engine architecture](engine/README.md) (issue #3) decides how the editor is built,
+traced to the behavioural baseline of issue #1. Its ADRs are accepted, and nothing of it is
+implemented yet:
 
 - scene and element model, and how documents are versioned and serialised:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
