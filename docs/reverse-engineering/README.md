@@ -20,6 +20,7 @@ reference. 09b first ran in s68 and s69, and s5 records an aborted rerun. It is 
 | [backlog.md](backlog.md)                                 | Prioritised implementation backlog with acceptance criteria                |
 | [checkpoint.md](checkpoint.md)                           | Precise state of the open acceptance criteria                              |
 | [readiness.md](readiness.md)                             | What stays open after s84, each item classified, and the one next step     |
+| [final-review.md](final-review.md)                       | The final independent review: its findings, handling and what stays open   |
 | [readiness.md](readiness.md)                             | What stays open after the last session, classified, and the next step      |
 | [evidence/](evidence/)                                   | Sanitized, generated evidence index and probe summaries                    |
 

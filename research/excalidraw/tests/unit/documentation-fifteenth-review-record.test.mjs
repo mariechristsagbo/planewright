@@ -154,7 +154,7 @@ describe('the review of a9a4619 against the exit rule', () => {
     // R-75 at the latest head follows the exit rule (documentation-eighth-review.test.mjs); the
     // observation batch after db16323 is not covered by a review, so it is open again.
     expect(reviewState(checkpoint(), 'a9a4619').reviewMeets).toBe(true);
-    expect(r75()[6]).toMatch(/620eccf, a9a4619$/u);
+    expect(r75()[6]).toContain('620eccf, a9a4619');
     expect(r75()[7]).toContain(
       'its 3 suggestions stay open, with their handling in the checkpoint',
     );

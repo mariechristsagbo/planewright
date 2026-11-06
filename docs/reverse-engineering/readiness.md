@@ -1,8 +1,9 @@
 # Readiness of issue #1
 
-Last updated: 2026-11-06, after the final mobile batch (s83–s84). The precise state of each
-criterion, the batch records and the independent reviews are in the [checkpoint](checkpoint.md);
-the open rows are in the [residual matrix](residual-matrix.md).
+Last updated: 2026-11-06, after the final independent review of `cd1694c` and the remediation of its
+two major findings. The precise state of each criterion, the batch records and the independent
+reviews are in the [checkpoint](checkpoint.md); the open rows are in the
+[residual matrix](residual-matrix.md).
 
 This document classifies, after s83 and s84, every acceptance criterion and testing requirement of
 issue #1 that is not Done, and the open residual rows behind them. The agreed mobile list ran but
@@ -24,7 +25,7 @@ refinement of a behaviour already observed, which its feature issue must observe
 | Desktop light/dark and mobile evidence sets             | Partial | Objective limitation: verification page                                                                                | The missing desktop dark surfaces (R-26)                                                                                                                                                                                                                                                    |
 | Prioritised backlog with acceptance criteria            | Partial | Objective limitation: verification page; refinement, not mandatory                                                     | Criteria marked **open** for desktop behaviour and for the refinements below                                                                                                                                                                                                                |
 | Re-run each documented interaction from a fresh profile | Partial | Objective limitation: verification page; excluded by the maintainer                                                    | 15 on desktop after 01–07b; 43 and 44 ran once by design (one generation and one upload allowed); 77 ran once and 78 replaced it                                                                                                                                                            |
-| Separate Claude Code review session                     | Partial | Mandatory and feasible                                                                                                 | The single final independent review (R-75), the next step                                                                                                                                                                                                                                   |
+| Separate Claude Code review session                     | Partial | Decided by the maintainer                                                                                              | The final review of `cd1694c` ran (R-75): its two major findings are remediated, with no further review, and its 8 minor findings and 6 suggestions stay open for feature work                                                                                                              |
 
 Every other criterion and requirement is Done.
 
@@ -64,7 +65,12 @@ Every other criterion and requirement is Done.
   this classification, for the two menu cases by a decision taken autonomously within the
   maintainer's scope on 2026-11-06: they are not mandatory for issue #1, and no live session runs
   for them.
-- **Mandatory and feasible.** No feasible mandatory observation remains under these constraints;
-  the one mandatory item left is the single final independent review (R-75), which runs once,
-  read-only, on the latest head. Until it meets the exit rule, PR #2 stays a Draft and issue #1
-  stays open.
+- **Mandatory and feasible.** No feasible mandatory observation remains under these constraints.
+  The single final independent review (R-75) ran once, read-only, on `cd1694c`, and reported 0
+  critical, 2 major and 8 minor findings and 6 suggestions ([final review record](final-review.md)).
+- **Decided by the maintainer.** On 2026-11-06, by a decision taken autonomously within the
+  maintainer's scope, the two major findings were remediated (`f69598a`, `0d327d3`) and no further
+  review runs for issue #1, so R-75 stays 🟡 under its exit rule. The 8 minor findings and 6
+  suggestions stay open, non-blocking, for the feature work that follows. PR #2 leaves Draft and is
+  squash-merged once every required check passes on its exact head, which closes issue #1; every
+  Partial item above stays open as classified.

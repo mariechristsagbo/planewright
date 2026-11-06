@@ -187,7 +187,7 @@ describe('the rows and the readiness record after the s83–s84 batch', () => {
     );
   });
 
-  it('classify every partial criterion and name the review as the one mandatory item left', () => {
+  it('classify every partial criterion and record the final review and its handling', () => {
     const text = flat(read(`${RE}/readiness.md`));
     for (const kind of [
       'Objective limitation: verification page',
@@ -199,8 +199,9 @@ describe('the rows and the readiness record after the s83–s84 batch', () => {
     }
     expect(text).toContain('No feasible mandatory observation remains');
     expect(text).toContain(
-      'the one mandatory item left is the single final independent review (R-75)',
+      'The single final independent review (R-75) ran once, read-only, on cd1694c',
     );
+    expect(text).toContain('no further review runs for issue #1, so R-75 stays 🟡');
     const summary = part('Readiness');
     expect(summary).toContain('(see [Readiness of issue #1](readiness.md))');
     expect(summary).toContain(
@@ -208,6 +209,9 @@ describe('the rows and the readiness record after the s83–s84 batch', () => {
     );
     expect(summary).toContain('objective limitation of the verification page');
     expect(summary).toContain('objective limitation of headless Chromium');
-    expect(summary).toContain('PR #2 stays a Draft and issue #1 stays open');
+    expect(summary).toContain(
+      'PR #2 leaves Draft and is squash-merged once every required check passes on its exact ' +
+        'head, which closes issue #1',
+    );
   });
 });

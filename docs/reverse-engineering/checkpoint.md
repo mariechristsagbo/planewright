@@ -1,13 +1,12 @@
 # Checkpoint: issue #1 status
 
-Last updated: 2026-11-06 (final mobile batch: live sessions s83 and s84 on 2026-11-06 at
-12:18–12:35 UTC, on mobile only, under the gate that stops on a 403 of any request type, with no
-403 met, and the readiness record that classifies what stays open; see
-[Final mobile batch](#final-mobile-batch-s83s84) and [Readiness](#readiness)).
-Branch: `docs/1-excalidraw-research`. Issue #1 stays
-open: the Draft PR refers to it (`Refs #1`) and does not close it.
-Commit ranges are written as Git reads them: `A`..`B` is the commits after `A` up to and
-including `B`. A span that includes its first commit is written from `A` to `B`.
+Last updated: 2026-11-06 (the single final independent review of `cd1694c` and the remediation of
+its two major findings, with no live session after s84; see [Readiness](#readiness) and the
+[final review record](final-review.md)). Branch: `docs/1-excalidraw-research`. Issue #1 stays open
+until PR #2 is squash-merged, which the maintainer decided once every required check passes on its
+exact head; the merge closes it (`Closes #1`). Commit ranges are written as Git reads them: `A`..`B`
+is the commits after `A` up to and including `B`. A span that includes its first commit is written
+from `A` to `B`.
 
 ## Acceptance criteria
 
@@ -35,7 +34,7 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 | Generated JSON and REA bundles validated                | Done    | All committed JSON parses. With the current tools, `sessions.json`, `rea-windows.json`, the nine probe summaries, the five initial-inspection summaries and `static-api-surface.json` regenerate byte for byte from the retained records. This was checked in the fifth-review remediation on 2026-11-04, by the sixth review on `46b2b01`, by the review of `a78a210` on that head and, for R-76, on `f0aa21b` on 2026-11-05: first the nine files committed before R-76, then the s1–s11 files built after it; all 17 again by the tenth review on `f1562ed`, on `5f955a6` in its remediation, on `776dc05` in the eleventh-review remediation, by the twelfth review on `4e9c663`, which compared 7 of them byte for byte and the 10 that a builder prints to stdout by a canonical digest, because writing them to a file was refused, and on `e59ecf8` in its remediation; the thirteenth review, on `6d5d264`, compared the same 7 byte for byte and the same 10 by a canonical digest, for the same reason, and argued from their layout, without a literal comparison, that Prettier would give those 10 the same bytes. `rea-extract.mjs` changed in `f0aa21b`, to read REA CLI envelopes, and `lib/windows.mjs`, which it shares with `rea-windows.mjs`, in `8bfdfe3`, to refuse failed ones, and again in `5574b04`, with `rea-windows.mjs` in `a64611a`, which changes only their failure messages, and in `2b5ff0e`, to count a missing timeline as unknown, and `495e95e`, with both scripts, to name a file that is not valid JSON, neither of which changes a committed file; the other builders and the libraries they import are unchanged since `46b2b01`. `bundle-01-desktop.json` passed `rea evidence-export` earlier on 2026-11-04. `netlog-steps.json`, added in `545b97b` and built by `netlog-steps.mjs`, regenerates byte for byte with the tools at `eff8534`, as do the other 17 ([Netlog placement](#netlog-placement-r-64-r-66)). The fourteenth review, on `620eccf`, regenerated all 18 and compared them byte for byte; in its remediation `46f447a` regenerated `netlog-steps.json` in the start order of `7bceb59`, which moves one s6 placement, and all 18 regenerate byte for byte with the tools at `f6a9ffe`. The fifteenth review, on `a9a4619`, regenerated all 18 and found them identical byte for byte after Prettier, with no missing or extra file. In the observation batch, the 23 REA CLI records of s5–s11 and the 7 of s12–s14 became two bundles that REA's MCP import validated and `export_evidence_bundle` wrote (R-73 ✅), and with the tools at `78b6192` all 22 committed evidence files, the 4 of s12–s14 included, regenerate byte for byte in three runs. At the s74–s78 and s79–s82 records all 117, then 128, committed evidence files, their 12 and 11 included, regenerate byte for byte in three runs      |
 | CDP and driver ports loopback-only                      | Done    | With the sixth-review tooling, `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 against real local containers on 2026-11-05 at 00:15–00:16 UTC, on `e38955a`, contacting no website; their output is committed in [local-checks/](local-checks/). Before the R-76 sessions they passed again, 11 of 11 and 19 of 19, on `0b4fb19` on 2026-11-05 at 04:45–04:46 UTC; that output is committed there too. Before the observation batch they passed again, 11 of 11 and 19 of 19, on `78b6192` on 2026-11-05 at 16:47–16:49 UTC (output in local-checks/), and each of s12–s14 probed its own browser before the driver attached. Before the mobile follow-up they passed again, 11 of 11 and 19 of 19, on `b21edd4` at 17:53–17:54 UTC (output in local-checks/), and s15 and s16 each probed its own browser. Before the mobile priority-1 batch they passed again, 11 of 11 and 19 of 19, on `ddc3e81` at 19:54–19:55 UTC (output in local-checks/), and s17–s21 each probed its own browser. Before the mobile touch-control batch they passed again, 11 of 11 and 19 of 19, on `0f22218` at 21:24–21:25 UTC (output in local-checks/), and s22–s36 each probed its own browser. Before the mobile control batch they passed again, 11 of 11 and 19 of 19, on `de052c8` at 22:50–22:51 UTC and, after a probe change, on `32448e3` at 23:01 UTC (output in local-checks/), and s37–s50 each probed its own browser. Before the mobile radio and edit batch's scenarios they passed again, 11 of 11 and 19 of 19, on `19fbe93` at 01:01–01:02 UTC, after the input and probe changes (output in local-checks/); s51 and s52 ran earlier, at `2a6ec57`, whose driver the `32448e3` checks cover, and s51–s57 each probed its own browser. Before the keyboard, offline and layout batch's scenarios they passed again, 11 of 11 and 19 of 19, on `5ec677a` at 02:53 UTC, after the driver change (output in local-checks/); s58 ran earlier, at `d81dc03`, whose driver the `19fbe93` checks cover, and s58–s64 each probed its own browser. Before the replay batch they passed again, 11 of 11 and 19 of 19, on `61c695a` at 05:20–05:21 UTC (output in local-checks/), and s65–s67 each probed its own browser. Before s68–s70 they passed again, 11 of 11 and 19 of 19, on `c097333` at 06:17–06:18 UTC (output in local-checks/), and each session probed its own browser. Before s71–s73 they passed again, 11 of 11 and 19 of 19, on `70a4e22` at 07:29 UTC (output in local-checks/), and each session probed its own browser. The earlier runs on `dc6eef1` (2026-11-04, 22:18 and 22:19 UTC) kept no output. This holds from s5 on: s1–s4 ran on the default Docker bridge, where the DevTools forwarder was reachable from other containers (see the methodology). A probe that cannot run, and a failed docker listing during cleanup, count as FAIL |
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs. The removal checks of the `e38955a` and `0b4fb19` runs are in local-checks. After each of s8–s14 the container, its network, the driver, the listeners on 9222 and 9333, the token file and any REA CLI process were checked gone, and after s12–s82 also any container of the browser image                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| Separate Claude Code review session                     | Partial | Fifteen independent reviews ran. The fifteenth (of `a9a4619`) meets the R-75 exit rule: 0 critical, 0 major and 0 minor findings, and its 3 suggestions are listed with their handling. The observation batch after `db16323`, with the mobile batches after `2864145`, `a4990b6`, `823dae7`, `7e547de`, `2a6ec57`, `d81dc03`, `61c695a`, `5d2126b` and `97149aa`, is behaviour-changing and no review covers it yet, so R-75 is 🟡; as the maintainer decided, one fresh independent review runs once, at readiness, after every acceptance observation of issue #1, and none ran in the batch or the follow-up. It reviewed the fourteenth-review remediation, `620eccf`..`a9a4619`, which handled the minor finding and 6 suggestions of the fourteenth review. R-75 closes only under the exit rule in [Independent reviews](#independent-reviews), which applies to every behaviour-changing commit, so it is ✅ until a behaviour-changing commit follows `a9a4619`: the ninth review met it on `a85eb82`, but the R-76 commits after `935f2fc` were behaviour-changing and no review covered them until the tenth (see [R-76 runs](#r-76-runs-s8s11)), and the thirteenth met it on `6d5d264`, but no review covered the netlog placement after `c010f7e` until the fourteenth. The tenth to the fifteenth are automated Claude Code reviews, not human approval. R-75 aside, the other Partial criteria and requirements keep issue #1 open                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Separate Claude Code review session                     | Partial | Sixteen independent reviews ran. The sixteenth (of `cd1694c`) is remediated for its two major findings in `f69598a` and `0d327d3`; no review of that remediation has run yet, and by the maintainer's decision none runs for issue #1, so R-75 stays 🟡. Its 8 minor findings and 6 suggestions stay open, non-blocking, for feature work ([final review record](final-review.md)). R-75 closes only under the exit rule in [Independent reviews](#independent-reviews). The fifteenth met it on `a9a4619` and the thirteenth on `6d5d264`, each until behaviour-changing commits followed, and the ninth on `a85eb82`, but the R-76 commits after `935f2fc` were behaviour-changing and no review covered them until the tenth (see [R-76 runs](#r-76-runs-s8s11)). The tenth to the sixteenth are automated Claude Code reviews, not human approval                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
 ## Readiness
 
@@ -48,8 +47,11 @@ bypassed, with no further desktop load check in this phase; Open, Save to…, th
 file and Insert image are an objective limitation of headless Chromium's native file pickers,
 waiting for a headed browser that the maintainer runs; a room, a second client and further uploads
 or generations are excluded by the maintainer for this phase; and the mobile items still open are
-refinements, not mandatory. The one mandatory item left is the single final independent review
-(R-75). Until it meets the exit rule, PR #2 stays a Draft and issue #1 stays open.
+refinements, not mandatory. The single final independent review (R-75) ran on `cd1694c`: its two
+major findings are remediated, and its 8 minor findings and 6 suggestions stay open, non-blocking,
+for feature work ([final review record](final-review.md)). By the maintainer's decision no further
+review runs, so R-75 stays 🟡, and PR #2 leaves Draft and is squash-merged once every required check
+passes on its exact head, which closes issue #1.
 
 ## Checks of the fifth-review remediation
 
@@ -615,9 +617,8 @@ evidence-import` read each export back, with the same records in the same order 
 - **Record checks.** The checks of earlier records that count the committed evidence files leave
   out the four new ones, and the fifteenth-review record checks read the state of that review,
   not R-75 at the latest head.
-- **Not covered by a review.** The commits after `db16323` are behaviour-changing, and no review
-  covers them, so R-75 is 🟡. As the maintainer decided, no review ran in this batch: one fresh
-  independent review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `db16323` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the
   new commits (trailers, tool attribution and `secret-scan.mjs`), the push and the GitHub checks
@@ -713,9 +714,8 @@ session ran. It is not a review remediation and addresses none of the open revie
 - **Record checks.** The checks of earlier records that count the committed evidence files leave out
   the five new ones, and the R-64 and network-analysis checks that said no mobile scenario clicks
   Export to SVG now check that s15's one click wrote no worker event.
-- **Not covered by a review.** The commits after `2864145` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `2864145` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits (trailers, tool attribution and `secret-scan.mjs`), the push and the GitHub checks are in
@@ -825,9 +825,8 @@ not a review remediation and addresses none of the open review suggestions.
 - **Record checks.** The checks of earlier records that count the committed evidence files leave out
   the eight new ones, and the mobile follow-up's check of R-54 now expects the mobile column that
   s17–s21 completed.
-- **Not covered by a review.** The commits after `a4990b6` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `a4990b6` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits (trailers, tool attribution and `secret-scan.mjs`), the push and the GitHub checks are in
@@ -919,9 +918,8 @@ batch. It is not a review remediation and addresses none of the open review sugg
 - **Integrity:** each timeline holds exactly the steps of its scenarios, in order, with no failed
   step. The 15 new probe summaries are built with `--points`; with the tools of the commit that adds
   this section, every committed evidence file, the 18 new ones included, regenerates byte for byte.
-- **Not covered by a review.** The commits after `823dae7` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `823dae7` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1059,9 +1057,8 @@ addresses none of the open review suggestions.
   those of 37–40, 6 for those of 41–44 (a second upload, a second Enter, an unguarded capture, an
   unsaved ARIA read, a link click and a tap before the font's Undo among them), 2 for the elbowed
   flag and 14 for the record checks. No mutation was refused by its literal guard, and none passed.
-- **Not covered by a review.** The commits after `7e547de` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `7e547de` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1179,9 +1176,8 @@ not a review remediation and addresses none of the open review suggestions.
   control copy passed, and each failed the check it targeted: 8 for the checks of 45–47, 5 for those
   of 48 and 11 for the record checks of this section, one of which its literal guard first refused
   and which then ran with a literal on one line. None passed.
-- **Not covered by a review.** The commits after `2a6ec57` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `2a6ec57` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1322,9 +1318,8 @@ stopped all live contact after s64, so the planned s65 never ran.
   this section (three first refused by their literal guard and rerun with a literal on one line, and
   one first aimed at a citation that the row still made elsewhere and rerun with every citation
   removed).
-- **Not covered by a review.** The commits after `d81dc03` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `d81dc03` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1402,9 +1397,8 @@ review suggestions.
   repository, after an unchanged control copy passed, and failed the check it targeted: 8 for the
   checks of `2245cac` and 14 for the record checks of this section (one first refused by its own
   script, whose variable hid the helper's file name, and rerun).
-- **Not covered by a review.** The commits after `61c695a` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `61c695a` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1509,9 +1503,8 @@ suggestions.
   Each mutation ran in a temporary copy outside the repository, after an unchanged control copy
   passed, and failed the check it targeted: 5 for the `offline` step, 16 for scenarios 60 and 61,
   and 35 for the record checks of this section and the two rewritten 09b checks.
-- **Not covered by a review.** The commits after `5d2126b` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `5d2126b` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1625,9 +1618,8 @@ remediation and addresses none of the open review suggestions.
   and failed the check it targeted: 13 for `590d411`, 18 for scenarios 62–65, 7 for scenario 66
   and 21 for the record checks of this section, two of them first refused by the literal guard,
   as their text wraps, and run again with one line of it.
-- **Not covered by a review.** The commits after `97149aa` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `97149aa` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1773,9 +1765,8 @@ suggestions.
   13 for 75 and 76, 6 for 77, 6 for 78, one of them first refused by the literal guard, 7 for
   `4c0408c`, and 12 for the record checks of this section, one of them after a first mutant that
   still held the checked text and so passed.
-- **Not covered by a review.** The commits after `74977c3` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `74977c3` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1890,9 +1881,8 @@ suggestions.
   check it targeted: 7 for `cde324b`, 17 for scenarios 79–81, 13 for 82–84, 10 for 85 and 11 for
   the record checks of this section, four of those rerun after the literal guard refused their
   first wording.
-- **Not covered by a review.** The commits after `82b93e8` are behaviour-changing, and no review
-  covers them, so R-75 stays 🟡. As the maintainer decided, no review ran: one fresh independent
-  review runs once, at readiness, after every acceptance observation of issue #1.
+- **Covered by the review of `cd1694c`.** The commits after `82b93e8` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
@@ -1964,8 +1954,8 @@ remediation.
   least one. The fragment mutation's log printed the test's synthetic room value, so the commit
   before this section's puts that check's boolean first; its rerun printed none, and the log was
   masked.
-- **Not covered by a review.** The commits after `82b93e8` are behaviour-changing and no review
-  covers them, so R-75 stays 🟡; the single final independent review is the next step.
+- **Covered by the review of `cd1694c`.** The commits after `82b93e8` are behaviour-changing; no
+  review ran in this batch, and the single final review of `cd1694c` covers them.
 - `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
   `npm run validate` result, the commit bodies, the push and the GitHub checks are in the PR
   description.
@@ -2462,6 +2452,21 @@ but none does yet, so only a review finds a missing bullet, as the tenth review 
       research claim, so it would be behaviour-changing, and R-75 would need a fresh review under
       the rule.
 
+16. **Review of `cd1694c`**: 0 critical, 2 major, 8 minor findings and 6 suggestions. It does not
+    meet the R-75 exit rule, because it reports two major and eight minor findings. It reviewed the
+    behaviour-changing commits after `db16323` up to `cd1694c` read-only, once, as the single final
+    review at readiness, in a separate Claude Code session
+    (`3a79e917-14d4-4c02-ac56-6a5dd616aff1`, Claude Opus 5.5). It is an automated Claude Code
+    review, not human approval. What it ran, its findings and their handling are in the
+    [final review record](final-review.md). Handled as follows:
+    - **Majors 1 and 2 are remediated** in `f69598a` (the verification-page stop rule) and
+      `0d327d3` (the mobile context-menu items never picked).
+    - **Minors 1–8 and suggestions 1–6 stay open**, non-blocking, for the feature work that
+      follows, as the maintainer decided; none is fixed for issue #1.
+    - **Not covered by a review.** `f69598a` and `0d327d3` are behaviour-changing, and by the
+      maintainer's decision no review of the sixteenth-review remediation runs for issue #1, so
+      R-75 stays 🟡.
+
 ## Privacy remediation
 
 Values were never printed; only counts and file names were recorded.
@@ -2545,12 +2550,11 @@ Values were never printed; only counts and file names were recorded.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client
   collaboration (R-55), and offline start and reconnection on desktop (R-57), observed on mobile
   in s60 and s63, and with the offline state kept across the reload in s68 and s69.
-- **Independent review (R-75), open.** The fifteenth review (of `a9a4619`) meets the exit rule, but
-  the observation batch after `db16323` is behaviour-changing and not covered by a review. That
-  review covered the fourteenth-review remediation and reported 0 critical, 0 major and 0 minor
-  findings and 3 suggestions, which stay open as listed with it. One fresh independent review runs once, at
-  readiness, after every acceptance observation of issue #1; R-75 closes only under the exit rule
-  in [Independent reviews](#independent-reviews).
+- **Independent review (R-75), open.** The single final review, of `cd1694c`, reports 2 major and 8
+  minor findings, so it does not meet the exit rule. Its majors are remediated, but a review of the
+  sixteenth-review remediation is still to be run (R-75), and by the maintainer's decision none
+  runs for issue #1; its minors and suggestions stay open ([final review record](final-review.md)).
+  R-75 closes only under the exit rule in [Independent reviews](#independent-reviews).
 
 ## Remaining observation work
 

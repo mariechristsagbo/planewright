@@ -24,19 +24,20 @@ const record = (count) => {
 };
 
 describe('the review words', () => {
-  it('name every count up to fifteen reviews', () => {
+  it('name every count up to sixteen reviews', () => {
     expect(reviewWords(13)).toEqual({ number: 'thirteen', ordinal: 'thirteenth' });
     expect(reviewWords(14)).toEqual({ number: 'fourteen', ordinal: 'fourteenth' });
     expect(reviewWords(15)).toEqual({ number: 'fifteen', ordinal: 'fifteenth' });
+    expect(reviewWords(16)).toEqual({ number: 'sixteen', ordinal: 'sixteenth' });
     // Every count has words of its own, so no word is left out or repeated before the last.
-    const words = Array.from({ length: 15 }, (_, n) => reviewWords(n + 1));
-    expect(new Set(words.map(({ number }) => number)).size).toBe(15);
-    expect(new Set(words.map(({ ordinal }) => ordinal)).size).toBe(15);
+    const words = Array.from({ length: 16 }, (_, n) => reviewWords(n + 1));
+    expect(new Set(words.map(({ number }) => number)).size).toBe(16);
+    expect(new Set(words.map(({ ordinal }) => ordinal)).size).toBe(16);
   });
 
   it('fail with a clear message past the last word', () => {
-    expect(() => reviewWords(16)).toThrow(
-      'Add number and ordinal words for 16 reviews to review-list.mjs.',
+    expect(() => reviewWords(17)).toThrow(
+      'Add number and ordinal words for 17 reviews to review-list.mjs.',
     );
   });
 });
