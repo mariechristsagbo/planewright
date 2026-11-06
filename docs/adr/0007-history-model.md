@@ -17,8 +17,10 @@ will arrive between local ones ([ADR 0010](0010-collaboration-ready-change-model
    element change carries its `before` and `after` values: an addition carries the element, a
    removal the removed element, an update only the fields it changes.
 2. **Transactions.** A gesture or command opens a transaction. Previews during a gesture are
-   applied as transient changes, which are neither recorded nor saved; committing folds them into
-   one change set and one history entry, and cancelling reverts them (REQ-C13, REQ-T11, REQ-H07).
+   applied as transient changes, which are neither recorded nor saved; committing reverts them,
+   applies their net change set once and records it as one history entry, and cancelling reverts
+   them (REQ-C13, REQ-T11, REQ-H07). Committing a transaction is the only way an entry is
+   recorded.
 3. **Entries.** A history entry holds a label, the change set, and the selection before and after.
    Undo applies the inverse and restores the earlier selection, filtered to elements that exist;
    redo re-applies and restores the later one. A new entry clears the redo stack (REQ-H01,

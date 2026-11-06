@@ -100,8 +100,9 @@ and ENG-14.
 - **Acceptance criteria:**
   - a change set with one invalid change leaves the store unchanged;
   - index queries agree with a brute-force scan over random scenes;
-  - a cancelled transaction leaves the document equal to its start, and a committed one emits one
-    net change set that inverts exactly;
+  - a cancelled transaction leaves the document equal to its start, and a committed one reverts
+    its previews and applies one net change set, whose `before` check passes and which inverts
+    exactly;
   - `remote` and `load` updates are emitted with their origin.
 - **Requirements:** none directly; ENG-04 completes the change-set requirement that it starts.
 - **Out of scope:** history, rendering.
