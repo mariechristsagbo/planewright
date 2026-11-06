@@ -28,7 +28,7 @@ The store changes only by applying a change set ([ADR 0007](../../adr/0007-histo
 ```ts
 export type ChangeOrigin = 'local' | 'history' | 'load' | 'remote';
 
-/** A partial element of the same kind, without `id`, `kind` and `rev`. */
+/** A partial element of the same kind, without `id`, `kind` and `rev`; `null` means absent. */
 export type ElementPatch = Readonly<Record<string, unknown>>;
 
 export type ElementChange =
@@ -55,7 +55,12 @@ export interface ChangeSet {
 ```
 
 `ElementPatch` is checked per kind by the model layer before it reaches the store; the loose type
-only keeps the union of kinds out of every signature.
+only keeps the union of kinds out of every signature. No element field holds `null` at the top
+level, so there `null` means that an optional field is absent: an `after` of `null` removes the
+field and a `before` of `null` says that it was absent. Clearing a `group`, `link`, `label`,
+`pressures`, `crop` or an arrow's `start` or `end` is therefore valid JSON, where `undefined` would
+vanish. A nested value such as `style` is replaced whole, so its own `fill: null` keeps its
+meaning.
 
 Applying a change set is atomic:
 
