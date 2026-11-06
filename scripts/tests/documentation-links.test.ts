@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -19,15 +19,19 @@ const DOCUMENTS = execFileSync(
   .split('\0')
   .filter((path) => path.length > 0);
 
+// Reads a target once and classifies the failure, so nothing is checked first and used later.
 function readTarget(path: string): LinkTarget {
   try {
-    const absolute = join(ROOT, path);
-    if (statSync(absolute).isDirectory()) {
+    return { kind: 'file', text: readFileSync(join(ROOT, path), 'utf8') };
+  } catch (error) {
+    const code = error instanceof Error && 'code' in error ? error.code : undefined;
+    if (code === 'EISDIR') {
       return { kind: 'directory' };
     }
-    return { kind: 'file', text: readFileSync(absolute, 'utf8') };
-  } catch {
-    return { kind: 'missing' };
+    if (code === 'ENOENT' || code === 'ENOTDIR') {
+      return { kind: 'missing' };
+    }
+    throw error;
   }
 }
 
