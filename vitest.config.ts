@@ -106,6 +106,13 @@ export default defineConfig({
           functions: 95,
           lines: 95,
         },
+        // Every math function is tested and every branch taken (ENG-01's acceptance criteria).
+        'packages/engine/src/math/**': {
+          statements: 100,
+          branches: 100,
+          functions: 100,
+          lines: 100,
+        },
       },
     },
   },
