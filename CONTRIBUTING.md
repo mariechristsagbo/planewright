@@ -22,9 +22,9 @@ investigation issues.
    - `<kebab-summary>` is lowercase letters and digits separated by single hyphens.
    - Example: `feat/12-selection-box`. The `pre-push` hook and CI enforce this rule.
 3. **Commit** using [Conventional Commits](https://www.conventionalcommits.org/). Optional
-   scopes are `collab`, `deps`, `deps-dev`, `docs`, `github`, `protocol`, `repo`, `tooling` and
-   `web`. Keep each commit atomic: one logical change that builds and passes tests on its own.
-   The `commit-msg` hook runs commitlint.
+   scopes are `collab`, `deps`, `deps-dev`, `docs`, `engine`, `github`, `protocol`,
+   `render-canvas`, `repo`, `research`, `tooling` and `web`. Keep each commit atomic: one logical
+   change that builds and passes tests on its own. The `commit-msg` hook runs commitlint.
 4. **Open a pull request** against `main` and complete every section of the template. The pull
    request title must be a valid Conventional Commit header, because pull requests are
    squash-merged and the title becomes the commit message.
