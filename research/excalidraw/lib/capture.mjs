@@ -26,7 +26,20 @@ const readView = () => ({
   href: location.href,
   cssWidth: window.innerWidth,
   cssHeight: window.innerHeight,
+  dpr: window.devicePixelRatio,
 });
+
+// With cssScale true (R-71, from s74 on) the capture is clipped to the viewport at 1/DPR, so it
+// has the CSS-pixel size of a REA capture; without it the capture keeps device pixels.
+function captureParams(step, view) {
+  if (step.cssScale === undefined || step.cssScale === false) return { format: 'png' };
+  if (step.cssScale !== true) throw new Error('cssScale must be true or false.');
+  if (!Number.isFinite(view.dpr) || view.dpr <= 0) {
+    throw new Error('Screenshot refused: no usable device pixel ratio for a CSS-scale capture.');
+  }
+  const clip = { x: 0, y: 0, width: view.cssWidth, height: view.cssHeight, scale: 1 / view.dpr };
+  return { format: 'png', clip };
+}
 
 /**
  * A box is usable when its position is finite, its size is positive and finite, and part of it
@@ -136,10 +149,11 @@ export async function screenshot(ctx, step) {
   const file = outputPath(ctx.outDir, 'screenshots', step.name, '.png');
   await refuseIfPresent(ctx.page, step.refuseIf ?? []);
   const view = await ctx.page.evaluate(readView);
+  const params = captureParams(step, view);
   const boxes = await maskBoxesFor(ctx.page, step.mask ?? [], view);
   const secret = hasSecretFragment(view.href);
   if (secret) await refuseSecretView(ctx.page, view, boxes);
-  const { data } = await ctx.cdp.send('Page.captureScreenshot', { format: 'png' });
+  const { data } = await ctx.cdp.send('Page.captureScreenshot', params);
   // The fragment can change while the capture runs, so it is read again before writing. A view
   // that gained a value was never checked against its masks, so it is refused.
   if (!secret && hasSecretFragment((await ctx.page.evaluate(readView)).href)) {

@@ -114,6 +114,20 @@ async function tap(ctx, step) {
   return { at };
 }
 
+// A long press (R-08, R-09, from s74 on): one finger held still at `at` for `ms` (an integer
+// from 100 to 5000, default 800), then lifted. A tap holds 40 ms; touchDrag and touchPath move.
+async function touchHold(ctx, step) {
+  const at = point(step.at);
+  const ms = step.ms ?? 800;
+  if (!Number.isInteger(ms) || ms < 100 || ms > 5000) {
+    throw new Error('touchHold needs an integer ms from 100 to 5000.');
+  }
+  await touch(ctx, 'touchStart', [at]);
+  await sleep(ms);
+  await touch(ctx, 'touchEnd', []);
+  return { at, ms };
+}
+
 async function wheel(ctx, step) {
   const at = point(step.at);
   await ctx.page.mouse.move(at.x, at.y);
@@ -144,6 +158,7 @@ export const inputHandlers = {
   },
   wheel,
   tap,
+  touchHold,
   touchDrag,
   touchPath,
 };

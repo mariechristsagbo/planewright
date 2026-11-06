@@ -15,14 +15,14 @@ it never writes raw third-party content into this repository. See
 | `lib/server.mjs`         | HTTP wiring, request checks, body cap, batch admission (one at a time, `runLast` lock), step runner and token file.                                                                                         |
 | `lib/guard.mjs`          | Request, name, path, port and navigation rules.                                                                                                                                                             |
 | `lib/steps.mjs`          | Emulation with read-back assertions (offline included), navigation, fixtures, downloads, dialogs, select options, role clicks that can leave an expanded menu item alone, ARIA.                             |
-| `lib/capture.mjs`        | CDP screenshots with masks, and the refusal rules for captures.                                                                                                                                             |
+| `lib/capture.mjs`        | CDP screenshots with masks, at device or CSS scale, and the refusal rules for captures.                                                                                                                     |
 | `lib/files.mjs`          | Exclusive-create writes: an output name is never overwritten.                                                                                                                                               |
 | `lib/session-state.mjs`  | Keeps the `runLast` lock and the halt reason in `$OUT/driver-state.json`, so a driver restart keeps both.                                                                                                   |
 | `lib/navwatch.mjs`       | Halts the session when the page itself navigates off the allowlist or opens a popup.                                                                                                                        |
 | `lib/probe-outcome.sh`   | Classifies isolation probe runs; a probe error never counts as isolation.                                                                                                                                   |
 | `lib/resource-state.sh`  | Reports a container or network as PRESENT, ABSENT or UNKNOWN; a failed docker listing never counts as removed.                                                                                              |
 | `lib/selftest-checks.sh` | The self-test's driver-stopped, ARIA and removal checks; each passes only on positive proof (a refused connection, a non-empty redacted file, a successful listing).                                        |
-| `lib/input.mjs`          | Pointer, keyboard, wheel and touch input, including a one-finger touch path through waypoints.                                                                                                              |
+| `lib/input.mjs`          | Pointer, keyboard, wheel and touch input, including a one-finger touch path through waypoints and a held press.                                                                                             |
 | `lib/metrics.mjs`        | Layout metric read-back and the fail-fast comparison.                                                                                                                                                       |
 | `lib/sanitise.mjs`       | URL shapes, query stripping, secret-shape counting and redaction.                                                                                                                                           |
 | `lib/png.mjs`            | Minimal PNG codec used to paint masks and to verify them.                                                                                                                                                   |
@@ -136,7 +136,14 @@ or the MCP `import_evidence_bundle` and `export_evidence_bundle` tools; R-73).
   each element whose text names a room or link key. An SVG code, a value split across elements
   or a shadow root is not detected. A URL that gains such a value while the capture runs is
   refused. `refuseIf` refuses the capture while a selector matches. `check-masks.mjs` fails a
-  masked capture that recorded no box.
+  masked capture that recorded no box. With `cssScale: true` (from s74 on) the capture is clipped
+  to the viewport at 1/DPR, so it has the CSS-pixel size of a REA capture (R-71); a local fixture
+  run at DPR 3 gave 390×844 and kept DPR 3 and the emulated screen.
+- **Touch.** `tap` holds one finger for 40 ms, `touchDrag` and `touchPath` move, and `touchHold`
+  (from s74 on) holds one finger still for `ms` (100 to 5000, default 800) and lifts it. On a local
+  fixture page, neither an 800 ms `touchHold` nor CDP's synthetic tap gesture held for 1 s made this
+  headless Chromium fire `contextmenu`, while a right click did; so a hold opens a menu only where
+  the page times the press itself.
 - **Privacy.** ARIA text, dialog messages, error text, download names (reported and on disk) and
   clipboard previews are redacted, including `room` and `json` link values. The key name and its
   `=` and `,` separators match in any case and any mix of literal and percent-encoded
