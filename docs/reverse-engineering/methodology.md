@@ -6,13 +6,56 @@ unauthenticated guest. Planewright is not affiliated with Excalidraw or REA; see
 
 ## Clean-room rules applied
 
-| Rule                                                   | How it was applied                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| No reference source repository, package or source maps | Nothing was cloned or installed. `analyze_web_bundle`, the only REA operation that can fetch source maps, ran with `fetch_source_maps: false`. The driver netlogs of all eleven sessions contain 0 `.map` requests.                                                                                                                                                                                                                                                 |
-| Shipped bundles are observable artefacts only          | REA captured the scripts the browser received and exported them to a directory **outside** the repository. The only derived output is `evidence/static-api-surface.json`: occurrence counts of standard web-platform identifiers, with no code excerpts.                                                                                                                                                                                                            |
-| No copied code, components, assets or text             | Docs describe behaviour in our own words. Control names are quoted only where they are needed to identify the control. Screenshots, ARIA snapshot text and bundles are not committed.                                                                                                                                                                                                                                                                               |
-| Guest only; no protection bypass                       | No login, sign-up or Excalidraw+ was used, and no verification page was bypassed: when the reference served the headless desktop client one (s13, s14), those sessions stopped. Two live-collaboration sessions were started, one in s1 and one in s6. The generation dialogs were opened on mobile in s12 and s16, where Mermaid's example was inserted and Text to diagram generated nothing; "Export to Link" was not clicked, because its scenario did not run. |
-| Human-scale request volume                             | 11 short sessions. The reference page was loaded or navigated 21 times in total (s1: 3, s2–s5: 1 each, s6: 9 including the reloads that restore emulation, s7: 1, s8–s11: 1 each), counted from the `goto` and `reload` steps in `evidence/sessions.json`. Two collaboration rooms were created, both before s7. Everything else (isolation check, self-test, emulation probes) ran on `about:blank` or a self-authored fixture.                                    |
+| Rule                                                   | How it was applied                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| No reference source repository, package or source maps | Nothing was cloned or installed. `analyze_web_bundle`, the only REA operation that can fetch source maps, ran with `fetch_source_maps: false`. The driver netlogs of all eleven sessions contain 0 `.map` requests.                                                                                                                                                                                                                               |
+| Shipped bundles are observable artefacts only          | REA captured the scripts the browser received and exported them to a directory **outside** the repository. The only derived output is `evidence/static-api-surface.json`: occurrence counts of standard web-platform identifiers, with no code excerpts.                                                                                                                                                                                          |
+| No copied code, components, assets or text             | Docs describe behaviour in our own words. Control names are quoted only where they are needed to identify the control. Screenshots, ARIA snapshot text and bundles are not committed.                                                                                                                                                                                                                                                             |
+| Guest only; no protection bypass                       | No login, sign-up or Excalidraw+ was used, and no verification page or other protection response was bypassed (see [Verification pages and protection responses](#verification-pages-and-protection-responses)). Two live-collaboration sessions were started, one in s1 and one in s6. On mobile, Mermaid's example was inserted in s12 and s16, one generation ran in s49 and Export to Link uploaded one scene in s52; neither ran on desktop. |
+| Human-scale request volume                             | 11 short sessions. The reference page was loaded or navigated 21 times in total (s1: 3, s2–s5: 1 each, s6: 9 including the reloads that restore emulation, s7: 1, s8–s11: 1 each), counted from the `goto` and `reload` steps in `evidence/sessions.json`. Two collaboration rooms were created, both before s7. Everything else (isolation check, self-test, emulation probes) ran on `about:blank` or a self-authored fixture.                  |
+
+## Verification pages and protection responses
+
+A verification page, which checks whether a person or an ordinary browser is present, and any
+HTTP 403 or 429 from the reference are read as the hosting provider's protection. The rule as the
+sessions applied it:
+
+- **Stop at once.** On detection the session stops: no reload or second load inside it, no change
+  of user agent or of any other client setting, no waiting for the page to pass, and no input.
+  The batch then stops all live contact. From s15 a load gate stopped a session at its load on a
+  403 document or a request under `/.well-known/vercel/`; from s65 a stricter gate, with a watcher
+  reading the netlog every 0.5 s, stops on a 403 or 429 of any request type, on an aborted request
+  to the reference and on a REA window that is not ok or holds such a response.
+- **Later, one bounded check.** Only after a pause of an hour or more may a new session run, in a
+  fresh profile with the client configuration unchanged, its first step one load under the same
+  or a stricter gate, which stops it there if the protection appears again. The desktop and mobile
+  clients are the two configurations planned from s1 and s3; neither was changed, or added, to get
+  past a page.
+
+What happened each time:
+
+- **s13 and s14 (desktop, 2026-11-05).** s13's load got HTTP 403 and the verification page at
+  16:53 UTC. No gate checked the document yet: the metrics assertion stopped 12 and 23 at their
+  first step, so no input reached the site, and s13 ran on to 16. s14, the next desktop session
+  the batch had planned, loaded the page 37 s after s13's last step, met the same page, and only
+  then did the batch stop. Under the rule above, which these sessions led to, s14 would not have
+  run.
+- **s50 and s51 (mobile).** s50's load got HTTP 403 and the challenge at 23:26 UTC, after which
+  the page loaded the app by itself; the load gate stopped s50 at once, before any REA call or
+  input. After 73 min, s51 (2026-11-06, 00:39 UTC) was one load check in a fresh profile with
+  nothing else, and it loaded the app normally.
+- **s64 and s65 (mobile, 2026-11-06).** In s64 a locale script got HTTP 403, which the gates of
+  then, checking documents and verification paths only, passed, so s64 ran to its end; seen in
+  its REA record, the 403 stopped live contact. After 1 h 58 min, s65 ran under the stricter gate,
+  which would have stopped it at its load, and met no 403, nor did any session up to s84.
+- **Found later.** Asset 403s in s16 and s49, and in s12 aborted requests for the same two chunks
+  as in s16, with no REA window to show their status, passed the gates of their time and were
+  found only when the retained records were read again on 2026-11-06
+  ([limitations](limitations.md)); the sessions after them had run on.
+- **The desktop after s14.** No desktop load ran again. On 2026-11-06, at delivery, a decision
+  taken autonomously within the maintainer's scope settled that no further desktop load check runs
+  in this phase, so the desktop gaps stay open as an objective limitation, not done
+  ([readiness](readiness.md)).
 
 ## Evidence labels
 

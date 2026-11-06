@@ -27,11 +27,18 @@ observe or decide.
 Every other criterion and requirement is Done.
 
 - **Objective limitation: verification page.** Since s13 (2026-11-05, 16:53 UTC) the reference
-  answers the headless desktop client with HTTP 403 and a hosting-provider verification page,
-  which the investigation never bypasses (no user-agent change, retry or waiting it out). The
-  desktop parts of these open rows wait for it: R-01–R-05, R-07–R-10, R-12, R-13, R-17, R-19–R-22,
-  R-26, R-29–R-31, R-33, R-35–R-39, R-41, R-42, R-44, R-48, R-50–R-54, R-56, R-57 and R-63–R-66.
-  The only way named so far is a headed browser that the maintainer runs.
+  has answered the headless desktop client with HTTP 403 and a hosting-provider verification
+  page. The investigation never bypasses one: a session stops at once, with no reload, no
+  user-agent or client change and no waiting it out inside it, and only a fresh, bounded load check
+  after a pause may follow ([methodology](methodology.md#verification-pages-and-protection-responses)).
+  In practice s14 loaded the desktop page 37 s after s13 had met it, the one departure; s51 checked
+  mobile 73 min after s50 met the page there, and s65 resumed 1 h 58 min after s64's asset 403. The
+  desktop got no such check after s14, and on 2026-11-06 a decision taken autonomously within the
+  maintainer's scope settled that no further desktop load check runs in this phase. So the desktop
+  parts of these open rows stay open, not done: R-01–R-05, R-07–R-10, R-12, R-13, R-17,
+  R-19–R-22, R-26, R-29–R-31, R-33, R-35–R-39, R-41, R-42, R-44, R-48, R-50–R-54, R-56, R-57 and
+  R-63–R-66. A later phase can observe them through a bounded desktop load check after a pause or
+  a headed browser that the maintainer runs.
 - **Objective limitation: headless native file chooser.** Native file pickers show nothing in
   headless Chromium, and the final batch used no file chooser or upload, so Open, Save to…,
   Ctrl+S, the PNG and SVG exports, a library file, Insert image and a dropped scene file wait for

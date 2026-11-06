@@ -8,8 +8,11 @@
   scene and creates a link with a key, so its scenarios (20 on desktop, 44 on mobile) treat the
   link as a secret. 44 ran once, in s52, and no record keeps the link's value; 20 has not run,
   because of environment limit 8.
-- Verification pages: a page that checks whether a human or an ordinary browser is present is
-  never bypassed (no user-agent change, retry or waiting it out).
+- Verification pages and other protection responses are never bypassed: a session stops at once
+  on one, with no reload, no user-agent or client change and no waiting it out inside it, and only
+  a fresh, bounded load check after a pause may follow; s14, which loaded the desktop page 37 s
+  after s13 had met it, is the one departure (see the
+  [methodology](methodology.md#verification-pages-and-protection-responses)).
 - The reference source repository, its packages, source maps, and copied assets or text.
 - Server internals: everything about the collaboration relay, Firebase rules and analytics
   processing is hypothesis (see [network analysis](network-analysis.md#4-backend-hypotheses-not-verified)).
@@ -73,8 +76,10 @@
    54 got its locale chunk with HTTP 200, or s71–s73 (07:30–07:47 UTC); whether the protection depends on rate, time or the
    requests asked for is not known [H]. Nor did s74–s78 (09:16–09:57 UTC, five loads), s79–s82
    (11:03–11:26 UTC, four loads) or s83 and s84 (12:18–12:35 UTC, two loads), after which no live
-   session is planned, so the desktop gaps this leaves are an objective limitation of the
-   baseline ([readiness](readiness.md)).
+   session is planned. The desktop was never loaded after s14, which the batch ran 37 s after s13
+   had met the page, and by a decision taken autonomously within the maintainer's scope on
+   2026-11-06 no further desktop load check runs in this phase, so the desktop gaps this leaves
+   stay open as an objective limitation of the baseline, not done ([readiness](readiness.md)).
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.

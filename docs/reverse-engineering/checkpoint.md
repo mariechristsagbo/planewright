@@ -13,7 +13,7 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 
 | Criterion                                                          | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `methodology.md`                                                   | Done    | One confidence rule: two tools reading one session count as one session, and results that match only once a setup difference is allowed for count as different. The page-load count (21) and where the metrics are asserted now match the committed evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `methodology.md`                                                   | Done    | One confidence rule: two tools reading one session count as one session, and results that match only once a setup difference is allowed for count as different. The page-load count (21) and where the metrics are asserted now match the committed evidence. The stop rule for verification pages and protection responses states what the sessions did, s14 and the pauses before s51 and s65 included                                                                                                                                                                                                                                                                                                                                                                       |
 | `feature-inventory.md` covers all discovered features              | Partial | Each entry has an ID (F-01–F-35) with a residual-matrix row. Still open: library export and import, desktop Export to Link and the desktop generation features (verification page). On mobile, Find on canvas, the language switch, the canvas background and a library item were used, each twice or more (s61–s70; R-05, R-15), one upload in s52 (R-56) and one generation in s49 (R-63); s22 found Diamond, Ellipse and Line in the mobile tool choices (R-24), s74 the long-press menus (R-09), s79–s84 More tools and the links (R-17, R-09). §2 is rated medium: the s1 and s6 ARIA snapshots differ (raw comparison); R-76 raised the dark text panel, the desktop dark Preferences and the mobile dark surfaces to high on raw comparisons (s6 and s10, s7 and s11)   |
 | `behavior-analysis.md`                                             | Partial | Every entry (B-01–B-50) has the eleven issue fields in order. Unobserved dimensions name their residual row, and "not applicable" is kept only with a stated reason. Claims no session observed are withdrawn. R-76 raised B-02, B-35 and B-31's first-load list to high; B-30's save timing stays medium as s6 and s9 differ. Many dimensions (undo, reload, edge cases) are open; s16 added a mobile reload (B-30); s22–s84 added mobile binding, handles, layers, alignment, groups, styles, lines, arrows, texts, freehand, Autoshape, Delete, links, Export to Link, inserts, focus, offline start, layout, Find, language, library, background (B-43–B-49), eraser, toggles, snap, context menus, clipboard, embed, fill (B-29, B-34, B-37, B-50), most twice, with undo |
 | `network-analysis.md`                                              | Done    | Observed metadata and hypotheses are separated. Both analytics beacon key sets are described with their s6 counts; the cache counts come from `evidence/rea-windows.json`, and the storage names and the storage quota are raw-only                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
@@ -42,13 +42,13 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 After s83 and s84 the agreed mobile list is complete, and no live session runs after s84 (see
 [Readiness of issue #1](readiness.md)). Every criterion and requirement still Partial, and every
 open residual row, is classified in `readiness.md`. No feasible mandatory observation remains: the
-desktop parts of the open rows are an objective limitation of the verification page, which is
-never bypassed; Open, Save to…, the exports, a library file and Insert image are an objective
-limitation of headless Chromium's native file pickers, waiting for a headed browser that the
-maintainer runs; a room, a second client and further uploads or generations are excluded by the
-maintainer for this phase; and the mobile items still open are refinements, not mandatory. The one
-mandatory item left is the single final independent review (R-75). Until it meets the exit rule,
-PR #2 stays a Draft and issue #1 stays open.
+desktop parts of the open rows are an objective limitation of the verification page, which is never
+bypassed, with no further desktop load check in this phase; Open, Save to…, the exports, a library
+file and Insert image are an objective limitation of headless Chromium's native file pickers,
+waiting for a headed browser that the maintainer runs; a room, a second client and further uploads
+or generations are excluded by the maintainer for this phase; and the mobile items still open are
+refinements, not mandatory. The one mandatory item left is the single final independent review
+(R-75). Until it meets the exit rule, PR #2 stays a Draft and issue #1 stays open.
 
 ## Checks of the fifth-review remediation
 
@@ -559,11 +559,13 @@ no longer excluded.
   and a hosting-provider verification page (a script, a worker and two fetches under
   `/.well-known/vercel/`) instead of the app [O]. With no canvas on the page, the metrics assertion
   stopped 12, 23 and 17 at their first step, so no input reached the site, and the REA windows over
-  them retained no request. This research does not bypass such a page: no user agent was changed
-  and no load was retried or left to wait it out. So the sessions planned for 18, 19, 20 and 21
-  did not run, and no further session contacted the site. s12, at 16:50–16:52 UTC with scenario
-  09's mobile user agent, had loaded the app with HTTP 200 [O]. Whether the page depends on the
-  user agent, the headless browser or the time is unverified [U].
+  them retained no request. This research does not bypass such a page: no user agent was changed and
+  no session reloaded or waited it out, but no gate checked the document yet, so s14, the next
+  planned session, loaded the page 37 s after s13 ended and met it too before the batch stopped
+  ([stop rule](methodology.md#verification-pages-and-protection-responses)). So the sessions planned
+  for 18, 19, 20 and 21 did not run, and no desktop session contacted the site again. s12, at
+  16:50–16:52 UTC with scenario 09's mobile user agent, had loaded the app with HTTP 200 [O].
+  Whether the page depends on the user agent, the headless browser or the time is unverified [U].
 - **REA,** the CLI of build `5b953e13…`, with raw output only in the workspace artifact tree: a
   target listing after 00 or 09, and an `inspect_web_page` window that allows the 7 HTTP(S) origins
   any s1–s11 netlog recorded (REA accepts exact HTTP(S) origins only, so the collaboration
@@ -2528,8 +2530,10 @@ Values were never printed; only counts and file names were recorded.
   s79–s82 (11:03–11:26 UTC, four loads, no reload; see
   [Menu items, tools and clipboard batch](#menu-items-tools-and-clipboard-batch-s79s82)), and so
   did s83 and s84 (12:18–12:35 UTC, two loads, no reload; see
-  [Final mobile batch](#final-mobile-batch-s83s84)). No live session runs after s84, so these
-  desktop gaps are an objective limitation (see [Readiness](#readiness)).
+  [Final mobile batch](#final-mobile-batch-s83s84)). No live session runs after s84, and by a
+  decision taken autonomously within the maintainer's scope on 2026-11-06 no further desktop load
+  check runs in this phase, so these desktop gaps stay an objective limitation, not done (see
+  [Readiness](#readiness)).
 - **Not observable in this headless setup.** Native file pickers, save and export flows, a library
   file and Insert image: an objective limitation of headless Chromium, not a gap this baseline can
   close (see [Readiness](#readiness)); R-18 and R-46 plan them in a headed browser that the
@@ -2595,11 +2599,11 @@ under the maintainer's constraints, and no live session runs after s84.
   desktop exports (scenarios 17 and 18; 19 ran on mobile in s15) and R-65's listener inspection on
   desktop (on mobile the interactive canvas in s76, and the app root, the static canvas, `html` and
   `body` in s82).
-- **Maintainer decision:** how the desktop client can be observed again without bypassing the
-  verification page, for example in a headed browser that the maintainer runs; the mobile client
-  met it once, in s50, and loaded normally in s51–s64, but a script asset got HTTP 403 in s64 (and
-  earlier ones in s16 and s49), and s65–s84 loaded normally again, so how often mobile sessions may
-  run is also a maintainer decision. No live session is planned after s84.
+- **Maintainer decision, made:** no further desktop load check runs in this phase (2026-11-06, a
+  decision taken autonomously within the maintainer's scope), so the desktop client is observed
+  again only in a later phase, by a bounded load check after a pause or a headed browser that the
+  maintainer runs ([stop rule](methodology.md#verification-pages-and-protection-responses)). No
+  live session is planned after s84.
 
 ## Interrupted and aborted runs
 
