@@ -3,13 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { CodecError } from '../../../src/model/codec.ts';
 import type { Element } from '../../../src/model/elements.ts';
 import { INVALID } from '../../../src/model/json-check.ts';
-import {
-  UNPATCHED_FIELDS,
-  applyPatch,
-  matchesPatch,
-  patchElement,
-  patchValue,
-} from '../../../src/model/patch.ts';
+import { applyPatch, matchesPatch, patchElement, patchValue } from '../../../src/model/patch.ts';
 import type { ElementPatch } from '../../../src/model/patch.ts';
 import { elementId, fixtureDocument, groupId } from '../../support/fixtures.ts';
 
@@ -113,11 +107,15 @@ describe('patchElement', () => {
     );
   });
 
-  it.each(UNPATCHED_FIELDS)('refuses a patch that holds %s, which no patch changes', (key) => {
-    expect(patched(fixtureElement(0), { [key]: fixtureElement(0)[key], x: 1 })).toStrictEqual([
-      { path: `after.${key}`, problem: 'unknown-field' },
-    ]);
-  });
+  // Listed here, not read from the module, so that a field dropped from the module fails a test.
+  it.each(['id', 'kind', 'rev'] as const)(
+    'refuses a patch that holds %s, which no patch changes',
+    (key) => {
+      expect(patched(fixtureElement(0), { [key]: fixtureElement(0)[key], x: 1 })).toStrictEqual([
+        { path: `after.${key}`, problem: 'unknown-field' },
+      ]);
+    },
+  );
 
   it.each([
     ['a value out of range', { x: Number.NaN }, 'after.x', 'not-finite'],
