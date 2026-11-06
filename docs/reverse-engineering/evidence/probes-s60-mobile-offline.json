@@ -1,0 +1,257 @@
+[
+  {
+    "label": "50-online",
+    "at": "2026-11-06T02:58:36.467Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "connectivity": {
+      "onLine": true,
+      "controlled": true,
+      "registration": {
+        "scope": "/",
+        "active": "activated",
+        "waiting": null,
+        "installing": null
+      },
+      "readyState": "complete"
+    }
+  },
+  {
+    "label": "50-offline",
+    "at": "2026-11-06T02:58:46.098Z",
+    "connectivity": {
+      "onLine": false,
+      "controlled": true,
+      "registration": {
+        "scope": "/",
+        "active": "activated",
+        "waiting": null,
+        "installing": null
+      },
+      "readyState": "complete"
+    }
+  },
+  {
+    "label": "50-offline-reloaded",
+    "at": "2026-11-06T02:58:50.840Z",
+    "connectivity": {
+      "onLine": true,
+      "controlled": true,
+      "registration": {
+        "scope": "/",
+        "active": "activated",
+        "waiting": null,
+        "installing": null
+      },
+      "readyState": "complete"
+    },
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "51-offline",
+    "at": "2026-11-06T02:59:00.750Z",
+    "connectivity": {
+      "onLine": true,
+      "controlled": true,
+      "registration": {
+        "scope": "/",
+        "active": "activated",
+        "waiting": null,
+        "installing": null
+      },
+      "readyState": "complete"
+    }
+  },
+  {
+    "label": "51-offline-drawn",
+    "at": "2026-11-06T02:59:04.823Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [60, 400, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "51-online-again",
+    "at": "2026-11-06T02:59:11.373Z",
+    "connectivity": {
+      "onLine": true,
+      "controlled": true,
+      "registration": {
+        "scope": "/",
+        "active": "activated",
+        "waiting": null,
+        "installing": null
+      },
+      "readyState": "complete"
+    },
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [60, 400, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "24-before-reload",
+    "at": "2026-11-06T02:59:38.907Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [60, 400, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "24-after-reload",
+    "at": "2026-11-06T02:59:43.017Z",
+    "elements": [
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      },
+      {
+        "type": "rectangle",
+        "box": [60, 400, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  }
+]

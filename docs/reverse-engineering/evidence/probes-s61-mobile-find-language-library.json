@@ -1,0 +1,410 @@
+[
+  {
+    "label": "53-texts",
+    "at": "2026-11-06T03:01:39.680Z",
+    "elements": [
+      {
+        "type": "text",
+        "box": [60, 287.5, 40.5, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "text",
+        "box": [60, 487.5, 62.3, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-find-open",
+    "at": "2026-11-06T03:01:42.323Z",
+    "focused": {
+      "tag": "INPUT",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 0,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [149, 88, 217, 24],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": [],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-find-typed",
+    "at": "2026-11-06T03:01:44.495Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff",
+    "focused": {
+      "tag": "INPUT",
+      "type": null,
+      "role": null,
+      "name": null,
+      "textChars": 0,
+      "tabIndex": 0,
+      "states": [],
+      "disabled": false,
+      "focusVisible": true,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [149, 88, 217, 24],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "53-find-enter-1",
+    "at": "2026-11-06T03:01:45.342Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-find-enter-2",
+    "at": "2026-11-06T03:01:46.561Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "53-after-escape",
+    "at": "2026-11-06T03:01:47.874Z",
+    "focused": {
+      "tag": "BODY",
+      "body": true
+    },
+    "live": []
+  },
+  {
+    "label": "53-end",
+    "at": "2026-11-06T03:01:47.908Z",
+    "elements": [
+      {
+        "type": "text",
+        "box": [60, 287.5, 40.5, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "text",
+        "box": [60, 487.5, 62.3, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      }
+    ],
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "54-start",
+    "at": "2026-11-06T03:02:27.312Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "54-fr",
+    "at": "2026-11-06T03:02:30.642Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "fr-FR",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": []
+        },
+        {
+          "name": "Undo",
+          "boxes": []
+        }
+      ]
+    },
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "54-back",
+    "at": "2026-11-06T03:02:32.967Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "54-back-2",
+    "at": "2026-11-06T03:02:37.111Z",
+    "layout": {
+      "viewport": [390, 844],
+      "lang": "en",
+      "dir": "ltr",
+      "buttons": [
+        {
+          "name": "Rectangle",
+          "boxes": [[200, 794, 36, 36]]
+        },
+        {
+          "name": "Library",
+          "boxes": [[346, 12, 32, 32]]
+        },
+        {
+          "name": "Undo",
+          "boxes": [[306, 748, 32, 32]]
+        }
+      ]
+    }
+  },
+  {
+    "label": "54-english",
+    "at": "2026-11-06T03:02:38.996Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "54-end",
+    "at": "2026-11-06T03:02:42.308Z",
+    "selected": 0,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "55-library-open",
+    "at": "2026-11-06T03:03:22.927Z",
+    "focused": {
+      "tag": "BUTTON",
+      "type": "button",
+      "role": null,
+      "name": "Library",
+      "textChars": 0,
+      "tabIndex": 0,
+      "states": ["aria-pressed=true"],
+      "disabled": false,
+      "focusVisible": false,
+      "outline": ["none", "3px", "rgb(27, 27, 31)", "0px"],
+      "boxShadow": "none",
+      "rect": [346, 12, 32, 32],
+      "inDialog": false,
+      "inMenu": false
+    },
+    "live": []
+  },
+  {
+    "label": "55-rect",
+    "at": "2026-11-06T03:03:26.489Z",
+    "elements": [
+      {
+        "type": "text",
+        "box": [60, 287.5, 40.5, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "text",
+        "box": [60, 487.5, 62.3, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "55-library-selection",
+    "at": "2026-11-06T03:03:28.336Z",
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  },
+  {
+    "label": "55-end",
+    "at": "2026-11-06T03:03:29.658Z",
+    "elements": [
+      {
+        "type": "text",
+        "box": [60, 287.5, 40.5, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "text",
+        "box": [60, 487.5, 62.3, 25],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, null],
+        "font": [20, 5, "left"]
+      },
+      {
+        "type": "rectangle",
+        "box": [60, 200, 160, 120],
+        "angle": 0,
+        "groups": 0,
+        "bound": [],
+        "startBound": false,
+        "endBound": false,
+        "container": false,
+        "locked": false,
+        "style": ["#1e1e1e", "transparent", "solid", 2, "solid", 1, 100, 3]
+      }
+    ],
+    "selected": 1,
+    "tool": "selection",
+    "zoom": 1,
+    "scroll": [0, 0],
+    "theme": "light",
+    "background": "#ffffff"
+  }
+]
