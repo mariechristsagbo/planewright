@@ -5,8 +5,9 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Project state
 
-- Planewright is in its **foundation phase**. The drawing engine, canvas, shapes, persistence
-  and collaboration features do **not** exist yet.
+- Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
+  holds only its math layer and ports: the drawing engine, canvas, shapes, persistence and
+  collaboration features do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -61,6 +62,13 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   development it runs TypeScript directly through Node's type stripping.
 - `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and
   Node.js APIs.
+- `packages/engine`: the source-only canvas engine of
+  [ADR 0004](docs/adr/0004-canvas-engine-package-boundaries.md), designed in
+  `docs/architecture/engine`. ECMAScript only: its ESLint block forbids browser and Node.js
+  globals, `Math.random`, `Date.now` and timers, which come through its ports, and its sources
+  import only one another. A layer imports only from its own and earlier layers
+  (`scripts/lib/engine-layers.ts`); only `math` and `ports` exist so far. Tests run in the
+  `engine:unit` and `engine:integration` projects; property tests use `tests/support/property.ts`.
 - `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
   `scripts/tests`.
 - `research/excalidraw`: issue #1 behavioural-research tooling (loopback driver, scenarios,

@@ -22,6 +22,13 @@ Every gate runs locally through an npm script and in GitHub Actions
 | Commit messages   | `commit-msg` hook, CI       | commitlint, Conventional Commits         | A commit or pull request title is not a valid header               |
 | Branch names      | `pre-push` hook, CI         | `scripts/validate-branch-name.ts`        | The branch is not `<type>/<issue>-<kebab-summary>`                 |
 
+The engine package adds its own gates ([ADR 0004](../adr/0004-canvas-engine-package-boundaries.md)).
+Coverage of `packages/engine/src` must reach 95 % of statements, 90 % of branches, 95 % of
+functions and 95 % of lines, and its `math` layer 100 % of each. The ESLint block
+`planewright/engine` forbids browser and Node.js globals, `Math.random`, `Date.now` and timers in
+the engine, whose tsconfig has the ECMAScript library only. `scripts/tests/engine-layers.test.ts`
+fails on an import against the engine's layer order.
+
 ## Complexity guardrails
 
 ESLint enforces these limits on all TypeScript and JavaScript:

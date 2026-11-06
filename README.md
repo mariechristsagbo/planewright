@@ -5,7 +5,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > [!IMPORTANT]
 > **Status: repository foundation only.** Planewright is not a usable drawing editor yet. There
 > is no canvas, no shapes, no persistence and no collaboration. This repository currently
-> contains the workspace structure, a factual status page, a collaboration-service skeleton and
+> contains the workspace structure, a factual status page, a collaboration-service skeleton, the
+> first layer of the engine package (math primitives and platform ports, used by nothing yet) and
 > the quality gates that future work must pass.
 
 ## Goals
@@ -49,6 +50,7 @@ Product names are used only to identify these references.
 | [`apps/web`](apps/web)                   | React + Vite browser application (currently a status page only)           |
 | [`apps/collab`](apps/collab)             | Node.js WebSocket collaboration service (health endpoint + hello only)    |
 | [`packages/protocol`](packages/protocol) | Runtime-agnostic wire protocol definitions shared by clients and services |
+| [`packages/engine`](packages/engine)     | Canvas engine, ECMAScript only: math primitives and ports so far          |
 | [`scripts`](scripts)                     | Repository guardrails: file size, dependency policy, branch names         |
 | [`docs`](docs/README.md)                 | Architecture decisions, investigation process and development guides      |
 | [`.github`](.github)                     | CI, CodeQL, Dependabot, issue forms and the pull request template         |

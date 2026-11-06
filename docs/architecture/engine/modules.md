@@ -1,8 +1,9 @@
 # Packages, modules and ports
 
 This document fixes where engine code lives and which way dependencies point. The decision and its
-alternatives are in [ADR 0004](../../adr/0004-canvas-engine-package-boundaries.md). Nothing here
-exists yet; the first engine issue creates the packages.
+alternatives are in [ADR 0004](../../adr/0004-canvas-engine-package-boundaries.md). ENG-01 created
+`@planewright/engine` with its `math` and `ports` modules, its ESLint block and its layer check;
+`@planewright/render-canvas` and the other layers arrive with the issues that need them.
 
 ## Packages
 
@@ -23,8 +24,9 @@ browser and Node.js globals.
 ## Engine layers
 
 Each layer may import from the layers above it in this table and from its own layer, never from a
-layer below. The first engine issue adds a test that reads every engine import and fails on a
-violation.
+layer below. `scripts/tests/engine-layers.test.ts` reads every engine import and fails on a
+violation, on a file in a directory that no layer names, and on any difference between this table
+and the copy of it in `scripts/lib/engine-layers.ts`.
 
 | Layer | Modules                             | Responsibility                                                                                                  |
 | ----- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------- |
