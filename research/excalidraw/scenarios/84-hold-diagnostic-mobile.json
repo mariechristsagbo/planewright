@@ -1,0 +1,200 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-09: one diagnostic long press at the point where every press in s76 selected 77's right-hand rectangle but left no menu item to pick. Runs after 81, with 79's rectangles at y 230 to 320, and draws 77's P2 [40,470,100,80] and Q2 [220,470,100,80]. Holds on P2's left stroke at (40,490), where s76's presses worked, then on Q2's at (220,490), saving the ARIA after each and a capture after the second, and presses Escape after each; it picks no menu item. Last it selects Q2 and then P2 by a tap on the same points and deletes each with the Delete key. It types nothing, uses no clipboard item and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 470]],
+      "to": [[140, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[220, 470]],
+      "to": [[320, 550]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "84-two"
+    },
+    {
+      "do": "appState",
+      "label": "84-two"
+    },
+    {
+      "do": "touchHold",
+      "at": [40, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "84-p-hold"
+    },
+    {
+      "do": "aria",
+      "save": "m84-01-p-hold"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [220, 490],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "appState",
+      "label": "84-q-hold"
+    },
+    {
+      "do": "aria",
+      "save": "m84-02-q-hold"
+    },
+    {
+      "do": "screenshot",
+      "name": "m84-02-q-hold"
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "appState",
+      "label": "84-q-escape"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [220, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [40, 490]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "key",
+      "key": "Delete"
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "84-end"
+    },
+    {
+      "do": "appState",
+      "label": "84-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

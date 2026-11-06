@@ -421,6 +421,14 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     one closed loop, then Undo; and Bucket fill, tapping inside a transparent rectangle before and
     after asking for Blue, then Undo. `81` places a sticky note, types the self-authored text
     "Planewright note" into it, drags its bottom-right handle, with Undo, and deletes it.
+  - `82` (from s79 on) is the only scenario that reaches the clipboard: its first step grants
+    clipboard read and write to the reference origin only. By long presses it picks Copy, Cut,
+    Copy to clipboard as PNG and Copy to clipboard as SVG, reading the clipboard text shape or
+    the clipboard items after each, and pastes by Paste in the canvas menu of a right click, with
+    Undo. `83` runs last before 16: it moves two fingers together from two rectangles' strokes,
+    then spreads and pinches them, saving the ARIA once zoomed. `84` repeats 77's two shapes and
+    holds at (40,490) and at (220,490), where every press in s76 left no menu item to pick, saving
+    the ARIA after each and picking nothing.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
