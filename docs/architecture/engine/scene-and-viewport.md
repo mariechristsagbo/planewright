@@ -18,7 +18,14 @@ each held as data and indexed in memory. There is no tree of nested transforms
 | Attachments   | a connector end's `target`               | connector ends per target                              | moving bound ends, removing targets (P1)       |
 
 An element's **world bounds** are the axis-aligned bounds of its rotated local box, grown by half
-its stroke width and, for a label that overflows, by the label's box.
+its stroke width and, for a label that overflows, by the label's box. ENG-03 computes them in the
+`geometry` layer, the home of bounds, without the label's term: measuring a label needs the text
+layout that the geometry issue (ENG-06) delivers and the P1 labels use, so until then a label's
+box does not count.
+
+The group index lists, for each group, the elements in it or in any group nested in it, so
+`members` of an outermost group is what selection expands to; a group's parent never changes while
+it exists, so an element's outermost group changes only when its own `group` does.
 
 ## Change sets
 
@@ -55,7 +62,10 @@ export interface ChangeSet {
 ```
 
 `ElementPatch` is checked per kind by the model layer before it reaches the store; the loose type
-only keeps the union of kinds out of every signature. No element field holds `null` at the top
+only keeps the union of kinds out of every signature. The patched element must pass the codec's own
+element check, so the store never holds what a document could not. An identifier appears in at most
+one element change and at most one group change of a set, so the order of a set's changes does not
+matter, and an update names the same fields in `before` and `after`, so that it inverts exactly. No element field holds `null` at the top
 level, so there `null` means that an optional field is absent: an `after` of `null` removes the
 field and a `before` of `null` says that it was absent. Clearing a `group`, `link`, `label`,
 `pressures`, `crop` or an arrow's `start` or `end` is therefore valid JSON, where `undefined` would
@@ -65,14 +75,24 @@ meaning.
 Applying a change set is atomic:
 
 1. Every change is checked against the current state: an added identifier must be new, a removed or
-   updated element must exist and, for `local` and `history` origins, its current fields must equal
-   `before`. A failed check rejects the whole set and changes nothing.
-2. Element revisions and the document revision increase; the indexes are updated incrementally for
-   the changed elements only.
-3. One `SceneUpdate` is emitted with the origin, the set, the changed identifiers and the new
-   document revision. Autosave saves every origin but `load`, and the editor marks the render
-   layers dirty. History does not watch updates: the transaction that commits a `local` set records
-   it ([history](history.md#transactions)), so no set is recorded twice.
+   updated element or a removed group must exist and, for `local` and `history` origins, its
+   current fields must equal `before` (a removed element or group must equal the current one, the
+   element's revision aside, and so must the canvas's `before`). What the set leaves is checked
+   too: valid elements, at most 100,000 of them, and references that exist, namely each element's
+   group, each arrow's targets and each new group's parent, with no cycle of parents; so an element
+   or group that something the set leaves alone still uses cannot be removed. Only the changed
+   elements and groups are read, through the indexes. A failed check rejects the whole set and
+   changes nothing: `apply` throws a `ChangeSetError` that lists every reason with its path in the
+   set, such as `elements[2].before` and `stale`.
+2. The document revision increases by one per applied set, transient sets included, and an updated
+   element's revision by one; an added element keeps the revision it carries, so a `load` keeps the
+   stored revisions and an undone deletion brings the element back as it was. The indexes are
+   updated incrementally for the changed elements only.
+3. One `SceneUpdate` is emitted with the origin, whether it is transient, the set, the changed
+   identifiers and the new document revision. Autosave saves every origin but `load`, and the
+   editor marks the render layers dirty. History does not watch updates: the transaction that
+   commits a `local` set records it ([history](history.md#transactions)), so no set is recorded
+   twice. A listener cannot apply a set of its own while it is told of one.
 
 A change set is always complete: the transaction that builds it adds the derived changes before it
 is applied, such as re-routing connectors whose target moved (P1, REQ-M01), dropping attachments to
@@ -91,12 +111,34 @@ next frame is built, so the reverted state is never drawn. On cancel it applies 
 values back as a transient change and nothing else. A transient change never reaches autosave, so
 a reload in the middle of a drag restores the last committed state (REQ-P01).
 
+The scene's part is `openTransaction(store)`, which ENG-03 adds: `preview` applies a set as a
+transient `local` change, `commit(stamp)` returns the net set it applied with that stamp, or `null`
+when every touched field ended where it began, and `cancel` reverts. For an element or group that
+the previews added or removed, the net set compares its state at the first touch with its current
+one, so an element that a gesture adds and then resizes is one addition. A field that another
+origin changed meanwhile and that no preview touched stays out of the net set. A transaction
+refuses to add again, in another form, an element or group that it removed, since no change could
+express it, and it is used once. History's `Transaction` (ENG-04) adds the label, the merge key and
+the recording. A document after a cancel is equal to its start in its elements, groups and canvas;
+revisions only grow.
+
 ## Store interface
 
 ```ts
+export interface SceneUpdate {
+  readonly origin: ChangeOrigin;
+  readonly transient: boolean;
+  readonly changes: ChangeSet;
+  /** The elements added, removed or updated, in the order of the set's changes. */
+  readonly changed: readonly ElementId[];
+  readonly rev: number;
+}
+
 export interface SceneReader {
   readonly rev: number;
+  readonly canvas: CanvasState;
   get(id: ElementId): Element | undefined;
+  group(id: GroupId): GroupRecord | undefined;
   /** Elements in drawing order, bottom first. */
   ordered(): readonly Element[];
   /** Candidates whose world bounds meet a box; precise tests are the caller's. */
@@ -104,23 +146,34 @@ export interface SceneReader {
   /** Candidates whose world bounds are within `radius` of a point. */
   queryPoint(point: Point, radius: number): readonly ElementId[];
   outermostGroup(id: ElementId): GroupId | undefined;
+  /** The elements in a group or in any group nested in it. */
   members(group: GroupId): readonly ElementId[];
   connectorsOf(target: ElementId): readonly ElementId[];
+  /** A copy of the document as it is now. */
+  document(): DocumentState;
 }
 
 export interface SceneStore extends SceneReader {
+  /** Applies the whole set, or throws a ChangeSetError and changes nothing. */
   apply(changes: ChangeSet, origin: ChangeOrigin, options?: { readonly transient: boolean }): void;
   subscribe(listener: (update: SceneUpdate) => void): Cancel;
 }
 ```
+
+A store starts empty, at revision 0, with a canvas, and a document is loaded by applying it as a
+`load` change set. ENG-03 added `canvas`, `group` and `document` to the reader, the last for saving
+and tests.
 
 ## Spatial index
 
 The first implementation is a uniform grid of 512 × 512 scene-unit cells, each listing the
 elements whose world bounds touch it. An element whose bounds touch more than 64 cells goes into a
 separate list that every query scans, so a huge frame or a long line never fills thousands of
-cells. Queries return candidates in no particular order; the caller sorts by drawing order when it
-needs to. The index sits behind `queryBox` and `queryPoint`, so it can become a bounding-volume
+cells. A query reads the cells that its box touches, or scans the occupied cells when those are
+fewer, and keeps exactly the elements whose world bounds pass the test; a point query reads one
+more cell on each side, so that rounding at a cell's edge never loses one. A box with a negative or
+non-finite side, or a negative or non-finite radius, is refused. Queries return candidates in no
+particular order; the caller sorts by drawing order when it needs to. The index sits behind `queryBox` and `queryPoint`, so it can become a bounding-volume
 hierarchy without any caller changing if the [performance budgets](requirements.md#performance)
 are missed.
 
