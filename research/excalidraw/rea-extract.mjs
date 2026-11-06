@@ -5,6 +5,8 @@
 // - inspect_web_page: keeps named accessibility nodes, storage key names, script and resource
 //   URLs (no query values), worker counts and completeness flags. No values or payloads; copied
 //   names, descriptions and REA condition and limitation text are redacted.
+// - inspect_web_event_listeners: keeps listener types and flags and script paths, never source
+//   text, source-map URLs, script ids or callback locations.
 //
 // Usage: node research/excalidraw/rea-extract.mjs <rea-result.json> [summary-out.json]
 // The input is an Evidence record saved by the MCP server or REA CLI output, which wraps one
@@ -174,10 +176,43 @@ function inspection(evidence) {
   };
 }
 
+// A listener inspection (R-65, from s76 on) keeps each listener's type, flags and script path, and
+// each script's path, language, state and size. The record also holds the script source text, a
+// source-map URL, script ids and callback locations; none of them is copied.
+function listenerInspection(evidence) {
+  const result = evidence.normalized_result;
+  return {
+    kind: 'rea-event-listeners',
+    evidence_id: evidence.evidence_id,
+    selector: evidence.parameters?.selector,
+    matched: result.selected_node?.match === 'found',
+    listeners: (result.listeners ?? []).map((l) => ({
+      type: l.type,
+      use_capture: l.use_capture,
+      passive: l.passive,
+      once: l.once,
+      execution: l.execution,
+      script: stripQuery(l.location?.url ?? ''),
+    })),
+    sources: (result.sources ?? []).map((s) => ({
+      script: stripQuery(s.url ?? ''),
+      language: s.language,
+      state: s.source?.state,
+      utf8_bytes: s.source?.utf8_bytes,
+    })),
+    cleanup: result.cleanup,
+    limitations: redactStrings(result.limitations),
+  };
+}
+
 const [input, output] = process.argv.slice(2);
 if (!input) throw new Error('Pass a saved REA result JSON file.');
 const evidence = recordOf(parseJson(readFileSync(input, 'utf8'), input));
-const summaries = { capture_web_screenshot: screenshot, inspect_web_page: inspection };
+const summaries = {
+  capture_web_screenshot: screenshot,
+  inspect_web_page: inspection,
+  inspect_web_event_listeners: listenerInspection,
+};
 const summarise = summaries[evidence.operation];
 if (!summarise) throw new Error(`Unsupported REA operation "${String(evidence.operation)}".`);
 const summary = summarise(evidence, input);
