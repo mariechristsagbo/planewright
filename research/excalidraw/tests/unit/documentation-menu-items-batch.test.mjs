@@ -142,8 +142,9 @@ describe('the probe facts behind the s79–s82 items', () => {
     ]);
     expect(probe(s81, '85-right-selected').selected).toBe(3);
     expect(probe(s81, '85-grid-off').modes.grid).toBe(false);
+    // The two link items, left open by s79–s82, were observed in s83 and s84.
     expect(cells('R-09')[8]).toBe(
-      'Light desktop capture; each item with Ctrl+Z after it on desktop; Add link and Copy link to object on mobile',
+      'Light desktop capture; each item with Ctrl+Z after it on desktop',
     );
   });
 

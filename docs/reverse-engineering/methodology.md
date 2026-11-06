@@ -120,6 +120,14 @@ s79–s82 ran on 2026-11-06 at 11:03–11:26 UTC under the same gate and is inde
 header size and a text to the clipboard text shape; like the clipboard text probe, its results
 stay in the raw timelines.
 
+s83–s84 ran on 2026-11-06 at 12:18–12:35 UTC under the same gate, with a navigation gate added
+after every scenario, and is indexed in `evidence/sessions-s83-s84.json`. It added the
+`clipboardWrite` step, which writes one self-authored plain text of printable ASCII and refuses any
+text that reads as a link, and the `clipboardUrl` probe, which keeps a copied link's origin, path,
+query key names with value lengths and fragment shape; their results stay in the raw timelines.
+These were the last live sessions of issue #1; [readiness.md](readiness.md) classifies what stays
+open.
+
 ## Division of labour
 
 1. REA collected passive evidence: target listing, page inspection (DOM, accessibility, storage

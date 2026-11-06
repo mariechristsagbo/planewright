@@ -204,6 +204,16 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   clipboard items were read only after the driver granted clipboard access to the reference
   origin, and their types and sizes stay in the raw timelines. Zoomed in, the mobile view still
   shows no zoom control (B-36).
+- **The last menu items (s83, s84):** from the element menu Add link and Copy link to object, and
+  from the canvas menu Snap to objects, Arrow binding, Snap to midpoints, Canvas & Shape properties
+  and View mode were used, so every item of both mobile context menus has now been picked (B-34,
+  B-37, B-42) [O, high: s83 and s84 identical]. Copy link to object copies a link to the reference
+  with an `element` query key; with nothing selected Canvas & Shape properties showed no panel; in
+  view mode the canvas menu keeps only the two image copies, Toggle grid, "✓ View mode" and
+  "✓ Canvas & Shape properties". A plain text that the driver wrote to the clipboard pasted as one
+  text element (B-26), Redo restored an empty embed and a fill (B-50), and a long text grew a
+  sticky note and set its label to font size 16 (B-08). The element menu opened for a long press
+  at y 490 up to x 190 and not at x 220 (A-16).
 
 ## 7. Theme coverage [O, high]
 

@@ -318,8 +318,13 @@ value is a value the page had saved locally.
   text at font size 20 (`81-resized-undo`; s79, s80) [O]. On desktop: Not observed (R-41).
 - **Edge cases:** on mobile, with the grid on, a drag of the note's bottom-right handle by (40,40)
   made it `[80,440,300,300]`, still square, and its bound text grew from font size 20 to 24,
-  `[131.3,575,197.3,30]` (`81-resized`; s79, s80) [O]. Long text, and a resize on desktop: Not
-  observed (R-41).
+  `[131.3,575,197.3,30]` (`81-resized`; s79, s80) [O]. In 91, with the grid off, a note placed by a
+  tap at (195,560), `[70,435,250,250]`, took six typed sentences (246 characters): it grew to 292 px
+  high, its width kept, and its label went from font size 20 to 16, `[102.8,451,184.5,240]`; a
+  40-letter word after them made it 332 px high and the label `[86.4,451,217.3,280]`, still at 16
+  (`91-sentences`, `91-long-word`; s83, s84) [O]. The stored text then had 287 characters for 286
+  typed [O, raw only], so a break inside the word is [I]. A resize on desktop: Not observed
+  (R-41).
 - **Desktop/mobile:** on mobile the Sticky note is in More tools. Picked there, a tap at (195,180)
   placed a note `[70,55,250,250]` centred on the tap, with an empty bound text being edited, and
   left the Selection tool active; Escape dropped the empty text and left the note selected
@@ -329,10 +334,10 @@ value is a value the page had saved locally.
   selected, and Delete from its long-press menu removed the note and its text (`81-typed`,
   `81-escape`, `81-deleted`; s79, s80) [O]. The text's stored background was the default that 80
   had set, `#a5d8ff`, and the note's stayed `#ffdf6b` [O].
-- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`); 70 (s74–s76) and 81 (s79, s80) on
-  mobile.
+- **Reproduction:** scenario 02 (s2, s6: `02-all-shapes`); 70 (s74–s76), 81 (s79, s80) and 91
+  (s83, s84) on mobile.
 - **Confidence:** [O] high.
-- **Limitations:** one note on desktop and one typed text on mobile; the screenshot is outside Git,
+- **Limitations:** one note on desktop and two typed texts on mobile; the screenshot is outside Git,
   with its digest committed (R-41).
 
 ### B-09 Image by file drop
@@ -635,26 +640,39 @@ value is a value the page had saved locally.
 ### B-42 Element link
 
 - **Initial state:** mobile, scenario 46's scene, then a rectangle `[200,100,120,60]` drawn and
-  left selected (scenario 47).
+  left selected (scenario 47); in 86 a rectangle L `[200,230,120,60]` beside a rectangle A, nothing
+  selected (s83, s84).
 - **Action:** Add link in the Actions popover, a click on the textbox it opened, the self-authored
   URL `https://example.com/planewright-r11` typed with the keyboard standing in for the phone's
-  own, and Enter; then Undo, Redo and a tap on empty canvas.
+  own, and Enter; then Undo, Redo and a tap on empty canvas. In 86 a long press on L's left stroke
+  at (200,252), Add link from the element menu, a click on the textbox, the self-authored URL
+  `https://example.invalid/planewright-r09`, on a reserved host that can never resolve, Enter, Undo
+  and Redo; in 87 Copy link to object from the same menu, after the driver granted the clipboard.
 - **Immediate result:** Add link opened a textbox named "Type or paste your link here" beside a
   Link to object button (raw ARIA) [O]. After Enter the element stored a link whose origin is
   `https://example.com` and whose path is `/planewright-r11` (`47-link`), and the page showed it as
-  a link with Edit, Link to object and Remove buttons (raw ARIA) [O].
+  a link with Edit, Link to object and Remove buttons (raw ARIA) [O]. From the element menu Add
+  link opened the same textbox, and after Enter L stored the origin `https://example.invalid` and
+  the path `/planewright-r09` and stayed selected (`86-link`) [O]. Copy link to object left a
+  53-character link on the clipboard: the reference origin, the path `/`, one query key `element`
+  with a 21-character value and no fragment (`87-copy-link`) [O, raw timelines only].
 - **State and related effects:** the element stayed selected (`47-link`) [O]; no request to the
-  link's origin, or any other, was written after the load (netlog) [O].
+  link's origin, or any other, was written after the load (netlog) [O]. In 86 and 87 no request
+  went to the link's host or any other, the page's own URL kept no query or fragment, and no live
+  region announced the copy (netlogs and the windows over 86 and 87; s83, s84) [O].
 - **Persistence:** read from local storage [O].
 - **Undo/redo:** one Undo removed the linked rectangle itself, leaving nothing selected, and Redo
-  restored the rectangle without its link (`47-link-undo`, `47-link-redo`; s54, s56) [O]; that the
-  link edit is not recorded in the history is [H].
+  restored the rectangle without its link (`47-link-undo`, `47-link-redo`; s54, s56) [O]. In 86,
+  with L selected by the long press, Undo cleared the selection and kept the link, and Redo
+  selected L again (`86-link-undo`, `86-link-redo`; s83, s84) [O]; with 47's result, that the link
+  edit is not an undo step of its own is [I].
 - **Edge cases:** Link to object, Edit, Remove and following the link: Not observed (R-11); the
-  link was never followed.
+  link was never followed, nor was the copied element link opened. Delete from the long-press menu
+  removed the linked L (`87-deleted`) [O].
 - **Desktop/mobile:** links on desktop: Not observed (R-09).
-- **Reproduction:** scenario 47 (s54, s56), right after 46.
-- **Confidence:** [O] high (s54 and s56 identical).
-- **Limitations:** one URL, on a reserved example domain, typed with the keyboard; the probe
+- **Reproduction:** scenario 47 (s54, s56), right after 46; 86 and 87 (s83, s84).
+- **Confidence:** [O] high (s54 and s56 identical, and s83 and s84).
+- **Limitations:** two URLs, each on a reserved host, typed with the keyboard; the probe
   keeps a link's origin and path only (R-11).
 
 ## Style
@@ -877,8 +895,12 @@ value is a value the page had saved locally.
 - **Edge cases:** on mobile Cut removed the shape and left the same JSON shape on the clipboard,
   Paste from the canvas menu put the copy back at the same place as after Copy, and two Undos
   removed the paste and then brought the cut shape back (`82-cut`, `82-cut-pasted`,
-  `82-cut-pasted-undo`, `82-cut-undo`; s79, s80) [O]. Paste of external text or images, and paste
-  with the pointer outside the canvas: Not observed (R-53).
+  `82-cut-pasted-undo`, `82-cut-undo`; s79, s80) [O]. After the driver granted the clipboard and
+  wrote the self-authored plain text "Planewright plain text", Paste from the canvas menu of a
+  right click at (300,380) added one selected `text` `[179.7,389.5,215,25]`, font size 20, family
+  5, aligned left; Undo removed it, Redo put the same box back and Undo removed it again
+  (`88-pasted`, `88-pasted-undo`, `88-pasted-redo`, `88-redo-undo`; s83, s84) [O]. An image, text
+  from another app and paste with the pointer outside the canvas: Not observed (R-53).
 - **Desktop/mobile:** on mobile, after the driver granted clipboard read and write to the reference
   origin, Copy from the long-press menu on `[60,340,100,80]` left one `text/plain` clipboard item,
   the same JSON shape as on desktop with one `rectangle` (526 and 527 characters) [O, raw
@@ -886,7 +908,7 @@ value is a value the page had saved locally.
   at `[140,380,100,80]`, selected, and Undo removed it (`82-pasted`, `82-pasted-undo`; s79, s80)
   [O]; that the copy is centred on the point where the driver's click on Paste left the mouse is
   [I] from B-26's desktop rule.
-- **Reproduction:** scenario 06 (s1, s6); 82 on mobile (s79, s80).
+- **Reproduction:** scenario 06 (s1, s6); 82 (s79, s80) and 88 (s83, s84) on mobile.
 - **Confidence:** [O] high (the mobile probes identical in s79 and s80).
 - **Limitations:** the clipboard shape came from the driver, values redacted, and is in the raw
   timelines only (R-53).
@@ -1044,9 +1066,15 @@ value is a value the page had saved locally.
   [O]. Toggle grid in the canvas menu of a right click turned the grid on; that menu then named the
   item "✓ Toggle grid", so a second pick by the plain name found nothing and the grid stayed on for
   the rest of s79 and s80, and picking the checked name turned it off (`79-grid-on`, `79-grid-off`,
-  `85-grid-on`, `85-grid-off`, raw ARIA; s79–s82) [O].
+  `85-grid-on`, `85-grid-off`, raw ARIA; s79–s82) [O]. From that menu Snap to objects turned
+  `objectsSnapModeEnabled` on and its checked name off, and "✓ Arrow binding" and "✓ Snap to
+  midpoints" turned `isBindingEnabled` and `isMidpointSnappingEnabled` off and their plain names on
+  again; View mode left two unnamed buttons, the canvas menu then held only Copy to clipboard as
+  PNG and as SVG, Toggle grid, "✓ View mode" and "✓ Canvas & Shape properties", and "✓ View mode"
+  brought every control back; Canvas & Shape properties, with nothing selected, showed no panel and
+  stayed checked after Escape (`92-*`, raw ARIA and captures; s83, s84) [O].
 - **Reproduction:** scenarios 05 and 07 (s1, s6); 63–65 (s71, s72); 72 (s74–s78), 76 (s75–s78),
-  79 (s79, s80) and 85 (s81, s82).
+  79 (s79, s80), 85 (s81, s82) and 92 (s83, s84).
 - **Confidence:** [O] high for the visible effects and the unchanged zoom and scroll (s1 and s6),
   and for the mobile toggles, Undo and reload reads (s71 and s72 identical).
 - **Limitations:** visible effects from screenshots and ARIA outside Git; for s1 and s6 the zen,
@@ -1302,7 +1330,8 @@ value is a value the page had saved locally.
   Select all and the menu opened by a right click on one of them, Flip horizontal mirrored all three
   about the middle of their box: the arrow's first point from x 60 to 300, `[40,400,60,90]` to
   `[260,400,60,90]` and `[200,400,120,60]` to `[40,400,120,60]` (`85-flip-h`, `85-flip-v`,
-  `85-flip-all`; s81, s82) [O]. The links: Not observed (R-09).
+  `85-flip-all`; s81, s82) [O]. Add link and Copy link to object did what B-42 says (s83, s84)
+  [O].
 - **Persistence:** each mobile change was read from local storage [O].
 - **Undo/redo:** on mobile Undo removed the frame, unlocked a locked shape and brought a deleted
   one back (`75-framed-undo`, `75-locked-undo`, `78-deleted-q-undo`) [O]. After each Flip of the
@@ -1320,13 +1349,17 @@ value is a value the page had saved locally.
   them and the grid on, which drew them at y 480: in s79 and s80 the press at (40,490) opened the
   menu and the one at (220,490) selected the shape and left no menu in the ARIA or the capture
   (`84-p-hold`, `84-q-hold`, raw ARIA) [O]. So it depends on where the press lands, not on what ran
-  before; why is [H] (A-16). Groups: Not observed (R-09).
+  before; why is [H] (A-16). Scenario 90 bounded it at y 490: on a new rectangle each time, holds
+  at x 40, 70, 100, 130, 160 and 190 opened the menu with its left edge at x + 1, 176 px wide, its
+  Cut at y 273 and its Delete at y 799, so above the press, and the hold at x 220 selected the
+  shape and rendered no menu button (`90-hold-*`, raw ARIA; s83, s84) [O]. So the boundary lies
+  between x 190 and 220 (A-16). Groups: Not observed (R-09).
 - **Desktop/mobile:** light desktop: Not observed (R-09). On mobile a long press on an unselected
   shape selected it and opened the menu (`67-element-hold`), while a long press on empty canvas
   opened no menu; the canvas menu (F-14) opened there by a right click only (`m75-01-canvas-hold`,
   `m68-01-canvas-right`) [O].
 - **Reproduction:** scenario 15 (s6, s10); 67 and 68 (s74–s76), 75 (s75, s76), 77 (s76), 78
-  (s77, s78), 79 and 84 (s79, s80) and 85 (s81, s82) on mobile.
+  (s77, s78), 79 and 84 (s79, s80), 85 (s81, s82) and 86, 87 and 90 (s83, s84) on mobile.
 - **Confidence:** [O] medium. The menu entries are identical in s6 and s10, but the snapshots
   are not: the panel behind the menu has no Fill group in s10 and another Sloppiness radio
   checked, following the styles in use (a raw comparison). By the rule applied to the secondary
@@ -1617,7 +1650,8 @@ external one.
 ### B-50 Web Embed and Bucket fill
 
 - **Initial state:** mobile, two rectangles from 79 above y 320, nothing selected, the grid on
-  (scenario 80, after 79 in s79 and s80).
+  (scenario 80, after 79 in s79 and s80); in 89 one rectangle above y 320 and the grid off (s83,
+  s84).
 - **Action:** Web Embed from More tools and a one-finger drag from (40,340) to (340,440), then
   Escape and Undo; a transparent rectangle R drawn from (60,340) to (300,430), deselected, Bucket
   fill from More tools and a tap inside R at (180,385); the Background button and its Blue colour
@@ -1636,12 +1670,16 @@ external one.
   That the fill traces R's rounded outline is [I] from its point count and box.
 - **Persistence:** each element was read from local storage [O].
 - **Undo/redo:** Escape left the empty embed in place, and Undo removed it; Undo removed the fill
-  and left R (`80-embed-escape`, `80-embed-undo`, `80-fill-undo`) [O]. Redo: Not observed (R-17).
+  and left R (`80-embed-escape`, `80-embed-undo`, `80-fill-undo`) [O]. In 89, after the same
+  Undo, Redo restored the embed `[40,340,300,100]`, selected, showing "No link is set" beside Edit
+  and Link to object (raw ARIA), and after the fill's Undo, Redo restored the same `line`
+  `[82.5,340,240,90]` of 21 points with its `#b2f2bb` fill; a second Undo removed each again
+  (`89-embed-redo`, `89-fill-redo`; s83, s84) [O].
 - **Edge cases:** an embed with a link, a fill of an open shape or of empty canvas, and a fill
   when the default background is not transparent: Not observed (R-17).
 - **Desktop/mobile:** the desktop: Not observed (R-17).
-- **Reproduction:** scenario 80 (s79, s80).
-- **Confidence:** [O] high (s79 and s80 identical).
+- **Reproduction:** scenario 80 (s79, s80); 89 (s83, s84).
+- **Confidence:** [O] high (s79 and s80 identical, and s83 and s84).
 - **Limitations:** both ran with the grid on, which 79 had left on; one embed box and one fill,
   each in one rectangle (R-17).
 

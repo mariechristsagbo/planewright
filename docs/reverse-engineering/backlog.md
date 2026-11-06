@@ -8,7 +8,10 @@ feature issue. "Ref" points to the evidence.
 Every reference fact carries its label: [O] observed, [S] static, [I] inference, [H]
 hypothesis, [U] not observed. A criterion marked **open** has no supporting observation and must
 be decided in the feature issue, either after its residual row (`R-xx` in the
-[residual matrix](residual-matrix.md)) is observed or as a deliberate Planewright choice.
+[residual matrix](residual-matrix.md)) is observed or as a deliberate Planewright choice. No live
+session runs after s84: [readiness.md](readiness.md) says which open
+criteria wait for the desktop (verification page) or a headed browser (native file pickers), and
+which are refinements that the feature issue must observe or decide.
 
 ## P0: core canvas
 
@@ -40,7 +43,8 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      left the new element selected with the Selection tool, while Freedraw stayed active with
      nothing selected (s74–s76; B-01) [O]. On mobile Draw to shape is the same shape-recognising
      tool as the Draw tool's Autoshape, and an embed box drawn with Web Embed asks for its link at
-     once and loads nothing while it is empty (s79, s80; B-05, B-50) [O].
+     once and loads nothing while it is empty, even when Redo restores it (s79–s84; B-05, B-50)
+     [O].
    - A freedraw stroke covers the input extent, and a click without movement creates a dot [O].
    - Tool shortcuts are single letters and digits, exposed in accessible descriptions [O].
 3. **Selection model.** Ref: B-10 to B-14.
@@ -76,7 +80,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      undone, and when Redo enables, are **open** (R-04, R-52). History across a reload is open
      (R-52). On mobile one Undo removes a shape just drawn, a sticky note, a frame, a pasted style,
      a lock, a deletion from the context menu and a cleared canvas (s74–s78), and a flip, a paste,
-     a cut, an embed box, a fill and a note's resize (s79–s82) [O].
+     a cut, an embed box, a fill and a note's resize (s79–s82) [O]; Redo puts back an empty embed, a
+     fill and a pasted text (s83, s84) [O]. Adding a link made no undo step of its own on mobile
+     (s54, s56, s83, s84; B-42) [I]; Planewright should make it one.
 6. **Local persistence.** Ref: B-30, B-31.
    - The scene and the scroll position survive a reload [O, scenario 06 in s1 and s6]. Zoom and
      selection across a reload, and a mobile reload, are **open** (R-54).
@@ -104,7 +110,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
      and a corner resize keeps the note square and scales its label's font with it [O, mobile;
      B-08].
    - The font is picked from a list, as one undo step, beside font size and alignment controls
-     [O, mobile]; re-editing, wrapping and the undo of typing are **open** (R-40).
+     [O, mobile]; re-editing and the undo of typing are **open** (R-40). In a sticky note a long
+     text wraps, the label drops from font size 20 to 16 and the note grows downwards, keeping its
+     width (s83, s84; B-08) [O, mobile].
 9. **Arrows and binding.** Ref: B-04.
    - An arrow end released near a shape (5 units outside, or 5 units inside) binds to it, and
      the binding is recorded on both elements [O, two cases].
@@ -120,7 +128,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       On touch a long press on a shape opens it, without the layer commands; Copy styles and
       Paste styles carry the background to another shape, Lock leaves a shape unselectable and
       unerasable until Unlock, and Wrap selection in frame adds a frame 16 px larger on each side,
-      each undoable (s74–s78; B-19, B-27, B-34) [O].
+      each undoable (s74–s78; B-19, B-27, B-34) [O]. Add link from it stores a link, and Copy link
+      to object copies a link to the reference with an `element` query key (s83, s84; B-42) [O];
+      Planewright's own element-link format is a decision.
 11. **Clipboard.** Ref: B-26.
     - Copy produces a typed JSON payload [O, raw timelines only], and paste centres the copies
       on the pointer, with 2 of the 3 copies selected [O]. The committed probes keep the count
@@ -130,6 +140,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       that one Undo removes, and the image items write one PNG of the selection (360×300 for a
       100×80 shape) or one SVG text (s79, s80; B-26, B-27) [O, raw timelines only for the clipboard]. Desktop
       cut and the image items are **open** (R-53).
+    - A plain text on the clipboard pastes as one selected text element at font size 20, one Undo
+      step (s83, s84; B-26) [O, mobile, a text the driver wrote]; text from another app and an
+      image are **open** (R-53).
 12. **Eraser.** Ref: B-29.
     - After an eraser drag across a freshly drawn freedraw stroke, the scene held no freedraw
       element [O]. That the stroke existed just before is [I] from B-05, because no probe ran in
@@ -148,7 +161,9 @@ be decided in the feature issue, either after its residual row (`R-xx` in the
       palette ran a command typed by name with Enter (s74–s76; B-36) [O]; a canvas context menu
       reached only by a right click there is a gap to close, not to copy (R-08). A toggle's
       check mark is part of its accessible name there ("✓ Toggle grid"), so its name changes with
-      its state (s79–s82; B-37) [O]; Planewright should expose the state instead.
+      its state (s79–s82; B-37) [O]; Planewright should expose the state instead. The other
+      toggles of that menu are named the same way, and in view mode the menu offers "✓ View mode"
+      as the way back (s83, s84; B-37) [O].
     - Help lists shortcuts consistently with the palette (avoid the reference's Shift+2/Shift+3
       discrepancy).
 14. **Themes and view modes.** Ref: [B-37](behavior-analysis.md#b-37-view-modes-and-toggles),

@@ -222,6 +222,24 @@ s1's REA records retained the key (see [checkpoint](checkpoint.md#privacy-remedi
   included, and the 9 REA windows over them kept 0 requests (`evidence/rea-windows-s51-s57.json`).
   The self-authored link of scenario 47 made no request to its origin.
 
+### Final mobile batch (s83–s84) [O]
+
+- **Loads.** Each of the two loads got its document with HTTP 200 from the network, and neither
+  reloaded; no netlog holds a 403, 429, request under `/.well-known/vercel/`, `.map` request,
+  failed request on the reference origin or request to `example.invalid`
+  (`evidence/sessions-s83-s84.json`).
+- **A link stays a stored value.** Add link stored `https://example.invalid/planewright-r09`, on a
+  reserved host that can never resolve, and Copy link to object put a link to the reference on the
+  clipboard; neither started a request, and the window over each kept 0 requests (s83, s84) [O].
+- **The clipboard stays local.** The driver's plain-text write, Paste, Undo and Redo of 88 made no
+  request [O].
+- **One font, no other traffic.** The one request after each load was the CascadiaCode font,
+  served through the service worker right after the session's first More tools tap, in 89, as in
+  80; the empty embed restored by Redo loaded nothing, and none of the 40 request starts fell in one
+  of the 22 drawing steps. Of the 14 REA windows the two over 89 kept the font request and the
+  other 12 kept 0 requests, and none kept a WebSocket or console event
+  (`evidence/netlog-steps-s83-s84.json`, `evidence/rea-windows-s83-s84.json`).
+
 ### Menu items, tools and clipboard batch (s79–s82) [O]
 
 - **Loads.** Each of the four loads got its document with HTTP 200 from the network, and none

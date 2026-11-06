@@ -71,7 +71,10 @@
    both. About two hours after s64, s65–s67 (05:21–05:33 UTC) loaded the app normally under a gate
    that stops on a 403 of any request type, and met none, nor did s68–s70 (06:21–06:33 UTC), where
    54 got its locale chunk with HTTP 200, or s71–s73 (07:30–07:47 UTC); whether the protection depends on rate, time or the
-   requests asked for is not known [H]. Nor did s74–s78 (09:16–09:57 UTC, five loads).
+   requests asked for is not known [H]. Nor did s74–s78 (09:16–09:57 UTC, five loads), s79–s82
+   (11:03–11:26 UTC, four loads) or s83 and s84 (12:18–12:35 UTC, two loads), after which no live
+   session is planned, so the desktop gaps this leaves are an objective limitation of the
+   baseline ([readiness](readiness.md)).
 9. **REA origin lists and request times.** REA accepts only exact HTTP(S) origins, so a window
    cannot list the collaboration WebSocket origin, and it keeps no time per retained request, so
    a window bounds a scenario, not a step; per-step timing comes from the driver netlog.
@@ -114,7 +117,8 @@
     the page handles an external keyboard's keys, and no screen reader or assistive technology
     took part, so what one would announce was not observed. The command names typed into the
     command palette (s74–s76) are CDP key events too, as are the note text typed in 81 and the
-    Escape and Delete presses of 80, 81, 82 and 84 (s79, s80).
+    Escape and Delete presses of 80, 81, 82 and 84 (s79, s80), and the link typed in 86, the long
+    note text of 91 and the Enter, Escape and Delete presses of 86–91 (s83, s84).
 14. **Offline emulation.** The `offline` step sets Chromium's network conditions for the page and
     the service workers Playwright attached (s60, s63), and from s68 for the page on the driver's
     own session too. Set by Playwright alone, they held for requests across a reload, which still
@@ -136,11 +140,19 @@
     (120,375) opened the menu each time; 78 moved the presses to 75's height. Scenario 84 repeated
     one press at (40,490) and one at (220,490) on 77's shapes, with none of s76's earlier steps, in
     s79 and s80: the first opened the menu and the second selected the shape and showed none, so
-    the place of the press decides it; why is a hypothesis (A-16) [H].
+    the place of the press decides it; why is a hypothesis (A-16) [H]. Scenario 90 bounded it in s83
+    and s84: holds at y 490, on a new rectangle each time, opened the menu at x 40, 70, 100, 130,
+    160 and 190, with its left edge at x + 1 and its buttons moved above the press, and not at x
+    220, so the boundary lies between x 190 and 220 [O]. The presses at (220,252) of s76 did open
+    it, so crossing the right edge alone does not hide it; that a menu which must move both up and
+    left is left unshown is [H].
 17. **Clipboard access is granted, not asked for.** Scenario 82 grants clipboard read and write to
     the reference origin through Playwright before its first input, so no permission prompt was
     shown or answered, and the clipboard is the headless browser's own; what a phone's clipboard
-    or prompt does was not observed. The reads keep types, sizes and shapes only.
+    or prompt does was not observed. The reads keep types, sizes and shapes only. From s83, scenario
+    88 also writes one self-authored plain text with `clipboardWrite`, which refuses any text that
+    reads as a link; what the app does with text that another app put on a phone's clipboard, or
+    with an image there, was not observed.
 
 ## Tooling limits
 
@@ -237,6 +249,11 @@
     and 85 (the committed index keeps line counts), the absence of a menu in 84's captures, the
     flipped arrow's direction in 85's captures, and the s82 listener records' script source text,
     which holds three key-shaped values, as s76's did.
+  - in s83–s84, the clipboard reads of 87 and 88 (the copied link's shape and the written text's
+    shape), the page URL's shape after the copy, the stored text length of 91's note, the ARIA names
+    behind the link box, the link view, the empty embed's view, the menus of 90 and 92 and the view
+    mode's controls, the absence of a menu in 90's capture at x 220, and the byte-identical ARIA of
+    the replay pair.
 - **REA MCP denied.** The REA MCP tools needed a permission grant that the non-interactive session
   of s5–s7 could not give. Those sessions used the REA CLI of the same build, which cannot export
   a validated Evidence bundle.

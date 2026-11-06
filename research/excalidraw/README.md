@@ -279,6 +279,8 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
 | Menu items (`s80`)     | 09 → 79 → 80 → 81 → 84 → 82 → 83 → 16                                                                                                                                                                                                                  |
 | Flip and grid (`s81`)  | 09 → 85 → 16                                                                                                                                                                                                                                           |
 | Flip and grid (`s82`)  | 09 → 85 → 16; then REA listener inspections                                                                                                                                                                                                            |
+| Final batch (`s83`)    | 09 → 86 → 87 → 88 → 89 → 90 → 91 → 92 → 16                                                                                                                                                                                                             |
+| Final batch (`s84`)    | 09 → 86 → 87 → 88 → 89 → 90 → 91 → 92 → 16                                                                                                                                                                                                             |
 
 - **R-76 sessions (s8–s11).** Each ran in its own new container and profile, on 2026-11-05.
   Between the driver batches the REA CLI listed the targets and ran a 2 s initial-page

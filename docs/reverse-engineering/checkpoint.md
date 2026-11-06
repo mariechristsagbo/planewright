@@ -1,9 +1,9 @@
 # Checkpoint: issue #1 status
 
-Last updated: 2026-11-06 (menu items, tools and clipboard batch: live sessions s79–s82 on
-2026-11-06 at 11:03–11:26 UTC, on mobile only, under the gate that stops on a 403 of any request
-type, with no 403 met; see
-[Menu items, tools and clipboard batch](#menu-items-tools-and-clipboard-batch-s79s82)).
+Last updated: 2026-11-06 (final mobile batch: live sessions s83 and s84 on 2026-11-06 at
+12:18–12:35 UTC, on mobile only, under the gate that stops on a 403 of any request type, with no
+403 met, and the readiness record that classifies what stays open; see
+[Final mobile batch](#final-mobile-batch-s83s84) and [Readiness](#readiness)).
 Branch: `docs/1-excalidraw-research`. Issue #1 stays
 open: the Draft PR refers to it (`Refs #1`) and does not close it.
 Commit ranges are written as Git reads them: `A`..`B` is the commits after `A` up to and
@@ -14,8 +14,8 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 | Criterion                                                          | Status  | Notes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | ------------------------------------------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `methodology.md`                                                   | Done    | One confidence rule: two tools reading one session count as one session, and results that match only once a setup difference is allowed for count as different. The page-load count (21) and where the metrics are asserted now match the committed evidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| `feature-inventory.md` covers all discovered features              | Partial | Each entry has an ID (F-01–F-35) with a residual-matrix row. Still open: library export and import, desktop Export to Link and the desktop generation features (verification page). On mobile, Find on canvas, the language switch, the canvas background and a library item were used, each twice or more (s61–s70; R-05, R-15), one upload in s52 (R-56) and one generation in s49 (R-63); s22 found Diamond, Ellipse and Line in the mobile tool choices (R-24), s74 the long-press menus (R-09), s79 the last More tools entries (R-17). §2 is rated medium: the s1 and s6 ARIA snapshots differ (raw comparison); R-76 raised the dark text panel, the desktop dark Preferences and the mobile dark surfaces to high on raw comparisons (s6 and s10, s7 and s11)          |
-| `behavior-analysis.md`                                             | Partial | Every entry (B-01–B-50) has the eleven issue fields in order. Unobserved dimensions name their residual row, and "not applicable" is kept only with a stated reason. Claims no session observed are withdrawn. R-76 raised B-02, B-35 and B-31's first-load list to high; B-30's save timing stays medium as s6 and s9 differ. Many dimensions (undo, reload, edge cases) are open; s16 added a mobile reload (B-30); s22–s82 added mobile binding, handles, layers, alignment, groups, styles, lines, arrows, texts, freehand, Autoshape, Delete, links, Export to Link, inserts, focus, offline start, layout, Find, language, library, background (B-43–B-49), eraser, toggles, snap, context menus, clipboard, embed, fill (B-29, B-34, B-37, B-50), most twice, with undo |
+| `feature-inventory.md` covers all discovered features              | Partial | Each entry has an ID (F-01–F-35) with a residual-matrix row. Still open: library export and import, desktop Export to Link and the desktop generation features (verification page). On mobile, Find on canvas, the language switch, the canvas background and a library item were used, each twice or more (s61–s70; R-05, R-15), one upload in s52 (R-56) and one generation in s49 (R-63); s22 found Diamond, Ellipse and Line in the mobile tool choices (R-24), s74 the long-press menus (R-09), s79–s84 More tools and the links (R-17, R-09). §2 is rated medium: the s1 and s6 ARIA snapshots differ (raw comparison); R-76 raised the dark text panel, the desktop dark Preferences and the mobile dark surfaces to high on raw comparisons (s6 and s10, s7 and s11)   |
+| `behavior-analysis.md`                                             | Partial | Every entry (B-01–B-50) has the eleven issue fields in order. Unobserved dimensions name their residual row, and "not applicable" is kept only with a stated reason. Claims no session observed are withdrawn. R-76 raised B-02, B-35 and B-31's first-load list to high; B-30's save timing stays medium as s6 and s9 differ. Many dimensions (undo, reload, edge cases) are open; s16 added a mobile reload (B-30); s22–s84 added mobile binding, handles, layers, alignment, groups, styles, lines, arrows, texts, freehand, Autoshape, Delete, links, Export to Link, inserts, focus, offline start, layout, Find, language, library, background (B-43–B-49), eraser, toggles, snap, context menus, clipboard, embed, fill (B-29, B-34, B-37, B-50), most twice, with undo |
 | `network-analysis.md`                                              | Done    | Observed metadata and hypotheses are separated. Both analytics beacon key sets are described with their s6 counts; the cache counts come from `evidence/rea-windows.json`, and the storage names and the storage quota are raw-only                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `architecture-hypotheses.md`                                       | Done    | Every entry is labelled with a confidence                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `rea-findings.md`                                                  | Done    | Window bounds and retention come from `evidence/rea-windows.json`; the lifecycle offsets, the scenario 13 Delete time, the REA side of the byte-identical screenshot pairs and the result sizes are marked as raw-only                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
@@ -24,7 +24,7 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 | Canvas interactions through the external driver while REA observes | Done    | REA CLI windows over driver scenarios: 02, 10 and 13 in s6 and s7, 12, 13, 15 and 14 in s8–s11, armed before their first step, 10 in s12, armed 4.1 s before (coverage 3.5 s before) allowing 7 HTTP(S) origins, so mobile drawing is covered (R-72 ✅), 19, 10 and 22 in s15 and s16 (4.2–4.6 s), one over each of 28–35 in s22–s36 (4.7–5.8 s), of 36–43 in s37–s49 (2.9–3.8 s), of each run of 45–48 in s53–s57 (1.6–3.3 s), 24 over 49–59 in s59–s67 (1.6–3.6 s) and 6 over 60, 61 with 51, 53 and 54 in s68–s70 (3.1–3.6 s). Two retain navigation metadata only, the s7 window armed after 10's first tap, the s8–s11 windows cover one origin and REA keeps no time per request; the s13 and s14 windows saw only a verification page, and s16's over a reload failed   |
 | Evidence sanitized and stored under the agreed directories         | Done    | Raw evidence is in the workspace `artifacts/research/excalidraw/`; the sanitized index is in `evidence/`. Retained room values were removed or overwritten, and no copy is known to remain (see [privacy](#privacy-remediation))                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | No source maps, official repository, package or assets             | Done    | 0 `.map` requests in all eleven netlogs; no reference package installed                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| Prioritised backlog with acceptance criteria                       | Partial | [backlog.md](backlog.md) has 22 items. Items 19–22 (libraries, alignment and distribution, offline start and reconnection, keyboard accessibility) have no observed desktop behaviour, so those criteria are **open** (R-15, R-51, R-57, R-27); item 20 records the mobile commands and their undo (s25–s43), and items 19, 21 and 22 the mobile library item, offline start and keyboard focus of s58–s64; items 2, 5, 10 and 13 record the mobile tools, undo, context menus and palette of s74–s78, and items 2–5, 8, 10, 11, 13 and 19 those of s79–s82. Elsewhere, the criteria are not audited exhaustively against their entries: the sixth review found five labelled more strongly than their evidence (corrected), and many are open                                 |
+| Prioritised backlog with acceptance criteria                       | Partial | [backlog.md](backlog.md) has 22 items. Items 19–22 (libraries, alignment and distribution, offline start and reconnection, keyboard accessibility) have no observed desktop behaviour, so those criteria are **open** (R-15, R-51, R-57, R-27); item 20 records the mobile commands and their undo (s25–s43), and items 19, 21 and 22 the mobile library item, offline start and keyboard focus of s58–s64; items 2, 5, 10 and 13 record the mobile tools, undo, context menus and palette of s74–s78, and items 2–5, 8, 10, 11, 13 and 19 those of s79–s84. Elsewhere, the criteria are not audited exhaustively against their entries: the sixth review found five labelled more strongly than their evidence (corrected), and many are open                                 |
 
 ## Testing requirements
 
@@ -36,6 +36,19 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 | CDP and driver ports loopback-only                      | Done    | With the sixth-review tooling, `isolation-check.sh` passed 11 of 11 and `selftest.sh` 19 of 19 against real local containers on 2026-11-05 at 00:15–00:16 UTC, on `e38955a`, contacting no website; their output is committed in [local-checks/](local-checks/). Before the R-76 sessions they passed again, 11 of 11 and 19 of 19, on `0b4fb19` on 2026-11-05 at 04:45–04:46 UTC; that output is committed there too. Before the observation batch they passed again, 11 of 11 and 19 of 19, on `78b6192` on 2026-11-05 at 16:47–16:49 UTC (output in local-checks/), and each of s12–s14 probed its own browser before the driver attached. Before the mobile follow-up they passed again, 11 of 11 and 19 of 19, on `b21edd4` at 17:53–17:54 UTC (output in local-checks/), and s15 and s16 each probed its own browser. Before the mobile priority-1 batch they passed again, 11 of 11 and 19 of 19, on `ddc3e81` at 19:54–19:55 UTC (output in local-checks/), and s17–s21 each probed its own browser. Before the mobile touch-control batch they passed again, 11 of 11 and 19 of 19, on `0f22218` at 21:24–21:25 UTC (output in local-checks/), and s22–s36 each probed its own browser. Before the mobile control batch they passed again, 11 of 11 and 19 of 19, on `de052c8` at 22:50–22:51 UTC and, after a probe change, on `32448e3` at 23:01 UTC (output in local-checks/), and s37–s50 each probed its own browser. Before the mobile radio and edit batch's scenarios they passed again, 11 of 11 and 19 of 19, on `19fbe93` at 01:01–01:02 UTC, after the input and probe changes (output in local-checks/); s51 and s52 ran earlier, at `2a6ec57`, whose driver the `32448e3` checks cover, and s51–s57 each probed its own browser. Before the keyboard, offline and layout batch's scenarios they passed again, 11 of 11 and 19 of 19, on `5ec677a` at 02:53 UTC, after the driver change (output in local-checks/); s58 ran earlier, at `d81dc03`, whose driver the `19fbe93` checks cover, and s58–s64 each probed its own browser. Before the replay batch they passed again, 11 of 11 and 19 of 19, on `61c695a` at 05:20–05:21 UTC (output in local-checks/), and s65–s67 each probed its own browser. Before s68–s70 they passed again, 11 of 11 and 19 of 19, on `c097333` at 06:17–06:18 UTC (output in local-checks/), and each session probed its own browser. Before s71–s73 they passed again, 11 of 11 and 19 of 19, on `70a4e22` at 07:29 UTC (output in local-checks/), and each session probed its own browser. The earlier runs on `dc6eef1` (2026-11-04, 22:18 and 22:19 UTC) kept no output. This holds from s5 on: s1–s4 ran on the default Docker bridge, where the DevTools forwarder was reachable from other containers (see the methodology). A probe that cannot run, and a failed docker listing during cleanup, count as FAIL |
 | Owned processes and profiles cleaned up                 | Done    | After every session and every local check: no `pw-*` container or network, no driver process, no driver token files; profiles were container tmpfs. The removal checks of the `e38955a` and `0b4fb19` runs are in local-checks. After each of s8–s14 the container, its network, the driver, the listeners on 9222 and 9333, the token file and any REA CLI process were checked gone, and after s12–s82 also any container of the browser image                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Separate Claude Code review session                     | Partial | Fifteen independent reviews ran. The fifteenth (of `a9a4619`) meets the R-75 exit rule: 0 critical, 0 major and 0 minor findings, and its 3 suggestions are listed with their handling. The observation batch after `db16323`, with the mobile batches after `2864145`, `a4990b6`, `823dae7`, `7e547de`, `2a6ec57`, `d81dc03`, `61c695a`, `5d2126b` and `97149aa`, is behaviour-changing and no review covers it yet, so R-75 is 🟡; as the maintainer decided, one fresh independent review runs once, at readiness, after every acceptance observation of issue #1, and none ran in the batch or the follow-up. It reviewed the fourteenth-review remediation, `620eccf`..`a9a4619`, which handled the minor finding and 6 suggestions of the fourteenth review. R-75 closes only under the exit rule in [Independent reviews](#independent-reviews), which applies to every behaviour-changing commit, so it is ✅ until a behaviour-changing commit follows `a9a4619`: the ninth review met it on `a85eb82`, but the R-76 commits after `935f2fc` were behaviour-changing and no review covered them until the tenth (see [R-76 runs](#r-76-runs-s8s11)), and the thirteenth met it on `6d5d264`, but no review covered the netlog placement after `c010f7e` until the fourteenth. The tenth to the fifteenth are automated Claude Code reviews, not human approval. R-75 aside, the other Partial criteria and requirements keep issue #1 open                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+
+## Readiness
+
+After s83 and s84 the agreed mobile list is complete, and no live session runs after s84 (see
+[Readiness of issue #1](readiness.md)). Every criterion and requirement still Partial, and every
+open residual row, is classified in `readiness.md`. No feasible mandatory observation remains: the
+desktop parts of the open rows are an objective limitation of the verification page, which is
+never bypassed; Open, Save to…, the exports, a library file and Insert image are an objective
+limitation of headless Chromium's native file pickers, waiting for a headed browser that the
+maintainer runs; a room, a second client and further uploads or generations are excluded by the
+maintainer for this phase; and the mobile items still open are refinements, not mandatory. The one
+mandatory item left is the single final independent review (R-75). Until it meets the exit rule,
+PR #2 stays a Draft and issue #1 stays open.
 
 ## Checks of the fifth-review remediation
 
@@ -1881,6 +1894,76 @@ suggestions.
   `npm run validate` result for the tree of the commit that adds this section, the bodies of the new
   commits, the push and the GitHub checks are in the PR description.
 
+## Final mobile batch (s83–s84)
+
+The last two live sessions of the investigation ran on mobile only, on 2026-11-06 at 12:18–12:35
+UTC, for the final list that the maintainer agreed: Add link and Copy link to object (R-09), the
+other canvas-menu items (R-08), a self-authored plain-text paste (R-53), Redo after the Web Embed
+and Bucket fill undos (R-17), the bound of the no-menu long press (R-09, A-16) and a long
+sticky-note text (R-41). No desktop session, file chooser, upload, sign-in, room, embed link or
+generation; no live session runs after s84 (see [Readiness](#readiness)). It is not a review
+remediation.
+
+- **Commits.** `002d960` adds the `clipboardWrite` step (one self-authored plain text, refused when
+  it reads as a link) and the `clipboardUrl` probe (a copied link's origin, path, query key names
+  with value lengths and fragment shape); `4f4aaaf` adds scenarios 86–88 and `67a7b03` 89–92;
+  `3bd39de` commits the evidence; the commit that adds this section adds the local check output,
+  the readiness record and the documents. Nothing under `apps/` or `packages/` changed.
+- **Before the sessions:** `isolation-check.sh` 11 of 11 and `selftest.sh` 19 of 19 plus the
+  check-masks line on 67a7b03 at 12:10–12:11 UTC, as `002d960` changed the driver (output in
+  [local-checks/](local-checks/)); the research projects passed (103 files, 1284 tests).
+- **Sessions,** each in a new container, network and tmpfs profile, after 5 isolation probes, under
+  the unchanged strict gate and watcher plus a navigation gate (driver halt, navigation-halt event,
+  main-frame navigation off the reference, any request to the link's host).
+  `s83-mobile-final-batch` (09, 86–92, 16) ran at 12:18–12:26 and its replay
+  `s84-mobile-final-batch-2` at 12:27–12:35, both on `67a7b03`. Each load got one network document
+  with HTTP 200 and no session reloaded; no 403, 429, verification path, failed reference request
+  or request to the link's host occurred, every gate and REA record passed, and the timelines hold
+  429 rows each, none failed, with 15 metrics assertions each, all passed
+  (`evidence/sessions-s83-s84.json`) [O].
+- **REA** (CLI, build `5b953e13…`, raw output outside Git): a target listing per session and 14
+  windows, one over each scenario, armed 0.0–3.3 s before their first step, 7 origins; the windows
+  over 89 kept one font request each and the others none, with no WebSocket or console event
+  (`evidence/rea-windows-s83-s84.json`) [O].
+- **Findings** [O], each in its entry: Add link from the long-press menu stored
+  `https://example.invalid/planewright-r09`, which Undo kept, and Copy link to object copied a
+  53-character link to the reference with an `element` query key (B-42); the driver's plain text
+  pasted as one selected text, with Undo and Redo (B-26); Redo restored the empty embed and the
+  fill (B-50); at y 490 the menu opened for holds at x 40–190, placed at x + 1 and above the press,
+  and not at x 220 (B-34, A-16); a long text grew the note to 332 px and set its label to font size
+  16 (B-08); the canvas-menu toggles flipped their stored flags, Canvas & Shape properties showed
+  nothing with nothing selected, and "✓ View mode" in the view-mode menu left view mode (B-37).
+- **Network.** Besides the loads, the one request per session was the CascadiaCode font, through the
+  service worker after the first More tools tap, in 89; none of the 40 request starts fell in one of
+  the 22 drawing steps (`evidence/netlog-steps-s83-s84.json`) [O].
+- **Replay and integrity.** s84 against s83: 53 shared labels, all identical, and all 20 shared ARIA
+  snapshots byte-identical, so 86–92 each ran twice in fresh profiles. Each timeline holds exactly
+  its scenarios' steps. With the tools of `3bd39de` all 133 committed evidence files, the 5 new ones
+  included, regenerate byte for byte in three runs.
+- **Bounds and cleanup.** Only the self-authored link, on a reserved host that can never resolve,
+  and note text were typed; only "Planewright plain text" was written to the clipboard, granted to
+  the reference origin only; no link was followed; 0 `.map` requests. After each session no
+  container, network, driver, watcher, listener on 9222 or 9333, token, REA CLI process or browser
+  image container was left, and `secret-scan.mjs` found no secret shape in either raw tree (89
+  files each) or in the new evidence.
+- **Tests first.** Against a stub module the 16 new checks of `002d960` failed (one expected length
+  then corrected from 54 to 53); the 16 checks of `4f4aaaf`, whose body says 14 (a miscount, kept as
+  history is not rewritten), and the 18 of `67a7b03` could not load before their scenarios; without
+  `3bd39de`'s list change 6 older record checks fail; the 8 record checks of this section failed
+  with the `3bd39de` documents, and one older check was rewritten (R-09's next step no longer names
+  the link items). After unchanged control copies passed, each mutation, in a temporary copy
+  outside the repository, failed the check it targeted: 10 for `002d960` (one rerun after Prettier's
+  rewrap made the literal guard refuse it), 17 for scenarios 86–92, 18 for their guard checks and 15
+  for the record checks of this section and the rewritten one; every new check failed under at
+  least one. The fragment mutation's log printed the test's synthetic room value, so the commit
+  before this section's puts that check's boolean first; its rerun printed none, and the log was
+  masked.
+- **Not covered by a review.** The commits after `82b93e8` are behaviour-changing and no review
+  covers them, so R-75 stays 🟡; the single final independent review is the next step.
+- `npm run test:e2e` was not run locally: nothing under `apps/` or `packages/` changed. The
+  `npm run validate` result, the commit bodies, the push and the GitHub checks are in the PR
+  description.
+
 ## Independent reviews
 
 **R-75 exit rule.** R-75 may become ✅ only after a fresh independent review of the latest
@@ -2443,9 +2526,14 @@ Values were never printed; only counts and file names were recorded.
   s74–s78 (09:16–09:57 UTC, five loads, no reload; see
   [Context-menu, tools and snap batch](#context-menu-tools-and-snap-batch-s74s78)), and so did
   s79–s82 (11:03–11:26 UTC, four loads, no reload; see
-  [Menu items, tools and clipboard batch](#menu-items-tools-and-clipboard-batch-s79s82)).
-- **Not observable in this headless setup.** Native file pickers, save and export flows; R-18
-  and R-46 plan them in a headed browser.
+  [Menu items, tools and clipboard batch](#menu-items-tools-and-clipboard-batch-s79s82)), and so
+  did s83 and s84 (12:18–12:35 UTC, two loads, no reload; see
+  [Final mobile batch](#final-mobile-batch-s83s84)). No live session runs after s84, so these
+  desktop gaps are an objective limitation (see [Readiness](#readiness)).
+- **Not observable in this headless setup.** Native file pickers, save and export flows, a library
+  file and Insert image: an objective limitation of headless Chromium, not a gap this baseline can
+  close (see [Readiness](#readiness)); R-18 and R-46 plan them in a headed browser that the
+  maintainer runs.
 - **Not observed yet, but planned.** The effective stop-session flow and multi-client
   collaboration (R-55), and offline start and reconnection on desktop (R-57), observed on mobile
   in s60 and s63, and with the offline state kept across the reload in s68 and s69.
@@ -2459,7 +2547,9 @@ Values were never printed; only counts and file names were recorded.
 ## Remaining observation work
 
 The issue cannot be completed from retained evidence. These rows of the
-[residual matrix](residual-matrix.md) need work before the behaviour contract is met:
+[residual matrix](residual-matrix.md) need work before the behaviour contract is met. After s84
+each of them is classified in [Readiness](#readiness): none is a feasible mandatory observation
+under the maintainer's constraints, and no live session runs after s84.
 
 - **Without a live session:** none; R-73 is done.
 - **New live observation, priority 1:** keyboard accessibility on desktop and with a screen
@@ -2477,16 +2567,17 @@ The issue cannot be completed from retained evidence. These rows of the
   while the driver draws on desktop, with request start times (R-66); Export to Link on desktop (R-56; the one planned upload ran on mobile in s52); the generation
   features on desktop (R-63; on mobile one generation ran in s49). Desktop sessions first need a way
   to load the page without the verification page (see the blockers); mobile sessions loaded it
-  normally again on 2026-11-06 (s51–s57).
+  normally again on 2026-11-06 (s51–s84).
 - **New live observation, priority 2:** the tool and selection after a drag on desktop, read
   after a wait (R-02, R-29; mobile done in s74–s76); a reload while dark and with zen, grid and snap on, and
   Ctrl+Z after a toggle or theme change, on desktop (R-19; done on mobile in s71 and s72); a real device and what shows the
   shortcut letters (R-23; breakpoints, tablet sizes, landscape and live resizing emulated in s59
   and s62); the System theme and the missing dark surfaces on desktop (R-26; System on mobile in
   s71 and s72); the eraser with undo and a bound or locked target on desktop (R-44; mobile in
-  s71–s73 and s75–s76); the context-menu items on desktop, the two link items and an external
-  paste on mobile (R-08, R-09, R-53; the other items done on mobile in s74–s82); every More tools
-  entry on desktop (R-17; on mobile all but Insert image in s74–s80); Snap to
+  s71–s73 and s75–s76); the context-menu items on desktop and an external image paste (R-08, R-09,
+  R-53; every mobile item done in s74–s84, the two links and a plain-text paste in s83 and s84);
+  every More tools entry on desktop (R-17; on mobile all but Insert image in s74–s84, with Redo
+  after the undos in s83 and s84); Snap to
   midpoints and a snapped drag on desktop (R-19; mobile in s74–s78);
   Overlap and a partial box on desktop (R-12, R-33; mobile in s71 and s72); library export and import and desktop library
   use (R-15; an item added and placed on mobile in s64, with Undo and Redo in s68 and s69); the
@@ -2498,7 +2589,8 @@ The issue cannot be completed from retained evidence. These rows of the
   never run (R-54), and the new 60 and 61 in s68 and s69, and for 54's French labels in s70, which
   loaded them as s61 had, after the 403 of s64, and for 62–65 in s72 and 62 and 66 in s73, and
   for 67–74 in s75 and s76, 75 in s76, 76 in s76–s78 and 78 in s78; 77 ran once, in s76, where its
-  presses on one rectangle opened no menu, so 78 repeated it; for 79–84 in s80 and 85 in s82.
+  presses on one rectangle opened no menu, so 78 repeated it; for 79–84 in s80 and 85 in s82, and
+  for 86–92 in s84.
 - **New live observation, priority 3:** the remaining priority 3 rows, among them R-64's isolated
   desktop exports (scenarios 17 and 18; 19 ran on mobile in s15) and R-65's listener inspection on
   desktop (on mobile the interactive canvas in s76, and the app root, the static canvas, `html` and
@@ -2506,8 +2598,8 @@ The issue cannot be completed from retained evidence. These rows of the
 - **Maintainer decision:** how the desktop client can be observed again without bypassing the
   verification page, for example in a headed browser that the maintainer runs; the mobile client
   met it once, in s50, and loaded normally in s51–s64, but a script asset got HTTP 403 in s64 (and
-  earlier ones in s16 and s49), and s65–s78 loaded normally again, so how often mobile sessions may
-  run is also a maintainer decision.
+  earlier ones in s16 and s49), and s65–s84 loaded normally again, so how often mobile sessions may
+  run is also a maintainer decision. No live session is planned after s84.
 
 ## Interrupted and aborted runs
 
@@ -2576,3 +2668,5 @@ The issue cannot be completed from retained evidence. These rows of the
    netlog placement with `netlog-steps.mjs` for every session directory (see the
    [research README](../../research/excalidraw/README.md)), then update the documents until the
    documentation tests pass.
+7. No live session is planned after s84 (see [Readiness](#readiness)): the next step is the single
+   final independent review, read-only, on the latest head.

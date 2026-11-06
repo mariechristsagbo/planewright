@@ -244,6 +244,32 @@ window spans a reload.
 | `s64-mobile-find-library`          | `r04-inspect-during-58.json` | `ev_9a429301`     | `inspect_web_page`, 03:22:37.459–03:23:27.644, 7 origins. Armed 3394 ms before scenario 58's first step; all its 40 steps inside it |
 | `s64-mobile-find-library`          | `r05-inspect-during-59.json` | `ev_fe536c38`     | `inspect_web_page`, 03:23:31.515–03:24:11.782, 7 origins. Armed 3135 ms before scenario 59's first step; all its 26 steps inside it |
 
+**Final mobile batch records** (s83–s84, on 2026-11-06, times UTC). Each session listed the target
+after 09 once. Every scenario but 16 ran inside its own window, armed 0.0–3.3 s before its first
+step, with all its steps inside it. No session reloaded. The windows over 89 kept one font request
+each, as many as the netlog started inside them; the other 12 kept 0 requests, and none kept a
+WebSocket connection or console event. REA established the requests and their absence; the link,
+the clipboard reads, the menus' geometry and the note's growth came from the driver's probes.
+
+| Session                    | File                         | Evidence (prefix) | Operation and window                                                                                                                 |
+| -------------------------- | ---------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `s83-mobile-final-batch`   | `r01-targets.json`           | `ev_3641587f`     | `list_browser_targets`                                                                                                               |
+| `s83-mobile-final-batch`   | `r02-inspect-during-86.json` | `ev_884b2f9d`     | `inspect_web_page`, 12:19:44.410–12:20:30.515, 7 origins. Armed 931 ms before scenario 86's first step; all its 46 steps inside it   |
+| `s83-mobile-final-batch`   | `r03-inspect-during-87.json` | `ev_25348e71`     | `inspect_web_page`, 12:20:38.830–12:21:14.152, 7 origins. Armed 785 ms before scenario 87's first step; all its 23 steps inside it   |
+| `s83-mobile-final-batch`   | `r04-inspect-during-88.json` | `ev_f17fb3fd`     | `inspect_web_page`, 12:21:19.008–12:21:54.280, 7 origins. Armed 2749 ms before scenario 88's first step; all its 30 steps inside it  |
+| `s83-mobile-final-batch`   | `r05-inspect-during-89.json` | `ev_c74ecc64`     | `inspect_web_page`, 12:21:58.907–12:22:59.352, 7 origins. Armed 2801 ms before scenario 89's first step; all its 72 steps inside it  |
+| `s83-mobile-final-batch`   | `r06-inspect-during-90.json` | `ev_5867fff2`     | `inspect_web_page`, 12:23:06.981–12:24:37.588, 7 origins. Armed 165 ms before scenario 90's first step; all its 144 steps inside it  |
+| `s83-mobile-final-batch`   | `r07-inspect-during-91.json` | `ev_145a00a5`     | `inspect_web_page`, 12:24:46.021–12:25:36.826, 7 origins. Armed 134 ms before scenario 91's first step; all its 37 steps inside it   |
+| `s83-mobile-final-batch`   | `r08-inspect-during-92.json` | `ev_66edc8f3`     | `inspect_web_page`, 12:25:45.115–12:26:46.532, 7 origins. Armed 670 ms before scenario 92's first step; all its 62 steps inside it   |
+| `s84-mobile-final-batch-2` | `r01-targets.json`           | `ev_f3c89618`     | `list_browser_targets`                                                                                                               |
+| `s84-mobile-final-batch-2` | `r02-inspect-during-86.json` | `ev_082caf1e`     | `inspect_web_page`, 12:28:12.143–12:28:58.737, 7 origins. Armed 2752 ms before scenario 86's first step; all its 46 steps inside it  |
+| `s84-mobile-final-batch-2` | `r03-inspect-during-87.json` | `ev_e9dee6db`     | `inspect_web_page`, 12:29:03.686–12:29:38.997, 7 origins. Armed 2686 ms before scenario 87's first step; all its 26 steps inside it  |
+| `s84-mobile-final-batch-2` | `r04-inspect-during-88.json` | `ev_4863d320`     | `inspect_web_page`, 12:29:42.540–12:30:18.173, 7 origins. Armed 3271 ms before scenario 88's first step; all its 30 steps inside it  |
+| `s84-mobile-final-batch-2` | `r05-inspect-during-89.json` | `ev_74d51606`     | `inspect_web_page`, 12:30:23.736–12:31:24.156, 7 origins. Armed 2464 ms before scenario 89's first step; all its 72 steps inside it  |
+| `s84-mobile-final-batch-2` | `r06-inspect-during-90.json` | `ev_a0e20d2e`     | `inspect_web_page`, 12:31:29.522–12:32:59.946, 7 origins. Armed 1751 ms before scenario 90's first step; all its 146 steps inside it |
+| `s84-mobile-final-batch-2` | `r07-inspect-during-91.json` | `ev_7db6450d`     | `inspect_web_page`, 12:33:08.364–12:33:58.953, 7 origins. Armed 529 ms before scenario 91's first step; all its 33 steps inside it   |
+| `s84-mobile-final-batch-2` | `r08-inspect-during-92.json` | `ev_311d7d4d`     | `inspect_web_page`, 12:34:06.298–12:35:06.745, 7 origins. Armed 24 ms before scenario 92's first step; all its 61 steps inside it    |
+
 **Menu items, tools and clipboard records** (s79–s82, on 2026-11-06, times UTC). Each session
 listed the target after 09 once. Every scenario but 16 ran inside its own window, armed 0.4–3.7 s
 before its first step, with all its steps inside it, and in s82 REA inspected the listeners of the
