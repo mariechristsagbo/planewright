@@ -1,0 +1,295 @@
+# P0 engine roadmap
+
+The P0 engine is split into fifteen issues, each delivered by one pull request on its own branch,
+in the milestone **v0.1.0 — Engine Core**. Each issue is opened only when the one before it in the
+order below has merged or no longer blocks it, and only after this architecture has been reviewed
+and merged. None of them is open yet.
+
+Every P0 requirement of the [requirements trace](requirements.md) is delivered by exactly one
+issue below; the P1 and P2 requirements that the P0 design already accommodates are listed under
+[Deferred requirements](#deferred-requirements).
+
+## Rules for every engine issue
+
+- **Tests first.** The pull request records the failing run of its new tests before the change
+  that makes them pass. Each test that proves a requirement names it.
+- **Definition of done.** `npm run validate` passes, and `npm run test:e2e` too when the web app
+  changes; every acceptance criterion has a test or a recorded manual check; the documents in this
+  directory and the requirements' dispositions are updated when a decision changes, with a new or
+  superseding ADR when the decision is architectural.
+- **Clean room.** No reference code, assets, fonts, icons or text, and no `@excalidraw/*` package;
+  reference behaviour is consulted only through the merged baseline, and any new observation needs
+  its own investigation issue ([ADR 0003](../../adr/0003-clean-room-reference-policy.md)).
+- **Factual UI.** Until the last P0 issue merges, the web app labels itself a pre-release and lists
+  what does not work yet.
+- **Size.** An issue that grows beyond one reviewable pull request is split before work continues.
+
+## Order and dependencies
+
+| Issue  | Title                                                         | Depends on             |
+| ------ | ------------------------------------------------------------- | ---------------------- |
+| ENG-01 | Engine package, math primitives and layer check               | none                   |
+| ENG-02 | Document model, order keys and codec                          | ENG-01                 |
+| ENG-03 | Scene store, change sets and transactions                     | ENG-02                 |
+| ENG-04 | Undo and redo history                                         | ENG-03                 |
+| ENG-05 | Camera and viewport controller                                | ENG-01                 |
+| ENG-06 | Geometry, hit testing and text layout                         | ENG-02, ENG-05         |
+| ENG-07 | Canvas renderer and render loop                               | ENG-03, ENG-05, ENG-06 |
+| ENG-08 | Editor surface: canvas host, input, gestures and commands     | ENG-04, ENG-07         |
+| ENG-09 | Selection tool and selection chrome                           | ENG-06, ENG-08         |
+| ENG-10 | Transforms: move, resize, rotate, duplicate, delete and nudge | ENG-09                 |
+| ENG-11 | Shape, line and freehand creation tools                       | ENG-09                 |
+| ENG-12 | Text tool and text editing                                    | ENG-11                 |
+| ENG-13 | Local persistence and autosave                                | ENG-08                 |
+| ENG-14 | Accessible element list, live region and focus order          | ENG-09                 |
+| ENG-15 | Performance harness and budgets                               | ENG-07                 |
+
+ENG-05 can run beside ENG-02 to ENG-04, and ENG-13 to ENG-15 beside ENG-10 to ENG-12.
+
+## Issues
+
+### ENG-01 Engine package, math primitives and layer check
+
+- **Branch:** `feat/<issue>-engine-foundation`.
+- **Delivers:** the `packages/engine` workspace as in [modules](modules.md#packages); its Vitest
+  projects; an ESLint block that forbids DOM and Node.js globals, `Math.random`, `Date.now` and
+  timers in the engine; engine coverage thresholds of 95, 90, 95 and 95 %; the commitlint scopes
+  `engine` and `render-canvas`; the port interfaces as types; the `math` layer; the seeded random
+  generator for property tests; and the test that enforces the layer order.
+- **Acceptance criteria:**
+  - a planted import from a lower layer and a planted `window` reference each fail a check, as
+    recorded in the pull request, and the clean tree passes;
+  - every `math` function has unit tests and the layer has full branch coverage;
+  - `npm run validate` passes with the new workspace.
+- **Requirements:** none directly; every later issue builds on it.
+- **Out of scope:** any model, geometry or UI code.
+
+### ENG-02 Document model, order keys and codec
+
+- **Delivers:** the [domain model](domain-model.md) types for every kind; identifier, colour and
+  order-key helpers; the initial default style; `decodeDocument` and `encodeDocument` with every
+  limit and the migration scaffold.
+- **Acceptance criteria:**
+  - property tests: a generated key lies strictly between its neighbours and never ends with `0`;
+    decoding an encoded document returns it; encoding is byte-stable;
+  - each limit and invariant of the domain model has a failing-input test that returns an error
+    with the right path, and no invalid input yields a partial document;
+  - a newer schema number is refused with its own message.
+- **Requirements:** REQ-C12, REQ-K02, REQ-P07.
+- **Out of scope:** storage, the clipboard and file pickers.
+
+### ENG-03 Scene store, change sets and transactions
+
+- **Delivers:** the scene store with atomic `apply`, origins and `SceneUpdate` events; the order,
+  spatial, group and attachment indexes; transient previews; transactions that commit net change
+  sets ([scene and viewport](scene-and-viewport.md#change-sets)).
+- **Acceptance criteria:**
+  - a change set with one invalid change leaves the store unchanged;
+  - index queries agree with a brute-force scan over random scenes;
+  - a cancelled transaction leaves the document equal to its start, and a committed one emits one
+    net change set that inverts exactly;
+  - `remote` and `load` updates are emitted with their origin.
+- **Requirements:** REQ-K01.
+- **Out of scope:** history, rendering.
+
+### ENG-04 Undo and redo history
+
+- **Delivers:** the [history](history.md) with entries that carry the selection, burst merging,
+  conflict-safe undo and redo, limits and availability flags.
+- **Acceptance criteria:**
+  - property: undo then redo restores the document; undo alone restores the start;
+  - selection-only changes, camera moves and preference changes create no entry; undo restores the
+    surrounding selection and leaves the tool unchanged;
+  - undo during an open transaction does nothing;
+  - a field changed by a `remote` change set after an entry keeps its remote value on undo.
+- **Requirements:** REQ-H03, REQ-H04, REQ-H05, REQ-H06, REQ-H07, REQ-K03, REQ-S13.
+- **Out of scope:** keyboard shortcuts and buttons (ENG-08).
+
+### ENG-05 Camera and viewport controller
+
+- **Delivers:** the camera of [scene and viewport](scene-and-viewport.md#camera): transforms, pan,
+  wheel, zoom about a point, the zoom ladder, zoom to fit, two-pointer maths, limits and resize.
+- **Acceptance criteria:**
+  - every [test vector](scene-and-viewport.md#test-vectors-from-the-baseline) passes within 0.5
+    scene units;
+  - properties: screen to scene to screen is the identity; zooming about a point keeps it;
+  - no camera operation creates a history entry.
+- **Requirements:** REQ-V01, REQ-V02, REQ-V03, REQ-V04, REQ-V08, REQ-V09, REQ-V10.
+- **Out of scope:** DOM events (ENG-08).
+
+### ENG-06 Geometry, hit testing and text layout
+
+- **Delivers:** outlines, bounds and distance functions for the P0 kinds; `hitTest` with its order
+  and tolerances; marquee enclosure; handle layout and hit squares; `layoutText` over the text
+  measurer port ([rendering and hit testing](rendering-and-hit-testing.md#geometry)).
+- **Acceptance criteria:**
+  - the REQ-S03 ladder: at zoom 1 with a 2-unit stroke, 4 and 5 px from the centre line hit and 8
+    and 9 px miss, for mouse and touch tolerances; and the same ladder at zoom 2 in screen pixels;
+  - an unfilled rectangle is not hit at its centre and a filled one is; the topmost of overlapping
+    elements wins; a text is hit anywhere in its box;
+  - rotated elements hit-test in their local frame;
+  - handle hit squares are at least 24 px for touch.
+- **Requirements:** REQ-S01, REQ-S02, REQ-S03, REQ-S04, REQ-Y06.
+- **Out of scope:** drawing, input.
+
+### ENG-07 Canvas renderer and render loop
+
+- **Delivers:** the `packages/render-canvas` workspace implementing the renderer port with the
+  scene and overlay layers and the path cache; render frames, dirty tracking and frame scheduling
+  in the editor façade ([ADR 0006](../../adr/0006-canvas-rendering.md)).
+- **Acceptance criteria:**
+  - recorded draw calls for fixture scenes match their expected sequences, including the device
+    pixel ratio transform;
+  - an overlay-only change does not redraw the scene layer; several changes in one frame cause one
+    render;
+  - a path is rebuilt only when its element's revision changes.
+- **Requirements:** REQ-F02.
+- **Out of scope:** the canvas host and input (ENG-08).
+
+### ENG-08 Editor surface: canvas host, input, gestures and commands
+
+- **Delivers:** in `apps/web`, the canvas host with two canvases, the input adapter, the editor
+  provider and the tool bar; in the engine, the gesture recogniser, the viewport routing, the Hand
+  tool, the command registry and the keymap ([interaction](interaction.md)); Undo and Redo controls.
+- **Acceptance criteria:**
+  - adapter tests map pointer, wheel (pixel, line and page modes) and key events, with Mod as Cmd on
+    macOS and Ctrl elsewhere;
+  - recogniser tests cover drag thresholds, taps, double taps, long presses and the second touch
+    pointer cancelling a tool gesture;
+  - end to end: wheel, Shift+wheel, Mod+wheel, keyboard zoom, Space+drag, a middle-button drag, the
+    Hand tool and a two-finger pinch and pan move the camera as specified, and a press on the tool
+    bar never reaches the canvas;
+  - Undo and Redo start disabled and follow REQ-H02; every control has a name, the tool bar is a
+    `toolbar` with arrow-key movement, and each tool exposes its shortcut;
+  - the page still states what does not work yet.
+- **Requirements:** REQ-C11, REQ-C14, REQ-H01, REQ-H02, REQ-V05, REQ-V06, REQ-V07, REQ-Y01, REQ-Y03.
+- **Out of scope:** the drawing and selection tools.
+
+### ENG-09 Selection tool and selection chrome
+
+- **Delivers:** the Selection tool's press, Shift-press, marquee, Select all, tap-to-clear and
+  Escape behaviour; the selection outline and handles on the overlay.
+- **Acceptance criteria:**
+  - tool reducer tests for every transition in [Selection tool](interaction.md#selection-tool);
+  - end to end on desktop and the emulated phone: press, Shift+press, marquee and Mod+A select as
+    specified; a press on empty canvas and Escape clear;
+  - eight handles and the rotation handle show, side handles hide on small boxes, and a two-point
+    line shows end handles;
+  - selection changes create no undo step.
+- **Requirements:** REQ-S05, REQ-S06, REQ-S09, REQ-S10, REQ-S12, REQ-T07.
+- **Out of scope:** transforms (ENG-10).
+
+### ENG-10 Transforms: move, resize, rotate, duplicate, delete and nudge
+
+- **Delivers:** the transform rules of [interaction](interaction.md#transforms) and their commands.
+- **Acceptance criteria:**
+  - B-15's move by +40, +40 and B-16's resize boxes are reproduced for all eight handles and the
+    two-element case; Shift and Alt resize as specified; sizes stop at 1 unit;
+  - rotation follows the pointer and snaps to 15° with Shift;
+  - duplicate offsets by +10, +10 and selects the copies; Delete removes and undo restores the
+    selection;
+  - arrow keys nudge by 1 and 10, and one held key is one undo step;
+  - each gesture or command is exactly one undo step.
+- **Requirements:** REQ-T01, REQ-T02, REQ-T03, REQ-T04, REQ-T05, REQ-T06, REQ-T08, REQ-T09, REQ-T10,
+  REQ-T11.
+- **Out of scope:** flips, snapping, groups.
+
+### ENG-11 Shape, line and freehand creation tools
+
+- **Delivers:** the rectangle, ellipse, diamond, line and freehand tools and tool lock.
+- **Acceptance criteria:**
+  - B-01's boxes are reproduced by drags, also towards the top-left; taps create the default sizes;
+  - after a shape or line the Selection tool is active with the new element selected, and with tool
+    lock the tool stays and nothing is selected; freehand stays active;
+  - a freehand stroke's box is its input's extent and a tap makes a dot;
+  - each creation is one undo step that leaves nothing selected when undone.
+- **Requirements:** REQ-C01, REQ-C02, REQ-C03, REQ-C04, REQ-C05, REQ-C06, REQ-C07, REQ-C13.
+- **Out of scope:** pressure-sensitive width, arrows, notes.
+
+### ENG-12 Text tool and text editing
+
+- **Delivers:** the Text tool, the text overlay in the web app, measurement through the text
+  measurer, and an ADR choosing the open-licence fonts behind the `sans`, `hand` and `mono`
+  families.
+- **Acceptance criteria:**
+  - B-06's placement: the left edge at the click and the first line's centre on it;
+  - Escape, Mod+Enter, a press outside and a tool change commit; an empty new text disappears
+    without an undo step; one session is one undo step; a double tap re-edits;
+  - shortcuts are paused while the text area has focus.
+- **Requirements:** REQ-C09, REQ-C10.
+- **Out of scope:** labels in shapes, wrapping, the font picker.
+
+### ENG-13 Local persistence and autosave
+
+- **Delivers:** the autosave scheduler, the IndexedDB repository, loading, the notices for failed,
+  stale and unavailable storage, and the preferences entry ([persistence](persistence.md)).
+- **Acceptance criteria:**
+  - scheduler tests with a fake clock: saved within 300 ms of the last change and at most 1 s after
+    the first; transient previews never saved; retries and notices on failure;
+  - repository tests: a stale revision is refused and nothing is written;
+  - end to end: after a reload the document, camera and selection are back, the tool is Selection,
+    history is empty and deleted elements are gone; a second tab's newer save raises the notice;
+  - invalid stored data is left untouched and a new document opens with a notice.
+- **Requirements:** REQ-P01, REQ-P02, REQ-P03, REQ-P05, REQ-P06, REQ-V11.
+- **Out of scope:** files, images, the clipboard, offline start.
+
+### ENG-14 Accessible element list, live region and focus order
+
+- **Delivers:** the element list, the live region with the announcer port, focus order and
+  indicators, Escape focus return, and keyboard creation ([quality](quality.md#accessibility)).
+- **Acceptance criteria:**
+  - keyboard-only end-to-end test: create each P0 kind, select, nudge and delete from the list, undo
+    and redo, with each step announced;
+  - every focusable element shows a visible indicator, and the tab order is as specified;
+  - targets and contrast meet the stated minimums in the light theme.
+- **Requirements:** REQ-Y02, REQ-Y04, REQ-Y05.
+- **Out of scope:** menus and the dark theme (P1, P2).
+
+### ENG-15 Performance harness and budgets
+
+- **Delivers:** the benchmarks and Playwright measurements of [quality](quality.md#performance-budgets),
+  a bundle-size guardrail, and the CI reporting that becomes a gate after three baseline runs.
+- **Acceptance criteria:**
+  - each budget has a measurement that runs in CI and reports its value, the next-frame budget of
+    the ENG-07 render loop included;
+  - the P0 engine meets every budget, or the pull request names the miss and the issue that will fix
+    it.
+- **Requirements:** REQ-F01, REQ-F03, REQ-F04.
+- **Out of scope:** optimisations beyond what a missed budget requires.
+
+## Deferred requirements
+
+These requirements are not delivered by P0, but the P0 model and interfaces already hold them, as
+the cited designs show. They go to feature issues derived from the backlog.
+
+| Requirement | Phase | Backlog item            | Prepared by                                                                          |
+| ----------- | ----- | ----------------------- | ------------------------------------------------------------------------------------ |
+| REQ-C08     | P1    | 2, freehand             | `pressures` on freehand elements ([domain model](domain-model.md#elements))          |
+| REQ-S07     | P2    | 3, selection            | the marquee's overlap mode ([hit testing](rendering-and-hit-testing.md#hit-testing)) |
+| REQ-S08     | P1    | 10, lock                | `locked` on every element; hit testing skips it                                      |
+| REQ-S11     | P1    | 10, groups              | group records and the outermost-group index                                          |
+| REQ-S14     | P1    | 10, context menu        | the recogniser's long press                                                          |
+| REQ-T12     | P1    | 4, transforms           | transforms in the local frame                                                        |
+| REQ-P04     | P2    | 6, persistence          | the `files` store keyed by SHA-256                                                   |
+| REQ-P08     | P2    | 21, offline start       | the app shell and IndexedDB, with a service worker to add                            |
+| REQ-M01     | P1    | 9, arrows and binding   | single-sided attachments and the attachment index                                    |
+| REQ-M02     | P1    | 8, text and labels      | embedded labels and `layoutText` with a maximum width                                |
+| REQ-M03     | P1    | 8, sticky notes         | the note kind with an embedded label                                                 |
+| REQ-M04     | P1    | 10, groups              | group records with parents                                                           |
+| REQ-M05     | P1    | 10, layers              | order keys and `keyBetween`                                                          |
+| REQ-M06     | P1    | 7, styles               | the style record and editor defaults                                                 |
+| REQ-M07     | P1    | 10, lock                | `locked` on every element                                                            |
+| REQ-M08     | P1    | 10, links               | `link` with the codec's scheme check                                                 |
+| REQ-M09     | P2    | 10, frames              | the frame kind                                                                       |
+| REQ-M10     | P2    | 16, images              | the image kind and the files store                                                   |
+| REQ-X01     | P1    | 11, clipboard           | the clipboard payload in the codec                                                   |
+| REQ-X02     | P1    | 11, clipboard           | the text kind                                                                        |
+| REQ-X03     | P2    | 17, import and export   | the document file format                                                             |
+| REQ-X04     | P2    | 17, import and export   | outlines shared by the renderer and export                                           |
+| REQ-K04     | P2    | 18, guest collaboration | the collaboration-ready types ([collaboration](collaboration.md))                    |
+
+## The first issue
+
+The first issue to open, once this architecture is reviewed and merged, is **ENG-01 Engine package,
+math primitives and layer check**, in the milestone v0.1.0 — Engine Core, with its acceptance
+criteria copied from above.
