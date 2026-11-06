@@ -206,8 +206,11 @@ screenshot (see [limitations](limitations.md)). The layout facts below were iden
   shows no zoom control (B-36).
 - **The last menu items (s83, s84):** from the element menu Add link and Copy link to object, and
   from the canvas menu Snap to objects, Arrow binding, Snap to midpoints, Canvas & Shape properties
-  and View mode were used, so every item of both mobile context menus has now been picked (B-34,
-  B-37, B-42) [O, high: s83 and s84 identical]. Copy link to object copies a link to the reference
+  and View mode were used (B-34, B-37, B-42) [O, high: s83 and s84 identical]. Every item of
+  both mobile context menus has been picked but three cases: the canvas menu's two Copy to
+  clipboard items, picked only from the element menu (82), so a copy with nothing selected is
+  unobserved, and the element menu's Paste, picked only from the canvas menu (82, 88). They stay
+  open as refinements, not mandatory (R-08, R-09, R-53). Copy link to object copies a link to the reference
   with an `element` query key; with nothing selected Canvas & Shape properties showed no panel; in
   view mode the canvas menu keeps only the two image copies, Toggle grid, "✓ View mode" and
   "✓ Canvas & Shape properties". A plain text that the driver wrote to the clipboard pasted as one

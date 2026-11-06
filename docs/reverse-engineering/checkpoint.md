@@ -39,7 +39,8 @@ including `B`. A span that includes its first commit is written from `A` to `B`.
 
 ## Readiness
 
-After s83 and s84 the agreed mobile list is complete, and no live session runs after s84 (see
+After s83 and s84 the agreed mobile list ran but for two refinements, the canvas menu's image
+copies with nothing selected and the element menu's Paste, and no live session runs after s84 (see
 [Readiness of issue #1](readiness.md)). Every criterion and requirement still Partial, and every
 open residual row, is classified in `readiness.md`. No feasible mandatory observation remains: the
 desktop parts of the open rows are an objective limitation of the verification page, which is never
@@ -1935,6 +1936,9 @@ remediation.
   and not at x 220 (B-34, A-16); a long text grew the note to 332 px and set its label to font size
   16 (B-08); the canvas-menu toggles flipped their stored flags, Canvas & Shape properties showed
   nothing with nothing selected, and "✓ View mode" in the view-mode menu left view mode (B-37).
+  Of the other canvas-menu items, its two Copy to clipboard items were not picked, only the element
+  menu's in 82, so a copy with nothing selected, like the element menu's Paste, stays a refinement
+  ([Readiness](#readiness)).
 - **Network.** Besides the loads, the one request per session was the CascadiaCode font, through the
   service worker after the first More tools tap, in 89; none of the 40 request starts fell in one of
   the 22 drawing steps (`evidence/netlog-steps-s83-s84.json`) [O].
@@ -2579,7 +2583,8 @@ under the maintainer's constraints, and no live session runs after s84.
   and s62); the System theme and the missing dark surfaces on desktop (R-26; System on mobile in
   s71 and s72); the eraser with undo and a bound or locked target on desktop (R-44; mobile in
   s71–s73 and s75–s76); the context-menu items on desktop and an external image paste (R-08, R-09,
-  R-53; every mobile item done in s74–s84, the two links and a plain-text paste in s83 and s84);
+  R-53; on mobile every item but the canvas menu's image copies with nothing selected and the
+  element menu's Paste done in s74–s84, the two links and a plain-text paste in s83 and s84);
   every More tools entry on desktop (R-17; on mobile all but Insert image in s74–s84, with Redo
   after the undos in s83 and s84); Snap to
   midpoints and a snapped drag on desktop (R-19; mobile in s74–s78);

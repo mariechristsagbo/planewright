@@ -139,7 +139,8 @@ which are refinements that the feature issue must observe or decide.
     - On mobile Cut and Copy write the same payload, Paste in the canvas menu adds a selected copy
       that one Undo removes, and the image items write one PNG of the selection (360×300 for a
       100×80 shape) or one SVG text (s79, s80; B-26, B-27) [O, raw timelines only for the clipboard]. Desktop
-      cut and the image items are **open** (R-53).
+      cut and the image items are **open** (R-53), and so, on mobile, are the canvas menu's image
+      items with nothing selected and the element menu's Paste (R-08, R-09, R-53).
     - A plain text on the clipboard pastes as one selected text element at font size 20, one Undo
       step (s83, s84; B-26) [O, mobile, a text the driver wrote]; text from another app and an
       image are **open** (R-53).

@@ -4,25 +4,27 @@ Last updated: 2026-11-06, after the final mobile batch (s83–s84). The precise 
 criterion, the batch records and the independent reviews are in the [checkpoint](checkpoint.md);
 the open rows are in the [residual matrix](residual-matrix.md).
 
-This document classifies, after s83 and s84, every acceptance criterion and testing requirement
-of issue #1 that is not Done, and the open residual rows behind them. The agreed mobile list is
-complete: the six items of the [final mobile batch](checkpoint.md#final-mobile-batch-s83s84) were
-the last guest-mode mobile observations that the maintainer listed as feasible without an account,
-a file chooser, an upload, a room, an embed link or a generation, and no live session runs after
-s84. A gap is never counted as done: each is an objective limitation, which this baseline cannot
-remove without breaking a rule of the investigation, a scope the maintainer excluded for this
-phase, a tool limit, or a refinement of a behaviour already observed, which its feature issue must
-observe or decide.
+This document classifies, after s83 and s84, every acceptance criterion and testing requirement of
+issue #1 that is not Done, and the open residual rows behind them. The agreed mobile list ran but
+for two cases of it: the six items of the
+[final mobile batch](checkpoint.md#final-mobile-batch-s83s84) were the last guest-mode mobile
+observations that the maintainer listed as feasible without an account, a file chooser, an upload, a
+room, an embed link or a generation, but of the other canvas-menu items the two Copy to clipboard
+items were never picked with nothing selected, and the element menu's Paste was never picked either.
+Both are refinements, not mandatory (below), and no live session runs after s84. A gap is never
+counted as done: each is an objective limitation, which this baseline cannot remove without breaking
+a rule of the investigation, a scope the maintainer excluded for this phase, a tool limit, or a
+refinement of a behaviour already observed, which its feature issue must observe or decide.
 
-| Item                                                    | Status  | Classification                                                                                 | What stays open                                                                                                                                                            |
-| ------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `feature-inventory.md` covers all discovered features   | Partial | Objective limitation: verification page; objective limitation: headless native file chooser    | Every discovered feature has an ID and a matrix row. Not used: desktop Export to Link and generation (R-56, R-63), library export and import and Insert image (R-15, R-18) |
-| `behavior-analysis.md`                                  | Partial | Objective limitation: verification page; excluded by the maintainer; refinement, not mandatory | Desktop undo, reload, modifier, nudge and hit-test dimensions; a second collaboration client (R-55); on mobile the refinements listed below                                |
-| `limitations.md`                                        | Partial | Refinement, not mandatory                                                                      | The inaccessible and unverified behaviour is listed; the raw-only facts are listed per batch, s83–s84 included, but were never audited exhaustively                        |
-| Desktop light/dark and mobile evidence sets             | Partial | Objective limitation: verification page                                                        | The missing desktop dark surfaces (R-26)                                                                                                                                   |
-| Prioritised backlog with acceptance criteria            | Partial | Objective limitation: verification page; refinement, not mandatory                             | Criteria marked **open** for desktop behaviour and for the refinements below                                                                                               |
-| Re-run each documented interaction from a fresh profile | Partial | Objective limitation: verification page; excluded by the maintainer                            | 15 on desktop after 01–07b; 43 and 44 ran once by design (one generation and one upload allowed); 77 ran once and 78 replaced it                                           |
-| Separate Claude Code review session                     | Partial | Mandatory and feasible                                                                         | The single final independent review (R-75), the next step                                                                                                                  |
+| Item                                                    | Status  | Classification                                                                                                         | What stays open                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `feature-inventory.md` covers all discovered features   | Partial | Objective limitation: verification page; objective limitation: headless native file chooser; refinement, not mandatory | Every discovered feature has an ID and a matrix row. Not used: desktop Export to Link and generation (R-56, R-63), library export and import and Insert image (R-15, R-18); on mobile, the canvas menu's image copies with nothing selected and the element menu's Paste (R-08, R-09, R-53) |
+| `behavior-analysis.md`                                  | Partial | Objective limitation: verification page; excluded by the maintainer; refinement, not mandatory                         | Desktop undo, reload, modifier, nudge and hit-test dimensions; a second collaboration client (R-55); on mobile the refinements listed below                                                                                                                                                 |
+| `limitations.md`                                        | Partial | Refinement, not mandatory                                                                                              | The inaccessible and unverified behaviour is listed; the raw-only facts are listed per batch, s83–s84 included, but were never audited exhaustively                                                                                                                                         |
+| Desktop light/dark and mobile evidence sets             | Partial | Objective limitation: verification page                                                                                | The missing desktop dark surfaces (R-26)                                                                                                                                                                                                                                                    |
+| Prioritised backlog with acceptance criteria            | Partial | Objective limitation: verification page; refinement, not mandatory                                                     | Criteria marked **open** for desktop behaviour and for the refinements below                                                                                                                                                                                                                |
+| Re-run each documented interaction from a fresh profile | Partial | Objective limitation: verification page; excluded by the maintainer                                                    | 15 on desktop after 01–07b; 43 and 44 ran once by design (one generation and one upload allowed); 77 ran once and 78 replaced it                                                                                                                                                            |
+| Separate Claude Code review session                     | Partial | Mandatory and feasible                                                                                                 | The single final independent review (R-75), the next step                                                                                                                                                                                                                                   |
 
 Every other criterion and requirement is Done.
 
@@ -55,9 +57,13 @@ Every other criterion and requirement is Done.
   feature issue: text re-edit by a double tap and the undo of typing (R-40), the hit ladder at
   zoom 2 and with a thicker stroke (R-34), other Autoshape inputs (R-43), a nested group (R-49),
   a longer reconnection window (R-57), the breakpoints to the pixel (R-23), the Tab shape toggle
-  (R-32) and a committed storage inventory after interaction (R-61). The maintainer has confirmed
-  this classification: they are not mandatory for issue #1, and no live session runs for them
-  before the review.
+  (R-32) and a committed storage inventory after interaction (R-61). Two cases on the agreed final
+  list were not done and are refinements too: the canvas menu's two Copy to clipboard items with
+  nothing selected, picked only from the element menu in 82 (R-08, R-53), and the element menu's
+  Paste, picked only from the canvas menu in 82 and 88 (R-09, R-53). The maintainer has confirmed
+  this classification, for the two menu cases by a decision taken autonomously within the
+  maintainer's scope on 2026-11-06: they are not mandatory for issue #1, and no live session runs
+  for them.
 - **Mandatory and feasible.** No feasible mandatory observation remains under these constraints;
   the one mandatory item left is the single final independent review (R-75), which runs once,
   read-only, on the latest head. Until it meets the exit rule, PR #2 stays a Draft and issue #1

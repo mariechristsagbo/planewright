@@ -177,9 +177,13 @@ describe('the rows and the readiness record after the s83–s84 batch', () => {
     );
     expect(cells('R-17')[8]).toBe('Each entry on desktop; an embed with a self-authored link');
     expect(cells('R-41')[7]).not.toContain('long text');
-    expect(cells('R-53')[8]).toBe('Each context-menu item on desktop; an external image paste');
+    expect(cells('R-53')[8]).toBe(
+      'Each context-menu item on desktop; an external image paste; ' +
+        "on mobile the element menu's Paste and the canvas menu's image copies",
+    );
     expect(cells('R-08')[8]).toBe(
-      "Toggle Arrow binding off from it on desktop and redraw B-04's arrows",
+      "Toggle Arrow binding off from it on desktop and redraw B-04's arrows; " +
+        'on mobile both Copy to clipboard items with nothing selected',
     );
   });
 
