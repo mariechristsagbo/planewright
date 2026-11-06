@@ -20,6 +20,55 @@ const guardrails = {
   'max-params': ['error', 4],
 };
 
+const PLATFORM_MESSAGE =
+  'The engine is ECMAScript only (ADR 0004): it reaches the platform through its ports.';
+const TIMER_MESSAGE =
+  'Engine code never uses timers directly: it schedules through the Scheduler port.';
+const CLOCK_MESSAGE = 'Engine code never reads the time directly: it asks the Clock port.';
+const RANDOM_MESSAGE =
+  'Engine code is deterministic: identifiers come from the IdSource port and test values from a seeded random source.';
+const TIMERS = [
+  'setTimeout',
+  'clearTimeout',
+  'setInterval',
+  'clearInterval',
+  'setImmediate',
+  'clearImmediate',
+  'requestAnimationFrame',
+  'cancelAnimationFrame',
+  'requestIdleCallback',
+  'cancelIdleCallback',
+  'queueMicrotask',
+];
+// Every browser, worker and Node.js global; none of them is part of ECMAScript.
+const PLATFORM_GLOBALS = [
+  ...new Set(
+    [globals.browser, globals.worker, globals.serviceworker, globals.node].flatMap(Object.keys),
+  ),
+].filter((name) => !TIMERS.includes(name));
+
+/**
+ * The engine's boundary (ADR 0004 and docs/architecture/engine/quality.md): no platform global,
+ * not even through `globalThis`, and no clock, randomness or timer except through its ports.
+ */
+const engineBoundary = {
+  'no-restricted-globals': [
+    'error',
+    ...TIMERS.map((name) => ({ name, message: TIMER_MESSAGE })),
+    ...['globalThis', ...PLATFORM_GLOBALS].map((name) => ({ name, message: PLATFORM_MESSAGE })),
+  ],
+  'no-restricted-properties': [
+    'error',
+    { object: 'Math', property: 'random', message: RANDOM_MESSAGE },
+    { object: 'Date', property: 'now', message: CLOCK_MESSAGE },
+  ],
+  'no-restricted-syntax': [
+    'error',
+    { selector: "NewExpression[callee.name='Date'][arguments.length=0]", message: CLOCK_MESSAGE },
+    { selector: "CallExpression[callee.name='Date']", message: CLOCK_MESSAGE },
+  ],
+};
+
 export default defineConfig(
   globalIgnores([
     '**/dist/',
@@ -71,6 +120,30 @@ export default defineConfig(
     files: ['apps/web/src/**/*.{ts,tsx}', 'apps/web/tests/unit/**/*.{ts,tsx}'],
     extends: [reactHooks.configs.flat['recommended-latest'], reactRefresh.configs.vite],
     languageOptions: { globals: globals.browser },
+  },
+  {
+    name: 'planewright/engine',
+    files: ['packages/engine/**/*.ts'],
+    rules: engineBoundary,
+  },
+  {
+    // The engine has no run-time dependency: its sources import only one another.
+    name: 'planewright/engine-source',
+    files: ['packages/engine/src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?!\\.\\.?/)',
+              message:
+                'The engine has no dependencies and no Node.js APIs (ADR 0004): import only its own modules, by relative path.',
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     name: 'planewright/tests',
