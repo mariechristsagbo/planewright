@@ -23,6 +23,12 @@ issue below; the P1 and P2 requirements that the P0 design already accommodates 
 - **Factual UI.** Until the last P0 issue merges, the web app labels itself a pre-release and lists
   what does not work yet.
 - **Size.** An issue that grows beyond one reviewable pull request is split before work continues.
+- **One delivering issue.** A requirement's field names the first issue whose acceptance criteria
+  can show all of it that P0 has, with what that issue and its dependencies deliver; an earlier
+  issue may test the engine rule behind it first. A requirement about every tool, control or
+  command is delivered by the issue that sets up the rule, and each later issue that adds one
+  extends its tests. A part that needs something P0 does not have, such as menus or the dark
+  theme, is tested again by the P1 or P2 issue that adds it.
 
 ## Order and dependencies
 
@@ -83,7 +89,7 @@ and ENG-14.
   - each limit and invariant of the domain model has a failing-input test that returns an error
     with the right path, and no invalid input yields a partial document;
   - a newer schema number is refused with its own message.
-- **Requirements:** REQ-C12, REQ-K02, REQ-P07.
+- **Requirements:** REQ-K02, REQ-P07.
 - **Out of scope:** storage, the clipboard and file pickers.
 
 ### ENG-03 Scene store, change sets and transactions
@@ -97,7 +103,7 @@ and ENG-14.
   - a cancelled transaction leaves the document equal to its start, and a committed one emits one
     net change set that inverts exactly;
   - `remote` and `load` updates are emitted with their origin.
-- **Requirements:** REQ-K01.
+- **Requirements:** none directly; ENG-04 completes the change-set requirement that it starts.
 - **Out of scope:** history, rendering.
 
 ### ENG-04 Undo and redo history
@@ -106,11 +112,11 @@ and ENG-14.
   conflict-safe undo and redo, limits and availability flags.
 - **Acceptance criteria:**
   - property: undo then redo restores the document; undo alone restores the start;
-  - selection-only changes, camera moves and preference changes create no entry; undo restores the
-    surrounding selection and leaves the tool unchanged;
+  - only a committed transaction records an entry, so `remote` and `load` change sets never do
+    (REQ-K01); undo and redo restore the entry's selection, filtered to elements that exist;
   - undo during an open transaction does nothing;
   - a field changed by a `remote` change set after an entry keeps its remote value on undo.
-- **Requirements:** REQ-H03, REQ-H04, REQ-H05, REQ-H06, REQ-H07, REQ-K03, REQ-S13.
+- **Requirements:** REQ-H07, REQ-K01, REQ-K03.
 - **Out of scope:** keyboard shortcuts and buttons (ENG-08).
 
 ### ENG-05 Camera and viewport controller
@@ -121,8 +127,8 @@ and ENG-14.
   - every [test vector](scene-and-viewport.md#test-vectors-from-the-baseline) passes within 0.5
     scene units;
   - properties: screen to scene to screen is the identity; zooming about a point keeps it;
-  - no camera operation creates a history entry.
-- **Requirements:** REQ-V01, REQ-V02, REQ-V03, REQ-V04, REQ-V08, REQ-V09, REQ-V10.
+  - camera operations return a new camera and never touch the document.
+- **Requirements:** REQ-V01, REQ-V02, REQ-V03, REQ-V04, REQ-V08, REQ-V09.
 - **Out of scope:** DOM events (ENG-08).
 
 ### ENG-06 Geometry, hit testing and text layout
@@ -140,7 +146,7 @@ and ENG-14.
     elements wins; a text is hit anywhere in its box;
   - rotated elements hit-test in their local frame;
   - handle hit squares are at least 24 px for touch.
-- **Requirements:** REQ-S01, REQ-S02, REQ-S03, REQ-S04, REQ-Y06.
+- **Requirements:** REQ-S01, REQ-S02, REQ-S03, REQ-S04.
 - **Out of scope:** drawing, input.
 
 ### ENG-07 Canvas renderer and render loop
@@ -154,7 +160,7 @@ and ENG-14.
   - an overlay-only change does not redraw the scene layer; several changes in one frame cause one
     render;
   - a path is rebuilt only when its element's revision changes.
-- **Requirements:** REQ-F02.
+- **Requirements:** none directly; ENG-08 shows the next-frame requirement once input exists.
 - **Out of scope:** the canvas host and input (ENG-08).
 
 ### ENG-08 Editor surface: canvas host, input, gestures and commands
@@ -170,10 +176,14 @@ and ENG-14.
   - end to end: wheel, Shift+wheel, Mod+wheel, keyboard zoom, Space+drag, a middle-button drag, the
     Hand tool and a two-finger pinch and pan move the camera as specified, and a press on the tool
     bar never reaches the canvas;
-  - Undo and Redo start disabled and follow REQ-H02; every control has a name, the tool bar is a
-    `toolbar` with arrow-key movement, and each tool exposes its shortcut;
+  - editor integration tests with a fake scheduler: the effect of a pointer move is drawn in the
+    next animation frame (REQ-F02);
+  - Undo and Redo start disabled, and panning and zooming leave them disabled (REQ-V10, REQ-H04);
+    every control has a name, the tool bar is a `toolbar` with arrow-key movement, and each tool
+    exposes its shortcut;
   - the page still states what does not work yet.
-- **Requirements:** REQ-C11, REQ-C14, REQ-H01, REQ-H02, REQ-V05, REQ-V06, REQ-V07, REQ-Y01, REQ-Y03.
+- **Requirements:** REQ-C11, REQ-C14, REQ-F02, REQ-H04, REQ-V05, REQ-V06, REQ-V07, REQ-V10,
+  REQ-Y01, REQ-Y03.
 - **Out of scope:** the drawing and selection tools.
 
 ### ENG-09 Selection tool and selection chrome
@@ -201,9 +211,11 @@ and ENG-14.
   - duplicate offsets by +10, +10 and selects the copies; Delete removes and undo restores the
     selection;
   - arrow keys nudge by 1 and 10, and one held key is one undo step;
-  - each gesture or command is exactly one undo step.
-- **Requirements:** REQ-T01, REQ-T02, REQ-T03, REQ-T04, REQ-T05, REQ-T06, REQ-T08, REQ-T09, REQ-T10,
-  REQ-T11.
+  - each gesture or command is exactly one undo step; Undo and Redo requested during a move drag are
+    ignored (REQ-H06); a selection change after an edit is not undone: Undo reverses the edit and
+    restores the selection around it (REQ-S13).
+- **Requirements:** REQ-H06, REQ-S13, REQ-T01, REQ-T02, REQ-T03, REQ-T04, REQ-T05, REQ-T06,
+  REQ-T08, REQ-T09, REQ-T10, REQ-T11.
 - **Out of scope:** flips, snapping, groups.
 
 ### ENG-11 Shape, line and freehand creation tools
@@ -216,8 +228,13 @@ and ENG-14.
   - a freehand stroke's box is its input's extent and a tap makes a dot;
   - end to end on desktop and the emulated phone: drawn elements are selected by press,
     Shift+press, marquee and Mod+A, and a press on empty canvas and Escape clear the selection;
-  - each creation is one undo step that leaves nothing selected when undone.
-- **Requirements:** REQ-C01, REQ-C02, REQ-C03, REQ-C04, REQ-C05, REQ-C06, REQ-C07, REQ-C13.
+  - new elements take the current default style (REQ-C12);
+  - each creation is one undo step that leaves nothing selected when undone; Mod+Z undoes it and
+    Mod+Shift+Z or Mod+Y redoes it; Undo enables with the first creation, Redo after an undo, and a
+    new creation disables Redo (REQ-H01, REQ-H02); with tool lock on, undoing a creation leaves the
+    creation tool active (REQ-H05).
+- **Requirements:** REQ-C01, REQ-C02, REQ-C03, REQ-C04, REQ-C05, REQ-C06, REQ-C07, REQ-C12,
+  REQ-C13, REQ-H01, REQ-H02, REQ-H05.
 - **Out of scope:** pressure-sensitive width, arrows, notes.
 
 ### ENG-12 Text tool and text editing
@@ -250,7 +267,7 @@ and ENG-14.
   - end to end: after a reload the document, camera and selection are back, the tool is Selection,
     history is empty and deleted elements are gone; a second tab's newer save raises the notice;
   - invalid stored data is left untouched and a new document opens with a notice.
-- **Requirements:** REQ-P01, REQ-P02, REQ-P03, REQ-P05, REQ-P06, REQ-V11.
+- **Requirements:** REQ-H03, REQ-P01, REQ-P02, REQ-P03, REQ-P05, REQ-P06, REQ-V11.
 - **Out of scope:** files, images, the clipboard, offline start.
 
 ### ENG-14 Accessible element list, live region and focus order
@@ -261,8 +278,10 @@ and ENG-14.
   - keyboard-only end-to-end test: create each P0 kind, select, nudge and delete from the list, undo
     and redo, with each step announced;
   - every focusable element shows a visible indicator, and the tab order is as specified;
-  - targets and contrast meet the stated minimums in the light theme.
-- **Requirements:** REQ-Y02, REQ-Y04, REQ-Y05.
+  - touch targets, handle hit squares included, are at least 24 × 24 CSS px; interface text meets
+    4.5:1 contrast in the light theme, the only P0 theme; with reduced motion requested no camera
+    change animates (REQ-Y06).
+- **Requirements:** REQ-Y02, REQ-Y04, REQ-Y05, REQ-Y06.
 - **Out of scope:** menus and the dark theme (P1, P2).
 
 ### ENG-15 Performance harness and budgets
