@@ -39,5 +39,5 @@ implementation independent.
 Issue #1 has produced a first guest-mode baseline in
 [docs/reverse-engineering](../reverse-engineering/README.md); its pointer here is
 [1-guest-mode-baseline.md](1-guest-mode-baseline.md). It is not exhaustive: open cases are
-tracked in its residual matrix, and no feature issue has been derived from it yet. The proposed
+tracked in its residual matrix, and no feature issue has been derived from it yet. The accepted
 [canvas-engine architecture](../architecture/engine/README.md) traces its requirements to it.

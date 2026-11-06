@@ -1,6 +1,6 @@
 # ADR 0009: Local persistence and the interchange format
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-06
 
 ## Context

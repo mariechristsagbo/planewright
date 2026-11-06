@@ -1,6 +1,6 @@
 # ADR 0005: Document model
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-06
 
 ## Context

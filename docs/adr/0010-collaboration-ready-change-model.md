@@ -1,6 +1,6 @@
 # ADR 0010: A collaboration-ready change model, without collaboration
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-06
 
 ## Context

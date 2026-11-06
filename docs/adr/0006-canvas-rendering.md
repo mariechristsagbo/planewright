@@ -1,6 +1,6 @@
 # ADR 0006: Canvas rendering behind a renderer port
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-06
 
 ## Context
