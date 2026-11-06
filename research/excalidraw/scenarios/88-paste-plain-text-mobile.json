@@ -1,0 +1,156 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-53: Paste of a self-authored plain text. Runs after 87, with A on the canvas and nothing selected. Grants clipboard read and write to the reference origin only, writes the self-authored plain text \"Planewright plain text\" to the clipboard and reads its shape back. Then picks Paste from the canvas menu of a right click on empty canvas at (300,380), a mouse event on the touch-emulated page, reading the scene and the app state and saving a capture, and presses Undo, Redo and Undo, reading after each. It types nothing, writes no link and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "grantClipboard"
+    },
+    {
+      "do": "clipboardWrite",
+      "text": "Planewright plain text"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "clipboard",
+      "label": "88-written"
+    },
+    {
+      "do": "click",
+      "at": [300, 380],
+      "button": "right"
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Paste",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 1000
+    },
+    {
+      "do": "scene",
+      "label": "88-pasted"
+    },
+    {
+      "do": "appState",
+      "label": "88-pasted"
+    },
+    {
+      "do": "screenshot",
+      "name": "m88-01-pasted"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "88-pasted-undo"
+    },
+    {
+      "do": "appState",
+      "label": "88-pasted-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "88-pasted-redo"
+    },
+    {
+      "do": "appState",
+      "label": "88-pasted-redo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m88-02-pasted-redo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "88-redo-undo"
+    },
+    {
+      "do": "appState",
+      "label": "88-redo-undo"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "88-end"
+    },
+    {
+      "do": "appState",
+      "label": "88-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

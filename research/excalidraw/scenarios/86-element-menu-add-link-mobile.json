@@ -1,0 +1,222 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-09: Add link from the element menu, with a self-authored link that is never followed. Runs right after 09 and draws first, at a height clear of the welcome screen's entries: A [40,230,60,90], which stays on the canvas for the rest of the session so that it is never empty, and L [200,230,120,60], then deselects. By a long press on L's left stroke at (200,252), 22 px below its corner and clear of its handles and of the link icon at its top-right corner, picks Add link and saves the ARIA and a capture of what opens; clicks the one textbox, which is unnamed, types https://example.invalid/planewright-r09, whose reserved .invalid host can never resolve, with the keyboard standing in for the phone's own, and presses Enter. Then Undo and Redo, and a tap on empty canvas. It never touches L's top-right corner or any link it shows. It stops at the first failed step, so nothing is typed unless the textbox was clicked. It reads the scene, with the element's link origin and path, and the app state.",
+  "continueOnError": false,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[40, 230]],
+      "to": [[100, 320]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [218, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "touchDrag",
+      "from": [[200, 230]],
+      "to": [[320, 290]]
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "86-two"
+    },
+    {
+      "do": "appState",
+      "label": "86-two"
+    },
+    {
+      "do": "touchHold",
+      "at": [200, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Add link",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "aria",
+      "save": "m86-01-link-editor"
+    },
+    {
+      "do": "screenshot",
+      "name": "m86-01-link-editor"
+    },
+    {
+      "do": "scene",
+      "label": "86-editor"
+    },
+    {
+      "do": "appState",
+      "label": "86-editor"
+    },
+    {
+      "do": "role",
+      "role": "textbox",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "type",
+      "text": "https://example.invalid/planewright-r09"
+    },
+    {
+      "do": "wait",
+      "ms": 300
+    },
+    {
+      "do": "key",
+      "key": "Enter"
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "86-link"
+    },
+    {
+      "do": "appState",
+      "label": "86-link"
+    },
+    {
+      "do": "aria",
+      "save": "m86-02-after-link"
+    },
+    {
+      "do": "screenshot",
+      "name": "m86-02-after-link"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "86-link-undo"
+    },
+    {
+      "do": "appState",
+      "label": "86-link-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "86-link-redo"
+    },
+    {
+      "do": "appState",
+      "label": "86-link-redo"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "aria",
+      "save": "m86-03-deselected"
+    },
+    {
+      "do": "screenshot",
+      "name": "m86-03-deselected"
+    },
+    {
+      "do": "scene",
+      "label": "86-end"
+    },
+    {
+      "do": "appState",
+      "label": "86-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

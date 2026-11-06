@@ -1,0 +1,137 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-09: Copy link to object from the element menu, then Delete. Runs right after 86, with A and the linked L on the canvas and nothing selected. First grants clipboard read and write to the reference origin only. By a long press on L's left stroke at (200,252) picks Copy link to object, then reads the clipboard text shape, the copied link's shape (its origin and path, each query key with its value length and each fragment key with its part lengths), the page URL's shape, the focus and live regions and the app state, and saves the ARIA and a capture. After a tap on empty canvas it deletes L by a long press at the same point and Delete from the menu. It types nothing, pastes nothing and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "grantClipboard"
+    },
+    {
+      "do": "touchHold",
+      "at": [200, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Copy link to object",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "clipboard",
+      "label": "87-copy-link"
+    },
+    {
+      "do": "clipboardUrl",
+      "label": "87-copy-link"
+    },
+    {
+      "do": "url",
+      "label": "87-copy-link"
+    },
+    {
+      "do": "focus",
+      "label": "87-copy-link"
+    },
+    {
+      "do": "appState",
+      "label": "87-copy-link"
+    },
+    {
+      "do": "aria",
+      "save": "m87-01-copied"
+    },
+    {
+      "do": "screenshot",
+      "name": "m87-01-copied"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "touchHold",
+      "at": [200, 252],
+      "ms": 800
+    },
+    {
+      "do": "wait",
+      "ms": 700
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Delete",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "87-deleted"
+    },
+    {
+      "do": "appState",
+      "label": "87-deleted"
+    },
+    {
+      "do": "tap",
+      "at": [330, 640]
+    },
+    {
+      "do": "wait",
+      "ms": 600
+    },
+    {
+      "do": "scene",
+      "label": "87-end"
+    },
+    {
+      "do": "appState",
+      "label": "87-end"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

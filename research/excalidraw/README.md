@@ -432,7 +432,7 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     one closed loop, then Undo; and Bucket fill, tapping inside a transparent rectangle before and
     after asking for Blue, then Undo. `81` places a sticky note, types the self-authored text
     "Planewright note" into it, drags its bottom-right handle, with Undo, and deletes it.
-  - `82` (from s79 on) is the only scenario that reaches the clipboard: its first step grants
+  - `82` (from s79 on) was the first scenario to reach the clipboard: its first step grants
     clipboard read and write to the reference origin only. By long presses it picks Copy, Cut,
     Copy to clipboard as PNG and Copy to clipboard as SVG, reading the clipboard text shape or
     the clipboard items after each, and pastes by Paste in the canvas menu of a right click, with
@@ -446,6 +446,15 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     horizontally and vertically, each with Undo; it draws two rectangles, picks Select all, and by a
     right click on a selected one flips all three, with Undo; last it turns the grid on and off
     again by the item named with a check mark, saving that menu's ARIA.
+  - `86` to `88` (from s83 on) begin the last mobile batch before the readiness record. `86`
+    runs right after `09`, draws A, which stays for the whole session so that the canvas is never
+    empty and the welcome screen's entries stay away, and a second rectangle L; by a long press
+    on L's left stroke it picks Add link, types `https://example.invalid/planewright-r09` (a
+    reserved host that can never resolve) into the one textbox and presses Enter, Undo and Redo.
+    It stops at its first failed step, and nothing ever touches the link icon or a shown link.
+    `87` grants the clipboard, picks Copy link to object on L and reads the copied link's shape,
+    then deletes L from the menu. `88` writes the self-authored text "Planewright plain text"
+    with `clipboardWrite` and pastes it from the canvas menu, with Undo, Redo and Undo.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
