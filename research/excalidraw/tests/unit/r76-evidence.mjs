@@ -14,9 +14,25 @@ export const evidence = (name) => JSON.parse(read(`${RE}/evidence/${name}`));
 export const session = (name) => evidence('sessions.json').sessions.find((s) => s.session === name);
 // Evidence files committed after the twelfth-review remediation (6d5d264). The regeneration
 // records of the tenth to twelfth reviews cover only the files committed before them.
-// Evidence files committed after 7e547de, by the mobile control batch (s37–s50); s50 ran no
+// Evidence files committed after 2a6ec57, by the mobile radio and edit batch (s51–s57); s51 ran no
 // labelled probe, so it has no probe summary.
+export const COMMITTED_AFTER_2A6EC57 = [
+  'netlog-steps-s51-s57.json',
+  ...[
+    's52-mobile-export-link',
+    's53-mobile-radios-autoshape',
+    's54-mobile-edits-link',
+    's55-mobile-radios-points',
+    's56-mobile-edits-link-2',
+    's57-mobile-radios-points-2',
+  ].map((name) => `probes-${name}.json`),
+  'rea-windows-s51-s57.json',
+  'sessions-s51-s57.json',
+];
+// Evidence files committed after 7e547de, by the mobile control batch (s37–s50) and later; s50 ran
+// no labelled probe, so it has no probe summary.
 export const COMMITTED_AFTER_7E547DE = [
+  ...COMMITTED_AFTER_2A6EC57,
   'netlog-steps-s37-s50.json',
   ...[
     's37-mobile-inventory-2',
