@@ -1,0 +1,204 @@
+{
+  "description": "Mobile 390x844 portrait, DPR 3, touch, R-44 and R-52: the eraser on a bound element, picked again before each stroke, because s71 found that Undo and Redo after an erase leave the Selection tool active. Runs right after 62, whose last Undo leaves its two rectangles, the arrow bound to both and the third rectangle on the canvas. It picks the Eraser and strokes across the right edge of the arrow's end target, reading after it, then presses Undo, Redo and Undo, reading after each, so the target is back; picks the Eraser again and strokes across the arrow, then Undo; last it picks the Eraser and presses Escape, reading the tool. Its last Undo leaves the scene as 62 left it, so 63 to 65 can follow it as in s71. It types nothing, opens no menu and follows no link.",
+  "continueOnError": true,
+  "steps": [
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    },
+    {
+      "do": "tap",
+      "at": [172, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "66-eraser"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [285, 170],
+        [315, 170]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "66-erased-target"
+    },
+    {
+      "do": "appState",
+      "label": "66-erased-target"
+    },
+    {
+      "do": "screenshot",
+      "name": "m66-01-erased-target"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "66-erased-target-undo"
+    },
+    {
+      "do": "appState",
+      "label": "66-erased-target-undo"
+    },
+    {
+      "do": "screenshot",
+      "name": "m66-02-erased-target-undo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Redo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "66-erased-target-redo"
+    },
+    {
+      "do": "appState",
+      "label": "66-erased-target-redo"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "66-target-restored"
+    },
+    {
+      "do": "appState",
+      "label": "66-target-restored"
+    },
+    {
+      "do": "tap",
+      "at": [172, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "66-eraser-again"
+    },
+    {
+      "do": "touchPath",
+      "points": [
+        [150, 175],
+        [150, 205]
+      ],
+      "steps": 6
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "66-erased-arrow"
+    },
+    {
+      "do": "appState",
+      "label": "66-erased-arrow"
+    },
+    {
+      "do": "screenshot",
+      "name": "m66-03-erased-arrow"
+    },
+    {
+      "do": "role",
+      "role": "button",
+      "name": "Undo",
+      "exact": true
+    },
+    {
+      "do": "wait",
+      "ms": 800
+    },
+    {
+      "do": "scene",
+      "label": "66-erased-arrow-undo"
+    },
+    {
+      "do": "appState",
+      "label": "66-erased-arrow-undo"
+    },
+    {
+      "do": "tap",
+      "at": [172, 812]
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "key",
+      "key": "Escape"
+    },
+    {
+      "do": "wait",
+      "ms": 500
+    },
+    {
+      "do": "appState",
+      "label": "66-escape"
+    },
+    {
+      "do": "assertMetrics",
+      "expect": {
+        "innerWidth": 390,
+        "innerHeight": 844,
+        "devicePixelRatio": 3,
+        "screenWidth": 390,
+        "screenHeight": 844,
+        "orientationType": "portrait-primary",
+        "orientationAngle": 0,
+        "maxTouchPoints": 5,
+        "coarsePointer": true,
+        "canvasBacking": true
+      }
+    }
+  ]
+}

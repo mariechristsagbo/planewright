@@ -357,6 +357,10 @@ scenarios 02b, 02c, 03b, 04b, 07b, 08b and 10b rely on the one before them.
     picking Mouse. `65` turns Dark mode, Snap to objects and Zen mode on and reloads, then turns View
     mode on and reloads again. Each menu choice reopens the menu, never collapses Preferences
     (`unlessExpanded`) and is closed by a tap at (330,300), outside the menu and its submenu.
+  - `66` runs right after `62`: s71 found that Undo and Redo after an erase leave the Selection
+    tool active, so 66 picks the Eraser again before it erases the arrow's end target, with Undo,
+    Redo and Undo, and before it erases the arrow, with Undo; it then picks the Eraser and presses
+    Escape. Its last Undo leaves the scene as 62 left it, so 63 to 65 can follow it.
   - `16` reads the storage key inventory (names, value lengths and shapes; no values). It has no
     input and no navigation, so it runs on desktop or mobile at any point before 08.
 - **Earlier versions.** `s1` ran an earlier `02` whose drags started on the properties panel, an
