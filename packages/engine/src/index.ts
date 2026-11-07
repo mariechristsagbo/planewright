@@ -40,6 +40,14 @@ export type { ApplyOptions, SceneReader, SceneStore, SceneUpdate } from './scene
 export type { SceneTransaction } from './scene/transaction.ts';
 export type { Camera } from './camera/camera.ts';
 export type { ViewportSize } from './camera/viewport.ts';
+export type { PathCommand } from './geometry/path.ts';
+export type { TextLayout, TextLine } from './geometry/text-layout.ts';
+export type { TextMeasurer, TextMetrics } from './geometry/text-measurer.ts';
 export type { HistoryEntry, HistoryLabel, HistorySelection } from './history/entry.ts';
 export type { History, HistoryLimits } from './history/history.ts';
 export type { CommitOptions, Transaction } from './history/transaction.ts';
+export type { SelectionFrame } from './selection/frame.ts';
+export type { Handle, HandleId } from './selection/handles.ts';
+export type { HitResult, HitView } from './selection/hit-test.ts';
+export type { PointerKind } from './selection/pointer.ts';
+export type { Selection } from './selection/selection.ts';
