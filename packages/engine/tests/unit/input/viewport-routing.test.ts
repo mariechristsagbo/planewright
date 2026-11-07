@@ -96,10 +96,10 @@ describe('camera gestures', () => {
       { x: 200, y: 0 },
     ] as const;
     const camera = createViewportRouter().gesture(
-      { x: 0, y: 0, zoom: 1 },
+      { x: 10, y: 0, zoom: 1 },
       { type: 'pinch', from, to },
     );
-    expect(camera).toEqual({ x: 25, y: 0, zoom: 2 });
+    expect(camera).toEqual({ x: 10, y: 0, zoom: 2 });
   });
 
   it.each([
