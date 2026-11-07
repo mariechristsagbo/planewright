@@ -2,6 +2,10 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import type * as Cameras from '../../src/camera/camera.ts';
 import type * as Viewports from '../../src/camera/viewport.ts';
+import type * as Chords from '../../src/commands/chords.ts';
+import type * as Commands from '../../src/commands/registry.ts';
+import * as editors from '../../src/editor/editor.ts';
+import type * as Editors from '../../src/editor/editor.ts';
 import type * as RenderStates from '../../src/editor/frame.ts';
 import type * as RenderFrames from '../../src/editor/render-frame.ts';
 import * as renderLoops from '../../src/editor/render-loop.ts';
@@ -15,6 +19,7 @@ import * as bounds from '../../src/geometry/world-bounds.ts';
 import type * as Entries from '../../src/history/entry.ts';
 import type * as Histories from '../../src/history/history.ts';
 import type * as Transactions from '../../src/history/transaction.ts';
+import type * as Inputs from '../../src/input/events.ts';
 import * as engine from '../../src/index.ts';
 import type * as Engine from '../../src/index.ts';
 import type * as Codec from '../../src/model/codec.ts';
@@ -34,15 +39,18 @@ import type * as Handles from '../../src/selection/handles.ts';
 import type * as Hits from '../../src/selection/hit-test.ts';
 import type * as Pointers from '../../src/selection/pointer.ts';
 import type * as Selections from '../../src/selection/selection.ts';
+import type * as Tools from '../../src/tools/tool.ts';
 
 describe('the engine entry point', () => {
-  it('exports as values only the render loop and the geometry that a renderer draws with', () => {
+  it('exports as values only the editor, the render loop and the geometry a renderer draws with', () => {
     expect(Object.keys(engine).sort()).toEqual([
+      'createEditor',
       'createRenderLoop',
       'geometryOf',
       'layoutText',
       'localBox',
     ]);
+    expect(engine.createEditor).toBe(editors.createEditor);
     expect(engine.createRenderLoop).toBe(renderLoops.createRenderLoop);
     expect(engine.geometryOf).toBe(kinds.geometryOf);
     expect(engine.layoutText).toBe(layouts.layoutText);
@@ -144,5 +152,24 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.Renderer>().toEqualTypeOf<RenderFrames.Renderer>();
     expectTypeOf<Engine.RenderState>().toEqualTypeOf<RenderStates.RenderState>();
     expectTypeOf<Engine.RenderLoop>().toEqualTypeOf<RenderLoops.RenderLoop>();
+  });
+
+  it("exports the editor's, its input events' and its commands' types", () => {
+    expectTypeOf<Engine.Editor>().toEqualTypeOf<Editors.Editor>();
+    expectTypeOf<Engine.EditorCommand>().toEqualTypeOf<Editors.EditorCommand>();
+    expectTypeOf<Engine.EditorPorts>().toEqualTypeOf<Editors.EditorPorts>();
+    expectTypeOf<Engine.EditorView>().toEqualTypeOf<Editors.EditorView>();
+    expectTypeOf<Engine.InputEvent>().toEqualTypeOf<Inputs.InputEvent>();
+    expectTypeOf<Engine.PointerInput>().toEqualTypeOf<Inputs.PointerInput>();
+    expectTypeOf<Engine.WheelInput>().toEqualTypeOf<Inputs.WheelInput>();
+    expectTypeOf<Engine.KeyInput>().toEqualTypeOf<Inputs.KeyInput>();
+    expectTypeOf<Engine.FocusLost>().toEqualTypeOf<Inputs.FocusLost>();
+    expectTypeOf<Engine.Modifiers>().toEqualTypeOf<Inputs.Modifiers>();
+    expectTypeOf<Engine.PointerButton>().toEqualTypeOf<Inputs.PointerButton>();
+    expectTypeOf<Engine.KeyChord>().toEqualTypeOf<Chords.KeyChord>();
+    expectTypeOf<Engine.CommandId>().toEqualTypeOf<Commands.CommandId>();
+    expectTypeOf<Engine.CommandOutcome>().toEqualTypeOf<Commands.CommandOutcome>();
+    expectTypeOf<Engine.ToolId>().toEqualTypeOf<Tools.ToolId>();
+    expectTypeOf<Engine.CursorKind>().toEqualTypeOf<Tools.CursorKind>();
   });
 });
