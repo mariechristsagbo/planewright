@@ -17,6 +17,7 @@
   "workspaces": [
     "packages/protocol",
     "packages/engine",
+    "packages/render-canvas",
     "apps/collab",
     "apps/web"
   ],
