@@ -5,7 +5,7 @@ import { keyInput, pointerInput, wheelInput } from './input-adapter.ts';
 import type { KeySource } from './input-adapter.ts';
 
 // The canvas host's DOM listeners (ADR 0008 decision 1): pointer events with capture, wheel events
-// that never scroll the page, keys, and the window's focus loss.
+// that never scroll the page, keys, the host's focus loss and the window's.
 
 const POINTER_EVENTS = [
   ['pointerdown', 'pointer-down'],
@@ -72,15 +72,24 @@ export function attachInput(
   const blur = (): void => {
     editor.input({ type: 'focus-lost', time: performance.now() });
   };
+  // A Space released after focus left the host never reaches it, and a held Space would turn every
+  // later press into a camera drag (REQ-S05, REQ-S06, REQ-S10), so Space is let go with the focus.
+  const letGoOfSpace = (): void => {
+    const modifiers = { shift: false, alt: false, mod: false };
+    const time = performance.now();
+    editor.input({ type: 'key-up', key: ' ', code: 'Space', repeat: false, modifiers, time });
+  };
   host.addEventListener('wheel', wheel, { passive: false });
   host.addEventListener('keydown', keyDown);
   host.addEventListener('keyup', keyUp);
+  host.addEventListener('blur', letGoOfSpace);
   window.addEventListener('blur', blur);
   return () => {
     for (const stop of pointers) stop();
     host.removeEventListener('wheel', wheel);
     host.removeEventListener('keydown', keyDown);
     host.removeEventListener('keyup', keyUp);
+    host.removeEventListener('blur', letGoOfSpace);
     window.removeEventListener('blur', blur);
   };
 }
