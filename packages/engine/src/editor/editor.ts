@@ -97,7 +97,7 @@ function wire(ports: EditorPorts, document: DocumentState): Wiring {
     routeGesture(core, router, gesture);
     publish();
   });
-  const target = targetOf(core);
+  const target = targetOf(core, () => recogniser.cancel());
   const run = (id: CommandId): CommandOutcome => {
     const outcome = core.registry.run(id, target);
     publish();

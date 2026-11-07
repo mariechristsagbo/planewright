@@ -73,8 +73,8 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
   };
 }
 
-/** The editor's state as commands read and change it. */
-export function targetOf(core: EditorCore): CommandTarget {
+/** The editor's state as commands read and change it, with the recogniser's gesture cancel. */
+export function targetOf(core: EditorCore, cancelGesture: () => boolean): CommandTarget {
   return {
     get tool() {
       return core.tool.id;
@@ -95,6 +95,10 @@ export function targetOf(core: EditorCore): CommandTarget {
     setCamera(camera) {
       core.loop.update({ camera });
     },
+    select(ids) {
+      core.selection.set(ids);
+    },
+    cancelGesture,
   };
 }
 

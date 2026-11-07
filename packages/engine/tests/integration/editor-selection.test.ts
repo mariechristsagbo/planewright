@@ -1,44 +1,20 @@
 import { describe, expect, it } from 'vitest';
 
-import type { RenderFrame } from '../../src/editor/render-frame.ts';
-import type { PointerKind } from '../../src/selection/pointer.ts';
 import { editorHarness } from '../support/editors.ts';
-import { down, move, up } from '../support/inputs.ts';
-import { ELLIPSE, RECTANGLE, SMALL, TEXT, selectionDocument } from '../support/selection-scene.ts';
+import { keyEvent, move } from '../support/inputs.ts';
+import { POINTERS, drag, marqueesOf, tapper } from '../support/selection-input.ts';
+import {
+  ELLIPSE,
+  LINE,
+  RECTANGLE,
+  SMALL,
+  TEXT,
+  selectionDocument,
+} from '../support/selection-scene.ts';
 
-// The Selection tool through the editor, over the selection fixture, with a mouse and with touch
-// (ENG-09). At the starting camera a screen point is the scene point. Drawing the elements before
+// The Selection tool, Select all and Escape through the editor, over the selection fixture, with a
+// mouse and with touch (ENG-09). At the starting camera a screen point is the scene point. Drawing the elements before
 // selecting them is the end-to-end check of ENG-11, the first issue whose users can draw.
-
-const POINTERS = ['mouse', 'touch'] as const;
-
-/** Taps a second apart, so that no two of them make a double tap; each lasts 50 ms. */
-function tapper(pointer: PointerKind) {
-  let time = 0;
-  return (x: number, y: number, shift = false) => {
-    time += 1_000;
-    const options = { pointer, time, modifiers: { shift } };
-    return [down(x, y, options), up(x, y, { ...options, time: time + 50 })];
-  };
-}
-
-/** A drag from one point to another through a point just past the drag threshold. */
-function drag(pointer: PointerKind, [x0, y0, x1, y1]: readonly number[], shift = false) {
-  const options = { pointer, time: 10_000, modifiers: { shift } };
-  const [fromX = 0, fromY = 0, toX = 0, toY = 0] = [x0, y0, x1, y1];
-  return {
-    start: [down(fromX, fromY, options), move(fromX + 10, fromY + 10, options)],
-    to: move(toX, toY, options),
-    end: up(toX, toY, options),
-  };
-}
-
-const marqueesOf = (frames: readonly RenderFrame[]) =>
-  frames.flatMap((frame) =>
-    (frame.overlay?.primitives ?? []).flatMap((primitive) =>
-      primitive.type === 'marquee' ? [primitive.box] : [],
-    ),
-  );
 
 describe.each(POINTERS)('the Selection tool in the editor, with %s input', (pointer) => {
   it('REQ-S05 selects on a press, and adds and removes with Shift, with no undo step', () => {
@@ -95,5 +71,44 @@ describe('the handles drawn for the pointer', () => {
     expect(sizes()).toEqual(new Set([12]));
     feed(...tapper('mouse')(450, 150));
     expect(sizes()).toEqual(new Set([8]));
+  });
+});
+
+const MOD_A = keyEvent('key-down', 'a', 'KeyA', { mod: true });
+const ESCAPE = keyEvent('key-down', 'Escape', 'Escape');
+
+describe.each(POINTERS)('Select all and Escape in the editor, with %s input', (pointer) => {
+  it('REQ-S09 Mod+A selects every selectable element in any tool, with no undo step', () => {
+    const { editor, feed } = editorHarness(selectionDocument());
+    feed(...tapper(pointer)(200, 150));
+    editor.run('tool.hand');
+    expect(editor.input(MOD_A)).toBe(true);
+    expect(editor.view).toMatchObject({
+      tool: 'hand',
+      selection: [RECTANGLE, ELLIPSE, LINE, TEXT, SMALL],
+      canUndo: false,
+    });
+  });
+
+  it('REQ-S10 Escape with no gesture clears the selection and returns to the Selection tool', () => {
+    const { editor, feed } = editorHarness(selectionDocument());
+    feed(...tapper(pointer)(200, 150));
+    editor.run('tool.hand');
+    expect(editor.input(ESCAPE)).toBe(true);
+    expect(editor.view).toMatchObject({ tool: 'selection', selection: [], canUndo: false });
+  });
+
+  it('REQ-S10 Escape during a marquee cancels it and keeps the selection; the pointer then does nothing', () => {
+    const { editor, feed, next } = editorHarness(selectionDocument());
+    feed(...tapper(pointer)(450, 415));
+    const { start, to, end } = drag(pointer, [50, 50, 610, 250]);
+    feed(...start, to);
+    expect(marqueesOf(next())).toHaveLength(1);
+    feed(ESCAPE);
+    const frames = next();
+    expect([frames.length, marqueesOf(frames)]).toEqual([1, []]);
+    feed(move(700, 300, { pointer, time: 10_000 }), end);
+    expect(editor.view.selection).toEqual([TEXT]);
+    expect(marqueesOf(next())).toEqual([]);
   });
 });

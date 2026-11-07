@@ -177,3 +177,30 @@ describe('camera drags', () => {
     expect(feed(move(10, 10), move(60, 10), up(60, 10))).toEqual([]);
   });
 });
+
+describe('cancelling the tool’s gesture on request, as Escape does', () => {
+  it('REQ-S10 tells the tool, then ignores the pointer until it lifts', () => {
+    const { recogniser, feed, take } = recogniserHarness();
+    feed(down(10, 10), move(40, 10));
+    expect(recogniser.cancel()).toBe(true);
+    expect(take()).toEqual([{ type: 'cancel' }]);
+    expect(feed(move(80, 10), up(80, 10))).toEqual([]);
+    expect(typesOf(feed(down(5, 5), up(5, 5)))).toEqual(['press', 'tap']);
+  });
+
+  it('has nothing to cancel without a press, nor during a camera drag, which goes on', () => {
+    const { recogniser, feed } = recogniserHarness();
+    expect(recogniser.cancel()).toBe(false);
+    feed(down(0, 0, { button: 'middle' }));
+    expect(recogniser.cancel()).toBe(false);
+    expect(typesOf(feed(move(30, 0, { button: 'middle' })))).toEqual(['pan']);
+  });
+
+  it('stops a touch press’s long-press timer', () => {
+    const { recogniser, scheduler, feed, take } = recogniserHarness();
+    feed(down(0, 0, { pointer: 'touch' }));
+    expect(recogniser.cancel()).toBe(true);
+    scheduler.advance(600);
+    expect(typesOf(take())).toEqual(['cancel']);
+  });
+});

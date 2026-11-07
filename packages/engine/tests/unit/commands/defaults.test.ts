@@ -32,6 +32,10 @@ function target(scene: SceneStore = sceneOf(), history?: History): MutableTarget
     setCamera: (camera) => {
       self.camera = camera;
     },
+    select: () => {
+      throw new Error('Only the selection commands select.');
+    },
+    cancelGesture: () => false,
   };
   return self;
 }

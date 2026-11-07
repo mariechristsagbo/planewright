@@ -123,6 +123,8 @@ describe('the view and the commands', () => {
       'tool.selection',
       'history.undo',
       'history.redo',
+      'selection.select-all',
+      'selection.cancel',
       'view.zoom-in',
       'view.zoom-out',
       'view.zoom-reset',

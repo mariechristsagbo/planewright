@@ -2,6 +2,7 @@ import type { Camera } from '../camera/camera.ts';
 import type { ViewportSize } from '../camera/viewport.ts';
 import type { History } from '../history/history.ts';
 import type { KeyInput } from '../input/events.ts';
+import type { ElementId } from '../model/ids.ts';
 import type { SceneReader } from '../scene/store.ts';
 import type { ToolId } from '../tools/tool.ts';
 import { chordMatches, sameChord } from './chords.ts';
@@ -15,6 +16,8 @@ export type CommandId =
   | 'tool.selection'
   | 'history.undo'
   | 'history.redo'
+  | 'selection.select-all'
+  | 'selection.cancel'
   | 'view.zoom-in'
   | 'view.zoom-out'
   | 'view.zoom-reset'
@@ -29,6 +32,10 @@ export interface CommandTarget {
   readonly history: Pick<History, 'canUndo' | 'canRedo' | 'undo' | 'redo'>;
   setTool(tool: ToolId): void;
   setCamera(camera: Camera): void;
+  /** Replaces the selection; never an undo step (REQ-S13). */
+  select(ids: readonly ElementId[]): void;
+  /** Cancels the tool's open gesture; false when none is open. */
+  cancelGesture(): boolean;
 }
 
 export type CommandOutcome = 'done' | 'disabled';
