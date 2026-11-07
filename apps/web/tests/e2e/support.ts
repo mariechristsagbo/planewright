@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-// What the end-to-end tests read and drive: the view readout, the canvas host and its box.
+// What the end-to-end tests read and drive: the view readout, the canvas host and its scene canvas.
 
 export interface Camera {
   readonly x: number;
@@ -20,12 +20,15 @@ export async function cameraOf(page: Page): Promise<Camera> {
   return { x: Number(match[1]), y: Number(match[2]), zoom: Number(match[3]) / 100 };
 }
 
-/** The canvas host's box in page pixels; it must be laid out. */
+/** The scene canvas, inside the canvas host's border: editor points are relative to it. */
+export const sceneCanvas = (page: Page): Locator => canvas(page).locator('canvas').first();
+
+/** The scene canvas's box in page pixels, inside the host's border; it must be laid out. */
 export async function canvasBox(
   page: Page,
 ): Promise<{ x: number; y: number; width: number; height: number }> {
-  const box = await canvas(page).boundingBox();
-  if (box === null) throw new Error('The canvas host is not laid out.');
+  const box = await sceneCanvas(page).boundingBox();
+  if (box === null) throw new Error('The scene canvas is not laid out.');
   return box;
 }
 
