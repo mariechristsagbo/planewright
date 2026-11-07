@@ -312,8 +312,8 @@ above leave open:
   both pointers are; a third is ignored. When one of the two lifts, the other does nothing until it
   lifts, and a new finger pinches with it again.
 - **The default tool.** The Selection tool is registered with V and 1 as the default tool, so that
-  the tool bar and Space+drag have a tool that is not the camera's, but it has no behaviour until
-  ENG-09; its description and the page say that selecting does not work yet.
+  the tool bar and Space+drag have a tool that is not the camera's, but it had no behaviour until
+  ENG-09 gave it one; until then its description and the page said that selecting did not work.
 - **Commands.** A command's label is its English name until the interface has message keys. The
   registry refuses a repeated identifier and a shortcut that two commands share, and a chord's
   modifiers must match exactly. Zoom in and out list one chord per produced key, with and without
@@ -337,6 +337,62 @@ above leave open:
   `navigator.platform`, names a Mac, iPhone, iPad or iPod. Coalesced pointer events are read with
   the freehand tool (ENG-11). Panning an empty canvas changes no pixel, so the page shows the
   camera's position and zoom as text.
+
+## What ENG-09 decided
+
+ENG-09 implements the Selection tool in the engine's `tools` layer, Select all and Escape in
+`commands`, and the selection's place in `createEditor`; in `apps/web` it updates the factual text
+and fixes two adapter defects that broke selection presses. It decided what the rules above leave
+open:
+
+- **Presses.** The tool reads the hit test's first match at the press: a handle, an element, the
+  selection box or nothing. A press on an unselected element selects it at once, or adds it with
+  Shift, so that the drag ENG-10 adds moves it; a press on a selected element, a handle or the
+  selection box changes nothing. A Shift+tap removes an element only if it was selected before its
+  press, so the Shift+press that added an element never removes it on release.
+- **Shift.** Each effect reads the modifiers of the gesture that makes it: the press for adding an
+  element, the tap for removing one and the release for adding a marquee's elements.
+- **Taps.** A tap inside the selection box on no element falls through to what is under the
+  point; the hit order already puts every element before the selection box, so nothing is there,
+  and the tap clears the selection like a tap on empty canvas, with or without Shift (REQ-S10,
+  REQ-T07). A double tap acts as a tap until a double tap on a text edits it (ENG-12), so the false
+  double taps of the ENG-08 review's s6 cannot lose a removal or a clearing tap, and the recogniser
+  keeps its rule until then. A touch press held for 500 ms ends with a release, not a tap, so it
+  changes nothing until the context menu (P1).
+- **The marquee.** It runs from the press's scene point to the pointer's, in scene units, so its
+  start stays on the content if the camera moves during the drag. The selection changes only on
+  release: the enclosed elements replace it, or join it with Shift, and a marquee that encloses
+  nothing clears it. A cancel, from a second finger, a cancelled pointer, focus loss or Escape,
+  removes the marquee and leaves the selection as it was.
+- **Before ENG-10.** The states are `idle`, `pressing-handle`, `pressing-element`,
+  `pressing-selection-box`, `pressing-empty` and `box-selecting`. Drags from a handle, an element
+  or the selection box change nothing and only wait for the release; ENG-10 adds moving, resizing
+  and rotating.
+- **Select all and Escape.** Mod+A runs `selection.select-all`, which selects every element of a
+  kind that has a geometry, in drawing order, since only those are drawn, hit and box-selected in
+  P0; a locked element stays selectable until locks (P1, REQ-S08). Escape runs `selection.cancel`:
+  if the tool has an open gesture, the recogniser cancels it as a cancelled pointer would, and the
+  pointer does nothing until it lifts; otherwise the selection clears and the Selection tool
+  becomes active. A camera drag is not a tool gesture, so Escape during one clears the selection
+  while the drag goes on. Both work in any tool, and neither is an undo step.
+- **The editor.** It holds the selection beside the scene store and the history, reports it in
+  `view.selection` and replaces it with `select(ids)`, which keeps the elements the document holds,
+  each once, in order. Before each publish it gives the selection to the render loop, whoever
+  changed it (a tool, a command, the history or a removal); a selection with the same elements in
+  the same order asks for no frame and publishes no view. The handles are drawn for the pointer of
+  the last press. The tool context holds the camera, the scene, the selection and the hit test.
+- **Opening a document.** Until persistence (ENG-13) gives `createEditor` a stored document, the
+  editor opens an empty one. `openEditor(ports, document)` loads a document as one `load` change
+  set, without an undo step and with nothing selected; the entry does not export it. The engine's
+  integration tests open fixture documents with it, and drawing elements to select them end to end
+  is ENG-11's check.
+- **Handles.** A lone text has its corners and rotation handle and no side handles (the ENG-06
+  review's m3); a selection of several elements keeps its side handles, on the selection outline.
+- **The web app.** The canvas host lets Space go when it loses focus, and the input adapter ignores
+  the back and forward buttons only on a press, taking the buttons held for their move, release or
+  cancel (the ENG-08 review's m1 and m2), so that a selection press is never turned into a camera
+  drag and a marquee always ends. The Selection button and the page say that the tool selects but
+  that nothing can be drawn yet to select.
 
 ## Requirements served
 

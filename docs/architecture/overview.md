@@ -24,8 +24,8 @@ complete and ADRs are accepted.
 A React 19 application built with Vite 8. It renders a navigation-only editor surface (ENG-08): a
 canvas host whose scene and overlay canvases the canvas renderer draws, an input adapter that
 sends DOM events to the engine's editor, a tool bar and Undo and Redo controls. The page labels the
-build as pre-release, says that nothing can be drawn, selected or edited yet, and lists the
-capabilities that are not implemented. It imports the protocol version to prove that workspace
+build as pre-release, says that nothing can be drawn or edited yet, so that the Selection tool has
+nothing to select, and lists the capabilities that are not implemented. It imports the protocol version to prove that workspace
 linking works.
 
 ### apps/collab
@@ -59,7 +59,7 @@ zoom ladder, zoom to fit, two-pointer maths, resizing and limits), the `scene` l
 store with its change sets, indexes, transient previews and transactions), the `history` module
 (undo and redo entries, burst merging and conflict-safe undo), the `selection` module (the
 selection state, hit testing, handle layout and box selection), the `input` layer (input events,
-the gesture recogniser and the viewport routing), the `tools` layer (the Hand tool), the `commands`
+the gesture recogniser and the viewport routing), the `tools` layer (the Hand and Selection tools), the `commands`
 layer (the command registry and its keymap) and the `editor` layer (render frames, the renderer
 port, culling, the render loop with its dirty tracking and frame scheduling, and `createEditor`).
 The web app imports it.

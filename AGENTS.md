@@ -7,12 +7,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
   holds only its math layer, ports, document model, scene store, undo history, camera, geometry,
-  selection with hit testing, input events with the gesture recogniser, the Hand tool, the command
-  registry with its keymap, and the editor layer's render loop and `createEditor`, and
-  `packages/render-canvas` its Canvas 2D renderer. The web app shows a **navigation-only** surface:
-  an empty canvas that pans and zooms, a tool bar and Undo and Redo controls with nothing to undo.
-  Drawing, selecting and editing elements, persistence and collaboration features do **not** exist
-  yet.
+  selection with hit testing, input events with the gesture recogniser, the Hand and Selection
+  tools, the command registry with its keymap, and the editor layer's render loop and
+  `createEditor`, and `packages/render-canvas` its Canvas 2D renderer. The web app shows a
+  **navigation-only** surface: an empty canvas that pans and zooms, a tool bar and Undo and Redo
+  controls with nothing to undo. The Selection tool works, but nothing can be drawn, so there is
+  nothing to select. Drawing, moving and editing elements, persistence and collaboration features
+  do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
