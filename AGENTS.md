@@ -7,9 +7,12 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
   holds only its math layer, ports, document model, scene store, undo history, camera, geometry,
-  selection with hit testing and the editor layer's render loop, and `packages/render-canvas` its
-  Canvas 2D renderer; nothing uses them yet. The canvas host, input, shapes on screen, persistence
-  and collaboration features do **not** exist yet.
+  selection with hit testing, input events with the gesture recogniser, the Hand tool, the command
+  registry with its keymap, and the editor layer's render loop and `createEditor`, and
+  `packages/render-canvas` its Canvas 2D renderer. The web app shows a **navigation-only** surface:
+  an empty canvas that pans and zooms, a tool bar and Undo and Redo controls with nothing to undo.
+  Drawing, selecting and editing elements, persistence and collaboration features do **not** exist
+  yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -58,8 +61,10 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 
 ## Code map
 
-- `apps/web`: React 19 and Vite 8 application. Source in `src/`, unit tests in `tests/unit`,
-  Playwright tests in `tests/e2e`, static files in `public/`.
+- `apps/web`: React 19 and Vite 8 application. Source in `src/`: the canvas host, input adapter
+  and editor provider in `editor/`, the tool bar, Undo and Redo and the view readout in `ui/`, and
+  the browser ports, text measurer and Mod key per platform in `platform/`. Unit tests in
+  `tests/unit`, Playwright tests in `tests/e2e`, static files in `public/`.
 - `apps/collab`: Node.js WebSocket service built with `ws` and bundled by esbuild. In
   development it runs TypeScript directly through Node's type stripping.
 - `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and
@@ -70,7 +75,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   globals, `Math.random`, `Date.now` and timers, which come through its ports, and its sources
   import only one another. A layer imports only from its own and earlier layers
   (`scripts/lib/engine-layers.ts`); only `math`, `ports`, `model`, `geometry`, `camera`, `scene`,
-  `history`, `selection` and `editor` (its render frames and render loop) exist so far. Tests run
+  `history`, `selection`, `input`, `tools`, `commands` and `editor` (its render frames, render loop
+  and `createEditor`) exist so far. Tests run
   in the `engine:unit` and `engine:integration` projects; property tests use
   `tests/support/property.ts`.
 - `packages/render-canvas`: the source-only Canvas 2D implementation of the engine's renderer port
