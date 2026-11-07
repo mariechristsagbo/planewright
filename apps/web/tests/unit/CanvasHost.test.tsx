@@ -7,10 +7,37 @@ import { surfaceHarness } from '../support/surface.tsx';
 // The canvas host (docs/architecture/engine/modules.md#web-app-structure): two stacked canvases in
 // a focusable region, sized from the page, whose DOM input reaches the editor.
 
+// The host has a 1 px border and the canvases fill the box inside it, as in styles.css.
+const HOST = DOMRect.fromRect({ x: 99, y: 49, width: 802, height: 602 });
+let canvasRect = DOMRect.fromRect({ x: 100, y: 50, width: 800, height: 600 });
+
+/** The size observers made so far, each with what it observes and the report it calls. */
+const observed: { target: Element; report: () => void }[] = [];
+class RecordingObserver {
+  readonly #report: () => void;
+  constructor(report: () => void) {
+    this.#report = report;
+  }
+  observe(target: Element): void {
+    observed.push({ target, report: this.#report });
+  }
+  unobserve(): void {
+    // Nothing to stop.
+  }
+  disconnect(): void {
+    // Nothing to stop.
+  }
+}
+vi.stubGlobal('ResizeObserver', RecordingObserver);
+
 beforeEach(() => {
-  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue(
-    DOMRect.fromRect({ x: 100, y: 50, width: 800, height: 600 }),
-  );
+  canvasRect = DOMRect.fromRect({ x: 100, y: 50, width: 800, height: 600 });
+  observed.length = 0;
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
+    this: HTMLElement,
+  ) {
+    return this instanceof HTMLCanvasElement ? canvasRect : HOST;
+  });
 });
 
 afterEach(() => {
@@ -135,5 +162,54 @@ describe('input on the canvas host', () => {
     fireEvent.pointerDown(host, at(300));
     fireEvent.pointerMove(host, { ...at(200), button: -1 });
     expect(editor.view.camera).toEqual({ x: 0, y: 0, zoom: 1 });
+  });
+});
+
+describe('the scene canvas inside the host’s border', () => {
+  it('REQ-V04 zooms about the scene canvas’s own top-left pixel, which is the screen origin', () => {
+    const { host, editor } = mount();
+    expect(fireEvent.wheel(host, { deltaY: -100, ctrlKey: true, clientX: 100, clientY: 50 })).toBe(
+      false,
+    );
+    const { x, y, zoom } = editor.view.camera;
+    expect(zoom).toBeCloseTo(Math.exp(0.1), 9);
+    expect(x).toBeCloseTo(0, 9);
+    expect(y).toBeCloseTo(0, 9);
+  });
+
+  it('gives pointer points relative to the scene canvas, not to the host’s border box', () => {
+    const { host, editor } = mount();
+    host.setPointerCapture = vi.fn();
+    const input = vi.spyOn(editor, 'input');
+    const at = (x: number, y: number) => ({
+      pointerId: 1,
+      pointerType: 'mouse',
+      clientX: x,
+      clientY: y,
+    });
+    fireEvent.pointerDown(host, { ...at(100, 50), button: 0, buttons: 1 });
+    fireEvent.pointerMove(host, { ...at(900, 650), button: -1, buttons: 1 });
+    expect(input.mock.calls.map(([event]) => ('at' in event ? event.at : null))).toEqual([
+      { x: 0, y: 0 },
+      { x: 800, y: 600 },
+    ]);
+  });
+
+  it('sizes the editor from the scene canvas at pixel ratio 2, and again when that canvas resizes', () => {
+    vi.spyOn(window, 'devicePixelRatio', 'get').mockReturnValue(2);
+    const { host, made, flush } = mount();
+    expect(observed).toHaveLength(1);
+    expect(observed[0]?.target).toBe(host.querySelector('canvas'));
+    expect(made[0]?.frames.at(-1)?.viewport).toEqual({ width: 800, height: 600, pixelRatio: 2 });
+    canvasRect = DOMRect.fromRect({ x: 100, y: 50, width: 640.5, height: 480.25 });
+    act(() => {
+      for (const { report } of observed) report();
+    });
+    flush();
+    expect(made[0]?.frames.at(-1)?.viewport).toEqual({
+      width: 640.5,
+      height: 480.25,
+      pixelRatio: 2,
+    });
   });
 });

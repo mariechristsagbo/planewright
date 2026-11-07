@@ -20,8 +20,8 @@ export function CanvasHost() {
     const stopFrames = editor.onFrame((frame) => {
       renderer.render(frame);
     });
-    const detach = attachInput(host.current, editor, platform);
-    const stopSizing = observeSize(host.current, editor);
+    const detach = attachInput(host.current, scene.current, editor, platform);
+    const stopSizing = observeSize(scene.current, editor);
     return () => {
       stopSizing();
       detach();
