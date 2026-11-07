@@ -57,7 +57,7 @@ describe('hit testing over the spatial index', () => {
         .reverse()
         .find((element) => hitsElement(element, point, tolerance));
       const expected = top === undefined ? { type: 'none' } : { type: 'element', id: top.id };
-      expect(hitTest({ scene, camera }, screen, pointer)).toStrictEqual(expected);
+      expect(hitTest({ scene, selection: [], camera }, screen, pointer)).toStrictEqual(expected);
     });
   });
 });
