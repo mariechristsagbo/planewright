@@ -22,11 +22,11 @@ const INK = `(() => {
 
 const overlayInk = async (page: Page): Promise<number> => Number(await page.evaluate(INK));
 
-test('the Selection button says that it selects, and that there is nothing to select yet', async ({
+test('the Selection button says that it selects and transforms, and that there is nothing to select yet', async ({
   page,
 }) => {
   await expect(page.getByRole('button', { name: 'Selection' })).toHaveAccessibleDescription(
-    'Shortcuts V or 1. Selects elements; nothing can be drawn yet, so there is nothing to select.',
+    'Shortcuts V or 1. Selects, moves, resizes and rotates elements; nothing can be drawn yet, so there is nothing to select.',
   );
 });
 

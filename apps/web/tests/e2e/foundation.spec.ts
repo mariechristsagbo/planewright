@@ -12,7 +12,9 @@ test('states that the build is navigation only and lists what does not work', as
   );
   const missing = page.getByRole('region', { name: 'Not implemented yet' });
   await expect(missing).toContainText('Drawing shapes, lines, freehand strokes and text');
-  await expect(missing).toContainText('Moving, resizing, rotating and editing elements');
+  await expect(missing).toContainText(
+    'Transforming and editing elements: the engine moves, resizes, rotates, duplicates, deletes and nudges a selection',
+  );
   await expect(missing).not.toContainText('the Selection tool does nothing');
   await expect(page.getByText('not affiliated with Excalidraw')).toBeVisible();
 });
