@@ -89,6 +89,8 @@ describe('applying what still fits', () => {
       rev: 0,
       apply(changes: ChangeSet) {
         tried.push(changes);
+        // A second try would mean the step keeps something that the refusal covered.
+        if (tried.length > 1) throw new Error('The set was tried again.');
         throw new ChangeSetError([{ path: 'elements', problem: 'too-many' }]);
       },
     } as unknown as SceneStore;
