@@ -38,6 +38,14 @@ describe('marquee enclosure', () => {
     expect(enclosedBy(scene, box(0, 0, 10, 10))).toStrictEqual([]);
   });
 
+  it('keeps an unrotated corner on the edge it lies on, with no rounding through the centre', () => {
+    // Placed through its centre, this box's left corners would land at 10.299999999999997.
+    const edge = shapeElement('rectangle', 120, 100, { id: 6, x: 10.3, y: 180.3 });
+    expect(enclosedBy(sceneOf(edge), { x: 10.3, y: 180.3, width: 120, height: 100 })).toStrictEqual(
+      [testId(6)],
+    );
+  });
+
   it('needs the four rotated corners of a box kind inside', () => {
     const turned = shapeElement('rectangle', 100, 20, {
       id: 4,
