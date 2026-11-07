@@ -78,6 +78,39 @@ const engineBoundary = {
   ],
 };
 
+const RENDERER_PLATFORM_MESSAGE =
+  'The canvas renderer uses Canvas 2D and the canvases it is given (ADR 0004): no Node.js API and no page global.';
+const RENDERER_TIMER_MESSAGE =
+  'The canvas renderer draws the frames it is handed: the engine schedules them through its Scheduler port.';
+const RENDERER_DETERMINISM_MESSAGE =
+  'The canvas renderer is deterministic: it draws what a frame holds and reads no clock or randomness.';
+
+/**
+ * The canvas renderer's boundary (ADR 0004 and docs/architecture/engine/modules.md#packages): it
+ * may use Canvas 2D and its DOM types, but no Node.js global, no page global such as `window` or
+ * `document`, and no timer, clock or randomness.
+ */
+const rendererBoundary = {
+  'no-restricted-globals': [
+    'error',
+    ...TIMERS.map((name) => ({ name, message: RENDERER_TIMER_MESSAGE })),
+    ...[
+      ...new Set([
+        'globalThis',
+        'window',
+        'document',
+        'self',
+        ...Object.keys(globals.node).filter((name) => !TIMERS.includes(name)),
+      ]),
+    ].map((name) => ({ name, message: RENDERER_PLATFORM_MESSAGE })),
+  ],
+  'no-restricted-properties': [
+    'error',
+    { object: 'Math', property: 'random', message: RENDERER_DETERMINISM_MESSAGE },
+    { object: 'Date', property: 'now', message: RENDERER_DETERMINISM_MESSAGE },
+  ],
+};
+
 export default defineConfig(
   globalIgnores([
     '**/dist/',
@@ -148,6 +181,30 @@ export default defineConfig(
               regex: '^(?!\\.\\.?/)',
               message:
                 'The engine has no dependencies and no Node.js APIs (ADR 0004): import only its own modules, by relative path.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    name: 'planewright/render-canvas',
+    files: ['packages/render-canvas/**/*.ts'],
+    rules: rendererBoundary,
+  },
+  {
+    // The renderer depends on the engine only, through its entry (ADR 0004).
+    name: 'planewright/render-canvas-source',
+    files: ['packages/render-canvas/src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?!\\.\\.?/|@planewright/engine$)',
+              message:
+                "The canvas renderer depends on the engine only (ADR 0004): import the engine's entry or its own modules, by relative path.",
             },
           ],
         },

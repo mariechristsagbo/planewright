@@ -57,6 +57,14 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'render-canvas:unit',
+          root: './packages/render-canvas',
+          include: ['tests/unit/**/*.test.ts'],
+          environment: 'node',
+        },
+      },
+      {
+        test: {
           name: 'collab:unit',
           root: './apps/collab',
           include: ['tests/unit/**/*.test.ts'],
@@ -101,6 +109,13 @@ export default defineConfig({
         lines: 90,
         // The engine holds itself to a higher bar (docs/architecture/engine/quality.md).
         'packages/engine/src/**': {
+          statements: 95,
+          branches: 90,
+          functions: 95,
+          lines: 95,
+        },
+        // The renderer holds itself to the engine's bar (docs/architecture/engine/quality.md).
+        'packages/render-canvas/src/**': {
           statements: 95,
           branches: 90,
           functions: 95,
