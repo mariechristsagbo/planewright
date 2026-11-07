@@ -2,10 +2,10 @@
 
 **Status: accepted in issue #3; implementation started with ENG-01 (issue #5).** These documents
 design Planewright's canvas engine and split its first usable version into issues. The engine
-package holds only its `math`, `ports`, `model`, `scene`, `history` and `camera` modules and the
-world and content bounds of `geometry` so far, the camera since ENG-05 (issue #13); nothing uses
-the scene, the history or the camera yet, no renderer, input or editor code exists, and the web
-app is still the foundation status page.
+package holds only its `math`, `ports`, `model`, `geometry`, `camera`, `scene`, `history` and
+`selection` modules so far, the geometry's outlines, distances and text layout and the selection
+module since ENG-06 (issue #15); nothing uses them yet, no renderer, input or editor code exists,
+and the web app is still the foundation status page.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
 ([reverse engineering](../../reverse-engineering/README.md)), which says what users observe, and

@@ -6,8 +6,9 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Project state
 
 - Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
-  holds only its math layer, ports, document model, scene store, undo history and camera: the
-  drawing engine, canvas, shapes, persistence and collaboration features do **not** exist yet.
+  holds only its math layer, ports, document model, scene store, undo history, camera, geometry
+  and selection with hit testing: the drawing engine, canvas, shapes on screen, persistence and
+  collaboration features do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -67,8 +68,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   `docs/architecture/engine`. ECMAScript only: its ESLint block forbids browser and Node.js
   globals, `Math.random`, `Date.now` and timers, which come through its ports, and its sources
   import only one another. A layer imports only from its own and earlier layers
-  (`scripts/lib/engine-layers.ts`); only `math`, `ports`, `model`, `scene`, `history`, `camera`
-  and the world and content bounds of `geometry` exist so far. Tests run in the
+  (`scripts/lib/engine-layers.ts`); only `math`, `ports`, `model`, `geometry`, `camera`, `scene`,
+  `history` and `selection` exist so far. Tests run in the
   `engine:unit` and `engine:integration` projects; property tests use `tests/support/property.ts`.
 - `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
   `scripts/tests`.
