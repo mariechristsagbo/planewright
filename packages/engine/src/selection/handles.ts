@@ -50,7 +50,8 @@ const SIDES = [
  * The handles of a selection frame in screen space, in the order in which they are hit: the four
  * corners, the rotation handle 24 px above the top centre in the box's own orientation, then the
  * side handles, each hidden when its side is shorter on screen than three hit squares, so that the
- * corners stay reachable (REQ-S12). A lone two-point line has its start and end handles instead.
+ * corners stay reachable (REQ-S12); a lone text has none. A lone two-point line has its start and
+ * end handles instead.
  */
 export function layoutHandles(
   frame: SelectionFrame,
@@ -73,7 +74,10 @@ export function layoutHandles(
     center: add(screenFromScene(at(0.5, 0), camera), above),
     ...sized,
   };
-  const sides = SIDES.filter(([, , , side]) => box[side] * camera.zoom >= 3 * sized.hitSize);
+  const sides =
+    frame.sideHandles === false
+      ? []
+      : SIDES.filter(([, , , side]) => box[side] * camera.zoom >= 3 * sized.hitSize);
   return [
     ...CORNERS.map(([handle, fx, fy]) => place(handle, at(fx, fy))),
     rotation,

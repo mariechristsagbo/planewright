@@ -5,7 +5,8 @@ import { selectionFrame } from '../../../src/selection/frame.ts';
 import type { SelectionFrame } from '../../../src/selection/frame.ts';
 import { handleAt, layoutHandles } from '../../../src/selection/handles.ts';
 import type { Handle } from '../../../src/selection/handles.ts';
-import { lineElement, sceneOf, shapeElement, testId } from '../../support/elements.ts';
+import { hitTest } from '../../../src/selection/hit-test.ts';
+import { lineElement, sceneOf, shapeElement, testId, textElement } from '../../support/elements.ts';
 
 const ZOOM_1: Camera = { x: 0, y: 0, zoom: 1 };
 
@@ -159,6 +160,31 @@ describe('the handles of a selection box', () => {
       'sw',
       'rotate',
     ]);
+  });
+});
+
+describe('the handles of a lone text (ENG-06 m3)', () => {
+  const text = textElement(400, 200, { id: 1 });
+  const rectangle = shapeElement('rectangle', 400, 200, { id: 2, x: 500 });
+
+  /** The handles' names for a selection of the scene's elements, at zoom 1 with a mouse. */
+  const names = (ids: readonly number[]) => {
+    const frame = selectionFrame(sceneOf(text, rectangle), ids.map(testId));
+    return frame === null ? [] : layoutHandles(frame, ZOOM_1, 'mouse').map(({ handle }) => handle);
+  };
+
+  it('REQ-S12 are its four corners and the rotation handle, with no side handles however large', () => {
+    expect(names([1])).toEqual(['nw', 'ne', 'se', 'sw', 'rotate']);
+  });
+
+  it('let a press on the middle of a side hit the text itself, not a handle', () => {
+    const view = { scene: sceneOf(text), selection: [testId(1)], camera: ZOOM_1 };
+    expect(hitTest(view, { x: 200, y: 0 }, 'mouse')).toEqual({ type: 'element', id: testId(1) });
+    expect(hitTest(view, { x: 400, y: 100 }, 'touch')).toEqual({ type: 'element', id: testId(1) });
+  });
+
+  it('keep the side handles of a selection that holds a text and another element', () => {
+    expect(names([1, 2])).toEqual(['nw', 'ne', 'se', 'sw', 'rotate', 'n', 'e', 's', 'w']);
   });
 });
 
