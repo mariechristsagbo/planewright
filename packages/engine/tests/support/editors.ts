@@ -1,7 +1,8 @@
-import { createEditor } from '../../src/editor/editor.ts';
+import { createEditor, openEditor } from '../../src/editor/editor.ts';
 import type { Editor, EditorView } from '../../src/editor/editor.ts';
 import type { RenderFrame } from '../../src/editor/render-frame.ts';
 import type { InputEvent } from '../../src/input/events.ts';
+import type { DocumentState } from '../../src/model/document.ts';
 import { createCountingIds, createManualClock, createQueueScheduler } from './fakes.ts';
 import type { QueueScheduler } from './fakes.ts';
 
@@ -20,11 +21,15 @@ export interface EditorHarness {
 
 export const VIEWPORT = { width: 1280, height: 720, pixelRatio: 1 };
 
-/** An editor whose listener has drawn its first full frame, so nothing is dirty. */
-export function editorHarness(): EditorHarness {
+/**
+ * An editor whose listener has drawn its first full frame, so nothing is dirty: over an empty
+ * document, or over a fixture document opened without an undo step.
+ */
+export function editorHarness(document?: DocumentState): EditorHarness {
   const clock = createManualClock();
   const scheduler = createQueueScheduler(clock);
-  const editor = createEditor({ clock, scheduler, ids: createCountingIds() });
+  const ports = { clock, scheduler, ids: createCountingIds() };
+  const editor = document === undefined ? createEditor(ports) : openEditor(ports, document);
   editor.resize(VIEWPORT);
   const frames: RenderFrame[] = [];
   editor.onFrame((frame) => frames.push(frame));

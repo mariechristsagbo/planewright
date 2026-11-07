@@ -19,6 +19,10 @@ export interface Selection extends HistorySelection {
   dispose(): void;
 }
 
+/** Whether two selections hold the same elements in the same order. */
+export const sameIds = (a: readonly ElementId[], b: readonly ElementId[]): boolean =>
+  a.length === b.length && a.every((id, index) => id === b[index]);
+
 /**
  * An empty selection over a scene store. It never holds a missing element: once any change set,
  * a preview, a remote set or an undo included, removes a selected element, it is dropped.
