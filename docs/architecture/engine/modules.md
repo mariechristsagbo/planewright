@@ -113,47 +113,48 @@ the render loop's `onFrame` and calls `render` with each frame it is handed
 The engine exports its types, one constructor and, for renderers, the render loop and the pure
 geometry functions they draw with (`createRenderLoop`, `geometryOf`, `localBox` and `layoutText`,
 since ENG-07). Everything else is internal to the package. The one constructor, `createEditor`,
-came with the editor surface (ENG-08) and composes the render loop; so far it has the parts of the
-interface below that ENG-08 needs ([what ENG-08 decided](interaction.md#what-eng-08-decided)).
+came with the editor surface (ENG-08) and composes the render loop; the selection issue (ENG-09)
+added the selection to it. Its surface so far
+([what ENG-08 decided](interaction.md#what-eng-08-decided),
+[what ENG-09 decided](interaction.md#what-eng-09-decided)):
 
 ```ts
 export interface EditorPorts {
   readonly clock: Clock;
   readonly scheduler: Scheduler;
   readonly ids: IdSource;
-  readonly text: TextMeasurer;
-  readonly repository?: DocumentRepository;
-  readonly announcer?: Announcer;
 }
 
 export interface Editor {
-  /** Read-only views: document, selection, camera, tool, history, text session, save status. */
+  /** Read-only view: tool, cursor, camera, selection, and whether Undo and Redo are enabled. */
   readonly view: EditorView;
-  /** Feed one engine input event (pointer, wheel, key, pinch) from the input adapter. */
-  input(event: InputEvent): void;
-  /** Run a registered command, for example from a menu, the palette or a test. */
+  /** The registry's commands with their labels, shortcuts and tools, tools in tool bar order. */
+  readonly commands: readonly EditorCommand[];
+  /** Feed one input event; true for a wheel event or a key press that is a command's chord. */
+  input(event: InputEvent): boolean;
+  /** Run a registered command, for example from the tool bar or a test. */
   run(command: CommandId): CommandOutcome;
   /** Replace the selection, for example from the element list; never an undo step. */
   select(ids: readonly ElementId[]): void;
-  /** Report the text area's whole value, or the end of the session, while a text is edited. */
-  editText(edit: TextEdit): void;
-  /** Start a save at once if anything is unsaved, for example when the page is hidden. */
-  saveNow(): void;
-  /** Carry out the user's choice after a save was refused as stale. */
-  resolveStale(choice: 'load-newer' | 'keep-this'): void;
   /** Report the canvas size in CSS pixels and the device pixel ratio. */
   resize(size: ViewportSize): void;
-  /** The next frame to draw, or null when no layer is dirty. */
-  frame(): RenderFrame | null;
-  subscribe(listener: (update: EditorUpdate) => void): Cancel;
+  /** Hand the listener every frame built on an animation frame, starting with a full one. */
+  onFrame(listener: (frame: RenderFrame) => void): Cancel;
+  subscribe(listener: (view: EditorView) => void): Cancel;
   dispose(): void;
 }
 
-export function createEditor(ports: EditorPorts, stored?: StoredDocument): Editor;
+export function createEditor(ports: EditorPorts): Editor;
 ```
 
-`EditorPorts` gains each port with the issue that adds it. `repository` and `announcer` stay
-optional, so that tests and the issues before ENG-13 and ENG-14 can create an editor without them.
+The rest of the designed surface joins with its issues: the `text` port (`TextMeasurer`) with its
+first engine caller; `editText(edit: TextEdit)` and the view's text session with text editing
+(ENG-12); `repository?: DocumentRepository`, a stored document
+(`createEditor(ports, stored?: StoredDocument)`), `saveNow()`, `resolveStale(choice)` and the
+view's save status with persistence (ENG-13); and `announcer?: Announcer` with the live region
+(ENG-14). `repository` and `announcer` stay optional, so that tests and the issues before ENG-13
+and ENG-14 can create an editor without them. Until a stored document arrives, the engine's tests
+open fixture documents with `openEditor(ports, document)`, which the entry does not export.
 
 React reads `editor.view` through `useSyncExternalStore` with `editor.subscribe`; it never reaches
 into the scene store directly.

@@ -107,7 +107,9 @@ The overlay layer is redrawn in screen space with lines aligned to device pixels
 Handles are hit through a larger square than they are drawn: 12 px for a mouse or pen and 24 px for
 touch (REQ-Y06). Side handles are hidden when that side is shorter on screen than three hit squares,
 so that the corners stay reachable; corners and the rotation handle always show (REQ-S12). A
-two-point line shows `start` and `end` handles on its ends instead of a box.
+two-point line shows `start` and `end` handles on its ends instead of a box, and a lone text has
+no side handles, since texts have none in P0 ([transforms](interaction.md#transforms)); ENG-09
+applies this to the handle layout ([what ENG-09 decided](interaction.md#what-eng-09-decided)).
 
 ## Geometry
 
