@@ -1,0 +1,91 @@
+import type { Camera } from '../camera/camera.ts';
+import { zoomToFit } from '../camera/fit.ts';
+import { resetZoom, zoomIn, zoomOut } from '../camera/ladder.ts';
+import type { ViewportSize } from '../camera/viewport.ts';
+import { contentBounds } from '../geometry/world-bounds.ts';
+import type { ToolId } from '../tools/tool.ts';
+import type { KeyChord } from './chords.ts';
+import type { Command, CommandId } from './registry.ts';
+
+// The commands that the editor surface has so far
+// (docs/architecture/engine/interaction.md#commands-and-shortcuts); the others join with the
+// issues that give them behaviour.
+
+const always = (): boolean => true;
+
+/** Mod with a produced key, with or without Shift, wherever the layout puts it. */
+const modWithEitherShift = (key: string): KeyChord[] => [
+  { key, mod: true },
+  { key, mod: true, shift: true },
+];
+
+const toolCommand = (tool: ToolId, label: string, shortcuts: readonly KeyChord[]): Command => ({
+  id: `tool.${tool}`,
+  label,
+  shortcuts,
+  tool,
+  isEnabled: always,
+  run: (target) => {
+    target.setTool(tool);
+  },
+});
+
+const cameraCommand = (
+  id: CommandId,
+  label: string,
+  shortcuts: readonly KeyChord[],
+  next: (camera: Camera, viewport: ViewportSize) => Camera,
+): Command => ({
+  id,
+  label,
+  shortcuts,
+  isEnabled: always,
+  run: (target) => {
+    target.setCamera(next(target.camera, target.viewport));
+  },
+});
+
+/** In tool bar order for the tools; digits follow that order (REQ-C14). */
+export const DEFAULT_COMMANDS: readonly Command[] = [
+  toolCommand('hand', 'Hand', [{ key: 'h' }]),
+  toolCommand('selection', 'Selection', [{ key: 'v' }, { key: 'Digit1', physical: true }]),
+  {
+    id: 'history.undo',
+    label: 'Undo',
+    shortcuts: [{ key: 'z', mod: true }],
+    isEnabled: (target) => target.history.canUndo,
+    run: (target) => {
+      target.history.undo();
+    },
+  },
+  {
+    id: 'history.redo',
+    label: 'Redo',
+    shortcuts: [
+      { key: 'z', mod: true, shift: true },
+      { key: 'y', mod: true },
+    ],
+    isEnabled: (target) => target.history.canRedo,
+    run: (target) => {
+      target.history.redo();
+    },
+  },
+  cameraCommand('view.zoom-in', 'Zoom in', ['=', '+'].flatMap(modWithEitherShift), zoomIn),
+  cameraCommand('view.zoom-out', 'Zoom out', ['-', '−', '_'].flatMap(modWithEitherShift), zoomOut),
+  cameraCommand(
+    'view.zoom-reset',
+    'Reset zoom',
+    [{ key: 'Digit0', physical: true, mod: true }],
+    resetZoom,
+  ),
+  {
+    id: 'view.zoom-to-fit',
+    label: 'Zoom to fit',
+    shortcuts: [{ key: 'Digit1', physical: true, shift: true }],
+    isEnabled: always,
+    run: (target) => {
+      const content = contentBounds(target.scene.ordered());
+      target.setCamera(zoomToFit(target.camera, content, target.viewport));
+    },
+  },
+];
