@@ -54,8 +54,18 @@ codec), the `geometry` layer (world and content bounds, per-kind outlines and di
 measurer port and text layout), the `camera` layer (screen and scene transforms, pan, zoom, the
 zoom ladder, zoom to fit, two-pointer maths, resizing and limits), the `scene` layer (the scene
 store with its change sets, indexes, transient previews and transactions), the `history` module
-(undo and redo entries, burst merging and conflict-safe undo) and the `selection` module (the
-selection state, hit testing, handle layout and box selection). No application imports it yet.
+(undo and redo entries, burst merging and conflict-safe undo), the `selection` module (the
+selection state, hit testing, handle layout and box selection) and the `editor` layer (render
+frames, the renderer port, culling and the render loop with its dirty tracking and frame
+scheduling). No application imports it yet.
+
+### packages/render-canvas
+
+The Canvas 2D implementation of the engine's renderer port
+([ADR 0006](../adr/0006-canvas-rendering.md)), which depends on the engine only. It draws a render
+frame's scene part on a scene canvas and its overlay part on an overlay canvas, sizes their backing
+stores to the device pixel ratio, and caches each element's path and text layout per revision. It
+is tested against a recording fake of the 2D context; no page uses it yet.
 
 ## Decisions and what stays open
 
@@ -63,12 +73,14 @@ The [canvas-engine architecture](engine/README.md) (issue #3) decides how the ed
 traced to the behavioural baseline of issue #1. Its ADRs are accepted. ENG-01 (issue #5) created
 the engine package with its boundary checks, its math layer and its ports, ENG-02 (issue #7)
 added the document model and its codec, ENG-03 (issue #9) the scene store, ENG-04 (issue #11)
-the undo and redo history, ENG-05 (issue #13) the camera and ENG-06 (issue #15) the geometry, text
-layout and hit testing; the rest is not implemented yet:
+the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text
+layout and hit testing, and ENG-07 (issue #17) the render loop and the canvas renderer; the rest is
+not implemented yet:
 
 - storage, beyond the element model and codec of ENG-02 and the scene store of ENG-03:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
-- rendering approach and viewport culling, beyond the hit testing of ENG-06:
+- the canvas host that shows what the renderer draws (ENG-08), beyond the render loop, culling
+  and canvas renderer of ENG-07 and the hit testing of ENG-06:
   [ADR 0006](../adr/0006-canvas-rendering.md);
 - input handling, tool architecture and undo/redo model, beyond the change sets and transactions
   of ENG-03 and the history of ENG-04:

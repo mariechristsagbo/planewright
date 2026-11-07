@@ -8,8 +8,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > contains the workspace structure, a factual status page, a collaboration-service skeleton, the
 > first layers of the engine package (math primitives, platform ports, the document model with
 > its codec, the scene store with its change sets and transactions, the undo and redo history,
-> the camera, and the geometry, text layout and hit testing, all used by nothing yet) and the
-> quality gates that future work must pass.
+> the camera, the geometry, text layout and hit testing, and the render loop), a Canvas 2D
+> renderer package, all used by nothing yet, and the quality gates that future work must pass.
 
 ## Goals
 
@@ -47,15 +47,16 @@ Product names are used only to identify these references.
 
 ## Repository layout
 
-| Path                                     | Contents                                                                  |
-| ---------------------------------------- | ------------------------------------------------------------------------- |
-| [`apps/web`](apps/web)                   | React + Vite browser application (currently a status page only)           |
-| [`apps/collab`](apps/collab)             | Node.js WebSocket collaboration service (health endpoint + hello only)    |
-| [`packages/protocol`](packages/protocol) | Runtime-agnostic wire protocol definitions shared by clients and services |
-| [`packages/engine`](packages/engine)     | ECMAScript-only canvas engine, from math to geometry and hit testing      |
-| [`scripts`](scripts)                     | Repository guardrails: file size, dependency policy, branch names         |
-| [`docs`](docs/README.md)                 | Architecture decisions, investigation process and development guides      |
-| [`.github`](.github)                     | CI, CodeQL, Dependabot, issue forms and the pull request template         |
+| Path                                               | Contents                                                                  |
+| -------------------------------------------------- | ------------------------------------------------------------------------- |
+| [`apps/web`](apps/web)                             | React + Vite browser application (currently a status page only)           |
+| [`apps/collab`](apps/collab)                       | Node.js WebSocket collaboration service (health endpoint + hello only)    |
+| [`packages/protocol`](packages/protocol)           | Runtime-agnostic wire protocol definitions shared by clients and services |
+| [`packages/engine`](packages/engine)               | ECMAScript-only canvas engine, from math to the render loop               |
+| [`packages/render-canvas`](packages/render-canvas) | Canvas 2D renderer of the engine's render frames (not on a page yet)      |
+| [`scripts`](scripts)                               | Repository guardrails: file size, dependency policy, branch names         |
+| [`docs`](docs/README.md)                           | Architecture decisions, investigation process and development guides      |
+| [`.github`](.github)                               | CI, CodeQL, Dependabot, issue forms and the pull request template         |
 
 ## Requirements
 
