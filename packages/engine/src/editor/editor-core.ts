@@ -14,11 +14,12 @@ import type { Clock, IdSource, Scheduler } from '../ports/ports.ts';
 import type { ChangeSet, ChangeStamp } from '../scene/change-set.ts';
 import { createSceneStore } from '../scene/store.ts';
 import type { SceneStore } from '../scene/store.ts';
+import { hitTest } from '../selection/hit-test.ts';
 import { createSelection, sameIds } from '../selection/selection.ts';
 import type { Selection } from '../selection/selection.ts';
 import { activeTool } from '../tools/active.ts';
 import type { ActiveTool } from '../tools/active.ts';
-import type { CursorKind, GestureEvent, ToolEffect } from '../tools/tool.ts';
+import type { CursorKind, GestureEvent, ToolContext, ToolEffect } from '../tools/tool.ts';
 import { createRenderLoop } from './render-loop.ts';
 import type { RenderLoop } from './render-loop.ts';
 
@@ -104,13 +105,39 @@ export function toolEventOf(gesture: Gesture, camera: Camera): GestureEvent | nu
   return { ...gesture, scene: sceneFromScreen(gesture.at, camera) };
 }
 
-export function applyEffects(core: EditorCore, effects: readonly ToolEffect[]): void {
-  for (const effect of effects) {
-    if (effect.type === 'pan') {
+function applyEffect(core: EditorCore, effect: ToolEffect): void {
+  switch (effect.type) {
+    case 'pan':
       core.loop.update({ camera: panBy(core.loop.state().camera, effect.delta) });
-    } else {
+      break;
+    case 'cursor':
       core.cursor = effect.cursor;
-    }
+      break;
+    case 'select':
+      core.selection.set(effect.ids);
+      break;
+    case 'marquee':
+      core.loop.update({ marquee: effect.box });
+      break;
+  }
+}
+
+/** What the active tool reads: the camera, the scene, the selection and the hit test over them. */
+function contextOf(core: EditorCore, camera: Camera): ToolContext {
+  const ids = core.selection.get();
+  const view = { scene: core.scene, selection: ids, camera };
+  return {
+    camera,
+    scene: core.scene,
+    selection: { ids },
+    hit: (at, pointer) => hitTest(view, at, pointer),
+  };
+}
+
+/** The handles are drawn for the pointer that pressed last: 8 px for a mouse or pen, 12 for touch. */
+function sizeHandlesFor(core: EditorCore, event: GestureEvent): void {
+  if (event.type === 'press' && event.pointer !== core.loop.state().pointer) {
+    core.loop.update({ pointer: event.pointer });
   }
 }
 
@@ -119,8 +146,13 @@ export function routeGesture(core: EditorCore, router: ViewportRouter, gesture: 
   const camera = core.loop.state().camera;
   const moved = router.gesture(camera, gesture);
   const event = toolEventOf(gesture, camera);
-  if (moved !== null) core.loop.update({ camera: moved });
-  else if (event !== null) applyEffects(core, core.tool.reduce(event, { camera }));
+  if (moved !== null) {
+    core.loop.update({ camera: moved });
+  } else if (event !== null) {
+    sizeHandlesFor(core, event);
+    for (const effect of core.tool.reduce(event, contextOf(core, camera)))
+      applyEffect(core, effect);
+  }
 }
 
 /** Shows the selection on the overlay once it changed, by a tool, a command, the history or a removal. */

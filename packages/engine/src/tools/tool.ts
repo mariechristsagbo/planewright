@@ -1,7 +1,11 @@
 import type { Camera } from '../camera/camera.ts';
 import type { Modifiers } from '../input/events.ts';
-import type { Point } from '../model/elements.ts';
+import type { Box, Point } from '../model/elements.ts';
+import type { ElementId } from '../model/ids.ts';
+import type { SceneReader } from '../scene/store.ts';
+import type { HitResult } from '../selection/hit-test.ts';
 import type { PointerKind } from '../selection/pointer.ts';
+import type { SelectionState } from '../selection/selection.ts';
 
 // Tools (docs/architecture/engine/interaction.md#tools): each tool is a reducer over its own state
 // that returns effects for the editor to apply, so a tool never changes anything itself.
@@ -34,11 +38,19 @@ export type GestureEvent =
 export type ToolEffect =
   /** Pans the camera by a screen delta, so the content follows the pointer. */
   | { readonly type: 'pan'; readonly delta: Point }
-  | { readonly type: 'cursor'; readonly cursor: CursorKind };
+  | { readonly type: 'cursor'; readonly cursor: CursorKind }
+  /** Replaces the selection; never an undo step (REQ-S13). */
+  | { readonly type: 'select'; readonly ids: readonly ElementId[] }
+  /** Shows the box selection's marquee in scene units, or hides it with null. */
+  | { readonly type: 'marquee'; readonly box: Box | null };
 
-/** What a tool may read; more joins with the tools that need it. */
+/** What a tool may read; the defaults, tool lock and new identifiers join with the creation tools. */
 export interface ToolContext {
   readonly camera: Camera;
+  readonly scene: SceneReader;
+  readonly selection: SelectionState;
+  /** What a press at a screen point hits: a handle, an element, the selection box or nothing. */
+  readonly hit: (at: Point, pointer: PointerKind) => HitResult;
 }
 
 export interface ToolStep<State> {

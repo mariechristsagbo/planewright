@@ -1,4 +1,5 @@
 import { handTool } from './hand.ts';
+import { selectionTool } from './selection-tool.ts';
 import type { CursorKind, GestureEvent, Tool, ToolContext, ToolEffect, ToolId } from './tool.ts';
 
 /** A tool with its current state, whatever that state's type is. */
@@ -22,10 +23,7 @@ function activate<State>(tool: Tool<State>): ActiveTool {
   };
 }
 
-/**
- * A tool in its initial state. The Selection tool gets its states with the selection issue
- * (ENG-09); until then it is only the default tool, and a gesture with it has no effect.
- */
+/** A tool in its initial state. */
 export function activeTool(id: ToolId): ActiveTool {
-  return id === 'hand' ? activate(handTool) : { id, cursor: 'default', reduce: () => [] };
+  return id === 'hand' ? activate(handTool) : activate(selectionTool);
 }
