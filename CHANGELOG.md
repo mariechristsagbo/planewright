@@ -50,3 +50,10 @@ release has been published yet.
   fit with the content's bounds, the two-pointer gesture maths, resizing that keeps the viewport
   centre, and the limits of 10 % to 3000 % zoom and a position within 10⁹ units, kept for every
   input. Nothing uses the camera yet: no canvas, input or zoom control exists.
+- Geometry, hit testing and text layout in the engine (ENG-06): outlines and signed distances for
+  rectangles, ellipses, diamonds, lines, freehand strokes and texts in each element's own frame, a
+  text measurer port and text layout, the selection state that the undo history reads and
+  restores, hit testing of the selection's handles, then the topmost element within 5 px for a
+  mouse or pen and 6 px for touch, then the selection box, handle layout with hit squares of 24 px
+  for touch, and box selection of wholly enclosed elements. A selection reader that throws no
+  longer leaves the history open. Nothing uses them yet: no canvas, input or selection tool exists.
