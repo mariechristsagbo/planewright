@@ -1,5 +1,8 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
+import type * as Entries from '../../src/history/entry.ts';
+import type * as Histories from '../../src/history/history.ts';
+import type * as Transactions from '../../src/history/transaction.ts';
 import * as engine from '../../src/index.ts';
 import type * as Engine from '../../src/index.ts';
 import type * as Codec from '../../src/model/codec.ts';
@@ -70,5 +73,15 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.ApplyOptions>().toEqualTypeOf<Store.ApplyOptions>();
     expectTypeOf<Engine.SceneStore>().toEqualTypeOf<Store.SceneStore>();
     expectTypeOf<Engine.SceneTransaction>().toEqualTypeOf<Transaction.SceneTransaction>();
+  });
+
+  it("exports the history's entries, history and transaction types", () => {
+    expectTypeOf<Engine.HistoryLabel>().toEqualTypeOf<Entries.HistoryLabel>();
+    expectTypeOf<Engine.HistoryEntry>().toEqualTypeOf<Entries.HistoryEntry>();
+    expectTypeOf<Engine.HistorySelection>().toEqualTypeOf<Entries.HistorySelection>();
+    expectTypeOf<Engine.History>().toEqualTypeOf<Histories.History>();
+    expectTypeOf<Engine.HistoryLimits>().toEqualTypeOf<Histories.HistoryLimits>();
+    expectTypeOf<Engine.Transaction>().toEqualTypeOf<Transactions.Transaction>();
+    expectTypeOf<Engine.CommitOptions>().toEqualTypeOf<Transactions.CommitOptions>();
   });
 });
