@@ -1,8 +1,10 @@
 import type { Camera } from '../camera/camera.ts';
 import type { ViewportSize } from '../camera/viewport.ts';
+import type { HistoryLabel } from '../history/entry.ts';
 import type { History } from '../history/history.ts';
 import type { KeyInput } from '../input/events.ts';
 import type { ElementId } from '../model/ids.ts';
+import type { UnstampedChangeSet } from '../scene/change-set.ts';
 import type { SceneReader } from '../scene/store.ts';
 import type { ToolId } from '../tools/tool.ts';
 import { chordMatches, sameChord } from './chords.ts';
@@ -11,6 +13,8 @@ import type { KeyChord } from './chords.ts';
 // The command registry and keymap (docs/architecture/engine/interaction.md#commands-and-shortcuts,
 // ADR 0008 decision 6): the tool bar, the keymap and every later surface read one list.
 
+export type NudgeDirection = 'left' | 'right' | 'up' | 'down';
+
 export type CommandId =
   | 'tool.hand'
   | 'tool.selection'
@@ -18,6 +22,10 @@ export type CommandId =
   | 'history.redo'
   | 'selection.select-all'
   | 'selection.cancel'
+  | 'selection.duplicate'
+  | 'selection.delete'
+  | `selection.nudge-${NudgeDirection}`
+  | `selection.nudge-${NudgeDirection}-10`
   | 'view.zoom-in'
   | 'view.zoom-out'
   | 'view.zoom-reset'
@@ -36,6 +44,26 @@ export interface CommandTarget {
   select(ids: readonly ElementId[]): void;
   /** Cancels the tool's open gesture; false when none is open. */
   cancelGesture(): boolean;
+  /** The selected elements, in the order they were selected. */
+  readonly selection: readonly ElementId[];
+  /** A new element identifier from the identifier source. */
+  readonly newId: () => ElementId;
+  /**
+   * The number of the key press, or of the run, that started the command: a held key's repeats
+   * share their press's number.
+   */
+  readonly keyPress: number;
+  /**
+   * Applies a change set in one transaction, so it is one undo step, after selecting `select` if
+   * given; steps with the same merge key within one burst merge into one (REQ-T10).
+   */
+  edit(label: HistoryLabel, changes: UnstampedChangeSet, options?: EditOptions): void;
+}
+
+export interface EditOptions {
+  /** The selection after the change, which redo restores. */
+  readonly select?: readonly ElementId[];
+  readonly mergeKey?: string;
 }
 
 export type CommandOutcome = 'done' | 'disabled';

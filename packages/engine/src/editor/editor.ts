@@ -114,6 +114,7 @@ function input({ core, target, recogniser, publish, run }: Wiring, event: InputE
     return true;
   }
   recogniser.input(event);
+  if (event.type === 'key-down' && !event.repeat) core.keyPresses += 1;
   const command = event.type === 'key-down' ? core.registry.forKey(event) : undefined;
   if (command !== undefined) run(command.id);
   return command !== undefined;
@@ -142,6 +143,7 @@ export function openEditor(ports: EditorPorts, document: DocumentState): Editor 
     },
     run(id) {
       alive();
+      core.keyPresses += 1;
       return run(id);
     },
     select(ids) {

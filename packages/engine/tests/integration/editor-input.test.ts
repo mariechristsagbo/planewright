@@ -129,6 +129,24 @@ describe('the view and the commands', () => {
       'view.zoom-out',
       'view.zoom-reset',
       'view.zoom-to-fit',
+      'selection.duplicate',
+      'selection.delete',
+      'selection.nudge-left',
+      'selection.nudge-left-10',
+      'selection.nudge-right',
+      'selection.nudge-right-10',
+      'selection.nudge-up',
+      'selection.nudge-up-10',
+      'selection.nudge-down',
+      'selection.nudge-down-10',
+    ]);
+    expect(editor.commands.filter(({ id }) => id.startsWith('selection.nudge-down'))).toEqual([
+      { id: 'selection.nudge-down', label: 'Nudge down', shortcuts: [{ key: 'arrowdown' }] },
+      {
+        id: 'selection.nudge-down-10',
+        label: 'Nudge down by 10',
+        shortcuts: [{ key: 'arrowdown', shift: true }],
+      },
     ]);
     expect(editor.commands[0]).toEqual({
       id: 'tool.hand',

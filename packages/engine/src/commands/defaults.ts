@@ -6,6 +6,7 @@ import { geometryOf } from '../geometry/kinds.ts';
 import { contentBounds } from '../geometry/world-bounds.ts';
 import type { ToolId } from '../tools/tool.ts';
 import type { KeyChord } from './chords.ts';
+import { EDIT_COMMANDS } from './edit-commands.ts';
 import type { Command, CommandId } from './registry.ts';
 
 // The commands that the editor has so far
@@ -115,4 +116,5 @@ export const DEFAULT_COMMANDS: readonly Command[] = [
       target.setCamera(zoomToFit(target.camera, content, target.viewport));
     },
   },
+  ...EDIT_COMMANDS,
 ];
