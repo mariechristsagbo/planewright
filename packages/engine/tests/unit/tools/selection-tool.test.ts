@@ -192,6 +192,10 @@ describe('the Selection tool: the marquee', () => {
     expect(run([CANCEL]).state).toEqual({ type: 'idle' });
   });
 
+  it('changes nothing on a tap or a release that it never saw pressed', () => {
+    expect(run([at('tap', 700, 500), at('release', 700, 500)], [RECTANGLE]).effects).toEqual([]);
+  });
+
   it('starts idle with the default cursor', () => {
     expect([selectionTool.id, selectionTool.cursor, selectionTool.initial]).toEqual([
       'selection',

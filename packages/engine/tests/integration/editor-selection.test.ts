@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { editorHarness } from '../support/editors.ts';
-import { keyEvent, move } from '../support/inputs.ts';
+import { down, keyEvent, move, up } from '../support/inputs.ts';
 import { POINTERS, drag, marqueesOf, tapper } from '../support/selection-input.ts';
 import {
   ELLIPSE,
@@ -124,5 +124,22 @@ describe.each(POINTERS)('Select all and Escape in the editor, with %s input', (p
     feed(move(700, 300, { pointer, time: 10_000 }), end);
     expect(editor.view.selection).toEqual([TEXT]);
     expect(marqueesOf(next())).toEqual([]);
+  });
+});
+
+describe('the Selection tool in the editor, when nothing should change', () => {
+  it('REQ-S10 keeps the Selection tool and clears the selection on Escape with no gesture', () => {
+    const { editor, feed } = editorHarness(selectionDocument());
+    feed(...tapper('mouse')(200, 150), ESCAPE);
+    expect(editor.view).toMatchObject({ tool: 'selection', selection: [] });
+  });
+
+  it('keeps the selection when a touch held for 500 ms on empty canvas is released', () => {
+    const { editor, feed, scheduler } = editorHarness(selectionDocument());
+    feed(...tapper('touch')(200, 150));
+    feed(down(700, 500, { pointer: 'touch', time: 5_000 }));
+    scheduler.advance(500);
+    feed(up(700, 500, { pointer: 'touch', time: 5_500 }));
+    expect(editor.view).toMatchObject({ selection: [RECTANGLE], canUndo: false });
   });
 });
