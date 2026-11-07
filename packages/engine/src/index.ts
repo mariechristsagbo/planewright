@@ -1,8 +1,13 @@
 /**
- * The public entry of `@planewright/engine`. The engine exports its types and, once the editor
- * exists, one constructor (docs/architecture/engine/modules.md#public-surface); every layer stays
- * internal to the package.
+ * The public entry of `@planewright/engine` (docs/architecture/engine/modules.md#public-surface).
+ * The engine exports its types, the editor's render loop and the pure geometry functions that a
+ * renderer draws with: each kind's outline, an element's local box and text layout. Everything
+ * else stays internal to the package; `createEditor` joins them with the editor surface (ENG-08).
  */
+export { createRenderLoop } from './editor/render-loop.ts';
+export { geometryOf } from './geometry/kinds.ts';
+export { layoutText } from './geometry/text-layout.ts';
+export { localBox } from './geometry/world-bounds.ts';
 export type { Cancel, Clock, IdSource, Scheduler } from './ports/ports.ts';
 export type { CodecError, CodecProblem, Decoded } from './model/codec.ts';
 export type { Color } from './model/color.ts';
@@ -40,7 +45,7 @@ export type { ApplyOptions, SceneReader, SceneStore, SceneUpdate } from './scene
 export type { SceneTransaction } from './scene/transaction.ts';
 export type { Camera } from './camera/camera.ts';
 export type { ViewportSize } from './camera/viewport.ts';
-export type { PathCommand } from './geometry/path.ts';
+export type { KindGeometry, PathCommand } from './geometry/path.ts';
 export type { TextLayout, TextLine } from './geometry/text-layout.ts';
 export type { TextMeasurer, TextMetrics } from './geometry/text-measurer.ts';
 export type { HistoryEntry, HistoryLabel, HistorySelection } from './history/entry.ts';
@@ -51,3 +56,6 @@ export type { Handle, HandleId } from './selection/handles.ts';
 export type { HitResult, HitView } from './selection/hit-test.ts';
 export type { PointerKind } from './selection/pointer.ts';
 export type { Selection } from './selection/selection.ts';
+export type { RenderState } from './editor/frame.ts';
+export type { OverlayPrimitive, RenderFrame, Renderer, Theme } from './editor/render-frame.ts';
+export type { RenderLoop } from './editor/render-loop.ts';
