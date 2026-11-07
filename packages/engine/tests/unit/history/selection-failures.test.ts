@@ -63,3 +63,52 @@ describe('a selection reader that throws while a transaction opens', () => {
     expect(present(store, 2).x).toBe(300);
   });
 });
+
+describe('a selection reader that throws at commit', () => {
+  it('throws before anything is applied and leaves the transaction open to retry or cancel', () => {
+    const store = fixtureStore();
+    const selection = failingSelection();
+    const history = historyOver(store, selection);
+    const retried = history.begin();
+    retried.preview(edit(store, 2, { x: 300 }));
+    selection.failGet = true;
+    expect(() => retried.commit('move')).toThrow('the selection reader failed');
+    expect(history.inTransaction).toBe(true);
+    expect(history.canUndo).toBe(false);
+    expect(present(store, 2).x).toBe(300);
+    selection.failGet = false;
+    expect(retried.commit('move')).not.toBeNull();
+    expect(history.inTransaction).toBe(false);
+    const cancelled = history.begin();
+    cancelled.preview(edit(store, 2, { x: 400 }));
+    selection.failGet = true;
+    expect(() => cancelled.commit('move')).toThrow('the selection reader failed');
+    cancelled.cancel();
+    expect(history.inTransaction).toBe(false);
+    expect(present(store, 2).x).toBe(300);
+  });
+});
+
+describe('a selection writer that throws during undo or redo', () => {
+  it('leaves the step done and the history usable, and its error reaches the caller', () => {
+    const store = fixtureStore();
+    const selection = failingSelection();
+    const history = historyOver(store, selection);
+    const transaction = history.begin();
+    transaction.preview(edit(store, 2, { x: 300 }));
+    transaction.commit('move');
+    selection.failSet = true;
+    expect(() => history.undo()).toThrow('the selection writer failed');
+    expect(present(store, 2).x).toBe(200);
+    expect([history.canUndo, history.canRedo, history.inTransaction]).toStrictEqual([
+      false,
+      true,
+      false,
+    ]);
+    expect(() => history.redo()).toThrow('the selection writer failed');
+    expect(present(store, 2).x).toBe(300);
+    selection.failSet = false;
+    expect(history.undo()).not.toBeNull();
+    expect(history.begin()).toBeDefined();
+  });
+});
