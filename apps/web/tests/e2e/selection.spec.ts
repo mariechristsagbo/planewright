@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 import { canvas, canvasBox, expectHistoryDisabled, readout } from './support.ts';
 
@@ -9,6 +10,17 @@ import { canvas, canvasBox, expectHistoryDisabled, readout } from './support.ts'
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
 });
+
+/** Counts the overlay canvas's device pixels that are not transparent, in the page. */
+const INK = `(() => {
+  const layer = document.querySelectorAll('[aria-label="Drawing canvas"] canvas')[1];
+  const { data } = layer.getContext('2d').getImageData(0, 0, layer.width, layer.height);
+  let ink = 0;
+  for (let alpha = 3; alpha < data.length; alpha += 4) if (data[alpha] !== 0) ink += 1;
+  return ink;
+})()`;
+
+const overlayInk = async (page: Page): Promise<number> => Number(await page.evaluate(INK));
 
 test('the Selection button says that it selects, and that there is nothing to select yet', async ({
   page,
@@ -52,4 +64,25 @@ test('REQ-S10 Escape on the canvas returns to the Selection tool', async ({ page
   await page.keyboard.press('Escape');
   await expect(selection).toHaveAttribute('aria-pressed', 'true');
   await expectHistoryDisabled(page);
+});
+
+test('a tool change during a marquee removes it, and the release and Escape leave nothing drawn', async ({
+  page,
+}) => {
+  const box = await canvasBox(page);
+  await page.mouse.move(box.x + 100, box.y + 100);
+  await page.mouse.down();
+  await page.mouse.move(box.x + 400, box.y + 300, { steps: 5 });
+  await expect.poll(() => overlayInk(page)).toBeGreaterThan(0);
+  await page.keyboard.press('h');
+  await expect(page.getByRole('button', { name: 'Hand' })).toHaveAttribute('aria-pressed', 'true');
+  await expect.poll(() => overlayInk(page)).toBe(0);
+  await page.mouse.up();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('button', { name: 'Selection' })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
+  await expect.poll(() => overlayInk(page)).toBe(0);
+  await expect(readout(page)).toHaveText('View: x 0, y 0, zoom 100%');
 });
