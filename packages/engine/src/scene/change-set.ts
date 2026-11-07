@@ -50,6 +50,10 @@ export interface ChangeSet extends ChangeStamp {
   readonly canvas?: CanvasChange;
 }
 
+/** Whether a change set changes nothing: no element, group or canvas change. */
+export const isEmptyChangeSet = ({ elements, groups, canvas }: ChangeSet): boolean =>
+  elements.length === 0 && groups.length === 0 && canvas === undefined;
+
 function invertElementChange(change: ElementChange): ElementChange {
   switch (change.type) {
     case 'add':
