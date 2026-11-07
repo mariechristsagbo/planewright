@@ -9,6 +9,7 @@ import { planChangeSet } from './check.ts';
 import type { ChangeError, Plan } from './check.ts';
 import { createGroupIndex } from './group-index.ts';
 import type { GroupIndex } from './group-index.ts';
+import { rethrowFirst } from './listener-errors.ts';
 import { createOrderIndex } from './order-index.ts';
 import type { OrderIndex } from './order-index.ts';
 import { createSpatialIndex } from './spatial-index.ts';
@@ -55,7 +56,10 @@ export interface ApplyOptions {
 }
 
 export interface SceneStore extends SceneReader {
-  /** Applies the whole set, or throws a {@link ChangeSetError} and changes nothing. */
+  /**
+   * Applies the whole set, or throws a {@link ChangeSetError} and changes nothing. Once the set is
+   * applied every listener is told, and the first error a listener threw is then rethrown.
+   */
   apply(changes: ChangeSet, origin: ChangeOrigin, options?: ApplyOptions): void;
   subscribe(listener: (update: SceneUpdate) => void): Cancel;
 }
@@ -104,14 +108,22 @@ function commit(scene: Scene, plan: Plan): void {
   scene.ordered = undefined;
 }
 
-/** Step 3: one update goes to each listener in turn. */
+/**
+ * Step 3: one update goes to every listener in turn. A listener that throws cannot keep the update
+ * from the others: the first error is rethrown once all of them are told, with the set applied.
+ */
 function notify(scene: Scene, update: SceneUpdate): void {
+  const failures: unknown[] = [];
   scene.notifying = true;
-  try {
-    for (const { listener } of [...scene.listeners]) listener(update);
-  } finally {
-    scene.notifying = false;
+  for (const { listener } of [...scene.listeners]) {
+    try {
+      listener(update);
+    } catch (error) {
+      failures.push(error);
+    }
   }
+  scene.notifying = false;
+  rethrowFirst(failures);
 }
 
 function apply(
@@ -154,8 +166,9 @@ const documentOf = (scene: Scene): DocumentState => ({
 /**
  * A scene store that starts empty, at revision 0, with the given canvas; a document is loaded by
  * applying it as a `load` change set. Applying is atomic: the set is checked whole first, then
- * applied, then one {@link SceneUpdate} goes to each listener in turn. A listener may not apply a
- * change set of its own while it is told of one, since every set is complete before it is applied.
+ * applied, then one {@link SceneUpdate} goes to each listener in turn, even after one throws. A
+ * listener may not apply a change set of its own while it is told of one, since every set is
+ * complete before it is applied.
  */
 export function createSceneStore(canvas: CanvasState): SceneStore {
   const scene: Scene = {
