@@ -57,3 +57,9 @@ release has been published yet.
   mouse or pen and 6 px for touch, then the selection box, handle layout with hit squares of 24 px
   for touch, and box selection of wholly enclosed elements. A selection reader that throws no
   longer leaves the history open. Nothing uses them yet: no canvas, input or selection tool exists.
+- Render loop in the engine and the `@planewright/render-canvas` package (ENG-07): render frames
+  that carry the visible elements, culled to the viewport and a 64 px margin, and the overlay's
+  selection outline, handles and marquee; dirty tracking that redraws only the layers a change
+  affects, and at most one frame per animation frame; and a Canvas 2D renderer that draws the scene
+  and overlay layers at the device pixel ratio and caches each element's path and text layout per
+  revision. Nothing uses them yet: no canvas host or input exists, so nothing is drawn on a page.

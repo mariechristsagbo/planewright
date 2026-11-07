@@ -6,9 +6,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 ## Project state
 
 - Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
-  holds only its math layer, ports, document model, scene store, undo history, camera, geometry
-  and selection with hit testing: the drawing engine, canvas, shapes on screen, persistence and
-  collaboration features do **not** exist yet.
+  holds only its math layer, ports, document model, scene store, undo history, camera, geometry,
+  selection with hit testing and the editor layer's render loop, and `packages/render-canvas` its
+  Canvas 2D renderer; nothing uses them yet. The canvas host, input, shapes on screen, persistence
+  and collaboration features do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -69,8 +70,14 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   globals, `Math.random`, `Date.now` and timers, which come through its ports, and its sources
   import only one another. A layer imports only from its own and earlier layers
   (`scripts/lib/engine-layers.ts`); only `math`, `ports`, `model`, `geometry`, `camera`, `scene`,
-  `history` and `selection` exist so far. Tests run in the
-  `engine:unit` and `engine:integration` projects; property tests use `tests/support/property.ts`.
+  `history`, `selection` and `editor` (its render frames and render loop) exist so far. Tests run
+  in the `engine:unit` and `engine:integration` projects; property tests use
+  `tests/support/property.ts`.
+- `packages/render-canvas`: the source-only Canvas 2D implementation of the engine's renderer port
+  ([ADR 0006](docs/adr/0006-canvas-rendering.md)). Its ESLint block forbids Node.js and page
+  globals, timers, `Date.now` and `Math.random`, and its sources import only the engine's entry
+  and one another. Tests run in the `render-canvas:unit` project against a recording fake of the
+  2D context.
 - `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
   `scripts/tests`.
 - `research/excalidraw`: issue #1 behavioural-research tooling (loopback driver, scenarios,
