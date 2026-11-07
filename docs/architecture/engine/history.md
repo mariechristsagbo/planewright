@@ -52,6 +52,12 @@ export interface Transaction {
   cancel whose revert the store refuses leaves it open
   ([transient previews](scene-and-viewport.md#transient-previews)), so undo and redo stay ignored
   until it is retried or cancelled.
+- The selection port may throw, and the history is never left open or half done by it. `begin`
+  reads the selection before it counts as open, so a reader that throws there leaves no transaction
+  open. A reader that throws at commit throws before anything is applied, so the transaction stays
+  open, as when its revert is refused, to be retried or cancelled. A writer that throws while undo
+  or redo restores the selection leaves the step done (the set applied and the entry moved) and the
+  history usable, and its error reaches the caller.
 
 ## Entries and selection
 
