@@ -38,6 +38,14 @@ function target(open: boolean) {
       asked.cancels += 1;
       return open;
     },
+    selection: [],
+    newId: () => {
+      throw new Error('No command here makes elements.');
+    },
+    keyPress: 0,
+    edit: () => {
+      throw new Error('No command here edits.');
+    },
   };
   return { target: self, asked };
 }

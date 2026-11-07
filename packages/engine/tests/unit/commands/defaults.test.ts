@@ -36,6 +36,14 @@ function target(scene: SceneStore = sceneOf(), history?: History): MutableTarget
       throw new Error('Only the selection commands select.');
     },
     cancelGesture: () => false,
+    selection: [],
+    newId: () => {
+      throw new Error('No command here makes elements.');
+    },
+    keyPress: 0,
+    edit: () => {
+      throw new Error('No command here edits.');
+    },
   };
   return self;
 }

@@ -3,17 +3,19 @@ import type { Camera } from '../camera/camera.ts';
 import { panBy } from '../camera/pan.ts';
 import { DEFAULT_COMMANDS } from '../commands/defaults.ts';
 import { createCommandRegistry } from '../commands/registry.ts';
-import type { CommandRegistry, CommandTarget } from '../commands/registry.ts';
+import type { CommandRegistry, CommandTarget, EditOptions } from '../commands/registry.ts';
 import { createHistory } from '../history/history.ts';
 import type { History } from '../history/history.ts';
 import type { Transaction } from '../history/transaction.ts';
 import type { Gesture } from '../input/gestures.ts';
 import type { ViewportRouter } from '../input/viewport-routing.ts';
+import type { HistoryLabel } from '../history/entry.ts';
 import type { DocumentState } from '../model/document.ts';
-import { newClientId } from '../model/ids.ts';
+import { newClientId, newElementId } from '../model/ids.ts';
+import type { ElementId } from '../model/ids.ts';
 import type { Clock, IdSource, Scheduler } from '../ports/ports.ts';
 import { isEmptyChangeSet } from '../scene/change-set.ts';
-import type { ChangeSet, ChangeStamp } from '../scene/change-set.ts';
+import type { ChangeSet, ChangeStamp, UnstampedChangeSet } from '../scene/change-set.ts';
 import { createSceneStore } from '../scene/store.ts';
 import type { SceneStore } from '../scene/store.ts';
 import { hitTest } from '../selection/hit-test.ts';
@@ -43,6 +45,9 @@ export interface EditorCore {
   readonly registry: CommandRegistry;
   /** The stamp of the session's next local change set. */
   readonly stamp: () => ChangeStamp;
+  readonly newId: () => ElementId;
+  /** Counts the key presses and runs that start commands; a held key's repeats count once. */
+  keyPresses: number;
   tool: ActiveTool;
   cursor: CursorKind;
   /** The transaction of the tool's gesture: open from its first preview to its commit or cancel. */
@@ -75,10 +80,36 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     loop: createRenderLoop(scene, ports.scheduler),
     registry: createCommandRegistry(DEFAULT_COMMANDS),
     stamp,
+    newId: () => newElementId(ports.ids),
+    keyPresses: 0,
     tool,
     cursor: tool.cursor,
     transaction: null,
   };
+}
+
+/**
+ * A command's change: one transaction, so one undo step, with the selection after it. The
+ * selection is set before the commit, which records it for redo, and again after it, because the
+ * commit's transient revert drops elements that the preview added from the selection (the ENG-06
+ * review's m2, open until the selection layer keeps them).
+ */
+function edit(
+  core: EditorCore,
+  label: HistoryLabel,
+  changes: UnstampedChangeSet,
+  options: EditOptions = {},
+): void {
+  const transaction = core.history.begin();
+  try {
+    transaction.preview({ ...changes, ...core.stamp() });
+    if (options.select !== undefined) core.selection.set(options.select);
+  } catch (error) {
+    transaction.cancel();
+    throw error;
+  }
+  transaction.commit(label, options.mergeKey === undefined ? {} : { mergeKey: options.mergeKey });
+  if (options.select !== undefined) core.selection.set(options.select);
 }
 
 /**
@@ -113,6 +144,16 @@ export function targetOf(core: EditorCore, cancelGesture: () => boolean): Comman
       core.selection.set(ids);
     },
     cancelGesture,
+    get selection() {
+      return core.selection.get();
+    },
+    newId: core.newId,
+    get keyPress() {
+      return core.keyPresses;
+    },
+    edit(label, changes, options) {
+      edit(core, label, changes, options);
+    },
   };
 }
 
