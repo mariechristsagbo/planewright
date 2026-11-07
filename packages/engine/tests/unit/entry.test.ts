@@ -1,5 +1,7 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
+import type * as Cameras from '../../src/camera/camera.ts';
+import type * as Viewports from '../../src/camera/viewport.ts';
 import type * as Entries from '../../src/history/entry.ts';
 import type * as Histories from '../../src/history/history.ts';
 import type * as Transactions from '../../src/history/transaction.ts';
@@ -83,5 +85,10 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.HistoryLimits>().toEqualTypeOf<Histories.HistoryLimits>();
     expectTypeOf<Engine.Transaction>().toEqualTypeOf<Transactions.Transaction>();
     expectTypeOf<Engine.CommitOptions>().toEqualTypeOf<Transactions.CommitOptions>();
+  });
+
+  it("exports the camera's types", () => {
+    expectTypeOf<Engine.Camera>().toEqualTypeOf<Cameras.Camera>();
+    expectTypeOf<Engine.ViewportSize>().toEqualTypeOf<Viewports.ViewportSize>();
   });
 });
