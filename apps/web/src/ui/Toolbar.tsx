@@ -10,7 +10,7 @@ import { ariaKeyShortcuts, shortcutSentence, shortcutText } from './shortcuts.ts
 /** What each tool does so far, after its shortcut in the button's description. */
 const NOTES: Readonly<Record<ToolId, string>> = {
   hand: 'Drag to pan the canvas.',
-  selection: 'Selecting elements does not work yet.',
+  selection: 'Selects elements; nothing can be drawn yet, so there is nothing to select.',
 };
 
 /** The keys that move focus within the tool bar, as steps or ends. */

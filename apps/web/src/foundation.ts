@@ -17,7 +17,7 @@ export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
   {
     name: 'Canvas engine and renderer',
     detail:
-      'The engine’s document model, scene store, undo history, camera, gestures and commands, and its Canvas 2D renderer. Nothing creates or changes elements yet.',
+      'The engine’s document model, scene store, undo history, camera, gestures, commands and Selection tool, and its Canvas 2D renderer. Nothing creates or changes elements yet.',
   },
   {
     name: 'Collaboration service skeleton',
@@ -37,7 +37,7 @@ export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
 
 export const NOT_YET_IMPLEMENTED: readonly string[] = [
   'Drawing shapes, lines, freehand strokes and text',
-  'Selecting, moving and editing elements: the Selection tool does nothing yet',
+  'Moving, resizing, rotating and editing elements; the Selection tool works, but nothing can be drawn yet to select',
   'Undoing and redoing: nothing changes the drawing, so Undo and Redo stay disabled',
   'Saving, loading and exporting drawings',
   'Real-time collaboration',
