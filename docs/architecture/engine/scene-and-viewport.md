@@ -246,6 +246,39 @@ Camera changes are never history entries (REQ-V10); the camera is saved with the
 restored on reload (REQ-V11). When reduced motion is requested no camera change is animated, and in
 P0 none is animated at all (REQ-Y06).
 
+ENG-05 implements these rules in the `camera` layer as pure functions of a camera and screen-space
+input: `panBy`, `wheelPan`, `zoomAbout`, `wheelZoom`, `zoomIn`, `zoomOut`, `resetZoom`,
+`zoomToFit`, `twoPointerCamera` and `resizeViewport`, beside `sceneFromScreen` and
+`screenFromScene`. Each returns a new camera through one limiting step and never reads or changes
+the document; the editor surface (ENG-08) routes input events to them. `ViewportSize`, the canvas
+size and pixel ratio of the [render frame](rendering-and-hit-testing.md#render-frame-and-renderer-port),
+is defined in this layer, the lowest that needs it; the camera reads only its size.
+
+ENG-05 decided what the accepted rules leave open:
+
+- **Wheel deltas.** The camera takes pixel deltas, as the engine's wheel event carries them; the
+  input adapter (ENG-08) turns line deltas into 16 px and page deltas into one viewport. Without
+  Shift the vertical part pans `y` and the horizontal part `x`, so a trackpad pans both ways at
+  once; with Shift both parts pan `x`, whichever axis the browser reports the delta on. A zoom
+  event uses only its vertical delta.
+- **Limits.** Zooming clamps the asked zoom before it places the camera, so the anchor stays put
+  even when the zoom stops at 0.1 or 30; the position is clamped last, so only the ±10⁹ limit can
+  move an anchor. An infinite input stops at the limits, and an input that would leave a NaN in the
+  camera, which only a non-finite number can, leaves the camera as it was, so the camera stays
+  within the limits for every input (REQ-V08).
+- **Ladder steps.** A level that the zoom equals but for rounding (within 10⁻⁹ of it, relatively)
+  does not count, so every step moves; past the last level in either direction the zoom stays at 30
+  or 0.1.
+- **Zoom to fit.** The content's bounds are the union of the elements' world bounds
+  (`contentBounds`, beside the world bounds in `geometry`; a label's box joins them with ENG-06). A
+  side without extent, such as a vertical line's width or a dot, leaves the zoom to the other side,
+  and a canvas smaller than the padding zooms to 0.1. Without any element the camera stays where it
+  is.
+- **Two pointers.** The camera is computed each time from the camera and pointers at the gesture's
+  start, so no rounding builds up; two pointers that started at one point have no ratio and only
+  pan.
+- **Results.** Every operation returns a new object, even when nothing changes.
+
 ### Test vectors from the baseline
 
 These come from the B-36 table at a 1280 × 720 viewport; each row states the camera it starts
