@@ -5,12 +5,14 @@ import type { RenderFrame } from '../../../src/editor/render-frame.ts';
 import { sceneOf, shapeElement } from '../../support/elements.ts';
 import { createManualClock, createQueueScheduler } from '../../support/fakes.ts';
 import { loopHarness } from '../../support/render-loops.ts';
+import { changeSet } from '../../support/scene-state.ts';
 
 // Frame scheduling (docs/architecture/engine/rendering-and-hit-testing.md#dirty-layers-and-scheduling):
 // a dirty mark asks the scheduler for the next animation frame once, later marks are coalesced, and
 // on that frame the loop builds one frame and hands it to its listeners.
 
 const box = shapeElement('rectangle', 100, 50, { id: 1, x: 30, y: 40 });
+const other = shapeElement('ellipse', 20, 20, { id: 2, x: 200, y: 40 });
 
 describe('one render per animation frame', () => {
   it('AC several changes in one frame cause one render, with the latest state', () => {
@@ -118,6 +120,25 @@ describe('frame listeners', () => {
     cancel();
     loop.invalidate();
     expect(scheduler.pending()).toBe(0);
+  });
+
+  it('keep the marks and removals for the next listener when the last one leaves before its frame', () => {
+    const store = sceneOf(box, other);
+    const scheduler = createQueueScheduler(createManualClock());
+    const loop = createRenderLoop(store, scheduler);
+    loop.update({ viewport: { width: 800, height: 600, pixelRatio: 1 } });
+    const cancel = loop.onFrame(() => undefined);
+    scheduler.frame();
+    store.apply(changeSet([{ type: 'remove', element: box }]), 'local');
+    expect(scheduler.pending()).toBe(1);
+    cancel();
+    expect(scheduler.pending()).toBe(0);
+    scheduler.frame();
+    const seen: RenderFrame[] = [];
+    loop.onFrame((frame) => seen.push(frame));
+    scheduler.frame();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]?.scene).toMatchObject({ elements: [other], removed: [box.id] });
   });
 });
 
