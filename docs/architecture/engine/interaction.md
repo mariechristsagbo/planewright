@@ -375,6 +375,11 @@ open:
   pointer does nothing until it lifts; otherwise the selection clears and the Selection tool
   becomes active. A camera drag is not a tool gesture, so Escape during one clears the selection
   while the drag goes on. Both work in any tool, and neither is an undo step.
+- **Tool changes.** Choosing another tool, by its key or from the tool bar, first cancels the
+  active tool's gesture, as Escape does: the old tool removes what its gesture shows, such as a
+  marquee, and the pointer does nothing until it lifts. Choosing the tool that is already active
+  changes nothing. (The independent review of ENG-09 found the marquee stuck on the overlay
+  without this.)
 - **The editor.** It holds the selection beside the scene store and the history, reports it in
   `view.selection` and replaces it with `select(ids)`, which keeps the elements the document holds,
   each once, in order. Before each publish it gives the selection to the render loop, whoever
