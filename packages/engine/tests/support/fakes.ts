@@ -1,4 +1,5 @@
 import type { Cancel, Clock, IdSource, Scheduler } from '../../src/index.ts';
+import type { TextMeasurer } from '../../src/geometry/text-measurer.ts';
 
 /** A clock that moves only when the test advances it. */
 export interface ManualClock extends Clock {
@@ -90,5 +91,23 @@ export function createCountingIds(): IdSource {
       count += 1;
       return String(count).padStart(22, '0');
     },
+  };
+}
+
+/** How many code points a string holds: a surrogate pair counts once. */
+const codePoints = (text: string): number =>
+  text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '_').length;
+
+/**
+ * A measurer that gives every code point the same advance, `advance` units at size 20 and in
+ * proportion at other sizes, with an ascent of 0.8 and a descent of 0.2 of the size.
+ */
+export function createFixedAdvanceMeasurer(advance = 10): TextMeasurer {
+  return {
+    measure: (text, font) => ({
+      width: (codePoints(text) * advance * font.size) / 20,
+      ascent: 0.8 * font.size,
+      descent: 0.2 * font.size,
+    }),
   };
 }
