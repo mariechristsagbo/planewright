@@ -1,5 +1,7 @@
 import type { Camera } from '../camera/camera.ts';
+import type { ElementId } from '../model/ids.ts';
 import type { Cancel } from '../ports/ports.ts';
+import { sameIds } from '../selection/selection.ts';
 import type { CursorKind, ToolId } from '../tools/tool.ts';
 import type { EditorCore } from './editor-core.ts';
 
@@ -10,6 +12,8 @@ export interface EditorView {
   readonly tool: ToolId;
   readonly cursor: CursorKind;
   readonly camera: Camera;
+  /** The selected elements, in the order they were selected. */
+  readonly selection: readonly ElementId[];
   readonly canUndo: boolean;
   readonly canRedo: boolean;
 }
@@ -18,6 +22,7 @@ export const viewOf = (core: EditorCore): EditorView => ({
   tool: core.tool.id,
   cursor: core.cursor,
   camera: core.loop.state().camera,
+  selection: core.selection.get(),
   canUndo: core.history.canUndo,
   canRedo: core.history.canRedo,
 });
@@ -26,6 +31,7 @@ export const sameView = (a: EditorView, b: EditorView): boolean =>
   a.tool === b.tool &&
   a.cursor === b.cursor &&
   a.camera === b.camera &&
+  sameIds(a.selection, b.selection) &&
   a.canUndo === b.canUndo &&
   a.canRedo === b.canRedo;
 
