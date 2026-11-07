@@ -1,4 +1,4 @@
-import { invertChangeSet } from './change-set.ts';
+import { invertChangeSet, isEmptyChangeSet } from './change-set.ts';
 import type { ChangeSet, ChangeStamp } from './change-set.ts';
 import { keepListenerErrors, rethrowFirst } from './listener-errors.ts';
 import type { SceneStore } from './store.ts';
@@ -26,9 +26,6 @@ export interface SceneTransaction {
   /** Reverts every preview with one transient change. */
   cancel(): void;
 }
-
-const isEmpty = ({ elements, groups, canvas }: ChangeSet): boolean =>
-  elements.length === 0 && groups.length === 0 && canvas === undefined;
 
 /**
  * Opens a transaction over the store. Each preview is applied as a transient `local` change, and
@@ -78,9 +75,9 @@ export function openTransaction(store: SceneStore): SceneTransaction {
       ensureOpen();
       const net = { ...netChanges(touches, store), ...stamp };
       const failures: unknown[] = [];
-      if (!isEmpty(net)) revert(net, failures);
+      if (!isEmptyChangeSet(net)) revert(net, failures);
       open = false;
-      if (isEmpty(net)) return null;
+      if (isEmptyChangeSet(net)) return null;
       apply(failures, () => {
         store.apply(net, 'local');
       });
@@ -92,7 +89,7 @@ export function openTransaction(store: SceneStore): SceneTransaction {
       ensureOpen();
       const net = last === undefined ? undefined : { ...netChanges(touches, store), ...last };
       const failures: unknown[] = [];
-      if (net !== undefined && !isEmpty(net)) revert(net, failures);
+      if (net !== undefined && !isEmptyChangeSet(net)) revert(net, failures);
       open = false;
       rethrowFirst(failures);
     },
