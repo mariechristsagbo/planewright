@@ -286,9 +286,12 @@ the canvas renderer in `@planewright/render-canvas`. It decided what the rules a
 - **Backing stores.** The renderer sizes a layer's backing store to the CSS size times the pixel
   ratio, rounded, before it draws that layer, and assigns a size only when it changed, since
   assigning one clears the canvas. A canvas without a 2D context is refused.
-- **The package boundary.** `@planewright/render-canvas` has its own ESLint block: no Node.js or
-  page global such as `window` or `document`, no timer, clock or randomness, and imports of the
-  engine's entry and its own modules only. It holds the engine's coverage thresholds.
+- **The package boundary.** `@planewright/render-canvas` has its own ESLint block: no browser,
+  worker or Node.js global (so no page global such as `window`, `document` or `location`) except
+  the Canvas 2D names it draws with, `Path2D` and `CanvasRenderingContext2D`; no timer, clock
+  (`Date.now`, `new Date()`, `Date()`) or randomness; and imports of the engine's entry and of its
+  own modules by `./` paths only, since its sources sit in one directory. It holds the engine's
+  coverage thresholds.
 
 ## Export
 

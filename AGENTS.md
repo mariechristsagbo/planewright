@@ -74,9 +74,10 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   in the `engine:unit` and `engine:integration` projects; property tests use
   `tests/support/property.ts`.
 - `packages/render-canvas`: the source-only Canvas 2D implementation of the engine's renderer port
-  ([ADR 0006](docs/adr/0006-canvas-rendering.md)). Its ESLint block forbids Node.js and page
-  globals, timers, `Date.now` and `Math.random`, and its sources import only the engine's entry
-  and one another. Tests run in the `render-canvas:unit` project against a recording fake of the
+  ([ADR 0006](docs/adr/0006-canvas-rendering.md)). Its ESLint block forbids every browser, worker
+  and Node.js global except the Canvas 2D names it draws with (`Path2D`), timers, the clock
+  (`Date.now`, `new Date()`) and `Math.random`, and its sources import only the engine's entry and
+  one another, by `./` paths. Tests run in the `render-canvas:unit` project against a recording fake of the
   2D context.
 - `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
   `scripts/tests`.

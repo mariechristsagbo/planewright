@@ -85,29 +85,34 @@ const RENDERER_TIMER_MESSAGE =
 const RENDERER_DETERMINISM_MESSAGE =
   'The canvas renderer is deterministic: it draws what a frame holds and reads no clock or randomness.';
 
+// The Canvas 2D names that the renderer draws with; every other platform global stays refused.
+const RENDERER_CANVAS_GLOBALS = ['Path2D', 'CanvasRenderingContext2D'];
+
 /**
  * The canvas renderer's boundary (ADR 0004 and docs/architecture/engine/modules.md#packages): it
- * may use Canvas 2D and its DOM types, but no Node.js global, no page global such as `window` or
- * `document`, and no timer, clock or randomness.
+ * may use Canvas 2D and its DOM types, but no other browser, worker or Node.js global (no page
+ * global such as `window`, `document` or `location`), and no timer, clock or randomness.
  */
 const rendererBoundary = {
   'no-restricted-globals': [
     'error',
     ...TIMERS.map((name) => ({ name, message: RENDERER_TIMER_MESSAGE })),
-    ...[
-      ...new Set([
-        'globalThis',
-        'window',
-        'document',
-        'self',
-        ...Object.keys(globals.node).filter((name) => !TIMERS.includes(name)),
-      ]),
-    ].map((name) => ({ name, message: RENDERER_PLATFORM_MESSAGE })),
+    ...['globalThis', ...PLATFORM_GLOBALS]
+      .filter((name) => !RENDERER_CANVAS_GLOBALS.includes(name))
+      .map((name) => ({ name, message: RENDERER_PLATFORM_MESSAGE })),
   ],
   'no-restricted-properties': [
     'error',
     { object: 'Math', property: 'random', message: RENDERER_DETERMINISM_MESSAGE },
     { object: 'Date', property: 'now', message: RENDERER_DETERMINISM_MESSAGE },
+  ],
+  'no-restricted-syntax': [
+    'error',
+    {
+      selector: "NewExpression[callee.name='Date'][arguments.length=0]",
+      message: RENDERER_DETERMINISM_MESSAGE,
+    },
+    { selector: "CallExpression[callee.name='Date']", message: RENDERER_DETERMINISM_MESSAGE },
   ],
 };
 
@@ -193,7 +198,8 @@ export default defineConfig(
     rules: rendererBoundary,
   },
   {
-    // The renderer depends on the engine only, through its entry (ADR 0004).
+    // The renderer depends on the engine only, through its entry (ADR 0004). Its sources sit in one
+    // directory, so a relative import never needs to climb out of it.
     name: 'planewright/render-canvas-source',
     files: ['packages/render-canvas/src/**/*.ts'],
     rules: {
@@ -202,9 +208,9 @@ export default defineConfig(
         {
           patterns: [
             {
-              regex: '^(?!\\.\\.?/|@planewright/engine$)',
+              regex: '^(?!\\./|@planewright/engine$)',
               message:
-                "The canvas renderer depends on the engine only (ADR 0004): import the engine's entry or its own modules, by relative path.",
+                "The canvas renderer depends on the engine only (ADR 0004): import the engine's entry or its own modules, by a ./ path.",
             },
           ],
         },
