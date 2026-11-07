@@ -30,9 +30,9 @@ describe('frames after input', () => {
     expect(next().map(({ camera }) => camera.zoom)).toEqual([1.1]);
   });
 
-  it('asks for no frame when a gesture changes nothing, as a press with the Selection tool', () => {
+  it('asks for no frame when a gesture changes nothing, as a tap on empty canvas with nothing selected', () => {
     const { scheduler, feed, views } = editorHarness();
-    feed(down(100, 100), move(160, 100), up(160, 100), keyEvent('key-down', 'a', 'KeyA'));
+    feed(down(100, 100), up(100, 100), keyEvent('key-down', 'a', 'KeyA'));
     expect(scheduler.pending()).toBe(0);
     expect(views).toEqual([]);
   });

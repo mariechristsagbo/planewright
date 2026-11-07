@@ -3,12 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { activeTool } from '../../../src/tools/active.ts';
 import { handTool } from '../../../src/tools/hand.ts';
 import type { GestureEvent, ToolEffect } from '../../../src/tools/tool.ts';
+import { sceneOf } from '../../support/elements.ts';
+import { toolContext } from '../../support/tool-contexts.ts';
 
 // The Hand tool (docs/architecture/engine/interaction.md#p0-tools): idle and panning; a drag pans
 // the camera by the pointer delta (REQ-V06).
 
 const NONE = { shift: false, alt: false, mod: false };
-const CONTEXT = { camera: { x: 0, y: 0, zoom: 1 } };
+const CONTEXT = toolContext(sceneOf(), []);
 
 function pointer(type: 'press' | 'drag-start' | 'drag' | 'release', x: number, y: number) {
   return { type, at: { x, y }, scene: { x, y }, pointer: 'mouse', modifiers: NONE } as const;
@@ -78,11 +80,12 @@ describe('the active tool', () => {
     expect([hand.id, hand.cursor]).toEqual(['hand', 'grab']);
   });
 
-  it('gives the Selection tool no behaviour until its issue: every gesture has no effect', () => {
+  it('keeps the Selection tool’s state from one gesture to the next, with the default cursor', () => {
     const selection = activeTool('selection');
-    for (const type of ['press', 'drag-start', 'drag', 'release'] as const) {
-      expect(selection.reduce(pointer(type, 3, 4), CONTEXT)).toEqual([]);
-    }
+    expect(selection.reduce(pointer('press', 3, 4), CONTEXT)).toEqual([]);
+    expect(selection.reduce(pointer('drag-start', 30, 40), CONTEXT)).toEqual([
+      { type: 'marquee', box: { x: 3, y: 4, width: 27, height: 36 } },
+    ]);
     expect([selection.id, selection.cursor]).toEqual(['selection', 'default']);
   });
 });

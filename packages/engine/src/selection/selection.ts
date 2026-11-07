@@ -6,6 +6,12 @@ import type { SceneStore } from '../scene/store.ts';
 // are selected, in the order they were selected. It is the HistorySelection that the history
 // reads and restores, and changing it is never an undo step (REQ-S13).
 
+/** The selection as a tool reads it; the text being edited joins it with the text tool (ENG-12). */
+export interface SelectionState {
+  /** Unique, in the order they were selected. */
+  readonly ids: readonly ElementId[];
+}
+
 export interface Selection extends HistorySelection {
   /** The selected elements, each once, in the order they were selected. */
   get(): readonly ElementId[];

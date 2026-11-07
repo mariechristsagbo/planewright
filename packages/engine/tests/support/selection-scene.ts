@@ -27,9 +27,10 @@ export function documentOf(...elements: readonly Element[]): DocumentState {
   };
 }
 
-export function selectionDocument(): DocumentState {
+/** The fixture's elements, in drawing order. */
+export function selectionElements(): readonly Element[] {
   const filled = { style: { fill: SOLID } };
-  return documentOf(
+  return [
     shapeElement('rectangle', 200, 100, { id: 1, order: 'a', x: 100, y: 100, ...filled }),
     shapeElement('ellipse', 100, 100, { id: 2, order: 'b', x: 400, y: 100, ...filled }),
     lineElement(
@@ -41,5 +42,7 @@ export function selectionDocument(): DocumentState {
     ),
     textElement(120, 30, { id: 4, order: 'd', x: 400, y: 400 }),
     shapeElement('rectangle', 20, 20, { id: 5, order: 'e', x: 600, y: 100, ...filled }),
-  );
+  ];
 }
+
+export const selectionDocument = (): DocumentState => documentOf(...selectionElements());
