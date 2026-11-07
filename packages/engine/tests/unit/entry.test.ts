@@ -2,6 +2,9 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import type * as Cameras from '../../src/camera/camera.ts';
 import type * as Viewports from '../../src/camera/viewport.ts';
+import type * as Paths from '../../src/geometry/path.ts';
+import type * as Layouts from '../../src/geometry/text-layout.ts';
+import type * as Measurers from '../../src/geometry/text-measurer.ts';
 import type * as Entries from '../../src/history/entry.ts';
 import type * as Histories from '../../src/history/history.ts';
 import type * as Transactions from '../../src/history/transaction.ts';
@@ -19,6 +22,11 @@ import type * as Changes from '../../src/scene/change-set.ts';
 import type * as Check from '../../src/scene/check.ts';
 import type * as Store from '../../src/scene/store.ts';
 import type * as Transaction from '../../src/scene/transaction.ts';
+import type * as Frames from '../../src/selection/frame.ts';
+import type * as Handles from '../../src/selection/handles.ts';
+import type * as Hits from '../../src/selection/hit-test.ts';
+import type * as Pointers from '../../src/selection/pointer.ts';
+import type * as Selections from '../../src/selection/selection.ts';
 
 describe('the engine entry point', () => {
   it('exports no run-time value: the layers stay internal until the editor exists', () => {
@@ -90,5 +98,23 @@ describe('the engine entry point', () => {
   it("exports the camera's types", () => {
     expectTypeOf<Engine.Camera>().toEqualTypeOf<Cameras.Camera>();
     expectTypeOf<Engine.ViewportSize>().toEqualTypeOf<Viewports.ViewportSize>();
+  });
+
+  it("exports the geometry's outlines, the text measurer port and the text layout's types", () => {
+    expectTypeOf<Engine.PathCommand>().toEqualTypeOf<Paths.PathCommand>();
+    expectTypeOf<Engine.TextMeasurer>().toEqualTypeOf<Measurers.TextMeasurer>();
+    expectTypeOf<Engine.TextMetrics>().toEqualTypeOf<Measurers.TextMetrics>();
+    expectTypeOf<Engine.TextLayout>().toEqualTypeOf<Layouts.TextLayout>();
+    expectTypeOf<Engine.TextLine>().toEqualTypeOf<Layouts.TextLine>();
+  });
+
+  it("exports the selection's, hit testing's and handles' types", () => {
+    expectTypeOf<Engine.Selection>().toEqualTypeOf<Selections.Selection>();
+    expectTypeOf<Engine.PointerKind>().toEqualTypeOf<Pointers.PointerKind>();
+    expectTypeOf<Engine.HitResult>().toEqualTypeOf<Hits.HitResult>();
+    expectTypeOf<Engine.HitView>().toEqualTypeOf<Hits.HitView>();
+    expectTypeOf<Engine.HandleId>().toEqualTypeOf<Handles.HandleId>();
+    expectTypeOf<Engine.Handle>().toEqualTypeOf<Handles.Handle>();
+    expectTypeOf<Engine.SelectionFrame>().toEqualTypeOf<Frames.SelectionFrame>();
   });
 });
