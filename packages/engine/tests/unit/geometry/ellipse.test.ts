@@ -8,7 +8,7 @@ import type { Random } from '../../../src/math/random.ts';
 import type { Point } from '../../../src/model/elements.ts';
 import { shapeElement } from '../../support/elements.ts';
 import { checkProperty } from '../../support/property.ts';
-import { chance } from '../../support/scenes.ts';
+import { chance, pick } from '../../support/scenes.ts';
 
 /** The control-point factor of a quarter circle drawn as one cubic. */
 const K = (4 * (Math.SQRT2 - 1)) / 3;
@@ -46,16 +46,25 @@ function sampledDistance(width: number, height: number, local: Point): number {
   return inside ? -at((low + high) / 2) : at((low + high) / 2);
 }
 
-/** A box from 0.02 to 20,000 units on each side, and a point inside, near or outside it. */
+/**
+ * A box from 0.02 to 20,000 units on each side, and a point inside, near or outside it, sometimes
+ * on one of its axes or at its centre.
+ */
 function anyEllipseProbe(random: Random) {
   const width = Math.exp(randomBetween(random, Math.log(0.02), Math.log(20_000)));
   const height = Math.exp(randomBetween(random, Math.log(0.02), Math.log(20_000)));
   const angle = randomBetween(random, 0, TAU);
   const reach = randomBetween(random, 0, 2.5);
-  const onAxis = chance(random, 0.2);
+  const axis = chance(random, 0.3)
+    ? pick(random, ['horizontal', 'vertical', 'centre'] as const)
+    : 'off';
   const local = {
-    x: width / 2 + (onAxis && chance(random, 0.5) ? 0 : (reach * width * Math.cos(angle)) / 2),
-    y: height / 2 + (onAxis ? 0 : (reach * height * Math.sin(angle)) / 2),
+    x:
+      width / 2 +
+      (axis === 'vertical' || axis === 'centre' ? 0 : (reach * width * Math.cos(angle)) / 2),
+    y:
+      height / 2 +
+      (axis === 'horizontal' || axis === 'centre' ? 0 : (reach * height * Math.sin(angle)) / 2),
   };
   return { width, height, local };
 }
@@ -109,6 +118,16 @@ describe('the ellipse geometry', () => {
     const circle = shapeElement('ellipse', 100, 100);
     expect(ELLIPSE.distance(circle, { x: 50, y: 50 })).toBe(-50);
     expect(ELLIPSE.distance(circle, { x: 50 + 30, y: 50 + 40 })).toBeCloseTo(0, 12);
+  });
+
+  it('measures a tall ellipse on its long vertical axis as exactly as a wide one', () => {
+    const tall = shapeElement('ellipse', 40, 80);
+    expect(ELLIPSE.distance(tall, { x: 20, y: 50 })).toBeCloseTo(
+      -Math.hypot(40 / 3 - 10, 20 * Math.sqrt(1 - 1 / 9)),
+      12,
+    );
+    expect(ELLIPSE.distance(tall, { x: 20, y: 90 })).toBe(10);
+    expect(ELLIPSE.distance(tall, { x: 25, y: 40 })).toBe(-15);
   });
 
   it('measures an ellipse without width or height as the segment it is, with no inside', () => {
