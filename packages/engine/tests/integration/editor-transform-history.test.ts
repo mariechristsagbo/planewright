@@ -44,23 +44,31 @@ describe('undo steps of transform gestures', () => {
     ]);
   });
 
-  it('REQ-H06 ignores Undo and Redo requested during a move drag', () => {
+  it('REQ-H06 ignores Undo and Redo requested during a move drag, while both have a step', () => {
     const harness = twoBoxes();
     const shown = sceneWatcher(harness);
     harness.feed(...tapper('mouse')(150, 150));
-    const first = dragFrom('mouse', [150, 150, 170, 150]);
-    harness.feed(...first.start, first.to, first.end);
+    for (const path of [
+      [150, 150, 170, 150],
+      [170, 150, 170, 190],
+    ]) {
+      const { start, to, end } = dragFrom('mouse', path);
+      harness.feed(...start, to, end);
+    }
     harness.editor.run('history.undo');
-    const second = dragFrom('mouse', [150, 150, 150, 190]);
-    harness.feed(...second.start, second.to);
+    const third = dragFrom('mouse', [170, 150, 170, 130]);
+    harness.feed(...third.start, third.to);
+    expect(harness.editor.view).toMatchObject({ canUndo: true, canRedo: true });
     expect([harness.editor.run('history.undo'), harness.editor.run('history.redo')]).toEqual([
       'disabled',
       'disabled',
     ]);
     expect(harness.editor.input(MOD_Z)).toBe(true);
-    expect(boxOf(shown(FIRST))).toEqual([100, 140, 100, 100]);
-    harness.feed(second.end);
+    expect(boxOf(shown(FIRST))).toEqual([120, 80, 100, 100]);
+    harness.feed(third.end);
     expect(harness.editor.view).toMatchObject({ canUndo: true, canRedo: false });
+    harness.editor.run('history.undo');
+    expect(boxOf(shown(FIRST))).toEqual([120, 100, 100, 100]);
     harness.editor.run('history.undo');
     expect([boxOf(shown(FIRST)), harness.editor.view.canUndo]).toEqual([
       [100, 100, 100, 100],

@@ -114,4 +114,20 @@ describe('resizing several elements', () => {
     });
     expect(shape && boxOf(shape)).toEqual([400, 0, 200, 80]);
   });
+
+  it('REQ-T03 scales a quarter-turned element along the scene axes its own sides lie on', () => {
+    const elements = [
+      shapeElement('rectangle', 100, 50, { id: 1, rotation: Math.PI / 2 }),
+      shapeElement('rectangle', 50, 100, { id: 2, x: 100, y: -25 }),
+    ];
+    // Turned a quarter, the first one's own height lies across the scene, from x 25 to 75.
+    const outline = { x: 25, y: -25, width: 125, height: 100 };
+    const [turned, upright] = resizeElements(elements, outline, {
+      handle: 'e',
+      drag: { x: 125, y: 0 },
+      options: FREE,
+    });
+    expect(turned).toMatchObject({ x: 25, y: -25, width: 100, height: 100, rotation: Math.PI / 2 });
+    expect(upright && boxOf(upright)).toEqual([175, -25, 100, 100]);
+  });
 });
