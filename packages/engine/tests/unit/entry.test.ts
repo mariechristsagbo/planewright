@@ -2,9 +2,16 @@ import { describe, expect, expectTypeOf, it } from 'vitest';
 
 import type * as Cameras from '../../src/camera/camera.ts';
 import type * as Viewports from '../../src/camera/viewport.ts';
+import type * as RenderStates from '../../src/editor/frame.ts';
+import type * as RenderFrames from '../../src/editor/render-frame.ts';
+import * as renderLoops from '../../src/editor/render-loop.ts';
+import type * as RenderLoops from '../../src/editor/render-loop.ts';
+import * as kinds from '../../src/geometry/kinds.ts';
 import type * as Paths from '../../src/geometry/path.ts';
+import * as layouts from '../../src/geometry/text-layout.ts';
 import type * as Layouts from '../../src/geometry/text-layout.ts';
 import type * as Measurers from '../../src/geometry/text-measurer.ts';
+import * as bounds from '../../src/geometry/world-bounds.ts';
 import type * as Entries from '../../src/history/entry.ts';
 import type * as Histories from '../../src/history/history.ts';
 import type * as Transactions from '../../src/history/transaction.ts';
@@ -29,8 +36,17 @@ import type * as Pointers from '../../src/selection/pointer.ts';
 import type * as Selections from '../../src/selection/selection.ts';
 
 describe('the engine entry point', () => {
-  it('exports no run-time value: the layers stay internal until the editor exists', () => {
-    expect(Object.keys(engine)).toEqual([]);
+  it('exports as values only the render loop and the geometry that a renderer draws with', () => {
+    expect(Object.keys(engine).sort()).toEqual([
+      'createRenderLoop',
+      'geometryOf',
+      'layoutText',
+      'localBox',
+    ]);
+    expect(engine.createRenderLoop).toBe(renderLoops.createRenderLoop);
+    expect(engine.geometryOf).toBe(kinds.geometryOf);
+    expect(engine.layoutText).toBe(layouts.layoutText);
+    expect(engine.localBox).toBe(bounds.localBox);
   });
 
   it("exports the domain model's types", () => {
@@ -116,5 +132,17 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.HandleId>().toEqualTypeOf<Handles.HandleId>();
     expectTypeOf<Engine.Handle>().toEqualTypeOf<Handles.Handle>();
     expectTypeOf<Engine.SelectionFrame>().toEqualTypeOf<Frames.SelectionFrame>();
+  });
+
+  it("exports the render frame's, the renderer port's and the render loop's types", () => {
+    expectTypeOf<Engine.KindGeometry<Engine.Element>>().toEqualTypeOf<
+      Paths.KindGeometry<Elements.Element>
+    >();
+    expectTypeOf<Engine.OverlayPrimitive>().toEqualTypeOf<RenderFrames.OverlayPrimitive>();
+    expectTypeOf<Engine.Theme>().toEqualTypeOf<RenderFrames.Theme>();
+    expectTypeOf<Engine.RenderFrame>().toEqualTypeOf<RenderFrames.RenderFrame>();
+    expectTypeOf<Engine.Renderer>().toEqualTypeOf<RenderFrames.Renderer>();
+    expectTypeOf<Engine.RenderState>().toEqualTypeOf<RenderStates.RenderState>();
+    expectTypeOf<Engine.RenderLoop>().toEqualTypeOf<RenderLoops.RenderLoop>();
   });
 });
