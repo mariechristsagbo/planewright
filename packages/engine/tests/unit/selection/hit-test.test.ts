@@ -28,7 +28,7 @@ const NONE: HitResult = { type: 'none' };
 function pressNear(scene: SceneReader, camera: Camera, point: Point) {
   const screen = screenFromScene(point, camera);
   return (offset: number, pointer: PointerKind): HitResult =>
-    hitTest({ scene, camera }, { x: screen.x, y: screen.y + offset }, pointer);
+    hitTest({ scene, selection: [], camera }, { x: screen.x, y: screen.y + offset }, pointer);
 }
 
 // A horizontal 2-unit line at y = 100 and an unfilled rectangle whose top edge lies there too.
@@ -131,7 +131,8 @@ describe('REQ-S01 closed shapes, filled and unfilled', () => {
 describe('REQ-S02 texts', () => {
   it('hits a text anywhere in its box and within the tolerance outside it, without its stroke', () => {
     const scene = sceneOf(textElement(42.5, 25, { id: 5, x: 300, y: 300 }));
-    const press = (x: number, y: number) => hitTest({ scene, camera: ZOOM_1 }, { x, y }, 'mouse');
+    const press = (x: number, y: number) =>
+      hitTest({ scene, selection: [], camera: ZOOM_1 }, { x, y }, 'mouse');
     expect([press(321.25, 312.5), press(301, 301), press(342, 324), press(300, 312)]).toStrictEqual(
       [hit(5), hit(5), hit(5), hit(5)],
     );
@@ -157,7 +158,7 @@ describe('REQ-S04 overlapping elements', () => {
       style: { fill: SOLID },
     });
     const press = (scene: SceneReader) =>
-      hitTest({ scene, camera: ZOOM_1 }, { x: 75, y: 50 }, 'mouse');
+      hitTest({ scene, selection: [], camera: ZOOM_1 }, { x: 75, y: 50 }, 'mouse');
     expect(press(sceneOf(lower, upper))).toStrictEqual(hit(7));
     expect(
       press(sceneOf({ ...lower, order: upper.order }, { ...upper, order: lower.order })),
@@ -172,8 +173,12 @@ describe('REQ-S04 overlapping elements', () => {
     });
     const upper = shapeElement('rectangle', 100, 100, { id: 7, order: 'W', x: 20, y: 20 });
     const scene = sceneOf(lower, upper);
-    expect(hitTest({ scene, camera: ZOOM_1 }, { x: 60, y: 60 }, 'mouse')).toStrictEqual(hit(6));
-    expect(hitTest({ scene, camera: ZOOM_1 }, { x: 60, y: 21 }, 'mouse')).toStrictEqual(hit(7));
+    expect(
+      hitTest({ scene, selection: [], camera: ZOOM_1 }, { x: 60, y: 60 }, 'mouse'),
+    ).toStrictEqual(hit(6));
+    expect(
+      hitTest({ scene, selection: [], camera: ZOOM_1 }, { x: 60, y: 21 }, 'mouse'),
+    ).toStrictEqual(hit(7));
   });
 });
 
@@ -187,7 +192,8 @@ describe('rotated elements', () => {
       style: { fill: SOLID },
     });
     const scene = sceneOf(turned);
-    const press = (x: number, y: number) => hitTest({ scene, camera: ZOOM_1 }, { x, y }, 'mouse');
+    const press = (x: number, y: number) =>
+      hitTest({ scene, selection: [], camera: ZOOM_1 }, { x, y }, 'mouse');
     expect([press(200, 30), press(205, 200), press(120, 110), press(250, 110)]).toStrictEqual([
       hit(8),
       hit(8),
@@ -200,6 +206,8 @@ describe('rotated elements', () => {
 describe('kinds that P0 does not draw', () => {
   it('are never hit', () => {
     const scene = fixtureStore();
-    expect(hitTest({ scene, camera: ZOOM_1 }, { x: 625, y: -287.5 }, 'touch')).toStrictEqual(NONE);
+    expect(
+      hitTest({ scene, selection: [], camera: ZOOM_1 }, { x: 625, y: -287.5 }, 'touch'),
+    ).toStrictEqual(NONE);
   });
 });
