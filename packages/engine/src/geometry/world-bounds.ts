@@ -1,4 +1,4 @@
-import { aabbExpand } from '../math/aabb.ts';
+import { aabbExpand, aabbUnion } from '../math/aabb.ts';
 import type { Aabb } from '../math/aabb.ts';
 import { obbBounds } from '../math/obb.ts';
 import type { Element } from '../model/elements.ts';
@@ -24,4 +24,17 @@ export function worldBounds(element: Element): Aabb {
   const box = localBox(element);
   const turned = element.rotation === 0 ? box : obbBounds({ ...box, rotation: element.rotation });
   return aabbExpand(turned, element.style.stroke.width / 2);
+}
+
+/**
+ * The bounds of a document's content, which zoom to fit shows: the union of every element's world
+ * bounds, or null when there is no element.
+ */
+export function contentBounds(elements: Iterable<Element>): Aabb | null {
+  let bounds: Aabb | null = null;
+  for (const element of elements) {
+    const box = worldBounds(element);
+    bounds = bounds === null ? box : aabbUnion(bounds, box);
+  }
+  return bounds;
 }

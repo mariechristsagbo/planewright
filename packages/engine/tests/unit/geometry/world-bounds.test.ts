@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { localBox, worldBounds } from '../../../src/geometry/world-bounds.ts';
-import { aabbContainsPoint, aabbExpand, aabbFromPoints } from '../../../src/math/aabb.ts';
+import { contentBounds, localBox, worldBounds } from '../../../src/geometry/world-bounds.ts';
+import {
+  aabbContainsBox,
+  aabbContainsPoint,
+  aabbExpand,
+  aabbFromPoints,
+} from '../../../src/math/aabb.ts';
 import type { Aabb } from '../../../src/math/aabb.ts';
 import { obbCorners, obbToScene } from '../../../src/math/obb.ts';
 import type { Element } from '../../../src/model/elements.ts';
@@ -20,6 +25,8 @@ const variant = (index: number, fields: Record<string, unknown>): Element => ({
   ...fixtureElement(index),
   ...fields,
 });
+
+const worldBoundsOf = (elements: Iterable<Element>): Aabb[] => [...elements].map(worldBounds);
 
 const withStroke = (element: Element, width: number): Element => ({
   ...element,
@@ -107,6 +114,45 @@ describe('worldBounds', () => {
           expect(aabbContainsPoint(aabbExpand(bounds, scale * 1e-13), point)).toBe(true);
         }
       }
+    });
+  });
+});
+
+describe('contentBounds', () => {
+  it('is null without elements, so zoom to fit can leave an empty document alone', () => {
+    expect(contentBounds([])).toBeNull();
+    expect(contentBounds(new Map<string, Element>().values())).toBeNull();
+  });
+
+  it("is a single element's world bounds", () => {
+    const element = variant(0, { x: 10, y: 20, rotation: Math.PI / 6 });
+    expect(contentBounds([element])).toStrictEqual(worldBounds(element));
+  });
+
+  it('REQ-V09 is the union of the world bounds of every element, strokes included', () => {
+    const elements = [variant(0, { x: 10, y: 20 }), variant(3, { x: 500, y: -50 })];
+    expect(contentBounds(elements)).toStrictEqual({ x: 9, y: -51, width: 522, height: 172 });
+  });
+
+  it('property: holds every world bound and touches each side with one of them', () => {
+    checkProperty({ seed: 5105, runs: 60 }, anyDocument, (document) => {
+      const bounds = worldBoundsOf(document.elements.values());
+      const content = contentBounds(document.elements.values());
+      if (bounds.length === 0) {
+        expect(content).toBeNull();
+        return;
+      }
+      if (content === null) throw new Error('A document with elements has content bounds.');
+      const left = Math.min(...bounds.map((box) => box.x));
+      const top = Math.min(...bounds.map((box) => box.y));
+      const right = Math.max(...bounds.map((box) => box.x + box.width));
+      const bottom = Math.max(...bounds.map((box) => box.y + box.height));
+      // The union stores a width and a height, so its far sides round with the coordinates.
+      const scale = Math.max(1, ...[left, top, right, bottom].map(Math.abs)) * 1e-13;
+      for (const box of bounds) expect(aabbContainsBox(aabbExpand(content, scale), box)).toBe(true);
+      expect([content.x, content.y]).toStrictEqual([left, top]);
+      expect(Math.abs(content.x + content.width - right)).toBeLessThanOrEqual(scale);
+      expect(Math.abs(content.y + content.height - bottom)).toBeLessThanOrEqual(scale);
     });
   });
 });
