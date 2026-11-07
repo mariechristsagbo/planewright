@@ -3,11 +3,21 @@ export interface FoundationItem {
   readonly detail: string;
 }
 
-/** Facts about what this foundation build contains; keep in sync with the README. */
+/** The one-line state of this build, shown as the page's status; keep in sync with the README. */
+export const BUILD_STATUS =
+  'Pre-release — navigation only: you can pan and zoom an empty canvas, but nothing can be drawn yet.';
+
+/** Facts about what this pre-release build contains; keep in sync with the README. */
 export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
   {
-    name: 'Web shell',
-    detail: 'React and Vite application that renders this status page only.',
+    name: 'Navigation-only editor surface',
+    detail:
+      'An empty canvas that pans and zooms with the wheel, the keyboard, a middle-button drag, Space+drag, the Hand tool and two-finger touch gestures, with a tool bar and Undo and Redo controls.',
+  },
+  {
+    name: 'Canvas engine and renderer',
+    detail:
+      'The engine’s document model, scene store, undo history, camera, gestures and commands, and its Canvas 2D renderer. Nothing creates or changes elements yet.',
   },
   {
     name: 'Collaboration service skeleton',
@@ -26,8 +36,9 @@ export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
 ];
 
 export const NOT_YET_IMPLEMENTED: readonly string[] = [
-  'Drawing canvas and rendering engine',
-  'Shapes, text, selection and editing tools',
+  'Drawing shapes, lines, freehand strokes and text',
+  'Selecting, moving and editing elements: the Selection tool does nothing yet',
+  'Undoing and redoing: nothing changes the drawing, so Undo and Redo stay disabled',
   'Saving, loading and exporting drawings',
   'Real-time collaboration',
 ];
