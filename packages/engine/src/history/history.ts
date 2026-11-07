@@ -1,12 +1,13 @@
 import type { ElementId } from '../model/ids.ts';
 import { invertChangeSet, isEmptyChangeSet } from '../scene/change-set.ts';
-import type { ChangeSet, ChangeStamp } from '../scene/change-set.ts';
+import type { ChangeSet } from '../scene/change-set.ts';
 import { rethrowFirst } from '../scene/listener-errors.ts';
-import type { SceneStore } from '../scene/store.ts';
 import { applicablePart } from './conflict.ts';
-import type { HistoryEntry, HistorySelection } from './entry.ts';
+import type { HistoryEntry } from './entry.ts';
 import { applyWhatFits } from './fit.ts';
 import { mergeChangeSets } from './merge.ts';
+import { openHistoryTransaction } from './transaction.ts';
+import type { Transaction, TransactionOptions } from './transaction.ts';
 
 // The undo and redo history (docs/architecture/engine/history.md): the entries of committed
 // transactions, merged within a burst, and undone and redone where the document still allows it.
@@ -28,6 +29,13 @@ export interface History {
   readonly canUndo: boolean;
   /** Whether there is an entry to redo: true after an undo, false after a new entry. */
   readonly canRedo: boolean;
+  /** Whether a transaction is open; undo and redo do nothing until it has closed (REQ-H06). */
+  readonly inTransaction: boolean;
+  /**
+   * Opens the transaction of one gesture or command; committing it is the only way an entry is
+   * recorded (REQ-K01). Only one is open at a time: opening another throws until it has closed.
+   */
+  begin(): Transaction;
   /**
    * Pushes an entry, or merges it into the top one when both are parts of one burst, and clears
    * the redo stack. An entry that changes nothing is ignored.
@@ -44,11 +52,7 @@ export interface History {
   clear(): void;
 }
 
-export interface HistoryOptions {
-  readonly store: SceneStore;
-  readonly selection: HistorySelection;
-  /** The stamp of the next local change set: the session's client and its next number. */
-  readonly stamp: () => ChangeStamp;
+export interface HistoryOptions extends TransactionOptions {
   /** {@link HISTORY_LIMITS} unless a test sets others. */
   readonly limits?: HistoryLimits;
 }
@@ -62,6 +66,8 @@ interface State {
   readonly undone: HistoryEntry[];
   /** Whether the next entry may merge into the top one: not after an undo, a redo or a clear. */
   mergeable: boolean;
+  /** Whether a transaction is open. */
+  open: boolean;
 }
 
 const sizes = new WeakMap<HistoryEntry, number>();
@@ -138,6 +144,9 @@ function restoreSelection({ options }: State, ids: readonly ElementId[]): void {
  * is dropped. A listener's error is rethrown once all of that is done.
  */
 function step(state: State, undoing: boolean): HistoryEntry | null {
+  if (state.open) {
+    return null;
+  }
   const [from, to] = undoing ? [state.done, state.undone] : [state.undone, state.done];
   const failures: unknown[] = [];
   state.mergeable = false;
@@ -170,6 +179,7 @@ export function createHistory(options: HistoryOptions): History {
     done: [],
     undone: [],
     mergeable: false,
+    open: false,
   };
   return {
     get canUndo() {
@@ -177,6 +187,23 @@ export function createHistory(options: HistoryOptions): History {
     },
     get canRedo() {
       return state.undone.length > 0;
+    },
+    get inTransaction() {
+      return state.open;
+    },
+    begin() {
+      if (state.open) {
+        throw new Error('A transaction is open: commit or cancel it before opening another.');
+      }
+      state.open = true;
+      return openHistoryTransaction(options, {
+        record: (entry) => {
+          record(state, entry);
+        },
+        ended: () => {
+          state.open = false;
+        },
+      });
     },
     record: (entry) => {
       record(state, entry);
