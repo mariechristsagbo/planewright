@@ -54,7 +54,8 @@ export const DEFAULT_COMMANDS: readonly Command[] = [
     id: 'history.undo',
     label: 'Undo',
     shortcuts: [{ key: 'z', mod: true }],
-    isEnabled: (target) => target.history.canUndo,
+    // Ignored while a gesture's transaction is open (REQ-H06).
+    isEnabled: (target) => target.history.canUndo && !target.history.inTransaction,
     run: (target) => {
       target.history.undo();
     },
@@ -66,7 +67,7 @@ export const DEFAULT_COMMANDS: readonly Command[] = [
       { key: 'z', mod: true, shift: true },
       { key: 'y', mod: true },
     ],
-    isEnabled: (target) => target.history.canRedo,
+    isEnabled: (target) => target.history.canRedo && !target.history.inTransaction,
     run: (target) => {
       target.history.redo();
     },

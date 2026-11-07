@@ -6,11 +6,13 @@ import { createCommandRegistry } from '../commands/registry.ts';
 import type { CommandRegistry, CommandTarget } from '../commands/registry.ts';
 import { createHistory } from '../history/history.ts';
 import type { History } from '../history/history.ts';
+import type { Transaction } from '../history/transaction.ts';
 import type { Gesture } from '../input/gestures.ts';
 import type { ViewportRouter } from '../input/viewport-routing.ts';
 import type { DocumentState } from '../model/document.ts';
 import { newClientId } from '../model/ids.ts';
 import type { Clock, IdSource, Scheduler } from '../ports/ports.ts';
+import { isEmptyChangeSet } from '../scene/change-set.ts';
 import type { ChangeSet, ChangeStamp } from '../scene/change-set.ts';
 import { createSceneStore } from '../scene/store.ts';
 import type { SceneStore } from '../scene/store.ts';
@@ -39,8 +41,12 @@ export interface EditorCore {
   readonly history: History;
   readonly loop: RenderLoop;
   readonly registry: CommandRegistry;
+  /** The stamp of the session's next local change set. */
+  readonly stamp: () => ChangeStamp;
   tool: ActiveTool;
   cursor: CursorKind;
+  /** The transaction of the tool's gesture: open from its first preview to its commit or cancel. */
+  transaction: Transaction | null;
 }
 
 /** The change set that loads a document into an empty scene store. */
@@ -68,8 +74,10 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     history,
     loop: createRenderLoop(scene, ports.scheduler),
     registry: createCommandRegistry(DEFAULT_COMMANDS),
+    stamp,
     tool,
     cursor: tool.cursor,
+    transaction: null,
   };
 }
 
@@ -115,6 +123,26 @@ export function toolEventOf(gesture: Gesture, camera: Camera): GestureEvent | nu
   return { ...gesture, scene: sceneFromScreen(gesture.at, camera) };
 }
 
+type EditEffect = Extract<ToolEffect, { readonly type: 'preview' | 'commit' | 'cancel' }>;
+
+/**
+ * A gesture's document changes: its first preview opens its transaction, so undo and redo are
+ * ignored until it closes (REQ-H06); its commit records one undo step and its cancel reverts it.
+ */
+function applyEdit(core: EditorCore, effect: EditEffect): void {
+  if (effect.type === 'preview') {
+    core.transaction ??= core.history.begin();
+    if (!isEmptyChangeSet(effect.changes)) {
+      core.transaction.preview({ ...effect.changes, ...core.stamp() });
+    }
+    return;
+  }
+  const { transaction } = core;
+  core.transaction = null;
+  if (effect.type === 'commit') transaction?.commit(effect.label);
+  else transaction?.cancel();
+}
+
 function applyEffect(core: EditorCore, effect: ToolEffect): void {
   switch (effect.type) {
     case 'pan':
@@ -128,6 +156,11 @@ function applyEffect(core: EditorCore, effect: ToolEffect): void {
       break;
     case 'marquee':
       core.loop.update({ marquee: effect.box });
+      break;
+    case 'preview':
+    case 'commit':
+    case 'cancel':
+      applyEdit(core, effect);
       break;
   }
 }

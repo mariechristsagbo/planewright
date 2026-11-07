@@ -1,25 +1,36 @@
 import { aabbFromCorners } from '../math/aabb.ts';
 import type { Point } from '../model/elements.ts';
 import type { ElementId } from '../model/ids.ts';
+import type { HandleId } from '../selection/handles.ts';
 import { enclosedBy } from '../selection/marquee.ts';
 import type { GestureEvent, Tool, ToolContext, ToolStep } from './tool.ts';
+import { commitOf, previewOf, startTransform } from './transform-gesture.ts';
+import type { TransformGesture } from './transform-gesture.ts';
 
-// The Selection tool (docs/architecture/engine/interaction.md#selection-tool). Its drags from a
-// handle, an element or the selection box resize, rotate or move in ENG-10; until then they change
-// nothing. Each effect reads the modifiers of the gesture that makes it: a press adds with Shift,
-// a tap removes with Shift and a marquee adds with Shift at its release.
+// The Selection tool (docs/architecture/engine/interaction.md#selection-tool). A drag from a
+// handle resizes or rotates, and a drag from an element or the selection box moves the selection
+// (docs/architecture/engine/interaction.md#transforms). Each effect reads the modifiers of the
+// gesture that makes it: a press adds with Shift, a tap removes with Shift, a marquee adds with
+// Shift at its release, and each move of a resize or rotation reads Shift and Alt.
 
 export type SelectionToolState =
   | { readonly type: 'idle' }
-  /** Pressed on a handle of the selection: ENG-10 resizes or rotates from here. */
-  | { readonly type: 'pressing-handle' }
+  /** Pressed on a handle of the selection at a scene point: a drag resizes or rotates. */
+  | { readonly type: 'pressing-handle'; readonly handle: HandleId; readonly from: Point }
   /** Pressed on an element; `added` when that press selected it, so a Shift+tap keeps it. */
-  | { readonly type: 'pressing-element'; readonly id: ElementId; readonly added: boolean }
-  /** Pressed inside the selection box on no element: ENG-10 moves the selection from here. */
-  | { readonly type: 'pressing-selection-box' }
+  | {
+      readonly type: 'pressing-element';
+      readonly id: ElementId;
+      readonly added: boolean;
+      readonly from: Point;
+    }
+  /** Pressed inside the selection box on no element: a drag moves the selection. */
+  | { readonly type: 'pressing-selection-box'; readonly from: Point }
   /** Pressed on empty canvas at a scene point; a drag from it draws a marquee. */
   | { readonly type: 'pressing-empty'; readonly from: Point }
-  | { readonly type: 'box-selecting'; readonly from: Point };
+  | { readonly type: 'box-selecting'; readonly from: Point }
+  /** A move, resize or rotation, whose transaction the editor holds open until its release. */
+  | { readonly type: 'transforming'; readonly gesture: TransformGesture };
 
 type Step = ToolStep<SelectionToolState>;
 type PointerGesture = Exclude<GestureEvent, { readonly type: 'cancel' }>;
@@ -37,18 +48,18 @@ function press(event: PointerGesture, context: ToolContext): Step {
   const selected = context.selection.ids;
   switch (hit.type) {
     case 'handle':
-      return stay({ type: 'pressing-handle' });
+      return stay({ type: 'pressing-handle', handle: hit.handle, from: event.scene });
     case 'selection-box':
-      return stay({ type: 'pressing-selection-box' });
+      return stay({ type: 'pressing-selection-box', from: event.scene });
     case 'none':
       return stay({ type: 'pressing-empty', from: event.scene });
     case 'element': {
       if (selected.includes(hit.id)) {
-        return stay({ type: 'pressing-element', id: hit.id, added: false });
+        return stay({ type: 'pressing-element', id: hit.id, added: false, from: event.scene });
       }
       const ids = event.modifiers.shift ? [...selected, hit.id] : [hit.id];
       return {
-        state: { type: 'pressing-element', id: hit.id, added: true },
+        state: { type: 'pressing-element', id: hit.id, added: true, from: event.scene },
         effects: [{ type: 'select', ids }],
       };
     }
@@ -56,17 +67,45 @@ function press(event: PointerGesture, context: ToolContext): Step {
 }
 
 /** A drag from empty canvas draws the marquee from the press to the pointer, in scene units. */
-function drag(state: SelectionToolState, event: PointerGesture): Step {
-  if (state.type !== 'pressing-empty' && state.type !== 'box-selecting') return stay(state);
-  const { from } = state;
-  return {
-    state: { type: 'box-selecting', from },
-    effects: [{ type: 'marquee', box: aabbFromCorners(from, event.scene) }],
-  };
+const marquee = (from: Point, event: PointerGesture): Step => ({
+  state: { type: 'box-selecting', from },
+  effects: [{ type: 'marquee', box: aabbFromCorners(from, event.scene) }],
+});
+
+/** A transform previews its whole result for the pointer; nothing is selected to transform without one. */
+const transform = (
+  gesture: TransformGesture | null,
+  event: PointerGesture,
+  context: ToolContext,
+): Step =>
+  gesture === null
+    ? stay(IDLE)
+    : { state: { type: 'transforming', gesture }, effects: [previewOf(gesture, event, context)] };
+
+/** A drag from empty canvas draws a marquee; one from the selection or a handle transforms it. */
+function drag(state: SelectionToolState, event: PointerGesture, context: ToolContext): Step {
+  switch (state.type) {
+    case 'pressing-empty':
+    case 'box-selecting':
+      return marquee(state.from, event);
+    case 'pressing-element':
+    case 'pressing-selection-box':
+      return transform(startTransform(null, state.from, context), event, context);
+    case 'pressing-handle':
+      return transform(startTransform(state.handle, state.from, context), event, context);
+    case 'transforming':
+      return transform(state.gesture, event, context);
+    case 'idle':
+      return stay(state);
+  }
 }
 
-/** The marquee's release selects what it wholly encloses, added to the selection with Shift. */
+/**
+ * A transform's release commits it as one undo step; the marquee's selects what it wholly
+ * encloses, added to the selection with Shift.
+ */
 function release(state: SelectionToolState, event: PointerGesture, context: ToolContext): Step {
+  if (state.type === 'transforming') return { state: IDLE, effects: [commitOf(state.gesture)] };
   if (state.type !== 'box-selecting') return stay(IDLE);
   const enclosed = enclosedBy(context.scene, aabbFromCorners(state.from, event.scene));
   const ids = event.modifiers.shift
@@ -98,15 +137,21 @@ function tap(state: SelectionToolState, event: PointerGesture, context: ToolCont
     case 'idle':
     case 'pressing-handle':
     case 'box-selecting':
+    case 'transforming':
       return stay(IDLE);
   }
 }
 
-/** A cancelled marquee disappears and leaves the selection as it was. */
-const cancel = (state: SelectionToolState): Step =>
-  state.type === 'box-selecting'
+/**
+ * A cancelled transform reverts its previews without an undo step; a cancelled marquee disappears.
+ * Either leaves the selection as it was.
+ */
+function cancel(state: SelectionToolState): Step {
+  if (state.type === 'transforming') return { state: IDLE, effects: [{ type: 'cancel' }] };
+  return state.type === 'box-selecting'
     ? { state: IDLE, effects: [{ type: 'marquee', box: null }] }
     : stay(IDLE);
+}
 
 /** A double tap acts as a tap until a double tap on a text edits it (ENG-12). */
 export const selectionTool: Tool<SelectionToolState> = {
@@ -119,7 +164,7 @@ export const selectionTool: Tool<SelectionToolState> = {
         return press(event, context);
       case 'drag-start':
       case 'drag':
-        return drag(state, event);
+        return drag(state, event, context);
       case 'release':
         return release(state, event, context);
       case 'tap':

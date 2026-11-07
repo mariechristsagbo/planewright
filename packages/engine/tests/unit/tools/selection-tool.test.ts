@@ -16,8 +16,8 @@ import {
 import { toolContext } from '../../support/tool-contexts.ts';
 
 // The Selection tool's transitions (docs/architecture/engine/interaction.md#selection-tool), over
-// the selection fixture at zoom 1, where a screen point is the scene point. Its drags that would
-// move, resize or rotate are ENG-10's and change nothing yet.
+// the selection fixture at zoom 1, where a screen point is the scene point. Its transform drags are
+// in selection-tool-transforms.test.ts.
 
 const NONE = { shift: false, alt: false, mod: false };
 const SHIFT = { ...NONE, shift: true };
@@ -55,10 +55,9 @@ function run(events: readonly GestureEvent[], selected: readonly ElementId[] = [
 }
 
 describe('the Selection tool: presses on handles and elements', () => {
-  it('keeps the selection on a press on a handle, whose drag resizes only in ENG-10', () => {
+  it('keeps the selection on a press on a handle and on a drag from it, which resizes', () => {
     const drag = [at('press', 300, 200), at('drag-start', 340, 260), at('release', 340, 260)];
-    expect(run(drag, [RECTANGLE])).toEqual({
-      effects: [],
+    expect(run(drag, [RECTANGLE])).toMatchObject({
       selection: [RECTANGLE],
       state: { type: 'idle' },
     });
@@ -80,7 +79,7 @@ describe('the Selection tool: presses on handles and elements', () => {
   it('keeps the selection on a press, a tap or a drag from a selected element', () => {
     const selected = [RECTANGLE, ELLIPSE];
     const drag = [at('press', 200, 150), at('drag-start', 260, 150), at('release', 260, 150)];
-    expect(run(drag, selected).effects).toEqual([]);
+    expect(run(drag, selected).selection).toEqual(selected);
     expect(run([at('press', 200, 150), at('tap', 200, 150)], selected).effects).toEqual([]);
   });
 
@@ -110,9 +109,9 @@ describe('the Selection tool: presses inside the selection box and on empty canv
     expect(run(tap, [RECTANGLE, ELLIPSE]).effects).toEqual([{ type: 'select', ids: [] }]);
   });
 
-  it('keeps the selection on a drag from inside the selection box, which moves it only in ENG-10', () => {
+  it('keeps the selection on a drag from inside the selection box, which moves it', () => {
     const drag = [at('press', 350, 150), at('drag-start', 380, 150), at('release', 380, 150)];
-    expect(run(drag, [RECTANGLE, ELLIPSE]).effects).toEqual([]);
+    expect(run(drag, [RECTANGLE, ELLIPSE]).selection).toEqual([RECTANGLE, ELLIPSE]);
   });
 
   it('REQ-S10 REQ-T07 clears the selection on a tap on empty canvas, with a mouse or touch', () => {

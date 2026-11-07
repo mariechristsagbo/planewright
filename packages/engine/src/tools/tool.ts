@@ -1,7 +1,9 @@
 import type { Camera } from '../camera/camera.ts';
+import type { HistoryLabel } from '../history/entry.ts';
 import type { Modifiers } from '../input/events.ts';
 import type { Box, Point } from '../model/elements.ts';
 import type { ElementId } from '../model/ids.ts';
+import type { UnstampedChangeSet } from '../scene/change-set.ts';
 import type { SceneReader } from '../scene/store.ts';
 import type { HitResult } from '../selection/hit-test.ts';
 import type { PointerKind } from '../selection/pointer.ts';
@@ -34,7 +36,10 @@ export type GestureEvent =
     }
   | { readonly type: 'cancel' };
 
-/** What a tool asks of the editor; the document-changing effects join with the tools that need them. */
+/**
+ * What a tool asks of the editor. A gesture that changes the document previews its changes, which
+ * open its transaction, and then commits them as one undo step or cancels them.
+ */
 export type ToolEffect =
   /** Pans the camera by a screen delta, so the content follows the pointer. */
   | { readonly type: 'pan'; readonly delta: Point }
@@ -42,7 +47,13 @@ export type ToolEffect =
   /** Replaces the selection; never an undo step (REQ-S13). */
   | { readonly type: 'select'; readonly ids: readonly ElementId[] }
   /** Shows the box selection's marquee in scene units, or hides it with null. */
-  | { readonly type: 'marquee'; readonly box: Box | null };
+  | { readonly type: 'marquee'; readonly box: Box | null }
+  /** Applies a transient change set in the gesture's transaction, which the first one opens. */
+  | { readonly type: 'preview'; readonly changes: UnstampedChangeSet }
+  /** Commits the gesture's transaction as one undo step (REQ-T11). */
+  | { readonly type: 'commit'; readonly label: HistoryLabel }
+  /** Reverts the gesture's previews and closes its transaction without an undo step. */
+  | { readonly type: 'cancel' };
 
 /** What a tool may read; the defaults, tool lock and new identifiers join with the creation tools. */
 export interface ToolContext {
