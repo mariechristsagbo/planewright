@@ -36,7 +36,11 @@ export interface RenderFrame {
   readonly theme: 'light' | 'dark';
   readonly background: Color;
   /** Present when the scene layer must be redrawn. */
-  readonly scene?: { readonly elements: readonly Element[]; readonly hidden: readonly ElementId[] };
+  readonly scene?: {
+    readonly elements: readonly Element[];
+    readonly hidden: readonly ElementId[];
+    readonly removed: readonly ElementId[];
+  };
   /** Present when the overlay layer must be redrawn. */
   readonly overlay?: { readonly primitives: readonly OverlayPrimitive[] };
 }
@@ -48,7 +52,8 @@ export interface Renderer {
 ```
 
 `scene.elements` holds only the visible elements, in drawing order; `hidden` lists elements drawn
-by something else, such as the text being edited in the DOM overlay.
+by something else, such as the text being edited in the DOM overlay; `removed` lists the elements
+removed since the last frame that redrew the scene layer, so that the renderer drops their paths.
 
 ## Dirty layers and scheduling
 
@@ -227,6 +232,63 @@ marquee enclosure in the `selection` module. It decided what the rules above lea
   must be 0 or more (an infinite one never wraps), and a width from the measurer that is negative
   or not finite is refused. The per-revision cache of layouts arrives with its first caller, the
   renderer (ENG-07).
+
+## What ENG-07 decided
+
+ENG-07 implements the render frames, dirty tracking and frame scheduling in the `editor` layer and
+the canvas renderer in `@planewright/render-canvas`. It decided what the rules above leave open:
+
+- **The render loop.** "In the editor façade" is the `editor` layer's render loop,
+  `createRenderLoop(scene, scheduler)`, which `createEditor` composes when the editor surface
+  (ENG-08) adds input. It follows the scene store and holds the render state: camera, viewport,
+  theme, selection, the pointer kind that sizes the handles, the marquee and the hidden elements.
+  `update` marks layers dirty by the table above: a pointer-kind change is the handle move, hiding
+  an element marks only the scene layer, and `invalidate` marks both for a font that finished
+  loading. The state starts at the origin at zoom 1 on an empty viewport, in the light theme.
+- **Who calls the renderer.** The renderer is not an editor port. The loop asks the scheduler for
+  an animation frame only while a listener is registered with `onFrame`, builds one frame on it
+  and hands it to every listener; the web app's listener calls `render`. A new listener gets a
+  full frame; a listener that throws keeps the frame from no other, and its error is rethrown
+  afterwards. `frame()` pulls the frame of the dirty layers at once, which `Editor.frame()` will
+  return.
+- **Removed elements.** A frame's scene part lists the elements removed since the scene layer was
+  last drawn, even those added back since, because a cache keyed by identifier and revision cannot
+  tell a returning element from the one it held.
+- **The viewport.** It comes from the page, so the loop refuses a size below 0 or not finite and a
+  pixel ratio that is not finite and above 0, and changes nothing.
+- **The overlay.** The marquee is given in scene units, as the box selection compares it, and
+  becomes a screen box; the primitives are the selection outline, the handles at their drawn size
+  and the marquee, in that order. Nothing emits an element outline yet; the renderer draws one
+  along the path it drew the element with.
+- **The engine's public surface.** The entry exports its first values: `createRenderLoop`, and the
+  pure geometry functions a renderer draws with, `geometryOf`, `localBox` and `layoutText`.
+- **Placing elements.** Each element's transform is set on its own, with its origin relative to
+  the camera computed in double precision, so a canvas whose transform keeps single precision
+  never holds a translation of up to 10⁹ units.
+- **Painting.** A fill goes under the stroke of a closed kind only; lines and freehand strokes get
+  round caps and joins and are never filled; a one-point stroke is a disc filled with its stroke
+  colour. Dashes are 4 on and 4 off for `dashed` and 1 on and 2 off for `dotted`, in stroke widths.
+  A text fills its box when it has a fill, then draws each line in its stroke colour, vertically
+  centred on its line and anchored at the box's left edge, centre or right edge. Until the text
+  issue chooses fonts the families map to the generic `sans-serif`, `cursive` and `monospace`;
+  hatch fills draw solid and the sketch styles exact until P1; stored colours are drawn as they are
+  in both themes until the theme issue chooses the dark mapping; kinds without a geometry are not
+  drawn.
+- **The path cache.** One entry per element holds its path, its closedness, its local box's size
+  and, for a text, its layout, so layouts are cached per revision there. An element at the same
+  revision keeps its entry even as a new object. Entries are kept in use order and the oldest goes
+  past 20,000; removed elements are dropped before the scene layer is drawn.
+- **The overlay's pixels.** The overlay is drawn in device pixels with lines the pixel ratio
+  rounded, at least 1, device pixels wide, on the device grid: an odd width on pixel centres, an
+  even one on pixel edges. Handles are white squares and the rotation handle a white circle, with
+  borders, outlines and the marquee's edge in Planewright's selection colour `#2a62d0` and the
+  marquee filled with `#2a62d01a`.
+- **Backing stores.** The renderer sizes a layer's backing store to the CSS size times the pixel
+  ratio, rounded, before it draws that layer, and assigns a size only when it changed, since
+  assigning one clears the canvas. A canvas without a 2D context is refused.
+- **The package boundary.** `@planewright/render-canvas` has its own ESLint block: no Node.js or
+  page global such as `window` or `document`, no timer, clock or randomness, and imports of the
+  engine's entry and its own modules only. It holds the engine's coverage thresholds.
 
 ## Export
 
