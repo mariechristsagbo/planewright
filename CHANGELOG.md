@@ -38,3 +38,10 @@ release has been published yet.
   update per set, the order, spatial, group and attachment indexes, the world bounds they key on,
   transient previews and transactions that commit one net change set. Nothing uses it yet, and
   history, rendering and input do not exist.
+- Undo and redo history in the engine (ENG-04): entries that carry the selection around each
+  committed transaction, burst merging by merge key, conflict-safe undo and redo that leave in
+  place what another origin changed since, limits of 500 entries and an estimated 50 MB, and the
+  availability flags. Committing a transaction is the only way an entry is recorded, and undo and
+  redo do nothing while one is open. A throwing scene listener no longer stops the others or
+  leaves a transaction half done, and a refused revert leaves its transaction open. Nothing uses
+  the history yet, and no Undo or Redo control exists.

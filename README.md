@@ -7,8 +7,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > is no canvas, no shapes, no persistence and no collaboration. This repository currently
 > contains the workspace structure, a factual status page, a collaboration-service skeleton, the
 > first layers of the engine package (math primitives, platform ports, the document model with
-> its codec, and the scene store with its change sets and transactions, all used by nothing yet)
-> and the quality gates that future work must pass.
+> its codec, the scene store with its change sets and transactions, and the undo and redo history,
+> all used by nothing yet) and the quality gates that future work must pass.
 
 ## Goals
 
@@ -51,7 +51,7 @@ Product names are used only to identify these references.
 | [`apps/web`](apps/web)                   | React + Vite browser application (currently a status page only)           |
 | [`apps/collab`](apps/collab)             | Node.js WebSocket collaboration service (health endpoint + hello only)    |
 | [`packages/protocol`](packages/protocol) | Runtime-agnostic wire protocol definitions shared by clients and services |
-| [`packages/engine`](packages/engine)     | Canvas engine, ECMAScript only: math, ports, document model, scene store  |
+| [`packages/engine`](packages/engine)     | Canvas engine, ECMAScript only: math, ports, model, scene store, history  |
 | [`scripts`](scripts)                     | Repository guardrails: file size, dependency policy, branch names         |
 | [`docs`](docs/README.md)                 | Architecture decisions, investigation process and development guides      |
 | [`.github`](.github)                     | CI, CodeQL, Dependabot, issue forms and the pull request template         |
