@@ -195,8 +195,8 @@ export function createHistory(options: HistoryOptions): History {
       if (state.open) {
         throw new Error('A transaction is open: commit or cancel it before opening another.');
       }
-      state.open = true;
-      return openHistoryTransaction(options, {
+      // Opening reads the selection, which may throw: the history is open only once it has opened.
+      const transaction = openHistoryTransaction(options, {
         record: (entry) => {
           record(state, entry);
         },
@@ -204,6 +204,8 @@ export function createHistory(options: HistoryOptions): History {
           state.open = false;
         },
       });
+      state.open = true;
+      return transaction;
     },
     record: (entry) => {
       record(state, entry);
