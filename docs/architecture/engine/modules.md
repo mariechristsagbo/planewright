@@ -116,7 +116,9 @@ since ENG-07). Everything else is internal to the package. The one constructor, 
 came with the editor surface (ENG-08) and composes the render loop; the selection issue (ENG-09)
 added the selection to it. Its surface so far
 ([what ENG-08 decided](interaction.md#what-eng-08-decided),
-[what ENG-09 decided](interaction.md#what-eng-09-decided)):
+[what ENG-09 decided](interaction.md#what-eng-09-decided); the transforms issue, ENG-10, added no
+method: its gestures reach the Selection tool through `input`, and Duplicate, Delete and the nudges
+are commands that `run` and the keymap reach):
 
 ```ts
 export interface EditorPorts {

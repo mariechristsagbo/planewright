@@ -186,9 +186,9 @@ A transform gesture records the selected elements' values when it starts and rec
 result from them on every move, so rounding errors never accumulate. Each gesture commits one
 history entry (REQ-T11).
 
-- **Move.** The delta is `sceneFromScreen(current) − sceneFromScreen(start)` with the current
-  camera, so a wheel pan during a drag keeps the selection under the pointer. No snapping in P0
-  (REQ-T01).
+- **Move.** The delta runs from the press's scene point, read with the camera of the press, to
+  `sceneFromScreen(current)` with the current camera, so a wheel pan during a drag keeps the
+  selection under the pointer (ENG-10). No snapping in P0 (REQ-T01).
 - **Resize, one element.** The pointer is turned into the element's local frame about its starting
   centre. The dragged edges follow it and the opposite corner or side stays fixed in scene space;
   the new origin is solved from that fixed point (REQ-T02). Shift keeps the aspect ratio by taking
@@ -398,6 +398,60 @@ open:
   cancel (the ENG-08 review's m1 and m2), so that a selection press is never turned into a camera
   drag and a marquee always ends. The Selection button and the page say that the tool selects but
   that nothing can be drawn yet to select.
+
+## What ENG-10 decided
+
+ENG-10 implements the transform maths in the engine's `transform` layer, the Selection tool's
+transform gestures in `tools`, Duplicate, Delete and the nudges in `commands`, and the transaction
+of a gesture in `editor`; in `apps/web` it updates the factual text. It decided what the rules above
+leave open:
+
+- **Gestures.** A transform starts at the drag that follows a press: from an element or the
+  selection box it moves the selection, and from a handle it resizes, rotates or moves a line's end;
+  with nothing selected it does nothing. It keeps the selected elements and the press's scene point
+  as they were, and each move previews the whole result as updates of the fields that differ. The
+  delta runs from the press's scene point, read with the camera of the press, to the pointer's, read
+  with the current one: that is what keeps the content under the pointer after a wheel pan, which
+  the first wording of the move rule above did not. The release commits; a cancel from Escape, a
+  tool change, a second finger, a cancelled pointer or focus loss reverts with no undo step.
+- **Effects and transactions.** A tool returns `preview` with a change set that the editor stamps,
+  `commit` with a history label and `cancel`. The editor opens the history's transaction at a
+  gesture's first preview, even an empty one, so from the drag's start Undo and Redo change nothing
+  and their commands report that they are disabled (REQ-H06); a press that has not become a drag is
+  not a gesture yet. The labels are `move`, `resize`, which a line's end uses too, and `rotate`.
+  Each gesture's entry holds the selection when its transaction opened, after the press selected,
+  and when it committed (REQ-S13).
+- **Resizing.** The dragged edges follow the pointer's delta, not its position, so a drag started a
+  few units outside a handle, as B-16's were, moves the side by exactly the drag. Shift takes the
+  larger ratio of the dragged axes that have extent, and on a side handle the other side follows
+  about its middle; Shift and Alt combine. A size stops at 1 unit, or at its own size when that is
+  already smaller, so nothing jumps. A text always keeps its aspect ratio and its font size stays
+  within the document's limits; its measured size scales with the font and is measured again only
+  once the text measurer joins the engine (ENG-12). In a selection, a text scales by the ratio along
+  its own height, a quarter-turned element scales each of its sides by the ratio of the scene axis
+  it lies along, and the ratios also stop where any element's positive size or font size would go
+  below 1.
+- **Rotating.** One element's own rotation plus the turn is the total that Shift rounds; several
+  elements turn by the turn, which Shift rounds, since their outline has no rotation of its own.
+- **Commands.** `selection.duplicate` (Mod+D), `selection.delete` (Delete, Backspace) and
+  `selection.nudge-left`, `-right`, `-up` and `-down`, each also with `-10` for Shift, run only with
+  a selection and while no gesture's transaction is open. Each applies one change set through the
+  command target's `edit`, one transaction and one undo step. A copy is ordered between its original
+  and the next key above it, keeps every other field, its group included, and the copies are
+  selected in the selection's order. Delete also drops the attachments of connectors that point at
+  what it removes and the groups it leaves empty, up through their parents.
+- **Held keys.** A nudge's merge key names its key press: the editor counts each key press that is
+  not a repeat and each `run`, so the repeats of one held key merge into one undo step within the
+  history's 1 s burst, and the next press, another arrow or a Shift change makes another.
+- **The selection after a command.** `edit` selects before the commit, which records the selection
+  for redo, and again after it, because the commit's transient revert drops the elements that its
+  preview added from the selection. That is the ENG-06 review's m2, which stays open for the
+  selection layer.
+- **Cameras.** Selection (the ENG-09 review's m2) and transforms are also tested at zoom 2 with a
+  panned camera, where a screen point is not the scene point.
+- **Not here.** Handle cursors; arrows that follow the elements they are attached to (P1);
+  re-measuring texts (ENG-12); flips (P1), snapping and groups, which are out of scope. The web app
+  has nothing to transform until ENG-11 lets people draw.
 
 ## Requirements served
 

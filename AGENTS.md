@@ -7,13 +7,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
   holds only its math layer, ports, document model, scene store, undo history, camera, geometry,
-  selection with hit testing, input events with the gesture recogniser, the Hand and Selection
-  tools, the command registry with its keymap, and the editor layer's render loop and
-  `createEditor`, and `packages/render-canvas` its Canvas 2D renderer. The web app shows a
+  selection with hit testing, the transform maths, input events with the gesture recogniser, the
+  Hand and Selection tools, the command registry with its keymap, and the editor layer's render
+  loop and `createEditor`, and `packages/render-canvas` its Canvas 2D renderer. The web app shows a
   **navigation-only** surface: an empty canvas that pans and zooms, a tool bar and Undo and Redo
-  controls with nothing to undo. The Selection tool works, but nothing can be drawn, so there is
-  nothing to select. Drawing, moving and editing elements, persistence and collaboration features
-  do **not** exist yet.
+  controls with nothing to undo. The Selection tool selects, moves, resizes and rotates, and the
+  engine duplicates, deletes and nudges, but nothing can be drawn, so there is nothing to select.
+  Drawing elements, editing text, persistence and collaboration features do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -76,8 +76,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   globals, `Math.random`, `Date.now` and timers, which come through its ports, and its sources
   import only one another. A layer imports only from its own and earlier layers
   (`scripts/lib/engine-layers.ts`); only `math`, `ports`, `model`, `geometry`, `camera`, `scene`,
-  `history`, `selection`, `input`, `tools`, `commands` and `editor` (its render frames, render loop
-  and `createEditor`) exist so far. Tests run
+  `history`, `selection`, `transform`, `input`, `tools`, `commands` and `editor` (its render frames,
+  render loop and `createEditor`) exist so far. Tests run
   in the `engine:unit` and `engine:integration` projects; property tests use
   `tests/support/property.ts`.
 - `packages/render-canvas`: the source-only Canvas 2D implementation of the engine's renderer port
