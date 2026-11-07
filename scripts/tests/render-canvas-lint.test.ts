@@ -15,6 +15,7 @@ const BOUNDARY_RULES = new Set([
   'no-restricted-globals',
   'no-restricted-imports',
   'no-restricted-properties',
+  'no-restricted-syntax',
 ]);
 
 // Loading the whole ESLint configuration can exceed Vitest's 10 s hook limit under a full run.
@@ -52,6 +53,17 @@ const FORBIDDEN_EVERYWHERE: readonly (readonly [string, string])[] = [
   ['globalThis.Path2D;', 'no-restricted-globals'],
   ['Date.now();', 'no-restricted-properties'],
   ['Math.random();', 'no-restricted-properties'],
+  ['new Date();', 'no-restricted-syntax'],
+  ['Date();', 'no-restricted-syntax'],
+  ['location.href;', 'no-restricted-globals'],
+  ['devicePixelRatio;', 'no-restricted-globals'],
+  ['innerWidth;', 'no-restricted-globals'],
+  ['matchMedia("(min-width: 1px)");', 'no-restricted-globals'],
+  ['new XMLHttpRequest();', 'no-restricted-globals'],
+  ['indexedDB.open("a");', 'no-restricted-globals'],
+  ['new Image();', 'no-restricted-globals'],
+  ['new OffscreenCanvas(1, 1);', 'no-restricted-globals'],
+  ['createImageBitmap(source);', 'no-restricted-globals'],
 ];
 
 describe('the canvas renderer source boundary in ESLint', () => {
@@ -69,6 +81,9 @@ describe('the canvas renderer source boundary in ESLint', () => {
     'import { createRoot } from "react-dom/client";',
     'export { PROTOCOL_VERSION } from "@planewright/protocol";',
     'import { geometryOf } from "@planewright/engine/src/geometry/kinds.ts";',
+    'import type { SceneStore } from "../../engine/src/scene/store.ts";',
+    'export { PROTOCOL_VERSION } from "../../protocol/src/index.ts";',
+    'import { geometryOf } from "../../engine/src/geometry/kinds.ts";',
   ])('rejects the import in %s', (code) => {
     expect(ruleIds(code, rules)).toEqual(['no-restricted-imports']);
   });
@@ -79,6 +94,8 @@ describe('the canvas renderer source boundary in ESLint', () => {
       'import { geometryOf } from "@planewright/engine";',
       'import { drawScene } from "./scene-layer.ts";',
       'const path = new Path2D();',
+      'export type Context = Pick<CanvasRenderingContext2D, "fill">;',
+      'export const created = new Date(0);',
       'path.moveTo(0, 0);',
       'export const twice = (value: number): number => value * 2;',
     ].join('\n');
@@ -94,6 +111,7 @@ describe('the canvas renderer source boundary in ESLint', () => {
     expect(messages('import "@planewright/protocol";')).toEqual([
       expect.stringContaining("engine's entry"),
     ]);
+    expect(messages('new Date();')).toEqual([expect.stringContaining('reads no clock')]);
   });
 });
 
