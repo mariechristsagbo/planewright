@@ -96,7 +96,8 @@ export interface History {
   set with a new stamp, and the entry moves to the other stack holding only the part that was
   applied, which `undo` and `redo` return. A scene listener that throws never leaves either half
   done: the entry moves and the selection is restored before the error is rethrown; undo asked
-  while the store tells a listener of a set throws and changes nothing.
+  while the store tells a listener of a set throws, leaving the stacks and the document as they
+  were.
 - Selection-only changes, camera moves, view toggles, theme and preference changes, and saving
   never call `record` (REQ-S13, REQ-H04).
 
