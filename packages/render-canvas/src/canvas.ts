@@ -39,5 +39,11 @@ export interface CanvasSurface {
   getContext(contextId: '2d'): Context2D | null;
 }
 
+/** A canvas with its 2D context: one of the renderer's two layers. */
+export interface Layer {
+  readonly canvas: CanvasSurface;
+  readonly context: Context2D;
+}
+
 /** The calls that an outline is traced into a path with. */
 export type PathSink = Pick<Path2D, 'moveTo' | 'lineTo' | 'bezierCurveTo' | 'closePath' | 'arc'>;
