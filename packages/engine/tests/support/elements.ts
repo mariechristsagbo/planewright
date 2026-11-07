@@ -1,6 +1,12 @@
 import { INITIAL_DEFAULT_STYLE } from '../../src/model/defaults.ts';
 import type { Color } from '../../src/model/color.ts';
-import type { ShapeElement, TextElement } from '../../src/model/elements.ts';
+import type {
+  FreehandElement,
+  LineElement,
+  Point,
+  ShapeElement,
+  TextElement,
+} from '../../src/model/elements.ts';
 import type { ElementId } from '../../src/model/ids.ts';
 import type { OrderKey } from '../../src/model/order-key.ts';
 import type { Fill, Style } from '../../src/model/style.ts';
@@ -52,3 +58,14 @@ export const textElement = (
   height,
   content: { text: 'Hi', font: { family: 'sans', size: 20, lineHeight: 1.25 }, align: 'left' },
 });
+
+export const lineElement = (points: readonly Point[], placement: Placement = {}): LineElement => ({
+  ...common(placement),
+  kind: 'line',
+  points,
+});
+
+export const freehandElement = (
+  points: readonly Point[],
+  placement: Placement = {},
+): FreehandElement => ({ ...common(placement), kind: 'freehand', points });

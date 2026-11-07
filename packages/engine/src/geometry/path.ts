@@ -1,3 +1,4 @@
+import { lerp } from '../math/vector.ts';
 import type { Element, Point } from '../model/elements.ts';
 
 // Outlines and the geometry of each kind, in an element's local frame
@@ -30,6 +31,10 @@ export const cubicTo = (c1: Point, c2: Point, to: Point): PathCommand => ({
 });
 
 export const CLOSE: PathCommand = { op: 'close' };
+
+/** The cubic that draws the quadratic curve from `from` to `to` with the control point `control`. */
+export const quadraticTo = (from: Point, control: Point, to: Point): PathCommand =>
+  cubicTo(lerp(from, control, 2 / 3), lerp(to, control, 2 / 3), to);
 
 /** How far along its tangents a cubic's control points lie for a quarter circle of radius 1. */
 export const ARC_KAPPA = (4 * (Math.SQRT2 - 1)) / 3;
