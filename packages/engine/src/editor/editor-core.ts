@@ -73,7 +73,10 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
   };
 }
 
-/** The editor's state as commands read and change it, with the recogniser's gesture cancel. */
+/**
+ * The editor's state as commands read and change it, with the recogniser's gesture cancel; a tool
+ * change cancels the old tool's gesture first.
+ */
 export function targetOf(core: EditorCore, cancelGesture: () => boolean): CommandTarget {
   return {
     get tool() {
@@ -89,6 +92,9 @@ export function targetOf(core: EditorCore, cancelGesture: () => boolean): Comman
     history: core.history,
     setTool(tool) {
       if (tool === core.tool.id) return;
+      // As Escape does, so the old tool removes what its gesture shows, such as a marquee, and the
+      // pointer does nothing until it lifts.
+      cancelGesture();
       core.tool = activeTool(tool);
       core.cursor = core.tool.cursor;
     },
