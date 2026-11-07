@@ -49,21 +49,29 @@ export const modifiersOf = (event: ModifierSource, platform: Platform): Modifier
 
 const BUTTONS: readonly PointerButton[] = ['primary', 'middle', 'secondary'];
 
-/** A press or release names its button; a move (button −1) takes the buttons held. */
-function buttonOf({ button, buttons }: PointerSource): PointerButton | undefined {
-  if (button !== -1) return BUTTONS[button];
+/** The button that the pressed buttons stand for: middle, then secondary, else primary. */
+function heldButton(buttons: number): PointerButton {
   if ((buttons & 4) !== 0) return 'middle';
   return (buttons & 2) !== 0 ? 'secondary' : 'primary';
 }
 
-/** The engine event for a pointer event, or null for a button the editor does not use. */
+/** A press or release names its button; a move (button −1) takes the buttons held. */
+const buttonOf = ({ button, buttons }: PointerSource): PointerButton | undefined =>
+  button === -1 ? heldButton(buttons) : BUTTONS[button];
+
+/**
+ * The engine event for a pointer event, or null for a press of a button the editor does not use.
+ * A move, release or cancel of such a button, as the back and forward buttons give, takes the
+ * buttons still held instead, so that the press it belongs to always ends (REQ-S06).
+ */
 export function pointerInput(
   type: PointerInput['type'],
   event: PointerSource,
   canvas: CanvasBox,
   platform: Platform,
 ): PointerInput | null {
-  const button = buttonOf(event);
+  const button =
+    buttonOf(event) ?? (type === 'pointer-down' ? undefined : heldButton(event.buttons));
   if (button === undefined) return null;
   const pointer =
     event.pointerType === 'pen' || event.pointerType === 'touch' ? event.pointerType : 'mouse';
