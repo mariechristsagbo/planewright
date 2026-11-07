@@ -2,12 +2,13 @@ import type { Camera } from '../camera/camera.ts';
 import { zoomToFit } from '../camera/fit.ts';
 import { resetZoom, zoomIn, zoomOut } from '../camera/ladder.ts';
 import type { ViewportSize } from '../camera/viewport.ts';
+import { geometryOf } from '../geometry/kinds.ts';
 import { contentBounds } from '../geometry/world-bounds.ts';
 import type { ToolId } from '../tools/tool.ts';
 import type { KeyChord } from './chords.ts';
 import type { Command, CommandId } from './registry.ts';
 
-// The commands that the editor surface has so far
+// The commands that the editor has so far
 // (docs/architecture/engine/interaction.md#commands-and-shortcuts); the others join with the
 // issues that give them behaviour.
 
@@ -68,6 +69,31 @@ export const DEFAULT_COMMANDS: readonly Command[] = [
     isEnabled: (target) => target.history.canRedo,
     run: (target) => {
       target.history.redo();
+    },
+  },
+  {
+    id: 'selection.select-all',
+    label: 'Select all',
+    shortcuts: [{ key: 'a', mod: true }],
+    isEnabled: always,
+    // Selectable in P0: a kind that has a geometry, as hit testing and box selection read it;
+    // locked elements are left out in P1 (REQ-S08).
+    run: (target) => {
+      const ids = target.scene
+        .ordered()
+        .flatMap((element) => (geometryOf(element) === undefined ? [] : [element.id]));
+      target.select(ids);
+    },
+  },
+  {
+    id: 'selection.cancel',
+    label: 'Cancel, clear selection',
+    shortcuts: [{ key: 'escape' }],
+    isEnabled: always,
+    run: (target) => {
+      if (target.cancelGesture()) return;
+      target.select([]);
+      target.setTool('selection');
     },
   },
   cameraCommand('view.zoom-in', 'Zoom in', ['=', '+'].flatMap(modWithEitherShift), zoomIn),

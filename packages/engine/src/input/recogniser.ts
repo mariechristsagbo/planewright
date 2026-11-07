@@ -13,6 +13,11 @@ import type { Gesture } from './gestures.ts';
 export interface GestureRecogniser {
   /** Feeds one input event; wheel events belong to the viewport and pass untouched. */
   input(event: InputEvent): void;
+  /**
+   * Ends the tool's open gesture as a cancelled pointer would, so the tool is told and the pointer
+   * does nothing until it lifts; false when no tool gesture is open, as during a camera drag.
+   */
+  cancel(): boolean;
   /** Drops a pending long press; the recogniser then ignores all input. */
   dispose(): void;
 }
@@ -238,6 +243,11 @@ export function createGestureRecogniser(
   return {
     input(event) {
       if (!disposed) route(r, event);
+    },
+    cancel() {
+      const open = r.press !== null && !r.press.camera;
+      if (open) cancelPress(r);
+      return open;
     },
     dispose() {
       disposed = true;
