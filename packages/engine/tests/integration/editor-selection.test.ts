@@ -49,6 +49,20 @@ describe.each(POINTERS)('the Selection tool in the editor, with %s input', (poin
     expect(editor.view.selection).toEqual([TEXT, SMALL]);
   });
 
+  it('keeps the selection on drags from the rotation handle and from inside the selection box, until ENG-10', () => {
+    const { editor, feed, next } = editorHarness(selectionDocument());
+    const tap = tapper(pointer);
+    feed(...tap(200, 150));
+    const rotation = drag(pointer, [200, 76, 260, 20]);
+    feed(...rotation.start, rotation.to, rotation.end);
+    feed(...tap(450, 150, true));
+    const inside = drag(pointer, [350, 150, 360, 300]);
+    feed(...inside.start, inside.to);
+    expect(marqueesOf(next())).toEqual([]);
+    feed(inside.end);
+    expect(editor.view).toMatchObject({ selection: [RECTANGLE, ELLIPSE], canUndo: false });
+  });
+
   it('REQ-S10 REQ-T07 clears the selection on a tap on empty canvas, with no undo step', () => {
     const { editor, feed } = editorHarness(selectionDocument());
     const tap = tapper(pointer);
