@@ -67,7 +67,7 @@ its tests.
   rule in the engine block enforces it, and the ports supply them.
 - **Coverage.** The repository thresholds stay at 90 % statements, 85 % branches, 90 % functions
   and 90 % lines; the engine package adds its own thresholds of 95, 90, 95 and 95 %, and its `math`
-  layer must be covered in full.
+  layer must be covered in full; the renderer package holds the engine's thresholds too.
 - **Storage.** The repository's revision and delta logic is unit-tested with the in-memory
   repository; the IndexedDB adapter is tested end to end in Chromium, so no IndexedDB emulation is
   added.

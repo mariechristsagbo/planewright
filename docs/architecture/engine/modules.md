@@ -5,9 +5,10 @@ alternatives are in [ADR 0004](../../adr/0004-canvas-engine-package-boundaries.m
 `@planewright/engine` with its `math` and `ports` modules, its ESLint block and its layer check,
 ENG-02 added the `model` layer, ENG-03 the `scene` layer with the world bounds that start
 `geometry`, ENG-04 the `history` module, ENG-05 the `camera` layer with the content bounds in
-`geometry`, and ENG-06 the rest of `geometry` (outlines, distances, the text measurer port and text
-layout) and the `selection` module; `@planewright/render-canvas` and the other layers arrive with
-the issues that need them.
+`geometry`, ENG-06 the rest of `geometry` (outlines, distances, the text measurer port and text
+layout) and the `selection` module, and ENG-07 the `editor` layer's render frames, renderer port and
+render loop and the `@planewright/render-canvas` package; the other layers arrive with the issues
+that need them.
 
 ## Packages
 
@@ -103,11 +104,16 @@ sends, is defined with the editor, which makes every announcement.
 The renderer port (`Renderer`, with the `RenderFrame` it draws) is not passed to the editor: the web
 app hands it the editor's frames
 ([rendering](rendering-and-hit-testing.md#render-frame-and-renderer-port)). It is defined in
-`editor`, which builds the frames, and added by ENG-07.
+`editor`, which builds the frames, and was added by ENG-07: the web app registers a listener with
+the render loop's `onFrame` and calls `render` with each frame it is handed
+([what ENG-07 decided](rendering-and-hit-testing.md#what-eng-07-decided)).
 
 ## Public surface
 
-The engine exports its types and one constructor. Everything else is internal to the package.
+The engine exports its types, one constructor and, for renderers, the render loop and the pure
+geometry functions they draw with (`createRenderLoop`, `geometryOf`, `localBox` and `layoutText`,
+since ENG-07). Everything else is internal to the package. Until the editor surface (ENG-08) adds
+`createEditor`, which composes the render loop, the render loop is the editor layer's only value.
 
 ```ts
 export interface EditorPorts {
