@@ -52,6 +52,6 @@ export function resizeElement(element: Element, { handle, drag, options }: Resiz
     options: { ...options, keepAspect },
     limits: limitsOf(element, box),
   });
-  const origin = originKeeping(element, box, resized, resized.fixed);
-  return scaledTo(element, origin, resized, resized.ratio);
+  const size = { width: resized.width, height: resized.height };
+  return scaledTo(element, originKeeping(element, box, size, resized.fixed), size, resized.ratio);
 }

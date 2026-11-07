@@ -47,6 +47,12 @@ describe('resizing one element by a handle, as B-16 observed', () => {
     expect(resized([340, 240, 120, 100], 'se', 60, 50)).toEqual([340, 240, 180, 150]);
   });
 
+  it('changes only the element’s fields', () => {
+    const before = rectangle([0, 0, 120, 80]);
+    const after = resizeElement(before, { handle: 'se', drag: { x: 10, y: 0 }, options: FREE });
+    expect(after).toEqual({ ...before, width: 130 });
+  });
+
   it('REQ-T02 a turned element resizes in its own frame and keeps the opposite corner in place', () => {
     const turned = shapeElement('rectangle', 100, 50, { rotation: Math.PI / 2 });
     const [fixed] = obbCorners({ ...localBox(turned), rotation: Math.PI / 2 });
