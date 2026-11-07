@@ -2,7 +2,7 @@
   "name": "@planewright/web",
   "version": "0.0.0",
   "private": true,
-  "description": "Planewright browser application (foundation only; the editor is not implemented yet).",
+  "description": "Planewright browser application: a pre-release, navigation-only editor surface; drawing is not implemented yet.",
   "license": "MIT",
   "type": "module",
   "scripts": {

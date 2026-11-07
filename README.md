@@ -3,13 +3,15 @@
 An independently engineered open-source infinite canvas for drawing and diagrams.
 
 > [!IMPORTANT]
-> **Status: repository foundation only.** Planewright is not a usable drawing editor yet. There
-> is no canvas, no shapes, no persistence and no collaboration. This repository currently
-> contains the workspace structure, a factual status page, a collaboration-service skeleton, the
-> first layers of the engine package (math primitives, platform ports, the document model with
-> its codec, the scene store with its change sets and transactions, the undo and redo history,
-> the camera, the geometry, text layout and hit testing, and the render loop), a Canvas 2D
-> renderer package, all used by nothing yet, and the quality gates that future work must pass.
+> **Status: pre-release, navigation only.** Planewright is not a usable drawing editor yet. Its
+> page shows an empty canvas that pans and zooms, with a tool bar and Undo and Redo controls that
+> have nothing to undo; nothing can be drawn, selected or edited, and there is no persistence and
+> no collaboration. This repository currently contains the workspace structure, that
+> navigation-only editor surface, a collaboration-service skeleton, the first layers of the engine
+> package (math primitives, platform ports, the document model with its codec, the scene store
+> with its change sets and transactions, the undo and redo history, the camera, the geometry, text
+> layout and hit testing, input gestures, the Hand tool, commands and the editor with its render
+> loop), a Canvas 2D renderer package, and the quality gates that future work must pass.
 
 ## Goals
 
@@ -49,11 +51,11 @@ Product names are used only to identify these references.
 
 | Path                                               | Contents                                                                  |
 | -------------------------------------------------- | ------------------------------------------------------------------------- |
-| [`apps/web`](apps/web)                             | React + Vite browser application (currently a status page only)           |
+| [`apps/web`](apps/web)                             | React + Vite browser application: a navigation-only editor surface        |
 | [`apps/collab`](apps/collab)                       | Node.js WebSocket collaboration service (health endpoint + hello only)    |
 | [`packages/protocol`](packages/protocol)           | Runtime-agnostic wire protocol definitions shared by clients and services |
-| [`packages/engine`](packages/engine)               | ECMAScript-only canvas engine, from math to the render loop               |
-| [`packages/render-canvas`](packages/render-canvas) | Canvas 2D renderer of the engine's render frames (not on a page yet)      |
+| [`packages/engine`](packages/engine)               | ECMAScript-only canvas engine, from math to the editor façade             |
+| [`packages/render-canvas`](packages/render-canvas) | Canvas 2D renderer of the engine's render frames, on the page's canvas    |
 | [`scripts`](scripts)                               | Repository guardrails: file size, dependency policy, branch names         |
 | [`docs`](docs/README.md)                           | Architecture decisions, investigation process and development guides      |
 | [`.github`](.github)                               | CI, CodeQL, Dependabot, issue forms and the pull request template         |

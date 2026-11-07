@@ -63,3 +63,10 @@ release has been published yet.
   affects, and at most one frame per animation frame; and a Canvas 2D renderer that draws the scene
   and overlay layers at the device pixel ratio and caches each element's path and text layout per
   revision. Nothing uses them yet: no canvas host or input exists, so nothing is drawn on a page.
+- Navigation-only editor surface (ENG-08): in the engine, input events, a gesture recogniser
+  (drag thresholds, taps, double taps, long presses, camera drags and two-finger pinch and pan), the
+  viewport routing, the Hand tool, a command registry with a keymap that works on US and AZERTY
+  layouts, and `createEditor`; in the web app, a canvas host with a scene and an overlay canvas, the
+  input adapter with Mod as Cmd on macOS and Ctrl elsewhere, a tool bar and Undo and Redo controls.
+  The page pans and zooms an empty canvas and says that nothing can be drawn, selected or edited
+  yet; Undo and Redo stay disabled because nothing changes the drawing.
