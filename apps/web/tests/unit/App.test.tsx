@@ -29,7 +29,7 @@ describe('App', () => {
       expect(missing).toHaveTextContent(feature);
     }
     expect(missing).toHaveTextContent(
-      /the Selection tool works, but nothing can be drawn yet to select/,
+      /the engine moves, resizes, rotates, duplicates, deletes and nudges a selection, but nothing can be drawn yet to select/,
     );
     expect(missing).not.toHaveTextContent(/Selection tool does nothing/);
     expect(missing).toHaveTextContent(/Undo and Redo stay disabled/);
@@ -41,6 +41,9 @@ describe('App', () => {
     for (const { name } of FOUNDATION_CONTENTS) {
       expect(contents).toHaveTextContent(name);
     }
+    expect(contents).toHaveTextContent(
+      /Selection tool and transforms.*Nothing creates elements yet, so there is nothing to select or transform\./,
+    );
   });
 
   it('AC REQ-Y01 shows the tool bar, the canvas, Undo and Redo and the view as named parts', () => {
