@@ -98,6 +98,20 @@ function handOver(listeners: Iterable<{ readonly listener: Listener }>, frame: R
   rethrowFirst(failures);
 }
 
+/** Marks both layers dirty on every scene update, and notes the elements that it removes. */
+function followScene(
+  scene: SceneStore,
+  dirty: DirtyLayers,
+  mark: (layers: Layers) => void,
+): Cancel {
+  return scene.subscribe((update) => {
+    for (const change of update.changes.elements) {
+      if (change.type === 'remove') dirty.removed(change.element.id);
+    }
+    mark('both');
+  });
+}
+
 /** A render loop over a scene store, which asks for animation frames through the scheduler. */
 export function createRenderLoop(scene: SceneStore, scheduler: Scheduler): RenderLoop {
   let state = INITIAL_RENDER_STATE;
@@ -118,12 +132,11 @@ export function createRenderLoop(scene: SceneStore, scheduler: Scheduler): Rende
     dirty.mark(layers);
     if (pending === null && listeners.size > 0) pending = scheduler.nextFrame(draw);
   };
-  const stop = scene.subscribe((update) => {
-    for (const change of update.changes.elements) {
-      if (change.type === 'remove') dirty.removed(change.element.id);
-    }
-    mark('both');
-  });
+  const cancelPending = (): void => {
+    pending?.();
+    pending = null;
+  };
+  const stop = followScene(scene, dirty, mark);
 
   return {
     state: () => state,
@@ -148,13 +161,14 @@ export function createRenderLoop(scene: SceneStore, scheduler: Scheduler): Rende
       mark('both');
       return () => {
         listeners.delete(entry);
+        // A frame that nobody hears would take the marks and removals that the next listener needs.
+        if (listeners.size === 0) cancelPending();
       };
     },
     dispose() {
       disposed = true;
       stop();
-      pending?.();
-      pending = null;
+      cancelPending();
       listeners.clear();
     },
   };
