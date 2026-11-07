@@ -1,9 +1,10 @@
 /**
  * The public entry of `@planewright/engine` (docs/architecture/engine/modules.md#public-surface).
- * The engine exports its types, the editor's render loop and the pure geometry functions that a
- * renderer draws with: each kind's outline, an element's local box and text layout. Everything
- * else stays internal to the package; `createEditor` joins them with the editor surface (ENG-08).
+ * The engine exports its types, the editor, the editor's render loop and the pure geometry
+ * functions that a renderer draws with: each kind's outline, an element's local box and text
+ * layout. Everything else stays internal to the package.
  */
+export { createEditor } from './editor/editor.ts';
 export { createRenderLoop } from './editor/render-loop.ts';
 export { geometryOf } from './geometry/kinds.ts';
 export { layoutText } from './geometry/text-layout.ts';
@@ -59,3 +60,16 @@ export type { Selection } from './selection/selection.ts';
 export type { RenderState } from './editor/frame.ts';
 export type { OverlayPrimitive, RenderFrame, Renderer, Theme } from './editor/render-frame.ts';
 export type { RenderLoop } from './editor/render-loop.ts';
+export type { Editor, EditorCommand, EditorPorts, EditorView } from './editor/editor.ts';
+export type {
+  FocusLost,
+  InputEvent,
+  KeyInput,
+  Modifiers,
+  PointerButton,
+  PointerInput,
+  WheelInput,
+} from './input/events.ts';
+export type { KeyChord } from './commands/chords.ts';
+export type { CommandId, CommandOutcome } from './commands/registry.ts';
+export type { CursorKind, ToolId } from './tools/tool.ts';

@@ -22,7 +22,11 @@ export interface RenderLoop {
   update(change: Partial<RenderState>): void;
   /** Marks both layers dirty, as a font that finished loading does. */
   invalidate(): void;
-  /** The frame that redraws the dirty layers, or null when none is; building it clears them. */
+  /**
+   * The frame that redraws the dirty layers, or null when none is; building it clears them. It
+   * takes the marks that the next animation frame would hand to the listeners, so a loop is either
+   * pulled or listened to: the editor only listens, and exposes no pull.
+   */
   frame(): RenderFrame | null;
   /** Hands the listener every frame built on an animation frame, starting with a full one. */
   onFrame(listener: (frame: RenderFrame) => void): Cancel;
