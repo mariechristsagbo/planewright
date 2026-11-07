@@ -36,9 +36,17 @@ function onPointer(host: HTMLElement, type: PointerInput['type'], event: Pointer
   }
 }
 
-/** Listens to the host's input and the window's focus; returns the function that stops it. */
-export function attachInput(host: HTMLElement, editor: Editor, platform: Platform): () => void {
-  const box = (): DOMRect => host.getBoundingClientRect();
+/**
+ * Listens to the host's input and the window's focus; returns the function that stops it. Points
+ * are relative to the scene canvas, which sits inside the host's border.
+ */
+export function attachInput(
+  host: HTMLElement,
+  canvas: HTMLCanvasElement,
+  editor: Editor,
+  platform: Platform,
+): () => void {
+  const box = (): DOMRect => canvas.getBoundingClientRect();
   const pointers = POINTER_EVENTS.map(([name, type]) => {
     const listener = (event: PointerEvent): void => {
       const input = pointerInput(type, event, box(), platform);
@@ -77,14 +85,17 @@ export function attachInput(host: HTMLElement, editor: Editor, platform: Platfor
   };
 }
 
-/** Reports the host's size and the device pixel ratio now and whenever the size changes. */
-export function observeSize(host: HTMLElement, editor: Editor): () => void {
+/**
+ * Reports the scene canvas's CSS size and the device pixel ratio now and whenever that size changes.
+ * The canvas has no border or padding, so its box is its content box, inside the host's border.
+ */
+export function observeSize(canvas: HTMLCanvasElement, editor: Editor): () => void {
   const report = (): void => {
-    const { width, height } = host.getBoundingClientRect();
+    const { width, height } = canvas.getBoundingClientRect();
     editor.resize({ width, height, pixelRatio: window.devicePixelRatio });
   };
   const observer = new ResizeObserver(report);
-  observer.observe(host);
+  observer.observe(canvas);
   report();
   return () => {
     observer.disconnect();
