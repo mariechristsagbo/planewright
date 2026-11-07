@@ -184,6 +184,32 @@ describe('input on the canvas host', () => {
     fireEvent.pointerMove(host, { ...at(200), button: -1 });
     expect(editor.view.camera).toEqual({ x: 0, y: 0, zoom: 1 });
   });
+
+  it('REQ-S06 lets Space go when the canvas host loses focus, so a later drag selects instead of panning (ENG-08 m1)', () => {
+    const { host, editor } = mount();
+    host.setPointerCapture = vi.fn();
+    host.hasPointerCapture = () => true;
+    host.releasePointerCapture = vi.fn();
+    const at = (x: number) => ({
+      pointerId: 1,
+      pointerType: 'mouse',
+      clientX: x,
+      clientY: 300,
+      button: 0,
+      buttons: 1,
+    });
+    act(() => {
+      host.focus();
+    });
+    fireEvent.keyDown(host, { key: ' ', code: 'Space' });
+    act(() => {
+      host.blur();
+    });
+    fireEvent.pointerDown(host, at(300));
+    fireEvent.pointerMove(host, { ...at(200), button: -1 });
+    fireEvent.pointerUp(host, { ...at(200), buttons: 0 });
+    expect(editor.view).toMatchObject({ camera: { x: 0, y: 0, zoom: 1 }, tool: 'selection' });
+  });
 });
 
 describe('the scene canvas inside the host’s border', () => {
