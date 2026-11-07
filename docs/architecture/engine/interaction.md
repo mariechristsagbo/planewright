@@ -170,6 +170,8 @@ export interface SelectionState {
 ```
 
 - The selection never holds a missing element: a removal or an undo filters it.
+- ENG-06 holds the identifiers in `createSelection` in the `selection` module, which also defines
+  `PointerKind`; `editing` joins the state with the text tool (ENG-12).
 - In P1, a selected group member widens to all members of its outermost group (REQ-S11), and locked
   elements are never selected by pointer, marquee or Select all (REQ-S08).
 - The **selection outline** is the element's rotated box when one element is selected and the

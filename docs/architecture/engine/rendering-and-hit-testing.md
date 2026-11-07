@@ -180,6 +180,54 @@ than the line. It returns the lines with their widths, the line height (`size ×
 block's size. P0 texts do not wrap: their width is the widest line and their height the number of
 lines times the line height. Layouts are cached per element revision.
 
+## What ENG-06 decided
+
+ENG-06 implements the geometry of the P0 kinds, the `TextMeasurer` port and `layoutText` in the
+`geometry` layer, and the selection state, `hitTest`, the selection frame, handle layout and
+marquee enclosure in the `selection` module. It decided what the rules above leave open:
+
+- **Kinds without a geometry.** The arrow, note, image and frame, which P0 neither creates nor
+  draws, get their geometry with the issue that adds each of them; until then hit testing and box
+  selection skip them.
+- **Outlines.** A round rectangle's corners are quarter circles drawn as one cubic each; one with
+  no width or height to round is drawn sharp. A round diamond cuts each corner the corner radius
+  along both of its sides and joins the cuts by a curve whose control point is the corner, while
+  its distance stays the distance to its four straight edges. A freehand outline runs through the
+  midpoints of its points with each inner point as a control point, then on to the last point; a
+  one-point stroke is a move and a line to that point, which the renderer draws as a dot. A text's
+  box keeps sharp corners whatever its style says.
+- **Distances.** The ellipse's nearest point comes from Newton steps that start below the root of
+  its defining equation and rise to it without overshooting, exact well within 0.01 units. An
+  ellipse or diamond without width or height is the segment it is, with no inside.
+- **Local frame.** A scene point is turned back by the rotation only when there is one; an
+  unrotated element is only measured from its origin, so no rounding through its centre moves a
+  point near an exact limit.
+- **The REQ-S03 ladder at zoom 2.** The tolerance is a screen distance around the stroke, and a
+  2-unit stroke is 4 px wide on screen at zoom 2, so the ladder keeps each press's screen distance
+  from the stroke's edge: 5 and 6 px from the centre line hit and 9 and 10 px miss. The limits are
+  7 px from the centre line for a mouse or pen and 8 px for touch, so a touch exactly 8 px from the
+  centre line hits.
+- **Handles.** Hit squares are centred on their handles in screen space, edges included. Where
+  squares overlap, the first in layout order wins: the corners (`nw`, `ne`, `se`, `sw`), the
+  rotation handle, then the side handles (`n`, `e`, `s`, `w`); a lone two-point line has `start`
+  and `end`.
+- **The selection box.** A press is inside the selection box when it lies in the selection's
+  frame box, edges included and without tolerance; the frame of several elements is the
+  axis-aligned box of their rotated corners, and a lone two-point line has no box. Identifiers
+  that the scene does not hold are ignored.
+- **Box selection.** The marquee's edges count as inside, and an unrotated element's outline is
+  only moved by its origin, so a corner on an edge stays on it.
+- **Selection state.** `createSelection` holds the selected identifiers over the scene store and
+  drops an element once any change set removes it, a preview included; it is the
+  `HistorySelection` the history reads and restores. The text being edited joins it with the text
+  tool (ENG-12). `PointerKind` is defined in `selection`, the lowest layer that needs it, and the
+  input layer uses it from there.
+- **Text layout.** Lines wrap at single spaces, so several spaces stay within a line and the space
+  at a break is dropped; a word wider than the line breaks between code points. A maximum width
+  must be 0 or more (an infinite one never wraps), and a width from the measurer that is negative
+  or not finite is refused. The per-revision cache of layouts arrives with its first caller, the
+  renderer (ENG-07).
+
 ## Export
 
 PNG and SVG export (P2, REQ-X04) reuse the outline commands: PNG through the same renderer on an
