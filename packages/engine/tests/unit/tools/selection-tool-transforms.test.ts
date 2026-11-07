@@ -107,6 +107,14 @@ describe('the Selection tool: resizing, rotating and moving a line end', () => {
     ]);
   });
 
+  it('REQ-T04 keeps the aspect ratio by the larger ratio with Shift held at the drag', () => {
+    const shift = { ...NONE, shift: true };
+    const drag = [at('press', 300, 200), at('drag-start', 400, 210, shift)];
+    expect(effectsOf(drag, [RECTANGLE]).effects).toEqual([
+      preview(update(RECTANGLE, { width: 200, height: 100 }, { width: 300, height: 150 })),
+    ]);
+  });
+
   it('REQ-T06 rotates from the rotation handle and commits one rotation', () => {
     // The rotation handle sits 24 px above the rectangle's top centre (200, 100).
     const drag = [at('press', 200, 76), at('drag-start', 300, 150), at('release', 300, 150)];

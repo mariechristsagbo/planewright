@@ -167,4 +167,14 @@ describe('nudging through the editor', () => {
       false,
     ]);
   });
+
+  it('REQ-T10 a nudge run from outside the keymap is an undo step of its own each time', () => {
+    const harness = editorHarness(selectionDocument());
+    const shown = sceneWatcher(harness);
+    selected(harness, [200, 150]);
+    harness.editor.run('selection.nudge-right');
+    harness.editor.run('selection.nudge-right');
+    harness.editor.run('history.undo');
+    expect([shown(RECTANGLE).x, harness.editor.view.canUndo]).toEqual([101, true]);
+  });
 });
