@@ -50,8 +50,11 @@ export interface ChangeSet extends ChangeStamp {
   readonly canvas?: CanvasChange;
 }
 
+/** What a tool or a command asks to change, before the editor stamps it as the session's next set. */
+export type UnstampedChangeSet = Omit<ChangeSet, keyof ChangeStamp>;
+
 /** Whether a change set changes nothing: no element, group or canvas change. */
-export const isEmptyChangeSet = ({ elements, groups, canvas }: ChangeSet): boolean =>
+export const isEmptyChangeSet = ({ elements, groups, canvas }: UnstampedChangeSet): boolean =>
   elements.length === 0 && groups.length === 0 && canvas === undefined;
 
 function invertElementChange(change: ElementChange): ElementChange {

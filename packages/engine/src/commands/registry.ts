@@ -29,7 +29,7 @@ export interface CommandTarget {
   readonly camera: Camera;
   readonly viewport: ViewportSize;
   readonly scene: SceneReader;
-  readonly history: Pick<History, 'canUndo' | 'canRedo' | 'undo' | 'redo'>;
+  readonly history: Pick<History, 'canUndo' | 'canRedo' | 'inTransaction' | 'undo' | 'redo'>;
   setTool(tool: ToolId): void;
   setCamera(camera: Camera): void;
   /** Replaces the selection; never an undo step (REQ-S13). */
