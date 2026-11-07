@@ -6,9 +6,9 @@ alternatives are in [ADR 0004](../../adr/0004-canvas-engine-package-boundaries.m
 ENG-02 added the `model` layer, ENG-03 the `scene` layer with the world bounds that start
 `geometry`, ENG-04 the `history` module, ENG-05 the `camera` layer with the content bounds in
 `geometry`, ENG-06 the rest of `geometry` (outlines, distances, the text measurer port and text
-layout) and the `selection` module, and ENG-07 the `editor` layer's render frames, renderer port and
-render loop and the `@planewright/render-canvas` package; the other layers arrive with the issues
-that need them.
+layout) and the `selection` module, ENG-07 the `editor` layer's render frames, renderer port and
+render loop and the `@planewright/render-canvas` package, and ENG-08 the `input`, `tools` and
+`commands` layers and `createEditor`; the other layers arrive with the issues that need them.
 
 ## Packages
 
@@ -112,8 +112,9 @@ the render loop's `onFrame` and calls `render` with each frame it is handed
 
 The engine exports its types, one constructor and, for renderers, the render loop and the pure
 geometry functions they draw with (`createRenderLoop`, `geometryOf`, `localBox` and `layoutText`,
-since ENG-07). Everything else is internal to the package. Until the editor surface (ENG-08) adds
-`createEditor`, which composes the render loop, the render loop is the editor layer's only value.
+since ENG-07). Everything else is internal to the package. The one constructor, `createEditor`,
+came with the editor surface (ENG-08) and composes the render loop; so far it has the parts of the
+interface below that ENG-08 needs ([what ENG-08 decided](interaction.md#what-eng-08-decided)).
 
 ```ts
 export interface EditorPorts {
@@ -159,8 +160,9 @@ into the scene store directly.
 
 ## Web app structure
 
-The web app keeps its status page until the editor surface issue replaces it, and labels the build
-as pre-release while P0 is incomplete (AGENTS.md: the UI stays factual).
+The editor surface issue (ENG-08) replaced the web app's status page with a navigation-only editor
+surface. While P0 is incomplete the page labels the build as pre-release and says what does not
+work (AGENTS.md: the UI stays factual).
 
 | Directory (`apps/web/src`) | Holds                                                                                                 |
 | -------------------------- | ----------------------------------------------------------------------------------------------------- |

@@ -285,6 +285,59 @@ stay apart by the Shift modifier alone. Zoom in accepts the produced `=` or `+`,
 default action only for chords it handles while the canvas host or a toolbar has focus, so browser
 zoom stays available elsewhere.
 
+## What ENG-08 decided
+
+ENG-08 implements the input events, the gesture recogniser and the viewport routing in the
+engine's `input` layer, the Hand tool in `tools`, the command registry, keymap and default commands
+in `commands`, and `createEditor` in `editor`; in `apps/web` it adds the canvas host, the input
+adapter, the editor provider, the tool bar and the Undo and Redo controls. It decided what the rules
+above leave open:
+
+- **Gestures.** A drag starts once the pointer is strictly farther from where it was pressed than
+  the threshold, measured as a distance. A tap is reported at the press point; the second tap of a
+  double tap is reported as the double tap alone, and counting then starts again, the 400 ms running
+  from one release to the next. A touch or pen press that became a long press, or lasted 500 ms,
+  ends with a release, not a tap. The long-press timer runs on the `Scheduler` port, and nothing
+  acts on a long press until the context menu (P1); secondary-button presses are ignored until then
+  too.
+- **Camera drags.** A middle-button drag and a primary drag while Space is held pan by each move's
+  delta from the press and never reach the tool. Space is read from key events with the code
+  `Space` and released on focus loss. A pointer the recogniser never saw pressed, such as one
+  pressed on the tool bar, is ignored (REQ-C11).
+- **The Hand tool.** A reducer with idle and panning states whose drag returns a `pan` effect by the
+  pointer delta, so a second finger cancels it like any tool gesture. The tool effects so far are
+  `pan` and `cursor`, and the tool context holds only the camera; the others join with the tools
+  that need them.
+- **Two pointers.** A second touch pointer cancels the tool's gesture and starts a pinch from where
+  both pointers are; a third is ignored. When one of the two lifts, the other does nothing until it
+  lifts, and a new finger pinches with it again.
+- **The default tool.** The Selection tool is registered with V and 1 as the default tool, so that
+  the tool bar and Space+drag have a tool that is not the camera's, but it has no behaviour until
+  ENG-09; its description and the page say that selecting does not work yet.
+- **Commands.** A command's label is its English name until the interface has message keys. The
+  registry refuses a repeated identifier and a shortcut that two commands share, and a chord's
+  modifiers must match exactly. Zoom in and out list one chord per produced key, with and without
+  Shift. The commands so far are the Hand and Selection tools, Undo, Redo, zoom in, zoom out, reset
+  zoom and zoom to fit.
+- **The editor.** `createEditor(ports)` has the parts the editor surface needs: `view`, `commands`,
+  `input`, `run`, `resize`, `onFrame`, `subscribe` and `dispose`; `select`, `editText`, `saveNow`,
+  `resolveStale` and a stored document join with their issues. Its ports are those its parts use:
+  the clock and the identifier source, for the history's entries and change stamps, and the
+  scheduler. The text measurer joins with its first engine caller; the web app gives the renderer
+  one of its own. `input` returns true for a wheel event and for a key press that is a command's
+  chord, and the canvas host prevents the browser's default for those, and for Space so that the
+  page does not scroll. The first viewport the canvas host reports keeps the camera; later ones keep
+  the viewport's centre in place.
+- **Frames.** The editor exposes `onFrame` and no pull of a frame, so the render loop's pull and
+  push, which share its dirty marks, never compete. The loop does not check the camera in `update`:
+  the editor gives it only cameras from the camera layer, which are finite and within the limits.
+- **The web app.** The page creates one editor for its lifetime and gives it, with the platform and
+  the renderer factory, to the editor provider; components read the view through
+  `useSyncExternalStore`. Mod is Cmd when `navigator.userAgentData.platform`, or else
+  `navigator.platform`, names a Mac, iPhone, iPad or iPod. Coalesced pointer events are read with
+  the freehand tool (ENG-11). Panning an empty canvas changes no pixel, so the page shows the
+  camera's position and zoom as text.
+
 ## Requirements served
 
 REQ-C01 to REQ-C14, REQ-S01 to REQ-S14, REQ-T01 to REQ-T11, REQ-V01, REQ-V02, REQ-V04 to
