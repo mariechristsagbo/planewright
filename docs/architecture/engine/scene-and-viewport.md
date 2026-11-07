@@ -92,7 +92,9 @@ Applying a change set is atomic:
    identifiers and the new document revision. Autosave saves every origin but `load`, and the
    editor marks the render layers dirty. History does not watch updates: the transaction that
    commits a `local` set records it ([history](history.md#transactions)), so no set is recorded
-   twice. A listener cannot apply a set of its own while it is told of one.
+   twice. A listener cannot apply a set of its own while it is told of one. A listener that throws
+   cannot keep the update from the others: every listener is told, and the first error is then
+   rethrown, with the set applied.
 
 A change set is always complete: the transaction that builds it adds the derived changes before it
 is applied, such as re-routing connectors whose target moved (P1, REQ-M01), dropping attachments to
@@ -121,6 +123,19 @@ refuses to add again, in another form, an element or group that it removed, sinc
 express it, and it is used once. History's `Transaction` (ENG-04) adds the label, the merge key and
 the recording. A document after a cancel is equal to its start in its elements, groups and canvas;
 revisions only grow.
+
+A listener that throws, or a revert that the store refuses, never leaves a transaction half done.
+A preview that the store applied is remembered even when one of its listeners throws, so cancel
+and commit still account for it. A commit whose revert is applied also applies the net set, and
+hands it to an optional callback as soon as the store holds it, before the first listener error is
+rethrown; the history records through that callback, so every set the document holds is recorded.
+Commit and cancel close the transaction only once their revert is applied, and its `open` flag says
+whether it still accepts calls. A revert that the store refuses throws its `ChangeSetError`,
+changes nothing and leaves the transaction open with its previews in place: the caller may preview
+again, retry the commit or the cancel, or wait. Only another origin can make a revert invalid, for
+example a remote arrow that now points at an element a preview added; until that reference goes,
+neither the commit nor the cancel can go through, which the collaboration decision revisits
+([collaboration](collaboration.md#left-to-the-collaboration-decision)).
 
 ## Store interface
 
