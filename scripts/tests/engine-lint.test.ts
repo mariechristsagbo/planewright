@@ -19,6 +19,10 @@ const BOUNDARY_RULES = new Set([
 ]);
 
 /** The boundary rules, with their configured options, that the repository's config gives a file. */
+// Loading the whole ESLint configuration can take longer than Vitest's 10 s hook limit while the
+// full coverage run keeps every core busy, so the hooks that load it get a minute.
+const CONFIG_LOAD_MS = 60_000;
+
 async function boundaryRulesFor(path: string): Promise<Linter.RulesRecord> {
   const config = (await new ESLint({ cwd: ROOT }).calculateConfigForFile(path)) as Linter.Config;
   const rules: Linter.RulesRecord = {};
@@ -101,7 +105,7 @@ describe('the engine source boundary in ESLint', () => {
   let rules: Linter.RulesRecord;
   beforeAll(async () => {
     rules = await boundaryRulesFor('packages/engine/src/math/vector.ts');
-  });
+  }, CONFIG_LOAD_MS);
 
   it.each(FORBIDDEN_EVERYWHERE)('rejects %s', (code, rule) => {
     expect(ruleIds(code, rules)).toEqual([rule]);
@@ -146,7 +150,7 @@ describe('the engine test boundary in ESLint', () => {
   let rules: Linter.RulesRecord;
   beforeAll(async () => {
     rules = await boundaryRulesFor('packages/engine/tests/unit/vector.test.ts');
-  });
+  }, CONFIG_LOAD_MS);
 
   it.each(FORBIDDEN_EVERYWHERE)('rejects %s', (code, rule) => {
     expect(ruleIds(code, rules)).toEqual([rule]);
