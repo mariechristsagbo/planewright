@@ -4,8 +4,9 @@ This document fixes where engine code lives and which way dependencies point. Th
 alternatives are in [ADR 0004](../../adr/0004-canvas-engine-package-boundaries.md). ENG-01 created
 `@planewright/engine` with its `math` and `ports` modules, its ESLint block and its layer check,
 ENG-02 added the `model` layer, ENG-03 the `scene` layer with the world bounds that start
-`geometry`, and ENG-04 the `history` module; `@planewright/render-canvas` and the other layers
-arrive with the issues that need them.
+`geometry`, ENG-04 the `history` module and ENG-05 the `camera` layer with the content bounds in
+`geometry`; `@planewright/render-canvas` and the other layers arrive with the issues that need
+them.
 
 ## Packages
 

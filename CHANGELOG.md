@@ -45,3 +45,8 @@ release has been published yet.
   redo do nothing while one is open. A throwing scene listener no longer stops the others or
   leaves a transaction half done, and a refused revert leaves its transaction open. Nothing uses
   the history yet, and no Undo or Redo control exists.
+- Camera in the engine (ENG-05): the transforms between screen and scene points, panning by a drag
+  and by the wheel, zoom about a point, the Mod+wheel zoom curve, the keyboard zoom ladder, zoom to
+  fit with the content's bounds, the two-pointer gesture maths, resizing that keeps the viewport
+  centre, and the limits of 10 % to 3000 % zoom and a position within 10⁹ units, kept for every
+  input. Nothing uses the camera yet: no canvas, input or zoom control exists.
