@@ -28,7 +28,10 @@ describe('App', () => {
     for (const feature of NOT_YET_IMPLEMENTED) {
       expect(missing).toHaveTextContent(feature);
     }
-    expect(missing).toHaveTextContent(/Selection tool does nothing yet/);
+    expect(missing).toHaveTextContent(
+      /the Selection tool works, but nothing can be drawn yet to select/,
+    );
+    expect(missing).not.toHaveTextContent(/Selection tool does nothing/);
     expect(missing).toHaveTextContent(/Undo and Redo stay disabled/);
   });
 

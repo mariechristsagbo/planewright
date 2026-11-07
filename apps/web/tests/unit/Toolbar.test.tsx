@@ -35,7 +35,7 @@ describe('the tool bar', () => {
     expect(hand).toHaveAccessibleDescription('Shortcut H. Drag to pan the canvas.');
     expect(selection).toHaveAttribute('aria-keyshortcuts', 'V 1');
     expect(selection).toHaveAccessibleDescription(
-      'Shortcuts V or 1. Selecting elements does not work yet.',
+      'Shortcuts V or 1. Selects elements; nothing can be drawn yet, so there is nothing to select.',
     );
   });
 
