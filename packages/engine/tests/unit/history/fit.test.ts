@@ -39,6 +39,23 @@ describe('applying what still fits', () => {
     expect(store.canvas).toStrictEqual({ background: '#ffffff' });
   });
 
+  it('keeps a canvas change that the store accepts when it refuses another change', () => {
+    const store = fixtureStore();
+    const orphan = { ...present(store, 3), id: e(20), group: g(7) };
+    const canvas = {
+      before: { background: color('#ffffff') },
+      after: { background: color('#202020') },
+    };
+    const applied = applyWhatFits(
+      store,
+      changeSet([{ type: 'add', element: orphan }], [], canvas),
+      'history',
+      [],
+    );
+    expect(applied).toStrictEqual(changeSet([], [], canvas));
+    expect(store.canvas).toStrictEqual({ background: '#202020' });
+  });
+
   it('also leaves out a change that becomes invalid once another one is left out', () => {
     const store = fixtureStore();
     const member = { ...present(store, 3), id: e(20), group: g(5) };
@@ -66,7 +83,7 @@ describe('applying what still fits', () => {
     expect(store.rev).toBe(rev);
   });
 
-  it('gives up on a refusal that names no single change', () => {
+  it('gives up, canvas change included, on a refusal that names no single change', () => {
     const tried: ChangeSet[] = [];
     const store = {
       rev: 0,
@@ -75,7 +92,11 @@ describe('applying what still fits', () => {
         throw new ChangeSetError([{ path: 'elements', problem: 'too-many' }]);
       },
     } as unknown as SceneStore;
-    expect(applyWhatFits(store, changeSet([move]), 'history', [])).toBeNull();
+    const canvas = {
+      before: { background: color('#ffffff') },
+      after: { background: color('#202020') },
+    };
+    expect(applyWhatFits(store, changeSet([move], [], canvas), 'history', [])).toBeNull();
     expect(tried).toHaveLength(1);
   });
 
