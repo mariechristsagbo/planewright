@@ -70,3 +70,9 @@ release has been published yet.
   input adapter with Mod as Cmd on macOS and Ctrl elsewhere, a tool bar and Undo and Redo controls.
   The page pans and zooms an empty canvas and says that nothing can be drawn, selected or edited
   yet; Undo and Redo stay disabled because nothing changes the drawing.
+- Transforms (ENG-10): in the engine, a `transform` layer for moving, resizing by eight handles (one
+  element or several, Shift and Alt, a 1-unit floor and zero sizes kept), rotating with 15° Shift
+  steps, moving a line's end, duplicating and deleting; drags of the Selection tool that move,
+  resize and rotate the selection, each one undo step that Undo and Redo cannot interrupt; Duplicate
+  (Mod+D), Delete (Delete, Backspace) and nudges (arrow keys, 10 units with Shift) as commands. The
+  page says so, and still has nothing to transform because nothing can be drawn yet.

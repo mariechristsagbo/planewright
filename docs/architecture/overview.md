@@ -25,7 +25,7 @@ A React 19 application built with Vite 8. It renders a navigation-only editor su
 canvas host whose scene and overlay canvases the canvas renderer draws, an input adapter that
 sends DOM events to the engine's editor, a tool bar and Undo and Redo controls. The page labels the
 build as pre-release, says that nothing can be drawn or edited yet, so that the Selection tool has
-nothing to select, and lists the capabilities that are not implemented. It imports the protocol version to prove that workspace
+nothing to select or transform, and lists the capabilities that are not implemented. It imports the protocol version to prove that workspace
 linking works.
 
 ### apps/collab
@@ -58,9 +58,11 @@ measurer port and text layout), the `camera` layer (screen and scene transforms,
 zoom ladder, zoom to fit, two-pointer maths, resizing and limits), the `scene` layer (the scene
 store with its change sets, indexes, transient previews and transactions), the `history` module
 (undo and redo entries, burst merging and conflict-safe undo), the `selection` module (the
-selection state, hit testing, handle layout and box selection), the `input` layer (input events,
-the gesture recogniser and the viewport routing), the `tools` layer (the Hand and Selection tools), the `commands`
-layer (the command registry and its keymap) and the `editor` layer (render frames, the renderer
+selection state, hit testing, handle layout and box selection), the `transform` module (move,
+resize, rotate, line-end, duplicate and delete maths), the `input` layer (input events, the gesture
+recogniser and the viewport routing), the `tools` layer (the Hand tool and the Selection tool with
+its transforms), the `commands` layer (the command registry, its keymap, Duplicate, Delete and the
+nudges) and the `editor` layer (render frames, the renderer
 port, culling, the render loop with its dirty tracking and frame scheduling, and `createEditor`).
 The web app imports it.
 
@@ -79,8 +81,9 @@ traced to the behavioural baseline of issue #1. Its ADRs are accepted. ENG-01 (i
 the engine package with its boundary checks, its math layer and its ports, ENG-02 (issue #7)
 added the document model and its codec, ENG-03 (issue #9) the scene store, ENG-04 (issue #11)
 the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text
-layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, and ENG-08
-(issue #19) the navigation-only editor surface; the rest is not implemented yet:
+layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08
+(issue #19) the navigation-only editor surface, ENG-09 (issue #21) the Selection tool and ENG-10
+(issue #23) the transforms; the rest is not implemented yet:
 
 - storage, beyond the element model and codec of ENG-02 and the scene store of ENG-03:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);

@@ -5,13 +5,13 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > [!IMPORTANT]
 > **Status: pre-release, navigation only.** Planewright is not a usable drawing editor yet. Its
 > page shows an empty canvas that pans and zooms, with a tool bar and Undo and Redo controls that
-> have nothing to undo; nothing can be drawn or edited, so the Selection tool has nothing to
-> select, and there is no persistence and no collaboration. This repository currently contains the workspace structure, that
+> have nothing to undo; nothing can be drawn, so the Selection tool has nothing to select or
+> transform, and there is no persistence and no collaboration. This repository currently contains the workspace structure, that
 > navigation-only editor surface, a collaboration-service skeleton, the first layers of the engine
 > package (math primitives, platform ports, the document model with its codec, the scene store
 > with its change sets and transactions, the undo and redo history, the camera, the geometry, text
-> layout and hit testing, input gestures, the Hand and Selection tools, commands and the editor
-> with its render loop), a Canvas 2D renderer package, and the quality gates that future work must pass.
+> layout and hit testing, the transforms, input gestures, the Hand and Selection tools, commands and
+> the editor with its render loop), a Canvas 2D renderer package, and the quality gates that future work must pass.
 
 ## Goals
 
