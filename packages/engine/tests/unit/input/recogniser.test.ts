@@ -133,6 +133,23 @@ describe('long presses', () => {
   });
 });
 
+describe('a press held after a drag, and other pointers', () => {
+  it('AC a press that became a drag never becomes a long press, however long it is held', () => {
+    const { feed, take, scheduler } = recogniserHarness();
+    feed(down(0, 0, { pointer: 'touch' }), move(10, 0, { pointer: 'touch' }));
+    scheduler.advance(1_000);
+    expect(take()).toEqual([]);
+    expect(typesOf(feed(up(10, 0, { pointer: 'touch', time: 1_000 })))).toEqual(['release']);
+  });
+
+  it('leaves the press as it is when another pointer that it never saw pressed is released', () => {
+    const { feed } = recogniserHarness();
+    feed(down(0, 0));
+    expect(feed(up(5, 5, { id: 2, pointer: 'pen' }))).toEqual([]);
+    expect(typesOf(feed(move(10, 0)))).toEqual(['drag-start']);
+  });
+});
+
 describe('camera drags', () => {
   it('REQ-V06 a middle-button drag pans by exactly the pointer delta and never reaches the tool', () => {
     const { feed } = recogniserHarness();
