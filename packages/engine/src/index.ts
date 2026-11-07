@@ -38,6 +38,8 @@ export type {
 export type { ChangeError, ChangeProblem } from './scene/check.ts';
 export type { ApplyOptions, SceneReader, SceneStore, SceneUpdate } from './scene/store.ts';
 export type { SceneTransaction } from './scene/transaction.ts';
+export type { Camera } from './camera/camera.ts';
+export type { ViewportSize } from './camera/viewport.ts';
 export type { HistoryEntry, HistoryLabel, HistorySelection } from './history/entry.ts';
 export type { History, HistoryLimits } from './history/history.ts';
 export type { CommitOptions, Transaction } from './history/transaction.ts';
