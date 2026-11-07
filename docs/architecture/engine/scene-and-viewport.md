@@ -20,8 +20,8 @@ each held as data and indexed in memory. There is no tree of nested transforms
 An element's **world bounds** are the axis-aligned bounds of its rotated local box, grown by half
 its stroke width and, for a label that overflows, by the label's box. ENG-03 computes them in the
 `geometry` layer, the home of bounds, without the label's term: measuring a label needs the text
-layout that the geometry issue (ENG-06) delivers and the P1 labels use, so until then a label's
-box does not count.
+layout, which the geometry issue (ENG-06) delivers, and a measurer, which the store does not hold,
+so a label's box counts from the P1 label issue (REQ-M02) on.
 
 The group index lists, for each group, the elements in it or in any group nested in it, so
 `members` of an outermost group is what selection expands to; a group's parent never changes while
@@ -270,7 +270,8 @@ ENG-05 decided what the accepted rules leave open:
   does not count, so every step moves; past the last level in either direction the zoom stays at 30
   or 0.1.
 - **Zoom to fit.** The content's bounds are the union of the elements' world bounds
-  (`contentBounds`, beside the world bounds in `geometry`; a label's box joins them with ENG-06). A
+  (`contentBounds`, beside the world bounds in `geometry`; a label's box joins them with the P1
+  label issue). A
   side without extent, such as a vertical line's width or a dot, leaves the zoom to the other side,
   and a canvas smaller than the padding zooms to 0.1. Without any element the camera stays where it
   is.
