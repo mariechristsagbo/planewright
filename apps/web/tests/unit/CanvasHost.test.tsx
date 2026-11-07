@@ -129,7 +129,28 @@ describe('input on the canvas host', () => {
     expect(editor.view.camera).toEqual({ x: 50, y: 40, zoom: 1 });
   });
 
-  it('ignores the back and forward buttons', () => {
+  it('REQ-S06 ends a press released on the back or forward button, so a later hover drags nothing (ENG-08 m2)', () => {
+    const { host, editor } = mount();
+    host.setPointerCapture = vi.fn();
+    host.hasPointerCapture = () => true;
+    host.releasePointerCapture = vi.fn();
+    editor.run('tool.hand');
+    const at = (x: number, button: number, buttons: number) => ({
+      pointerId: 1,
+      pointerType: 'mouse',
+      clientX: x,
+      clientY: 300,
+      button,
+      buttons,
+    });
+    fireEvent.pointerDown(host, at(300, 0, 1));
+    fireEvent.pointerMove(host, at(250, -1, 9));
+    fireEvent.pointerUp(host, at(250, 3, 0));
+    fireEvent.pointerMove(host, at(100, -1, 0));
+    expect(editor.view).toMatchObject({ camera: { x: 50, y: 0, zoom: 1 }, cursor: 'grab' });
+  });
+
+  it('ignores a press of the back or forward button', () => {
     const { host, editor } = mount();
     const capture = vi.fn();
     host.setPointerCapture = capture;

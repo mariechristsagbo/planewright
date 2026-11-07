@@ -52,11 +52,27 @@ describe('pointer events', () => {
   it.each([
     [1, 'middle'],
     [2, 'secondary'],
-  ] as const)('AC map button %d to %s, and ignore the back and forward buttons', (button, name) => {
-    expect(pointerInput('pointer-down', pointer({ button }), CANVAS, 'other')?.button).toBe(name);
-    expect(pointerInput('pointer-down', pointer({ button: 3 }), CANVAS, 'other')).toBeNull();
-    expect(pointerInput('pointer-up', pointer({ button: 4 }), CANVAS, 'other')).toBeNull();
-  });
+  ] as const)(
+    'AC map button %d to %s, and ignore a press of the back or forward button',
+    (button, name) => {
+      expect(pointerInput('pointer-down', pointer({ button }), CANVAS, 'other')?.button).toBe(name);
+      expect(pointerInput('pointer-down', pointer({ button: 3 }), CANVAS, 'other')).toBeNull();
+      expect(pointerInput('pointer-down', pointer({ button: 4 }), CANVAS, 'other')).toBeNull();
+    },
+  );
+
+  it.each(['pointer-up', 'pointer-cancel', 'pointer-move'] as const)(
+    'REQ-S06 keep a %s on the back or forward button, read from the buttons still held, so a press always ends (ENG-08 m2)',
+    (type) => {
+      for (const button of [3, 4]) {
+        const held = pointerInput(type, pointer({ button, buttons: 4 }), CANVAS, 'other');
+        expect([held?.type, held?.button]).toEqual([type, 'middle']);
+        expect(pointerInput(type, pointer({ button, buttons: 0 }), CANVAS, 'other')?.button).toBe(
+          'primary',
+        );
+      }
+    },
+  );
 
   it.each([
     [4, 'middle'],
