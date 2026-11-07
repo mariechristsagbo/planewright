@@ -1,6 +1,7 @@
 import { INITIAL_DEFAULT_STYLE } from '../../src/model/defaults.ts';
 import type { Color } from '../../src/model/color.ts';
 import type {
+  Element,
   FreehandElement,
   LineElement,
   Point,
@@ -10,6 +11,9 @@ import type {
 import type { ElementId } from '../../src/model/ids.ts';
 import type { OrderKey } from '../../src/model/order-key.ts';
 import type { Fill, Style } from '../../src/model/style.ts';
+import { createSceneStore } from '../../src/scene/store.ts';
+import type { SceneStore } from '../../src/scene/store.ts';
+import { changeSet, color } from './scene-state.ts';
 
 // Single elements for the geometry and selection tests, sharp-cornered and unfilled unless a test
 // says otherwise, with the default 2-unit stroke.
@@ -69,3 +73,10 @@ export const freehandElement = (
   points: readonly Point[],
   placement: Placement = {},
 ): FreehandElement => ({ ...common(placement), kind: 'freehand', points });
+
+/** A store that holds the given elements, loaded as one change set. */
+export function sceneOf(...elements: readonly Element[]): SceneStore {
+  const store = createSceneStore({ background: color('#ffffff') });
+  store.apply(changeSet(elements.map((element) => ({ type: 'add', element }))), 'load');
+  return store;
+}
