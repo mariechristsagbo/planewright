@@ -158,7 +158,7 @@ describe('texts on the scene layer', () => {
       element(
         ['setTransform', 4, 0, 0, 4, 0, 0],
         ['globalAlpha=', 1],
-        ['font=', '20px sans-serif'],
+        ['font=', '20px "Planewright Sans", sans-serif'],
         ['textAlign=', 'center'],
         ['textBaseline=', 'middle'],
         ['fillStyle=', '#1e2430'],
@@ -168,18 +168,18 @@ describe('texts on the scene layer', () => {
     );
   });
 
-  it('align to the left or right edge of their box and name a generic family until ENG-12', () => {
+  it('align to the left or right edge of their box and name their bundled family (ADR 0011)', () => {
     const lines = (content: Parameters<typeof text>[0]) =>
       drawn({ elements: [text(content)] }).elements.filter(([name]) =>
         ['font=', 'fillText'].includes(name),
       );
     const font = { size: 16, lineHeight: 1.5 };
     expect(lines({ text: 'a', align: 'left', font: { family: 'hand', ...font } })).toEqual([
-      ['font=', '16px cursive'],
+      ['font=', '16px "Planewright Hand", cursive'],
       ['fillText', 'a', 0, 12],
     ]);
     expect(lines({ text: 'a', align: 'right', font: { family: 'mono', ...font } })).toEqual([
-      ['font=', '16px monospace'],
+      ['font=', '16px "Planewright Mono", monospace'],
       ['fillText', 'a', 100, 12],
     ]);
   });
