@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react';
 
 import { attachInput, observeSize } from './attach-input.ts';
 import { useEditorView, useSurface } from './surface.ts';
+import { TextEditor } from './text/TextEditor.tsx';
 
 /**
  * The canvas host: a scene canvas and an overlay canvas stacked in one focusable region, sized
- * from the page, whose input goes to the editor and which draws every frame the editor builds.
+ * from the page, whose input goes to the editor and which draws every frame the editor builds. The
+ * text area of a text being edited lies over it, outside the region, so its input stays its own.
  */
 export function CanvasHost() {
   const { editor, platform, createRenderer } = useSurface();
@@ -33,24 +35,31 @@ export function CanvasHost() {
   const mod = platform === 'apple' ? 'Cmd' : 'Ctrl';
   return (
     <div className="canvas-area">
-      <div
-        ref={host}
-        className="canvas-host"
-        role="region"
-        aria-label="Drawing canvas"
-        aria-describedby="canvas-instructions"
-        tabIndex={0}
-        style={{ cursor }}
-      >
-        <canvas ref={scene} className="canvas-layer" aria-hidden="true" />
-        <canvas ref={overlay} className="canvas-layer" aria-hidden="true" />
+      <div className="canvas-stage">
+        <div
+          ref={host}
+          className="canvas-host"
+          role="region"
+          aria-label="Drawing canvas"
+          aria-describedby="canvas-instructions"
+          tabIndex={0}
+          style={{ cursor }}
+        >
+          <canvas ref={scene} className="canvas-layer" aria-hidden="true" />
+          <canvas ref={overlay} className="canvas-layer" aria-hidden="true" />
+        </div>
+        <div className="text-layer">
+          <TextEditor />
+        </div>
       </div>
       <p id="canvas-instructions" className="canvas-instructions">
         Choose a drawing tool, then drag on the canvas to draw, or tap for the default size; the
         Selection tool (V) selects, moves, resizes and rotates what is drawn. Scroll to pan,
         Shift+scroll to pan sideways, and {mod}+scroll or pinch to zoom; {mod}+=, {mod}+− and {mod}
         +0 zoom from the keyboard. Drag with the middle button, with Space held or with the Hand
-        tool (H) to pan.
+        tool (H) to pan. With the Text tool (T), click or tap to place a text and type it; Escape,{' '}
+        {mod}+Enter or a press elsewhere ends it, and a double-click or double tap on a text edits
+        it again.
       </p>
     </div>
   );

@@ -43,7 +43,7 @@ function FoundationContents() {
   );
 }
 
-/** The page: the navigation-only editor surface, and what this build does and does not do. */
+/** The page: the editor surface, and what this build does and does not do. */
 export function App({ surface }: { readonly surface: EditorSurface }) {
   return (
     <div className="page">

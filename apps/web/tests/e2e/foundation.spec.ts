@@ -8,10 +8,11 @@ test('states what the build draws and lists what does not work', async ({ page }
   await expect(page).toHaveTitle('Planewright — pre-release');
   await expect(page.getByRole('heading', { level: 1, name: 'Planewright' })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText(
-    'Pre-release — you can draw, select and transform shapes, lines and freehand strokes, but there is no text, saving or collaboration yet.',
+    'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them, but there is no saving or collaboration yet.',
   );
   const missing = page.getByRole('region', { name: 'Not implemented yet' });
-  await expect(missing).toContainText('Text: the Text tool and text editing');
+  await expect(missing).toContainText('Text formatting: every text is left-aligned in one font');
+  await expect(missing).not.toContainText('the Text tool and text editing');
   await expect(missing).toContainText(
     'Saving, loading and exporting drawings: a reload loses the drawing',
   );

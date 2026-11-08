@@ -126,6 +126,33 @@ kbd {
   user-select: none;
 }
 
+.canvas-stage {
+  position: relative;
+}
+
+/* Over the canvas inside the host's 1 px border, so a text area's place is the canvas's own. */
+.text-layer {
+  position: absolute;
+  inset: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.text-editor {
+  position: absolute;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 1px dashed #2a62d0;
+  overflow: hidden;
+  resize: none;
+  white-space: pre;
+  background: transparent;
+  transform-origin: center;
+  pointer-events: auto;
+}
+
 .canvas-layer {
   position: absolute;
   inset: 0;

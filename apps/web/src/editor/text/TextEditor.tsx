@@ -1,0 +1,41 @@
+import { useEffect, useRef } from 'react';
+
+import { useEditorView, useSurface } from '../surface.ts';
+import { endsSession, textAreaStyle } from './text-area.ts';
+
+// The text-editing overlay (ADR 0006 decision 6, docs/architecture/engine/interaction.md#text-editing):
+// while a text is edited, a text area shows it where the canvas would, in its font scaled by the
+// zoom and turned by its rotation, and the scene layer leaves it out. The area sits outside the
+// canvas host, so its pointer and key events never reach the editor, whose shortcuts pause.
+
+/** The text area of the text being edited, focused when its session starts; nothing otherwise. */
+export function TextEditor() {
+  const { editor, platform } = useSurface();
+  const { text, camera } = useEditorView();
+  const area = useRef<HTMLTextAreaElement>(null);
+  const id = text?.element.id;
+  useEffect(() => {
+    if (id !== undefined) area.current?.focus({ preventScroll: true });
+  }, [id]);
+  if (text === null) return null;
+  return (
+    <textarea
+      ref={area}
+      className="text-editor"
+      aria-label="Text"
+      value={text.element.content.text}
+      maxLength={100_000}
+      wrap="off"
+      spellCheck={false}
+      style={textAreaStyle(text, camera.zoom)}
+      onChange={(event) => {
+        editor.editText({ type: 'value', text: event.target.value });
+      }}
+      onKeyDown={(event) => {
+        if (!endsSession(event, platform)) return;
+        event.preventDefault();
+        editor.editText({ type: 'commit' });
+      }}
+    />
+  );
+}
