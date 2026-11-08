@@ -5,6 +5,7 @@ import { aabbUnion } from '../../../src/math/aabb.ts';
 import type { Aabb } from '../../../src/math/aabb.ts';
 import { obbBounds } from '../../../src/math/obb.ts';
 import { randomBetween, randomInt } from '../../../src/math/random.ts';
+import { rotate } from '../../../src/math/vector.ts';
 import type { Random } from '../../../src/math/random.ts';
 import { checkElement } from '../../../src/model/element-checks.ts';
 import type { Element, Point } from '../../../src/model/elements.ts';
@@ -17,7 +18,7 @@ import { resizeElement } from '../../../src/transform/resize.ts';
 import { rotateElements } from '../../../src/transform/rotate.ts';
 import { freehandElement, lineElement, shapeElement } from '../../support/elements.ts';
 import { checkProperty } from '../../support/property.ts';
-import { textWithFont } from '../../support/text-fonts.ts';
+import { fontSizeOf, textWithFont } from '../../support/text-fonts.ts';
 
 // Every transform's result is an element that the document model accepts (the ENG-10 review's
 // M1): its numbers finite and within the limits, a text's font size within 1 to 1000, and a point
@@ -158,4 +159,57 @@ describe('every transform gives an element that the document model accepts', () 
       },
     );
   });
+});
+
+/** Where a corner handle's drag points to shrink its box, along the box's own axes. */
+const INWARD = {
+  nw: { x: 1, y: 1 },
+  ne: { x: -1, y: 1 },
+  se: { x: -1, y: -1 },
+  sw: { x: 1, y: -1 },
+};
+
+/** A text, alone or beside a rectangle, and a corner dragged a million units in or out. */
+function anyFontExtreme(random: Random) {
+  const text = {
+    ...anyElement(random, 0, true),
+    rotation: pick(random, [0, randomBetween(random, 0, 6)]),
+  };
+  const handle = pick(random, ['nw', 'ne', 'se', 'sw'] as const);
+  const sign = random.next() < 0.5 ? 1e6 : -1e6;
+  const inward = { x: INWARD[handle].x * sign, y: INWARD[handle].y * sign };
+  const options = { keepAspect: random.next() < 0.5, fromCenter: random.next() < 0.5 };
+  const beside =
+    random.next() < 0.5 ? [shapeElement('rectangle', 50, 50, { id: 2, order: 'b' })] : [];
+  return { text, beside, handle, inward, options };
+}
+
+describe('a text dragged far past either font limit', () => {
+  it(
+    'REQ-T05 stops within font sizes 1 and 1000, alone or in a selection',
+    { timeout: 30_000 },
+    () => {
+      checkProperty(
+        { seed: 1040, runs: 1_000 },
+        anyFontExtreme,
+        ({ text, beside, handle, inward, options }) => {
+          const [first] =
+            beside.length === 0
+              ? [resizeElement(text, { handle, drag: rotate(inward, text.rotation), options })]
+              : resizeElements(
+                  [{ ...text, rotation: 0 }, ...beside],
+                  outlineOf([{ ...text, rotation: 0 }, ...beside]),
+                  {
+                    handle,
+                    drag: inward,
+                    options,
+                  },
+                );
+          const size = fontSizeOf(first);
+          expect(size >= 1 && size <= 1_000).toBe(true);
+          expectValid(first === undefined ? [] : [first]);
+        },
+      );
+    },
+  );
 });
