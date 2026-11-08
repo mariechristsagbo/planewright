@@ -25,11 +25,22 @@ test.beforeEach(async ({ page }) => {
 const pressed = (page: Page, name: string) =>
   expect(toolButton(page, name)).toHaveAttribute('aria-pressed', 'true');
 
+/**
+ * Taps a tool bar button until it shows as pressed: under load a tap that follows a touch drag can
+ * be lost, and tapping the active tool again changes nothing.
+ */
+async function choose(page: Page, name: string): Promise<void> {
+  await expect(async () => {
+    await toolButton(page, name).tap();
+    await expect(toolButton(page, name)).toHaveAttribute('aria-pressed', 'true', { timeout: 1000 });
+  }).toPass();
+}
+
 /** The rectangle [40,40,100,80] and the ellipse [190,170,100,80], drawn by touch drags. */
 async function drawPair(page: Page) {
-  await toolButton(page, 'Rectangle').tap();
+  await choose(page, 'Rectangle');
   await touch(page, [40, 40], [140, 120]);
-  await toolButton(page, 'Ellipse').tap();
+  await choose(page, 'Ellipse');
   await touch(page, [190, 170], [290, 250]);
 }
 
@@ -39,7 +50,7 @@ const PROBES = { rectangle: [140, 120], ellipse: [190, 170], both: [290, 40] } a
 test('A1 A4 a touch drag draws B-01’s touch box, and the Selection tool selects it', async ({
   page,
 }) => {
-  await toolButton(page, 'Rectangle').tap();
+  await choose(page, 'Rectangle');
   await touch(page, [120, 250], [260, 350]);
   await expectInk(page, [
     [120, 300],
@@ -86,7 +97,7 @@ test('A15 to A20 drawn elements are selected by a press, Shift+press, marquee an
 test('A6 A7 A8 a freehand stroke and a tapped dot, with the tool still active and nothing selected', async ({
   page,
 }) => {
-  await toolButton(page, 'Freehand').tap();
+  await choose(page, 'Freehand');
   await touch(page, [40, 300], [200, 300]);
   await touch(page, [250, 300]);
   await expectInk(page, [
@@ -101,7 +112,8 @@ test('A5 A27 with tool lock the tool stays, nothing is selected, and Undo keeps 
   page,
 }) => {
   await toolButton(page, 'Tool lock').tap();
-  await toolButton(page, 'Diamond').tap();
+  await expect(toolButton(page, 'Tool lock')).toHaveAttribute('aria-pressed', 'true');
+  await choose(page, 'Diamond');
   await touch(page, [40, 40], [140, 140]);
   await touch(page, [190, 40], [290, 140]);
   await expectInk(page, [
