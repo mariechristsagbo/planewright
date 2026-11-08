@@ -426,11 +426,13 @@ leave open:
   larger ratio of the dragged axes that have extent, and on a side handle the other side follows
   about its middle; Shift and Alt combine. A size stops at 1 unit, or at its own size when that is
   already smaller, so nothing jumps. A text always keeps its aspect ratio and its font size stays
-  within the document's limits; its measured size scales with the font and is measured again only
-  once the text measurer joins the engine (ENG-12). In a selection, a text scales by the ratio along
-  its own height, a quarter-turned element scales each of its sides by the ratio of the scene axis
-  it lies along, and the ratios also stop where any element's positive size or font size would go
-  below 1.
+  within the document's limits, 1 to 1000: the ratios stop there, and the scaled size is clamped to
+  them too, because the ratios come from divisions and could otherwise land one rounding step past
+  them, which the scene store refuses (the independent review's M1); its measured size scales with
+  the font and is measured again only once the text measurer joins the engine (ENG-12). In a
+  selection, a text scales by the ratio along its own height, a quarter-turned element scales each
+  of its sides by the ratio of the scene axis it lies along, and the ratios also stop where any
+  element's positive size or font size would go below 1.
 - **Rotating.** One element's own rotation plus the turn is the total that Shift rounds; several
   elements turn by the turn, which Shift rounds, since their outline has no rotation of its own.
 - **Commands.** `selection.duplicate` (Mod+D), `selection.delete` (Delete, Backspace) and
