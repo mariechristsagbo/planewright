@@ -1,4 +1,5 @@
 import { drawingTool } from './drawing-tool.ts';
+import { freehandTool } from './freehand-tool.ts';
 import { handTool } from './hand.ts';
 import { selectionTool } from './selection-tool.ts';
 import type { CursorKind, GestureEvent, Tool, ToolContext, ToolEffect, ToolId } from './tool.ts';
@@ -36,6 +37,8 @@ export function activeTool(id: ToolId): ActiveTool {
     case 'diamond':
     case 'line':
       return activate(drawingTool(id));
+    case 'freehand':
+      return activate(freehandTool);
   }
 }
 

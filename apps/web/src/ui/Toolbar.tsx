@@ -16,6 +16,7 @@ const NOTES: Readonly<Record<ToolId, string>> = {
   ellipse: 'Drag to draw an ellipse; a tap draws a 100 by 100 one.',
   diamond: 'Drag to draw a diamond; a tap draws a 100 by 100 one.',
   line: 'Drag to draw a line; a tap draws a horizontal line 100 long.',
+  freehand: 'Drag to draw a freehand stroke; a tap draws a dot. The tool stays active.',
 };
 
 /** The keys that move focus within the tool bar, as steps or ends. */
