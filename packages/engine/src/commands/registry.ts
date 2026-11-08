@@ -16,8 +16,7 @@ import type { KeyChord } from './chords.ts';
 export type NudgeDirection = 'left' | 'right' | 'up' | 'down';
 
 export type CommandId =
-  | 'tool.hand'
-  | 'tool.selection'
+  | `tool.${ToolId}`
   | 'history.undo'
   | 'history.redo'
   | 'selection.select-all'

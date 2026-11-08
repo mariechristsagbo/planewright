@@ -12,6 +12,10 @@ const NOTES: Readonly<Record<ToolId, string>> = {
   hand: 'Drag to pan the canvas.',
   selection:
     'Selects, moves, resizes and rotates elements; nothing can be drawn yet, so there is nothing to select.',
+  rectangle: 'Drag to draw a rectangle; a tap draws a 100 by 100 one.',
+  ellipse: 'Drag to draw an ellipse; a tap draws a 100 by 100 one.',
+  diamond: 'Drag to draw a diamond; a tap draws a 100 by 100 one.',
+  line: 'Drag to draw a line; a tap draws a horizontal line 100 long.',
 };
 
 /** The keys that move focus within the tool bar, as steps or ends. */
