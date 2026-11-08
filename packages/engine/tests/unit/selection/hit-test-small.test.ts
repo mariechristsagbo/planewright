@@ -113,6 +113,14 @@ describe('C1 what makes a selection small', () => {
     expect(at3({ x: 600, y: 600 }, 'mouse')).toStrictEqual(handle('nw'));
   });
 
+  it('measures each side on screen: a wide, flat box is not small once its width reaches 24 px', () => {
+    // 10 x 4 at zoom 3 is 30 x 12 px on screen: its height alone is short.
+    const flat = pressOn([filled(10, 4)], { x: 0, y: 0, zoom: 3 });
+    expect(flat({ x: 600, y: 600 }, 'mouse')).toStrictEqual(handle('nw'));
+    const tall = pressOn([filled(4, 10)], { x: 0, y: 0, zoom: 3 });
+    expect(tall({ x: 600, y: 600 }, 'mouse')).toStrictEqual(handle('nw'));
+  });
+
   it('a two-point line is small when its ends are closer than two hit squares on both axes', () => {
     const line = (dx: number, dy: number) =>
       lineElement(
