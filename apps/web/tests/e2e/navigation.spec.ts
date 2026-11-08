@@ -105,7 +105,7 @@ test('REQ-V06 the Hand tool pans by the pointer delta, chosen by its button or H
   page,
 }) => {
   const box = await canvasBox(page);
-  const hand = page.getByRole('button', { name: 'Hand' });
+  const hand = page.getByRole('button', { name: 'Hand', exact: true });
   await hand.click();
   await expect(hand).toHaveAttribute('aria-pressed', 'true');
   await page.mouse.move(box.x + 200, box.y + 200);
@@ -124,7 +124,7 @@ test('REQ-C11 a press on the tool bar never reaches the canvas, even dragged ont
   page,
 }) => {
   const box = await canvasBox(page);
-  const hand = page.getByRole('button', { name: 'Hand' });
+  const hand = page.getByRole('button', { name: 'Hand', exact: true });
   await hand.click();
   const button = await hand.boundingBox();
   if (button === null) throw new Error('The Hand button is not laid out.');

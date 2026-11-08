@@ -57,7 +57,9 @@ describe('the canvas host', () => {
     const { host } = mount();
     expect(host).toHaveAttribute('tabindex', '0');
     expect(host.querySelectorAll('canvas')).toHaveLength(2);
-    expect(host).toHaveAccessibleDescription(/nothing can be drawn on it yet/);
+    expect(host).toHaveAccessibleDescription(
+      /^Choose a drawing tool, then drag on the canvas to draw, or tap for the default size; the Selection tool \(V\) selects, moves, resizes and rotates what is drawn\./,
+    );
     expect(host).toHaveAccessibleDescription(/Ctrl\+scroll or pinch to zoom/);
   });
 

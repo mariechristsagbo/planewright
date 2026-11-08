@@ -5,7 +5,8 @@ import { keyInput, pointerInput, wheelInput } from './input-adapter.ts';
 import type { KeySource } from './input-adapter.ts';
 
 // The canvas host's DOM listeners (ADR 0008 decision 1): pointer events with capture, wheel events
-// that never scroll the page, keys, the host's focus loss and the window's.
+// that never scroll the page, keys, the host's focus loss and the window's. A freehand stroke reads
+// the coalesced moves of each pointer move, so that a fast stroke keeps every point the browser saw.
 
 const POINTER_EVENTS = [
   ['pointerdown', 'pointer-down'],
@@ -37,6 +38,18 @@ function onPointer(host: HTMLElement, type: PointerInput['type'], event: Pointer
 }
 
 /**
+ * The moves that a pointer move stands for: its coalesced events while the freehand tool is
+ * active, where the browser offers them, or the move itself.
+ */
+function movesOf(event: PointerEvent, editor: Editor): readonly PointerEvent[] {
+  if (editor.view.tool !== 'freehand' || typeof event.getCoalescedEvents !== 'function') {
+    return [event];
+  }
+  const coalesced = event.getCoalescedEvents();
+  return coalesced.length > 0 ? coalesced : [event];
+}
+
+/**
  * Listens to the host's input and the window's focus; returns the function that stops it. Points
  * are relative to the scene canvas, which sits inside the host's border.
  */
@@ -49,10 +62,11 @@ export function attachInput(
   const box = (): DOMRect => canvas.getBoundingClientRect();
   const pointers = POINTER_EVENTS.map(([name, type]) => {
     const listener = (event: PointerEvent): void => {
-      const input = pointerInput(type, event, box(), platform);
-      if (input === null) return;
+      const events = type === 'pointer-move' ? movesOf(event, editor) : [event];
+      const inputs = events.flatMap((each) => pointerInput(type, each, box(), platform) ?? []);
+      if (inputs.length === 0) return;
       onPointer(host, type, event);
-      editor.input(input);
+      for (const input of inputs) editor.input(input);
     };
     host.addEventListener(name, listener);
     return () => {
