@@ -455,6 +455,65 @@ leave open:
   re-measuring texts (ENG-12); flips (P1), snapping and groups, which are out of scope. The web app
   has nothing to transform until ENG-11 lets people draw.
 
+## What ENG-11 decided
+
+ENG-11 implements the rectangle, ellipse, diamond, line and freehand tools in the engine's `tools`
+layer, their commands and tool lock in `commands`, and their place in `createEditor`; in `apps/web`
+it adds tool lock to the tool bar, reads coalesced pointer events for freehand strokes and updates
+the factual text. It decided what the rules above leave open:
+
+- **A creation's transaction.** A creation is one gesture: its first preview adds the element,
+  which opens the history's transaction, each later move previews updates of the fields that
+  changed, and the release commits it with the label `create` (REQ-C13); a tap previews and commits
+  at once. A creation first clears the selection, so its entry's selection before is empty and
+  undoing it leaves nothing selected, even after Select all in a creation tool; choosing a creation
+  tool clears the selection too.
+- **After a creation.** The `commit` effect carries the selection after it, the new element alone,
+  which the editor sets before the commit, so that redo restores it, and again after it, as `edit`
+  does for commands (the ENG-06 review's m2 stays open); a `set-tool` effect then makes the
+  Selection tool active (REQ-C05). With tool lock on, the commit selects nothing new and the tool
+  stays, and the freehand tool always stays and selects nothing (REQ-C06). Undo and redo never
+  change the tool, so with tool lock on the creation tool stays active after an undo (REQ-H05).
+- **Drag boxes.** The box runs from the press's scene point, read with the camera of the press, to
+  the pointer's, the release's point ending the drag, and is normalised whatever the direction
+  (REQ-C01, REQ-C02). A closed shape's side is at least 1 unit, so that a flat drag never leaves an
+  empty box, which no resize could grow since zero sizes stay 0 (REQ-T05); a line keeps its true
+  extent, as B-01's horizontal line `[300,420,120,0]` does, and runs from the press to the release.
+  No modifier changes a creation in P0, and nothing snaps.
+- **Taps.** A tap makes a 100 × 100 closed shape or a 100-unit horizontal line centred on its scene
+  point, whatever the zoom (REQ-C03, REQ-C04), and a double tap makes one as a tap does. A press
+  released without a drag, as a touch press held for 500 ms ends, makes nothing.
+- **Freehand strokes.** A stroke starts at the press's scene point and takes the pointer's point
+  whenever it lies 1 screen pixel or more from the last point taken, the release's included, so a
+  zoomed stroke keeps finer scene points; its box is their extent and its points are normalised to
+  it (REQ-C07). A tap makes a one-point dot of zero size. A stroke takes at most the document's
+  50,000 points and keeps no pressures until REQ-C08 (P1), so it draws a constant width.
+- **Limits.** A step that would put the new element's origin past the coordinate limit of 10⁹, as
+  a captured pointer can beyond the camera's own limit, or its size past 10⁷, previews nothing and
+  keeps the element last shown; a creation that never showed one makes nothing. So the scene store
+  never refuses a creation, and `input` never throws for one.
+- **New elements.** Each has a new identifier from the identifier source, an order key above every
+  element the scene holds, no rotation, no lock and the editor's current default style through
+  `styleForKind`: round corners for rectangles and diamonds and sharp ones for the others
+  (REQ-C12). The tool context reads the default style at each creation; it stays the initial one
+  until the style issue (P1, REQ-M06) can change it.
+- **Commands.** `tool.rectangle` (R, 2), `tool.ellipse` (O, 3), `tool.diamond` (D, 4), `tool.line`
+  (L, 5) and `tool.freehand` (P, 6) follow Hand and Selection in tool bar order. `tool.lock` (Q)
+  toggles tool lock, which `view.toolLock` reports and the tool context reads; it is no tool of its
+  own and never an undo step (REQ-H04). Escape with no gesture still returns to the Selection tool.
+- **Small selections** (the ENG-10 review's m2). A selection shorter on screen than two handle hit
+  squares along both sides lets a press on its elements or inside its box come before its handles,
+  so that a drawn dot or a small shape moves when dragged
+  ([hit testing](rendering-and-hit-testing.md#hit-testing)).
+- **The web app.** The tool bar shows the creation tools after Hand and Selection and Tool lock
+  last, a toggle whose state is `aria-pressed`, all in one arrow-key group, and wraps on narrow
+  screens. While the freehand tool is active the canvas host sends each pointer move's coalesced
+  events, where the browser offers them, in order. The page, the canvas instructions and the
+  controls' descriptions say what can be drawn and what does not exist yet. End-to-end tests read
+  the canvas layers' pixels on a desktop and an emulated phone.
+- **Not here.** Text (ENG-12), saving (ENG-13), arrows and notes (P1), pressure-sensitive widths
+  (REQ-C08), style controls (REQ-M06) and Shift or Alt variants of creation drags.
+
 ## Requirements served
 
 REQ-C01 to REQ-C14, REQ-S01 to REQ-S14, REQ-T01 to REQ-T11, REQ-V01, REQ-V02, REQ-V04 to

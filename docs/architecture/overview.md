@@ -9,7 +9,7 @@ complete and ADRs are accepted.
 ┌───────────────────────┐        WebSocket /ws         ┌───────────────────────────┐
 │ apps/web              │  ─────────────────────────▶  │ apps/collab               │
 │ React + Vite          │  (not connected yet)         │ Node.js http + ws         │
-│ navigation-only page  │                              │ /healthz, hello handshake │
+│ pre-release editor    │                              │ /healthz, hello handshake │
 └──────────┬────────────┘                              └─────────────┬─────────────┘
            │ imports                                                 │ imports
            ▼                                                         ▼
@@ -21,11 +21,12 @@ complete and ADRs are accepted.
 
 ### apps/web
 
-A React 19 application built with Vite 8. It renders a navigation-only editor surface (ENG-08): a
+A React 19 application built with Vite 8. It renders the editor surface of ENG-08 and ENG-11: a
 canvas host whose scene and overlay canvases the canvas renderer draws, an input adapter that
-sends DOM events to the engine's editor, a tool bar and Undo and Redo controls. The page labels the
-build as pre-release, says that nothing can be drawn or edited yet, so that the Selection tool has
-nothing to select or transform, and lists the capabilities that are not implemented. It imports the protocol version to prove that workspace
+sends DOM events to the engine's editor, a tool bar with the Hand, Selection and creation tools and
+tool lock, and Undo and Redo controls. The page labels the build as pre-release, says that shapes,
+lines and freehand strokes can be drawn, selected, transformed and undone, and lists the
+capabilities that are not implemented, text, styles, saving and collaboration among them. It imports the protocol version to prove that workspace
 linking works.
 
 ### apps/collab
@@ -82,16 +83,17 @@ the engine package with its boundary checks, its math layer and its ports, ENG-0
 added the document model and its codec, ENG-03 (issue #9) the scene store, ENG-04 (issue #11)
 the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text
 layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08
-(issue #19) the navigation-only editor surface, ENG-09 (issue #21) the Selection tool and ENG-10
-(issue #23) the transforms; the rest is not implemented yet:
+(issue #19) the editor surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the
+transforms and ENG-11 (issue #25) the shape, line and freehand creation tools; the rest is not
+implemented yet:
 
 - storage, beyond the element model and codec of ENG-02 and the scene store of ENG-03:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
-- drawing elements on the page, beyond the render loop, culling and canvas renderer of ENG-07, the
-  hit testing of ENG-06 and the canvas host of ENG-08:
+- drawing texts, arrows, notes and images, beyond the render loop, culling and canvas renderer of
+  ENG-07 and the shapes, lines and freehand strokes of ENG-11:
   [ADR 0006](../adr/0006-canvas-rendering.md);
-- the drawing and selection tools, beyond the change sets and transactions of ENG-03, the history
-  of ENG-04 and the input, gestures, Hand tool and commands of ENG-08:
+- the text tool and the P1 tools, beyond the Hand tool and commands of ENG-08, the Selection tool
+  of ENG-09, the transforms of ENG-10 and the creation tools of ENG-11:
   [ADR 0007](../adr/0007-history-model.md) and [ADR 0008](../adr/0008-input-tools-and-commands.md);
 - package boundaries for the engine, in place since ENG-01, and for its renderer:
   [ADR 0004](../adr/0004-canvas-engine-package-boundaries.md);

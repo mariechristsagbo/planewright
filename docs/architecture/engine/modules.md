@@ -118,7 +118,9 @@ added the selection to it. Its surface so far
 ([what ENG-08 decided](interaction.md#what-eng-08-decided),
 [what ENG-09 decided](interaction.md#what-eng-09-decided); the transforms issue, ENG-10, added no
 method: its gestures reach the Selection tool through `input`, and Duplicate, Delete and the nudges
-are commands that `run` and the keymap reach):
+are commands that `run` and the keymap reach; nor did the creation tools issue, ENG-11, whose tools
+and tool lock are commands too, while the view gained `toolLock`,
+[what ENG-11 decided](interaction.md#what-eng-11-decided)):
 
 ```ts
 export interface EditorPorts {
@@ -128,7 +130,7 @@ export interface EditorPorts {
 }
 
 export interface Editor {
-  /** Read-only view: tool, cursor, camera, selection, and whether Undo and Redo are enabled. */
+  /** Read-only view: tool, tool lock, cursor, camera, selection, and whether Undo and Redo are enabled. */
   readonly view: EditorView;
   /** The registry's commands with their labels, shortcuts and tools, tools in tool bar order. */
   readonly commands: readonly EditorCommand[];

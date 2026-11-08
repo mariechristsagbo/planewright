@@ -76,3 +76,11 @@ release has been published yet.
   resize and rotate the selection, each one undo step that Undo and Redo cannot interrupt; Duplicate
   (Mod+D), Delete (Delete, Backspace) and nudges (arrow keys, 10 units with Shift) as commands. The
   page says so, and still has nothing to transform because nothing can be drawn yet.
+- Creation tools (ENG-11): in the engine, the rectangle (R), ellipse (O), diamond (D), line (L) and
+  freehand (P) tools and tool lock (Q). A drag draws over its box or along the stroke and a tap
+  draws a 100-unit shape or line or a dot; each creation is one undo step, and after a shape or line
+  the new element alone is selected in the Selection tool unless tool lock is on. A press on a
+  selection smaller on screen than two handle hit squares now moves it instead of resizing it. In
+  the web app, the tool bar shows the tools and the tool lock toggle, freehand strokes read
+  coalesced pointer events, and the page says what can be drawn; text, styles, saving and
+  collaboration do not exist yet.
