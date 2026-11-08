@@ -87,6 +87,12 @@ export async function mouseClick(page: Page, at: Point, shift = false): Promise<
 /** The DevTools modifier bit for Shift. */
 const SHIFT = 8;
 
+/**
+ * How long a touch waits after its finger lifts. On CI a tap on Undo that landed about 40 ms after
+ * a touch drag ended was not turned into a click; no finger lands again that fast.
+ */
+const LIFT_MS = 350;
+
 /** One finger's touch from one canvas point to another in steps, or a tap when they are equal. */
 export async function touch(page: Page, from: Point, to: Point = from, shift = false) {
   const box = await canvasBox(page);
@@ -112,6 +118,7 @@ export async function touch(page: Page, from: Point, to: Point = from, shift = f
   }
   await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [], modifiers });
   await client.detach();
+  await page.waitForTimeout(LIFT_MS);
 }
 
 /** The tool bar button of a tool or of tool lock, found by its exact name. */
