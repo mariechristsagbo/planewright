@@ -44,7 +44,9 @@ describe.each(POINTERS)('placing and committing a text in the editor, with %s in
       selection: [id],
       canUndo: true,
     });
-    expect(harness.shown().map(textAndBox)).toEqual([['Hello', [820, 407.5, 50, 25]]]);
+    const scene = harness.next().findLast((frame) => frame.scene !== undefined)?.scene;
+    expect(scene?.hidden).toEqual([]);
+    expect(scene?.elements.map(textAndBox)).toEqual([['Hello', [820, 407.5, 50, 25]]]);
     expect(harness.next()).toEqual([]);
   });
 
