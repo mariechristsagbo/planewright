@@ -159,6 +159,18 @@ the candidates. Handle layout, the handles' hit squares and marquee enclosure li
 3. **The selection box**: a point inside the current selection's outline that hit no element.
 4. **Nothing.**
 
+A **small selection** comes before its own handles (ENG-11, for the ENG-10 review's m2). A
+selection is small when its frame is shorter on screen than two handle hit squares, 24 px for a
+mouse or pen and 48 for touch, along both of its sides; for a lone two-point line, when its ends
+are that close along both axes. Its handles then cover most of it: a selected dot's four corners
+coincide on it, and a 6 × 6 box lies within one corner's square, so a drag from the element would
+resize it from a corner, or do nothing for a dot, instead of moving it (REQ-T01). For a small
+selection, a press that hits one of its elements, as the topmost element at the point, or that
+lies inside its box goes to the element or the box first, and a drag from it moves the selection;
+the handles still take the presses that miss both, around the element and outside its box, and the
+rotation handle stays clear of it. An unselected element under a handle never takes the press from
+it, and a selection two hit squares or more along either side keeps the order above.
+
 With a 2-unit stroke at zoom 1 the hit limit is 6 px from the centre line for a mouse or pen and
 7 px for touch. Read from the centre line, the baseline's distances are 4 and 8 px; read from the
 stroke's edge, 5 and 9 px. In both readings the near point hits and the far point misses, for both
