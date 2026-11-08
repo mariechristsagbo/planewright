@@ -55,7 +55,7 @@ describe('the browser ports', () => {
 });
 
 describe('the canvas text measurer', () => {
-  it('measures in the font of each spec, with the font box’s ascent and descent', () => {
+  it('measures in the bundled font of each spec, with the font box’s ascent and descent', () => {
     const fonts: string[] = [];
     const context = {
       font: '',
@@ -77,7 +77,11 @@ describe('the canvas text measurer', () => {
     expect(measurer.measure('abc', spec('sans', 20))).toEqual({ width: 15, ascent: 9, descent: 3 });
     measurer.measure('', spec('hand', 16));
     measurer.measure('x', spec('mono', 12.5));
-    expect(fonts).toEqual(['20px sans-serif', '16px cursive', '12.5px monospace']);
+    expect(fonts).toEqual([
+      '20px "Planewright Sans", sans-serif',
+      '16px "Planewright Hand", cursive',
+      '12.5px "Planewright Mono", monospace',
+    ]);
   });
 });
 
