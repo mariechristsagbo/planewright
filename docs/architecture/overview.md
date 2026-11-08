@@ -21,12 +21,14 @@ complete and ADRs are accepted.
 
 ### apps/web
 
-A React 19 application built with Vite 8. It renders the editor surface of ENG-08 and ENG-11: a
-canvas host whose scene and overlay canvases the canvas renderer draws, an input adapter that
-sends DOM events to the engine's editor, a tool bar with the Hand, Selection and creation tools and
-tool lock, and Undo and Redo controls. The page labels the build as pre-release, says that shapes,
-lines and freehand strokes can be drawn, selected, transformed and undone, and lists the
-capabilities that are not implemented, text, styles, saving and collaboration among them. It imports the protocol version to prove that workspace
+A React 19 application built with Vite 8. It renders the editor surface of ENG-08, ENG-11 and
+ENG-12: a canvas host whose scene and overlay canvases the canvas renderer draws, an input adapter
+that sends DOM events to the engine's editor, a text area over the canvas for the text being
+edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, and Undo and
+Redo controls; it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md).
+The page labels the build as pre-release, says that shapes, lines, freehand strokes and texts can
+be drawn, selected, transformed and undone, and lists the capabilities that are not implemented,
+text formatting, styles, saving and collaboration among them. It imports the protocol version to prove that workspace
 linking works.
 
 ### apps/collab
@@ -84,16 +86,16 @@ added the document model and its codec, ENG-03 (issue #9) the scene store, ENG-0
 the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text
 layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08
 (issue #19) the editor surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the
-transforms and ENG-11 (issue #25) the shape, line and freehand creation tools; the rest is not
-implemented yet:
+transforms, ENG-11 (issue #25) the shape, line and freehand creation tools and ENG-12 (issue #27)
+the Text tool, text editing and the bundled fonts; the rest is not implemented yet:
 
 - storage, beyond the element model and codec of ENG-02 and the scene store of ENG-03:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
-- drawing texts, arrows, notes and images, beyond the render loop, culling and canvas renderer of
-  ENG-07 and the shapes, lines and freehand strokes of ENG-11:
+- drawing arrows, notes and images, beyond the render loop, culling and canvas renderer of ENG-07,
+  the shapes, lines and freehand strokes of ENG-11 and the texts of ENG-12:
   [ADR 0006](../adr/0006-canvas-rendering.md);
-- the text tool and the P1 tools, beyond the Hand tool and commands of ENG-08, the Selection tool
-  of ENG-09, the transforms of ENG-10 and the creation tools of ENG-11:
+- the P1 tools, beyond the Hand tool and commands of ENG-08, the Selection tool of ENG-09, the
+  transforms of ENG-10, the creation tools of ENG-11 and the Text tool of ENG-12:
   [ADR 0007](../adr/0007-history-model.md) and [ADR 0008](../adr/0008-input-tools-and-commands.md);
 - package boundaries for the engine, in place since ENG-01, and for its renderer:
   [ADR 0004](../adr/0004-canvas-engine-package-boundaries.md);
@@ -105,5 +107,6 @@ Still open, each for its own issue and ADR:
 - the collaboration model (merge policy, transport, presence, room lifecycle, authentication and
   server persistence); [ADR 0010](../adr/0010-collaboration-ready-change-model.md) only fixes the
   interfaces that the engine keeps ready for it;
-- the fonts behind the text families, the sketch styles and the dark-theme colour mapping, decided
-  in the feature issues that need them.
+- the sketch styles and the dark-theme colour mapping, decided in the feature issues that need
+  them; the fonts behind the text families are decided by
+  [ADR 0011](../adr/0011-bundled-open-licence-fonts.md) (ENG-12).

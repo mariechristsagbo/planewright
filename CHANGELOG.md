@@ -84,3 +84,12 @@ release has been published yet.
   the web app, the tool bar shows the tools and the tool lock toggle, freehand strokes read
   coalesced pointer events, and the page says what can be drawn; text, styles, saving and
   collaboration do not exist yet.
+- Text tool and text editing (ENG-12): in the engine, the Text tool (T) places an empty text with
+  its left edge at the tap and its first line centred on it, and a text session takes the text
+  area's values, measured again through the editor's new text measurer port, until Escape,
+  Mod+Enter, a press outside or a tool change ends it. A session is one undo step, a new text left
+  empty leaves none, an emptied text is deleted, and a double tap on a text edits it again. In the
+  web app, a text area over the canvas edits the text with the shortcuts paused, and the renderer,
+  the measurer and the text area use the bundled open-licence fonts of ADR 0011 (Inter, Patrick Hand
+  and JetBrains Mono, with their licences), which the page loads before it starts; text formatting,
+  styles, saving and collaboration do not exist yet.

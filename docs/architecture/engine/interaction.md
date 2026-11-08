@@ -171,7 +171,8 @@ export interface SelectionState {
 
 - The selection never holds a missing element: a removal or an undo filters it.
 - ENG-06 holds the identifiers in `createSelection` in the `selection` module, which also defines
-  `PointerKind`; `editing` joins the state with the text tool (ENG-12).
+  `PointerKind`; the text tool (ENG-12) left `editing` out: the editor's text session holds the text
+  being edited, and nothing is selected while it is open.
 - In P1, a selected group member widens to all members of its outermost group (REQ-S11), and locked
   elements are never selected by pointer, marquee or Select all (REQ-S08).
 - The **selection outline** is the element's rotated box when one element is selected and the
@@ -217,8 +218,8 @@ history entry (REQ-T11).
 
 ## Text editing
 
-The engine holds a text session: the element, whether it is new, and its starting content. The web
-app shows a text area over the canvas at the element's screen position, scaled by the zoom and
+The engine holds a text session: the element, whether it is new, and its starting content (ENG-12
+keeps the content in the session's transaction). The web app shows a text area over the canvas at the element's screen position, scaled by the zoom and
 rotated by the element, with the element hidden from the scene layer.
 
 ```ts
@@ -513,6 +514,60 @@ the factual text. It decided what the rules above leave open:
   the canvas layers' pixels on a desktop and an emulated phone.
 - **Not here.** Text (ENG-12), saving (ENG-13), arrows and notes (P1), pressure-sensitive widths
   (REQ-C08), style controls (REQ-M06) and Shift or Alt variants of creation drags.
+
+## What ENG-12 decided
+
+ENG-12 implements the Text tool in the engine's `tools` layer, its command in `commands`, and the
+text session in `editor`; in `apps/web` it adds the text area, the bundled fonts of
+[ADR 0011](../../adr/0011-bundled-open-licence-fonts.md) with their loading, and updates the factual
+text. It decided what the rules above leave open:
+
+- **Placing.** A tap, or a double tap, with the Text tool adds an empty left-aligned text in `sans`
+  at size 20 with line height 1.25, in the default style with sharp corners, its left edge at the
+  tap's scene point and its first line centred on it: a click at (820,420) at zoom 1 gives x 820,
+  y 407.5 and a height of 25, B-06's numbers, and the width the measurer gives an empty line. A
+  press, a drag or a release places nothing. Placing first clears the selection, and its preview
+  opens the gesture's transaction.
+- **The session.** An `edit-text` effect starts it. A new text keeps the transaction that placing
+  it opened, and a re-edit begins its own, so Undo and Redo are disabled until it ends (REQ-H06).
+  The session holds the text, whether it is new and its transaction, whose net change compares the
+  text with its starting content, so no copy of that content is kept. Nothing is selected while it
+  is open: the editor holds the session and `view.text` reports the text with its box on screen, so
+  `SelectionState` gains no `editing` field. The text is the render state's hidden element.
+- **Values.** `editText({ type: 'value' })` turns `\r\n` and `\r` into `\n`, measures the text
+  again with `layoutText` through the editor's `text` port and keeps its origin, so a new
+  left-aligned text keeps its top-left corner. A value longer than 100,000 characters, or measured
+  past the 10⁷ size limit, is not applied, and an edit with no session does nothing.
+- **Ending.** `editText({ type: 'commit' })`, which Escape and Mod+Enter in the text area send, a
+  press that reaches the active tool and a tool change end the session; camera gestures do not. A
+  new text left empty is removed by cancelling its transaction, with no entry; an existing text
+  emptied is deleted as one `delete` entry; any other session commits one entry, `create` for a new
+  text and `edit-text` for a re-edit, which records nothing when the text ends as it started. The
+  text alone is then selected, before and after the commit as for creations (the ENG-06 review's
+  m2), unless it is new and tool lock is on, and the Selection tool becomes active unless tool lock
+  is on. The press that ended the session then reaches that tool, so a tap on empty canvas leaves
+  nothing selected, as B-06's mobile tap did, and a press on an element selects it.
+- **Re-editing.** A double tap on a text with the Selection tool edits it (REQ-C10); a Shift double
+  tap stays a Shift tap, so it still removes the text from the selection.
+- **Resizing.** A resized text's measured size still scales with its font, as ENG-10 decided; the
+  text is measured again at its next edit, not at the resize.
+- **Fonts.** The canvas renderer draws texts in the bundled face of each family, then its generic
+  fallback, and exports that mapping, which the web app's measurer and text area use. The page loads
+  the three faces before it creates the editor, so no text exists before they load; measuring stored
+  texts again when a font finishes loading comes with the documents that persistence (ENG-13)
+  loads.
+- **The web app.** The text area lies in a layer over the canvas, inside the host's border but
+  outside the canvas host, so its pointer and key events never reach the input adapter and the
+  shortcuts pause while it has focus (ADR 0008 decision 7). It shows the text at its box on screen,
+  one font size wider so the caret has room, in its family's font at its size times the zoom, with
+  its line height and stroke colour, turned about its centre by its rotation. It is focused when a
+  session starts, sends its whole value on each input, holds at most 100,000 characters, and ends
+  the session on Escape or Mod+Enter (Cmd on Apple platforms, Ctrl elsewhere); Enter inserts a line
+  break. The tool bar shows Text (T, 7) after Freehand, and the page says what can be written and
+  that text formatting does not exist yet.
+- **Not here.** Labels in shapes, wrapping and the font picker, which are out of scope; alignment,
+  font size and colour controls, sticky notes and pasting text (P1); measuring texts again when a
+  font loads (ENG-13).
 
 ## Requirements served
 
