@@ -6,6 +6,20 @@ import { canvasFont } from '@planewright/render-canvas';
 
 export type MeasuringContext = Pick<CanvasRenderingContext2D, 'font' | 'measureText'>;
 
+/** The page that gives an offscreen canvas to measure text with. */
+export interface MeasuringPage {
+  createElement(tag: 'canvas'): { getContext(id: '2d'): MeasuringContext | null };
+}
+
+/** A measurer on an offscreen canvas of its own, so that no drawing state is ever shared. */
+export function pageTextMeasurer(page: MeasuringPage): TextMeasurer {
+  const context = page.createElement('canvas').getContext('2d');
+  if (context === null) {
+    throw new Error('This browser gave no 2D canvas context to measure text with.');
+  }
+  return canvasTextMeasurer(context);
+}
+
 export function canvasTextMeasurer(context: MeasuringContext): TextMeasurer {
   return {
     measure(text, font) {

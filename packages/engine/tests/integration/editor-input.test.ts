@@ -126,6 +126,7 @@ describe('the view and the commands', () => {
       'tool.diamond',
       'tool.line',
       'tool.freehand',
+      'tool.text',
       'tool.lock',
       'history.undo',
       'history.redo',

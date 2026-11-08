@@ -1,11 +1,14 @@
+import { layoutText } from '../geometry/text-layout.ts';
+import type { TextMeasurer } from '../geometry/text-measurer.ts';
 import { subtract } from '../math/vector.ts';
-import { styleForKind } from '../model/defaults.ts';
+import { DEFAULT_TEXT_FONT, styleForKind } from '../model/defaults.ts';
 import type {
   ElementKind,
   FreehandElement,
   LineElement,
   Point,
   ShapeElement,
+  TextElement,
 } from '../model/elements.ts';
 import type { ElementId } from '../model/ids.ts';
 import { LIMITS } from '../model/limits.ts';
@@ -21,7 +24,7 @@ import type { SceneReader } from '../scene/store.ts';
 export type ShapeKind = ShapeElement['kind'];
 /** The kinds that a drag draws over its box or between its ends. */
 export type DrawnKind = ShapeKind | 'line';
-export type CreatedElement = ShapeElement | LineElement | FreehandElement;
+export type CreatedElement = ShapeElement | LineElement | FreehandElement | TextElement;
 
 /** The side of a tapped closed shape and the length of a tapped line (REQ-C03, REQ-C04). */
 export const TAP_SIZE = 100;
@@ -115,6 +118,17 @@ export function strokeThrough(base: NewElement, points: readonly Point[]): Freeh
     kind: 'freehand',
     points: points.map((point) => subtract(point, origin)),
   };
+}
+
+/**
+ * An empty left-aligned text in the default font whose left edge is at a scene point and whose
+ * first line is centred vertically on it (REQ-C09), measured through the text measurer.
+ */
+export function textAt(base: NewElement, at: Point, measurer: TextMeasurer): TextElement {
+  const content = { text: '', font: DEFAULT_TEXT_FONT, align: 'left' } as const;
+  const { width, height, lineHeight } = layoutText(content, measurer);
+  const origin = { x: at.x, y: at.y - lineHeight / 2 };
+  return { ...common(base, 'text', origin), kind: 'text', width, height, content };
 }
 
 /**

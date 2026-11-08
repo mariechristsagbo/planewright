@@ -9,18 +9,21 @@ import { toColor } from '../model/color.ts';
 import type { DocumentState } from '../model/document.ts';
 import type { ElementId } from '../model/ids.ts';
 import type { Cancel } from '../ports/ports.ts';
-import { createCore, routeGesture, showSelection, targetOf } from './editor-core.ts';
+import { createCore, finishText, routeGesture, showSelection, targetOf } from './editor-core.ts';
 import type { EditorCore, EditorPorts } from './editor-core.ts';
 import type { RenderFrame } from './render-frame.ts';
+import { editSession } from './text-session.ts';
+import type { TextEdit } from './text-session.ts';
 import { createViewPublisher } from './view.ts';
 import type { EditorView, ViewPublisher } from './view.ts';
 
 // The editor façade (docs/architecture/engine/modules.md#public-surface), as far as the editor
-// surface (ENG-08) and the selection (ENG-09) need it: input, commands, the selection, the
-// viewport, frames and the view. Text editing and saving join with their issues.
+// surface (ENG-08), the selection (ENG-09) and text editing (ENG-12) need it: input, commands, the
+// selection, text edits, the viewport, frames and the view. Saving joins with its issue.
 
 export type { EditorPorts } from './editor-core.ts';
 export type { EditorView } from './view.ts';
+export type { TextEdit, TextEditView } from './text-session.ts';
 
 /** A command as a surface shows it: its identifier, label, shortcuts and tool. */
 export type EditorCommand = Pick<Command, 'id' | 'label' | 'shortcuts' | 'tool'>;
@@ -42,6 +45,11 @@ export interface Editor {
    * never an undo step (REQ-S13).
    */
   select(ids: readonly ElementId[]): void;
+  /**
+   * Takes the text area's value, which the edited text shows measured again, or ends the session
+   * on Escape or Mod+Enter (REQ-C09, REQ-C10); nothing happens when no text is edited.
+   */
+  editText(edit: TextEdit): void;
   /** The canvas size in CSS pixels and the device pixel ratio, from the canvas host. */
   resize(size: ViewportSize): void;
   /** Hands the listener every frame built on an animation frame, starting with a full one. */
@@ -149,6 +157,12 @@ export function openEditor(ports: EditorPorts, document: DocumentState): Editor 
     select(ids) {
       alive();
       core.selection.set(ids);
+      publish();
+    },
+    editText(edit) {
+      alive();
+      if (edit.type === 'commit') finishText(core);
+      else editSession(core, edit.text);
       publish();
     },
     resize(size) {

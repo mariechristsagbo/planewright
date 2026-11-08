@@ -15,6 +15,7 @@ export const KEYS = {
   diamond: key('d', 'KeyD'),
   line: key('l', 'KeyL'),
   freehand: key('p', 'KeyP'),
+  text: key('t', 'KeyT'),
   lock: key('q', 'KeyQ'),
   undo: key('z', 'KeyZ', { mod: true }),
   redo: key('z', 'KeyZ', { mod: true, shift: true }),

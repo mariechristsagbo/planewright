@@ -5,10 +5,13 @@ import { describe, expect, it, vi } from 'vitest';
 import { canvasRenderer } from '../../src/editor/renderer.ts';
 import { browserPorts } from '../../src/platform/ports.ts';
 import type { BrowserPage } from '../../src/platform/ports.ts';
-import { canvasTextMeasurer } from '../../src/platform/text-measurer.ts';
+import { canvasTextMeasurer, pageTextMeasurer } from '../../src/platform/text-measurer.ts';
 
 // The editor's ports over the browser (docs/architecture/engine/modules.md#ports) and the text
 // measurer that the canvas renderer lays texts out with.
+
+/** A measurer that the ports hand to the editor as they are given it. */
+const MEASURER = { measure: () => ({ width: 1, ascent: 1, descent: 0 }) };
 
 function fakePage(bytes: (index: number) => number): BrowserPage {
   return {
@@ -30,7 +33,7 @@ function fakePage(bytes: (index: number) => number): BrowserPage {
 describe('the browser ports', () => {
   it('read the page clock, and schedule and cancel timers and animation frames', () => {
     const page = fakePage(() => 0);
-    const { clock, scheduler } = browserPorts(page);
+    const { clock, scheduler } = browserPorts(page, MEASURER);
     expect(clock.now()).toBe(42.5);
     const task = () => undefined;
     scheduler.after(500, task)();
@@ -42,13 +45,42 @@ describe('the browser ports', () => {
   });
 
   it('write 128 random bits as 22 base64url characters', () => {
-    expect(browserPorts(fakePage((index) => index)).ids.next()).toBe('AAECAwQFBgcICQoLDA0ODw');
-    expect(browserPorts(fakePage(() => 255)).ids.next()).toBe('_____________________w');
-    expect(browserPorts(fakePage((index) => 0xfb - index)).ids.next()).toMatch(/^[\w-]{22}$/u);
+    expect(
+      browserPorts(
+        fakePage((index) => index),
+        MEASURER,
+      ).ids.next(),
+    ).toBe('AAECAwQFBgcICQoLDA0ODw');
+    expect(
+      browserPorts(
+        fakePage(() => 255),
+        MEASURER,
+      ).ids.next(),
+    ).toBe('_____________________w');
+    expect(
+      browserPorts(
+        fakePage((index) => 0xfb - index),
+        MEASURER,
+      ).ids.next(),
+    ).toMatch(/^[\w-]{22}$/u);
+  });
+
+  it('hand the editor the text measurer they are given', () => {
+    expect(
+      browserPorts(
+        fakePage(() => 0),
+        MEASURER,
+      ).text,
+    ).toBe(MEASURER);
   });
 
   it('are enough for an editor', () => {
-    const editor = createEditor(browserPorts(fakePage((index) => index * 7)));
+    const editor = createEditor(
+      browserPorts(
+        fakePage((index) => index * 7),
+        MEASURER,
+      ),
+    );
     expect(editor.view.tool).toBe('selection');
     editor.dispose();
   });
@@ -82,6 +114,23 @@ describe('the canvas text measurer', () => {
       '16px "Planewright Hand", cursive',
       '12.5px "Planewright Mono", monospace',
     ]);
+  });
+});
+
+describe('the page text measurer', () => {
+  it('measures on an offscreen canvas of its own, and refuses a page without a 2D context', () => {
+    const context = {
+      font: '',
+      measureText: (text: string) => ({ width: text.length }) as TextMetrics,
+    };
+    const page = { createElement: () => ({ getContext: () => context }) };
+    expect(
+      pageTextMeasurer(page).measure('abcd', { family: 'mono', size: 10, lineHeight: 1 }).width,
+    ).toBe(4);
+    expect(context.font).toBe('10px "Planewright Mono", monospace');
+    expect(() => pageTextMeasurer({ createElement: () => ({ getContext: () => null }) })).toThrow(
+      'This browser gave no 2D canvas context to measure text with.',
+    );
   });
 });
 

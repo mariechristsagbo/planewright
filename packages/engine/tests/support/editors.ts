@@ -3,7 +3,12 @@ import type { Editor, EditorView } from '../../src/editor/editor.ts';
 import type { RenderFrame } from '../../src/editor/render-frame.ts';
 import type { InputEvent } from '../../src/input/events.ts';
 import type { DocumentState } from '../../src/model/document.ts';
-import { createCountingIds, createManualClock, createQueueScheduler } from './fakes.ts';
+import {
+  createCountingIds,
+  createFixedAdvanceMeasurer,
+  createManualClock,
+  createQueueScheduler,
+} from './fakes.ts';
 import type { QueueScheduler } from './fakes.ts';
 
 // An editor over fake ports on a 1280 × 720 viewport, driven by scripted input sessions.
@@ -28,7 +33,7 @@ export const VIEWPORT = { width: 1280, height: 720, pixelRatio: 1 };
 export function editorHarness(document?: DocumentState): EditorHarness {
   const clock = createManualClock();
   const scheduler = createQueueScheduler(clock);
-  const ports = { clock, scheduler, ids: createCountingIds() };
+  const ports = { clock, scheduler, ids: createCountingIds(), text: createFixedAdvanceMeasurer() };
   const editor = document === undefined ? createEditor(ports) : openEditor(ports, document);
   editor.resize(VIEWPORT);
   const frames: RenderFrame[] = [];

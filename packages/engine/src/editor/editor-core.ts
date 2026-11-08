@@ -1,23 +1,22 @@
 import { sceneFromScreen } from '../camera/camera.ts';
 import type { Camera } from '../camera/camera.ts';
 import { panBy } from '../camera/pan.ts';
+import type { TextMeasurer } from '../geometry/text-measurer.ts';
 import { DEFAULT_COMMANDS } from '../commands/defaults.ts';
 import { createCommandRegistry } from '../commands/registry.ts';
-import type { CommandRegistry, CommandTarget, EditOptions } from '../commands/registry.ts';
+import type { CommandRegistry, CommandTarget } from '../commands/registry.ts';
 import { createHistory } from '../history/history.ts';
 import type { History } from '../history/history.ts';
 import type { Transaction } from '../history/transaction.ts';
 import type { Gesture } from '../input/gestures.ts';
 import type { ViewportRouter } from '../input/viewport-routing.ts';
-import type { HistoryLabel } from '../history/entry.ts';
 import { INITIAL_DEFAULT_STYLE } from '../model/defaults.ts';
 import type { DocumentState } from '../model/document.ts';
 import { newClientId, newElementId } from '../model/ids.ts';
 import type { ElementId } from '../model/ids.ts';
 import type { Style } from '../model/style.ts';
 import type { Clock, IdSource, Scheduler } from '../ports/ports.ts';
-import { isEmptyChangeSet } from '../scene/change-set.ts';
-import type { ChangeSet, ChangeStamp, UnstampedChangeSet } from '../scene/change-set.ts';
+import type { ChangeSet, ChangeStamp } from '../scene/change-set.ts';
 import { createSceneStore } from '../scene/store.ts';
 import type { SceneStore } from '../scene/store.ts';
 import { hitTest } from '../selection/hit-test.ts';
@@ -26,17 +25,23 @@ import type { Selection } from '../selection/selection.ts';
 import { activeTool, isCreationTool } from '../tools/active.ts';
 import type { ActiveTool } from '../tools/active.ts';
 import type { CursorKind, GestureEvent, ToolContext, ToolEffect, ToolId } from '../tools/tool.ts';
+import { applyEdit, edit } from './edits.ts';
 import { createRenderLoop } from './render-loop.ts';
 import type { RenderLoop } from './render-loop.ts';
+import { endSession, startSession } from './text-session.ts';
+import type { TextSession } from './text-session.ts';
 
 // What the editor composes (docs/architecture/engine/modules.md#public-surface): the scene store,
-// the selection, the history, the render loop, the command registry and the active tool.
+// the selection, the history, the render loop, the command registry, the active tool and the text
+// session.
 
 /** The ports that the editor's parts use so far; the others join with the parts that need them. */
 export interface EditorPorts {
   readonly clock: Clock;
   readonly scheduler: Scheduler;
   readonly ids: IdSource;
+  /** Measures texts in their fonts (docs/architecture/engine/modules.md#ports). */
+  readonly text: TextMeasurer;
 }
 
 export interface EditorCore {
@@ -58,6 +63,9 @@ export interface EditorCore {
   readonly defaults: Style;
   /** The transaction of the tool's gesture: open from its first preview to its commit or cancel. */
   transaction: Transaction | null;
+  readonly measurer: TextMeasurer;
+  /** The text being edited, which holds its own transaction. */
+  session: TextSession | null;
 }
 
 /** The change set that loads a document into an empty scene store. */
@@ -93,31 +101,9 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     toolLock: false,
     defaults: INITIAL_DEFAULT_STYLE,
     transaction: null,
+    measurer: ports.text,
+    session: null,
   };
-}
-
-/**
- * A command's change: one transaction, so one undo step, with the selection after it. The
- * selection is set before the commit, which records it for redo, and again after it, because the
- * commit's transient revert drops elements that the preview added from the selection (the ENG-06
- * review's m2, open until the selection layer keeps them).
- */
-function edit(
-  core: EditorCore,
-  label: HistoryLabel,
-  changes: UnstampedChangeSet,
-  options: EditOptions = {},
-): void {
-  const transaction = core.history.begin();
-  try {
-    transaction.preview({ ...changes, ...core.stamp() });
-    if (options.select !== undefined) core.selection.set(options.select);
-  } catch (error) {
-    transaction.cancel();
-    throw error;
-  }
-  transaction.commit(label, options.mergeKey === undefined ? {} : { mergeKey: options.mergeKey });
-  if (options.select !== undefined) core.selection.set(options.select);
 }
 
 /**
@@ -128,6 +114,16 @@ function switchTool(core: EditorCore, tool: ToolId): void {
   core.tool = activeTool(tool);
   core.cursor = core.tool.cursor;
   if (isCreationTool(tool)) core.selection.set([]);
+}
+
+/**
+ * Ends the text session, if one is open; the Selection tool then becomes active, unless tool lock
+ * is on (docs/architecture/engine/interaction.md#text-editing).
+ */
+export function finishText(core: EditorCore): void {
+  if (endSession(core) && !core.toolLock && core.tool.id !== 'selection') {
+    switchTool(core, 'selection');
+  }
 }
 
 /**
@@ -152,6 +148,7 @@ export function targetOf(core: EditorCore, cancelGesture: () => boolean): Comman
       // As Escape does, so the old tool removes what its gesture shows, such as a marquee, and the
       // pointer does nothing until it lifts.
       cancelGesture();
+      finishText(core);
       switchTool(core, tool);
     },
     get toolLock() {
@@ -187,42 +184,6 @@ export function toolEventOf(gesture: Gesture, camera: Camera): GestureEvent | nu
   return { ...gesture, scene: sceneFromScreen(gesture.at, camera) };
 }
 
-type EditEffect = Extract<ToolEffect, { readonly type: 'preview' | 'commit' | 'cancel' }>;
-
-/**
- * Commits a gesture's transaction. Its selection after is set before the commit, which records it
- * for redo, and again after it, because the commit's transient revert drops the elements that its
- * previews added from the selection (the ENG-06 review's m2), as `edit` does for commands.
- */
-function commit(
-  core: EditorCore,
-  transaction: Transaction,
-  effect: { readonly label: HistoryLabel; readonly select?: readonly ElementId[] },
-): void {
-  if (effect.select !== undefined) core.selection.set(effect.select);
-  transaction.commit(effect.label);
-  if (effect.select !== undefined) core.selection.set(effect.select);
-}
-
-/**
- * A gesture's document changes: its first preview opens its transaction, so undo and redo are
- * ignored until it closes (REQ-H06); its commit records one undo step and its cancel reverts it.
- */
-function applyEdit(core: EditorCore, effect: EditEffect): void {
-  if (effect.type === 'preview') {
-    core.transaction ??= core.history.begin();
-    if (!isEmptyChangeSet(effect.changes)) {
-      core.transaction.preview({ ...effect.changes, ...core.stamp() });
-    }
-    return;
-  }
-  const { transaction } = core;
-  core.transaction = null;
-  if (transaction === null) return;
-  if (effect.type === 'commit') commit(core, transaction, effect);
-  else transaction.cancel();
-}
-
 function applyEffect(core: EditorCore, effect: ToolEffect): void {
   switch (effect.type) {
     case 'pan':
@@ -246,6 +207,9 @@ function applyEffect(core: EditorCore, effect: ToolEffect): void {
     case 'cancel':
       applyEdit(core, effect);
       break;
+    case 'edit-text':
+      startSession(core, effect.id);
+      break;
   }
 }
 
@@ -264,6 +228,7 @@ function contextOf(core: EditorCore, camera: Camera): ToolContext {
     defaults: core.defaults,
     toolLock: core.toolLock,
     newId: core.newId,
+    measurer: core.measurer,
   };
 }
 
@@ -282,6 +247,8 @@ export function routeGesture(core: EditorCore, router: ViewportRouter, gesture: 
   if (moved !== null) {
     core.loop.update({ camera: moved });
   } else if (event !== null) {
+    // A press outside the text area commits the text being edited.
+    if (event.type === 'press') finishText(core);
     sizeHandlesFor(core, event);
     for (const effect of core.tool.reduce(event, contextOf(core, camera)))
       applyEffect(core, effect);

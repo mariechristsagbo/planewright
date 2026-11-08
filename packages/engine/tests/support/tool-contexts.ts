@@ -6,9 +6,10 @@ import type { SceneReader } from '../../src/scene/store.ts';
 import { hitTest } from '../../src/selection/hit-test.ts';
 import type { ToolContext } from '../../src/tools/tool.ts';
 import { testId } from './elements.ts';
+import { createFixedAdvanceMeasurer } from './fakes.ts';
 
 // What a tool reads, as the editor gives it: the camera, the scene, the selection and the hit test,
-// the default style, tool lock and new identifiers.
+// the default style, tool lock, new identifiers and a text measurer with a fixed advance.
 
 export const ZOOM_1: Camera = { x: 0, y: 0, zoom: 1 };
 
@@ -38,5 +39,6 @@ export function toolContext(
     defaults: options.defaults ?? INITIAL_DEFAULT_STYLE,
     toolLock: options.toolLock ?? false,
     newId: options.newId ?? newIds(),
+    measurer: createFixedAdvanceMeasurer(),
   };
 }

@@ -1,4 +1,5 @@
 import type { Camera } from '../camera/camera.ts';
+import type { TextMeasurer } from '../geometry/text-measurer.ts';
 import type { HistoryLabel } from '../history/entry.ts';
 import type { Modifiers } from '../input/events.ts';
 import type { Box, Point } from '../model/elements.ts';
@@ -13,12 +14,12 @@ import type { SelectionState } from '../selection/selection.ts';
 // Tools (docs/architecture/engine/interaction.md#tools): each tool is a reducer over its own state
 // that returns effects for the editor to apply, so a tool never changes anything itself.
 
-/** The tools that create elements; the text tool joins with its issue (ENG-12). */
-export type CreationToolId = 'rectangle' | 'ellipse' | 'diamond' | 'line' | 'freehand';
+/** The tools that create elements. */
+export type CreationToolId = 'rectangle' | 'ellipse' | 'diamond' | 'line' | 'freehand' | 'text';
 
 export type ToolId = 'selection' | 'hand' | CreationToolId;
 
-export type CursorKind = 'default' | 'grab' | 'grabbing' | 'crosshair';
+export type CursorKind = 'default' | 'grab' | 'grabbing' | 'crosshair' | 'text';
 
 /** A gesture as a tool sees it: the recogniser's, with the scene point under the pointer. */
 export type GestureEvent =
@@ -65,7 +66,12 @@ export type ToolEffect =
   /** Reverts the gesture's previews and closes its transaction without an undo step. */
   | { readonly type: 'cancel' }
   /** Makes another tool active once the gesture has ended, as a creation does (REQ-C05). */
-  | { readonly type: 'set-tool'; readonly tool: ToolId };
+  | { readonly type: 'set-tool'; readonly tool: ToolId }
+  /**
+   * Starts editing a text: a new one in the gesture's open transaction, which its preview added,
+   * or an existing one in a transaction of its own (REQ-C10).
+   */
+  | { readonly type: 'edit-text'; readonly id: ElementId };
 
 /** What a tool may read. */
 export interface ToolContext {
@@ -80,6 +86,8 @@ export interface ToolContext {
   readonly toolLock: boolean;
   /** A new element identifier from the identifier source. */
   readonly newId: () => ElementId;
+  /** Measures texts in their fonts, through the editor's text measurer port. */
+  readonly measurer: TextMeasurer;
 }
 
 export interface ToolStep<State> {

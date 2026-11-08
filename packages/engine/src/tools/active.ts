@@ -2,6 +2,7 @@ import { drawingTool } from './drawing-tool.ts';
 import { freehandTool } from './freehand-tool.ts';
 import { handTool } from './hand.ts';
 import { selectionTool } from './selection-tool.ts';
+import { textTool } from './text-tool.ts';
 import type { CursorKind, GestureEvent, Tool, ToolContext, ToolEffect, ToolId } from './tool.ts';
 
 /** A tool with its current state, whatever that state's type is. */
@@ -39,6 +40,8 @@ export function activeTool(id: ToolId): ActiveTool {
       return activate(drawingTool(id));
     case 'freehand':
       return activate(freehandTool);
+    case 'text':
+      return activate(textTool);
   }
 }
 
