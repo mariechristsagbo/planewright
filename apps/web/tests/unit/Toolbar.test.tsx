@@ -32,6 +32,7 @@ describe('the tool bar', () => {
       'DiamondD or 4',
       'LineL or 5',
       'FreehandP or 6',
+      'Tool lockQ',
     ]);
     expect(hand).toHaveAttribute('aria-pressed', 'false');
     expect(selection).toHaveAttribute('aria-pressed', 'true');
@@ -43,8 +44,33 @@ describe('the tool bar', () => {
     expect(hand).toHaveAccessibleDescription('Shortcut H. Drag to pan the canvas.');
     expect(selection).toHaveAttribute('aria-keyshortcuts', 'V 1');
     expect(selection).toHaveAccessibleDescription(
-      'Shortcuts V or 1. Selects, moves, resizes and rotates elements; nothing can be drawn yet, so there is nothing to select.',
+      'Shortcuts V or 1. Selects, moves, resizes and rotates the drawn elements.',
     );
+    const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
+    const describe = (name: string) => within(toolbar).getByRole('button', { name });
+    expect(describe('Rectangle')).toHaveAccessibleDescription(
+      'Shortcuts R or 2. Drag to draw a rectangle; a tap draws a 100 by 100 one.',
+    );
+    expect(describe('Line')).toHaveAttribute('aria-keyshortcuts', 'L 5');
+    expect(describe('Freehand')).toHaveAccessibleDescription(
+      'Shortcuts P or 6. Drag to draw a freehand stroke; a tap draws a dot. The tool stays active.',
+    );
+  });
+
+  it('REQ-C05 REQ-Y01 shows tool lock as a toggle whose state is pressed, never in its name', () => {
+    const { toolbar, editor } = mount();
+    const lock = within(toolbar).getByRole('button', { name: 'Tool lock' });
+    expect(lock).toHaveAttribute('aria-pressed', 'false');
+    expect(lock).toHaveAttribute('aria-keyshortcuts', 'Q');
+    expect(lock).toHaveAccessibleDescription(
+      'Shortcut Q. Keeps the rectangle, ellipse, diamond and line tools active after drawing, with nothing selected.',
+    );
+    fireEvent.click(lock);
+    expect(editor.view.toolLock).toBe(true);
+    expect(screen.getByRole('button', { name: 'Tool lock', pressed: true })).toBe(lock);
+    expect(fireEvent.keyDown(lock, { key: 'q', code: 'KeyQ' })).toBe(false);
+    expect(lock).toHaveAttribute('aria-pressed', 'false');
+    expect(editor.view.tool).toBe('selection');
   });
 
   it('REQ-Y01 shows the chosen tool as a pressed state and never in its name', () => {
@@ -67,14 +93,17 @@ describe('the tool bar', () => {
     };
     expect(press('ArrowRight')).toBe(selection);
     expect([hand.tabIndex, selection.tabIndex]).toEqual([-1, 0]);
+    const lock = within(toolbar).getByRole('button', { name: 'Tool lock' });
     expect(press('ArrowLeft')).toBe(hand);
+    expect(press('ArrowLeft')).toBe(lock);
     expect(press('ArrowLeft')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('ArrowDown')).toBe(lock);
     expect(press('ArrowDown')).toBe(hand);
-    expect(press('ArrowUp')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('ArrowUp')).toBe(lock);
     expect(press('ArrowDown')).toBe(hand);
     expect(press('ArrowDown')).toBe(selection);
     expect(press('Home')).toBe(hand);
-    expect(press('End')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('End')).toBe(lock);
     expect(press('ArrowRight')).toBe(hand);
   });
 

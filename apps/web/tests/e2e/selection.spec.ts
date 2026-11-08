@@ -22,11 +22,11 @@ const INK = `(() => {
 
 const overlayInk = async (page: Page): Promise<number> => Number(await page.evaluate(INK));
 
-test('the Selection button says that it selects and transforms, and that there is nothing to select yet', async ({
+test('the Selection button says that it selects and transforms the drawn elements', async ({
   page,
 }) => {
   await expect(page.getByRole('button', { name: 'Selection' })).toHaveAccessibleDescription(
-    'Shortcuts V or 1. Selects, moves, resizes and rotates elements; nothing can be drawn yet, so there is nothing to select.',
+    'Shortcuts V or 1. Selects, moves, resizes and rotates the drawn elements.',
   );
 });
 
@@ -75,7 +75,10 @@ test('a tool change during a marquee removes it, and the release and Escape leav
   await page.mouse.move(box.x + 400, box.y + 300, { steps: 5 });
   await expect.poll(() => overlayInk(page)).toBeGreaterThan(0);
   await page.keyboard.press('h');
-  await expect(page.getByRole('button', { name: 'Hand' })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('button', { name: 'Hand', exact: true })).toHaveAttribute(
+    'aria-pressed',
+    'true',
+  );
   await expect.poll(() => overlayInk(page)).toBe(0);
   await page.mouse.up();
   await page.keyboard.press('Escape');

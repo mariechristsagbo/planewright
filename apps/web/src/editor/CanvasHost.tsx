@@ -46,9 +46,11 @@ export function CanvasHost() {
         <canvas ref={overlay} className="canvas-layer" aria-hidden="true" />
       </div>
       <p id="canvas-instructions" className="canvas-instructions">
-        The canvas is empty and nothing can be drawn on it yet. Scroll to pan, Shift+scroll to pan
-        sideways, and {mod}+scroll or pinch to zoom; {mod}+=, {mod}+− and {mod}+0 zoom from the
-        keyboard. Drag with the middle button, with Space held or with the Hand tool (H) to pan.
+        Choose a drawing tool, then drag on the canvas to draw, or tap for the default size; the
+        Selection tool (V) selects, moves, resizes and rotates what is drawn. Scroll to pan,
+        Shift+scroll to pan sideways, and {mod}+scroll or pinch to zoom; {mod}+=, {mod}+− and {mod}
+        +0 zoom from the keyboard. Drag with the middle button, with Space held or with the Hand
+        tool (H) to pan.
       </p>
     </div>
   );

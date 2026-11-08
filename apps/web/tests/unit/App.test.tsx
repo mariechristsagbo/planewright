@@ -6,18 +6,18 @@ import { App } from '../../src/App.tsx';
 import { BUILD_STATUS, FOUNDATION_CONTENTS, NOT_YET_IMPLEMENTED } from '../../src/foundation.ts';
 import { surfaceHarness } from '../support/surface.tsx';
 
-// The page (AGENTS.md: the UI stays factual): the navigation-only editor surface, and what this
-// build contains and does not do yet.
+// The page (AGENTS.md: the UI stays factual): the editor surface, and what this build contains
+// and does not do yet.
 
 const mount = () => render(<App surface={surfaceHarness().surface} />);
 
 describe('App', () => {
-  it('AC states that the build only navigates an empty canvas and cannot draw', () => {
+  it('AC states what the build draws and that it has no text, saving or collaboration', () => {
     mount();
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent(BUILD_STATUS);
     expect(BUILD_STATUS).toBe(
-      'Pre-release — navigation only: you can pan and zoom an empty canvas, but nothing can be drawn yet.',
+      'Pre-release — you can draw, select and transform shapes, lines and freehand strokes, but there is no text, saving or collaboration yet.',
     );
   });
 
@@ -28,11 +28,9 @@ describe('App', () => {
     for (const feature of NOT_YET_IMPLEMENTED) {
       expect(missing).toHaveTextContent(feature);
     }
-    expect(missing).toHaveTextContent(
-      /the engine moves, resizes, rotates, duplicates, deletes and nudges a selection, but nothing can be drawn yet to select/,
-    );
-    expect(missing).not.toHaveTextContent(/Selection tool does nothing/);
-    expect(missing).toHaveTextContent(/Undo and Redo stay disabled/);
+    expect(missing).toHaveTextContent(/Text: the Text tool and text editing/);
+    expect(missing).toHaveTextContent(/a reload loses the drawing/);
+    expect(missing).not.toHaveTextContent(/Drawing shapes|nothing can be drawn|Undo and Redo stay/);
   });
 
   it('lists what the build contains', () => {
@@ -42,8 +40,9 @@ describe('App', () => {
       expect(contents).toHaveTextContent(name);
     }
     expect(contents).toHaveTextContent(
-      /Selection tool and transforms.*Nothing creates elements yet, so there is nothing to select or transform\./,
+      /transforms and creation tools.*Drawn elements can be selected, moved, resized, rotated, duplicated, deleted and nudged, and each creation or edit is one undo step\./,
     );
+    expect(contents).not.toHaveTextContent(/Nothing creates elements/);
   });
 
   it('AC REQ-Y01 shows the tool bar, the canvas, Undo and Redo and the view as named parts', () => {

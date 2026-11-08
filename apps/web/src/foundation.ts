@@ -5,19 +5,19 @@ export interface FoundationItem {
 
 /** The one-line state of this build, shown as the page's status; keep in sync with the README. */
 export const BUILD_STATUS =
-  'Pre-release — navigation only: you can pan and zoom an empty canvas, but nothing can be drawn yet.';
+  'Pre-release — you can draw, select and transform shapes, lines and freehand strokes, but there is no text, saving or collaboration yet.';
 
 /** Facts about what this pre-release build contains; keep in sync with the README. */
 export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
   {
-    name: 'Navigation-only editor surface',
+    name: 'Editor surface',
     detail:
-      'An empty canvas that pans and zooms with the wheel, the keyboard, a middle-button drag, Space+drag, the Hand tool and two-finger touch gestures, with a tool bar and Undo and Redo controls.',
+      'A canvas that pans and zooms with the wheel, the keyboard, a middle-button drag, Space+drag, the Hand tool and two-finger touch gestures, with a tool bar for the rectangle, ellipse, diamond, line and freehand tools and tool lock, and Undo and Redo controls.',
   },
   {
     name: 'Canvas engine and renderer',
     detail:
-      'The engine’s document model, scene store, undo history, camera, gestures, commands, Selection tool and transforms, and its Canvas 2D renderer. Nothing creates elements yet, so there is nothing to select or transform.',
+      'The engine’s document model, scene store, undo history, camera, gestures, commands, Selection tool, transforms and creation tools, and its Canvas 2D renderer. Drawn elements can be selected, moved, resized, rotated, duplicated, deleted and nudged, and each creation or edit is one undo step.',
   },
   {
     name: 'Collaboration service skeleton',
@@ -36,9 +36,9 @@ export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
 ];
 
 export const NOT_YET_IMPLEMENTED: readonly string[] = [
-  'Drawing shapes, lines, freehand strokes and text',
-  'Transforming and editing elements: the engine moves, resizes, rotates, duplicates, deletes and nudges a selection, but nothing can be drawn yet to select',
-  'Undoing and redoing: nothing changes the drawing, so Undo and Redo stay disabled',
-  'Saving, loading and exporting drawings',
+  'Text: the Text tool and text editing',
+  'Styles: every element is drawn in the one default style, with no way to change its colours, widths or fill',
+  'Arrows, sticky notes, images and pressure-sensitive strokes',
+  'Saving, loading and exporting drawings: a reload loses the drawing',
   'Real-time collaboration',
 ];

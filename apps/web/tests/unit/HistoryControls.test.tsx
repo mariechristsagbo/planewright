@@ -21,7 +21,10 @@ describe('Undo and Redo', () => {
     expect(undo).toHaveAttribute('aria-keyshortcuts', 'Control+Z');
     expect(redo).toHaveAttribute('aria-keyshortcuts', 'Control+Shift+Z Control+Y');
     expect(undo).toHaveAccessibleDescription(
-      'Shortcut Ctrl+Z. Nothing changes the drawing yet, so there is nothing to undo or redo.',
+      'Shortcut Ctrl+Z. Undoes the last change to the drawing.',
+    );
+    expect(redo).toHaveAccessibleDescription(
+      'Shortcuts Ctrl+Shift+Z or Ctrl+Y. Redoes the last change that was undone.',
     );
     expect(redo).toHaveAccessibleDescription(/^Shortcuts Ctrl\+Shift\+Z or Ctrl\+Y\./);
   });
