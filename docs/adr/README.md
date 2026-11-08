@@ -15,6 +15,7 @@ introduced in [ADR 0001](0001-record-architecture-decisions.md).
 | [0008](0008-input-tools-and-commands.md)         | Input pipeline, tool state machines and one command registry | Accepted |
 | [0009](0009-persistence-and-interchange.md)      | Local persistence and the interchange format                 | Accepted |
 | [0010](0010-collaboration-ready-change-model.md) | A collaboration-ready change model, without collaboration    | Accepted |
+| [0011](0011-bundled-open-licence-fonts.md)       | Bundled open-licence fonts behind the three font families    | Proposed |
 
 To propose a decision, copy the structure of an existing ADR into the next number and submit it
 with the status Proposed in the pull request that needs it. The pull request's last commit before
