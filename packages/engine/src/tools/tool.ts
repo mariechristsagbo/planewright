@@ -3,6 +3,7 @@ import type { HistoryLabel } from '../history/entry.ts';
 import type { Modifiers } from '../input/events.ts';
 import type { Box, Point } from '../model/elements.ts';
 import type { ElementId } from '../model/ids.ts';
+import type { Style } from '../model/style.ts';
 import type { UnstampedChangeSet } from '../scene/change-set.ts';
 import type { SceneReader } from '../scene/store.ts';
 import type { HitResult } from '../selection/hit-test.ts';
@@ -12,10 +13,12 @@ import type { SelectionState } from '../selection/selection.ts';
 // Tools (docs/architecture/engine/interaction.md#tools): each tool is a reducer over its own state
 // that returns effects for the editor to apply, so a tool never changes anything itself.
 
-/** The tools so far; the creation tools join with their issues. */
-export type ToolId = 'selection' | 'hand';
+/** The tools that create elements; the text tool joins with its issue (ENG-12). */
+export type CreationToolId = 'rectangle' | 'ellipse' | 'diamond' | 'line';
 
-export type CursorKind = 'default' | 'grab' | 'grabbing';
+export type ToolId = 'selection' | 'hand' | CreationToolId;
+
+export type CursorKind = 'default' | 'grab' | 'grabbing' | 'crosshair';
 
 /** A gesture as a tool sees it: the recogniser's, with the scene point under the pointer. */
 export type GestureEvent =
@@ -50,18 +53,33 @@ export type ToolEffect =
   | { readonly type: 'marquee'; readonly box: Box | null }
   /** Applies a transient change set in the gesture's transaction, which the first one opens. */
   | { readonly type: 'preview'; readonly changes: UnstampedChangeSet }
-  /** Commits the gesture's transaction as one undo step (REQ-T11). */
-  | { readonly type: 'commit'; readonly label: HistoryLabel }
+  /**
+   * Commits the gesture's transaction as one undo step (REQ-T11), with `select` as the selection
+   * after it, which redo restores.
+   */
+  | {
+      readonly type: 'commit';
+      readonly label: HistoryLabel;
+      readonly select?: readonly ElementId[];
+    }
   /** Reverts the gesture's previews and closes its transaction without an undo step. */
-  | { readonly type: 'cancel' };
+  | { readonly type: 'cancel' }
+  /** Makes another tool active once the gesture has ended, as a creation does (REQ-C05). */
+  | { readonly type: 'set-tool'; readonly tool: ToolId };
 
-/** What a tool may read; the defaults, tool lock and new identifiers join with the creation tools. */
+/** What a tool may read. */
 export interface ToolContext {
   readonly camera: Camera;
   readonly scene: SceneReader;
   readonly selection: SelectionState;
   /** What a press at a screen point hits: a handle, an element, the selection box or nothing. */
   readonly hit: (at: Point, pointer: PointerKind) => HitResult;
+  /** The editor's current default style, which new elements take (REQ-C12). */
+  readonly defaults: Style;
+  /** Whether a creation tool stays active after a creation (REQ-C05). */
+  readonly toolLock: boolean;
+  /** A new element identifier from the identifier source. */
+  readonly newId: () => ElementId;
 }
 
 export interface ToolStep<State> {

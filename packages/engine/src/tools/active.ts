@@ -1,3 +1,4 @@
+import { drawingTool } from './drawing-tool.ts';
 import { handTool } from './hand.ts';
 import { selectionTool } from './selection-tool.ts';
 import type { CursorKind, GestureEvent, Tool, ToolContext, ToolEffect, ToolId } from './tool.ts';
@@ -25,5 +26,18 @@ function activate<State>(tool: Tool<State>): ActiveTool {
 
 /** A tool in its initial state. */
 export function activeTool(id: ToolId): ActiveTool {
-  return id === 'hand' ? activate(handTool) : activate(selectionTool);
+  switch (id) {
+    case 'hand':
+      return activate(handTool);
+    case 'selection':
+      return activate(selectionTool);
+    case 'rectangle':
+    case 'ellipse':
+    case 'diamond':
+    case 'line':
+      return activate(drawingTool(id));
+  }
 }
+
+/** Whether a tool creates elements, so that choosing it clears the selection. */
+export const isCreationTool = (id: ToolId): boolean => id !== 'selection' && id !== 'hand';

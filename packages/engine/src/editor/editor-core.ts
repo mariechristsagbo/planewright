@@ -10,9 +10,11 @@ import type { Transaction } from '../history/transaction.ts';
 import type { Gesture } from '../input/gestures.ts';
 import type { ViewportRouter } from '../input/viewport-routing.ts';
 import type { HistoryLabel } from '../history/entry.ts';
+import { INITIAL_DEFAULT_STYLE } from '../model/defaults.ts';
 import type { DocumentState } from '../model/document.ts';
 import { newClientId, newElementId } from '../model/ids.ts';
 import type { ElementId } from '../model/ids.ts';
+import type { Style } from '../model/style.ts';
 import type { Clock, IdSource, Scheduler } from '../ports/ports.ts';
 import { isEmptyChangeSet } from '../scene/change-set.ts';
 import type { ChangeSet, ChangeStamp, UnstampedChangeSet } from '../scene/change-set.ts';
@@ -21,9 +23,9 @@ import type { SceneStore } from '../scene/store.ts';
 import { hitTest } from '../selection/hit-test.ts';
 import { createSelection, sameIds } from '../selection/selection.ts';
 import type { Selection } from '../selection/selection.ts';
-import { activeTool } from '../tools/active.ts';
+import { activeTool, isCreationTool } from '../tools/active.ts';
 import type { ActiveTool } from '../tools/active.ts';
-import type { CursorKind, GestureEvent, ToolContext, ToolEffect } from '../tools/tool.ts';
+import type { CursorKind, GestureEvent, ToolContext, ToolEffect, ToolId } from '../tools/tool.ts';
 import { createRenderLoop } from './render-loop.ts';
 import type { RenderLoop } from './render-loop.ts';
 
@@ -50,6 +52,10 @@ export interface EditorCore {
   keyPresses: number;
   tool: ActiveTool;
   cursor: CursorKind;
+  /** Whether a creation tool stays active after a creation (REQ-C05). */
+  toolLock: boolean;
+  /** The current default style, which new elements take (REQ-C12). */
+  readonly defaults: Style;
   /** The transaction of the tool's gesture: open from its first preview to its commit or cancel. */
   transaction: Transaction | null;
 }
@@ -84,6 +90,8 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     keyPresses: 0,
     tool,
     cursor: tool.cursor,
+    toolLock: false,
+    defaults: INITIAL_DEFAULT_STYLE,
     transaction: null,
   };
 }
@@ -113,6 +121,16 @@ function edit(
 }
 
 /**
+ * Makes a tool active in its initial state with its cursor. Choosing a creation tool clears the
+ * selection (docs/architecture/engine/interaction.md#p0-tools).
+ */
+function switchTool(core: EditorCore, tool: ToolId): void {
+  core.tool = activeTool(tool);
+  core.cursor = core.tool.cursor;
+  if (isCreationTool(tool)) core.selection.set([]);
+}
+
+/**
  * The editor's state as commands read and change it, with the recogniser's gesture cancel; a tool
  * change cancels the old tool's gesture first.
  */
@@ -134,8 +152,7 @@ export function targetOf(core: EditorCore, cancelGesture: () => boolean): Comman
       // As Escape does, so the old tool removes what its gesture shows, such as a marquee, and the
       // pointer does nothing until it lifts.
       cancelGesture();
-      core.tool = activeTool(tool);
-      core.cursor = core.tool.cursor;
+      switchTool(core, tool);
     },
     setCamera(camera) {
       core.loop.update({ camera });
@@ -167,6 +184,21 @@ export function toolEventOf(gesture: Gesture, camera: Camera): GestureEvent | nu
 type EditEffect = Extract<ToolEffect, { readonly type: 'preview' | 'commit' | 'cancel' }>;
 
 /**
+ * Commits a gesture's transaction. Its selection after is set before the commit, which records it
+ * for redo, and again after it, because the commit's transient revert drops the elements that its
+ * previews added from the selection (the ENG-06 review's m2), as `edit` does for commands.
+ */
+function commit(
+  core: EditorCore,
+  transaction: Transaction,
+  effect: { readonly label: HistoryLabel; readonly select?: readonly ElementId[] },
+): void {
+  if (effect.select !== undefined) core.selection.set(effect.select);
+  transaction.commit(effect.label);
+  if (effect.select !== undefined) core.selection.set(effect.select);
+}
+
+/**
  * A gesture's document changes: its first preview opens its transaction, so undo and redo are
  * ignored until it closes (REQ-H06); its commit records one undo step and its cancel reverts it.
  */
@@ -180,8 +212,9 @@ function applyEdit(core: EditorCore, effect: EditEffect): void {
   }
   const { transaction } = core;
   core.transaction = null;
-  if (effect.type === 'commit') transaction?.commit(effect.label);
-  else transaction?.cancel();
+  if (transaction === null) return;
+  if (effect.type === 'commit') commit(core, transaction, effect);
+  else transaction.cancel();
 }
 
 function applyEffect(core: EditorCore, effect: ToolEffect): void {
@@ -198,6 +231,10 @@ function applyEffect(core: EditorCore, effect: ToolEffect): void {
     case 'marquee':
       core.loop.update({ marquee: effect.box });
       break;
+    case 'set-tool':
+      // The gesture has ended, so there is nothing to cancel.
+      switchTool(core, effect.tool);
+      break;
     case 'preview':
     case 'commit':
     case 'cancel':
@@ -206,7 +243,10 @@ function applyEffect(core: EditorCore, effect: ToolEffect): void {
   }
 }
 
-/** What the active tool reads: the camera, the scene, the selection and the hit test over them. */
+/**
+ * What the active tool reads: the camera, the scene, the selection and the hit test over them, the
+ * default style, tool lock and the identifier source.
+ */
 function contextOf(core: EditorCore, camera: Camera): ToolContext {
   const ids = core.selection.get();
   const view = { scene: core.scene, selection: ids, camera };
@@ -215,6 +255,9 @@ function contextOf(core: EditorCore, camera: Camera): ToolContext {
     scene: core.scene,
     selection: { ids },
     hit: (at, pointer) => hitTest(view, at, pointer),
+    defaults: core.defaults,
+    toolLock: core.toolLock,
+    newId: core.newId,
   };
 }
 
