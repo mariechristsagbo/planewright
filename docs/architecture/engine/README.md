@@ -3,12 +3,14 @@
 **Status: accepted in issue #3; implementation started with ENG-01 (issue #5).** These documents
 design Planewright's canvas engine and split its first usable version into issues. The engine
 package holds only its `math`, `ports`, `model`, `geometry`, `camera`, `scene`, `history`,
-`selection`, `input`, `tools`, `commands` and `editor` modules so far, the geometry's outlines, distances and text layout and the
+`selection`, `transform`, `input`, `tools`, `commands` and `editor` modules so far, the geometry's outlines, distances and text layout and the
 selection module since ENG-06 (issue #15), and the `editor` layer's render frames and render loop,
 with the `@planewright/render-canvas` renderer, since ENG-07 (issue #17), and the `input`, `tools`
-and `commands` layers with `createEditor` since ENG-08 (issue #19). The web app shows a
-navigation-only editor surface on them: an empty canvas that pans and zooms, on which nothing can
-be drawn, selected or edited yet.
+and `commands` layers with `createEditor` since ENG-08 (issue #19); the Selection tool came with
+ENG-09 (issue #21), the transforms with ENG-10 (issue #23) and the shape, line and freehand tools
+with ENG-11 (issue #25). The web app shows a pre-release editor surface on them: a canvas that pans
+and zooms, on which shapes, lines and freehand strokes can be drawn, selected, transformed and
+undone, but not texts yet.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
 ([reverse engineering](../../reverse-engineering/README.md)), which says what users observe, and
