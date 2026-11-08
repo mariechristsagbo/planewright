@@ -1,19 +1,11 @@
-import type { FontFamily, FontSpec, Stroke, TextElement, TextLayout } from '@planewright/engine';
+import type { Stroke, TextElement, TextLayout } from '@planewright/engine';
 
 import type { Context2D } from './canvas.ts';
+import { canvasFont } from './fonts.ts';
 import type { Drawing } from './trace.ts';
 
 // Painting one element in its local frame
 // (docs/architecture/engine/rendering-and-hit-testing.md#drawing-the-scene-layer).
-
-/** Generic families until the text issue (ENG-12) chooses the fonts behind each family. */
-const FAMILIES: Readonly<Record<FontFamily, string>> = {
-  sans: 'sans-serif',
-  hand: 'cursive',
-  mono: 'monospace',
-};
-
-const fontOf = (font: FontSpec): string => `${String(font.size)}px ${FAMILIES[font.family]}`;
 
 /** Dash patterns in multiples of the stroke width, so they scale with it. */
 const DASHES: Readonly<Record<Exclude<Stroke['dash'], 'solid'>, readonly [number, number]>> = {
@@ -52,7 +44,7 @@ function paintFill(context: Context2D, drawing: Drawing): void {
 
 function paintText(context: Context2D, element: TextElement, layout: TextLayout): void {
   const { font, align } = element.content;
-  context.font = fontOf(font);
+  context.font = canvasFont(font);
   context.textAlign = align;
   context.textBaseline = 'middle';
   context.fillStyle = element.style.stroke.color;

@@ -158,8 +158,12 @@ describe('the canvas renderer', () => {
 });
 
 describe('the render-canvas entry point', () => {
-  it('exports only the renderer constructor as a value', () => {
-    expect(Object.keys(entry)).toEqual(['createCanvasRenderer']);
+  it('exports the renderer constructor and the font families as values', () => {
+    expect(Object.keys(entry).sort()).toEqual([
+      'FONT_STACKS',
+      'canvasFont',
+      'createCanvasRenderer',
+    ]);
     expect(entry.createCanvasRenderer).toBe(createCanvasRenderer);
   });
 });
