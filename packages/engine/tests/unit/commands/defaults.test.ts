@@ -63,6 +63,7 @@ describe('the tool commands', () => {
       ['tool.diamond', 'diamond', 'Diamond'],
       ['tool.line', 'line', 'Line'],
       ['tool.freehand', 'freehand', 'Freehand'],
+      ['tool.text', 'text', 'Text'],
     ]);
     expect(registry.get('tool.hand').shortcuts).toEqual([{ key: 'h' }]);
     expect(registry.get('tool.selection').shortcuts).toEqual([
@@ -82,15 +83,16 @@ describe('the tool commands', () => {
 
 describe('the creation tools and tool lock', () => {
   it('REQ-C14 give each creation tool its letter and the digit of its place in the tool bar', () => {
-    const shortcuts = (['rectangle', 'ellipse', 'diamond', 'line', 'freehand'] as const).map(
-      (tool) => registry.get(`tool.${tool}`).shortcuts,
-    );
+    const shortcuts = (
+      ['rectangle', 'ellipse', 'diamond', 'line', 'freehand', 'text'] as const
+    ).map((tool) => registry.get(`tool.${tool}`).shortcuts);
     expect(shortcuts).toEqual([
       [{ key: 'r' }, { key: 'Digit2', physical: true }],
       [{ key: 'o' }, { key: 'Digit3', physical: true }],
       [{ key: 'd' }, { key: 'Digit4', physical: true }],
       [{ key: 'l' }, { key: 'Digit5', physical: true }],
       [{ key: 'p' }, { key: 'Digit6', physical: true }],
+      [{ key: 't' }, { key: 'Digit7', physical: true }],
     ]);
   });
 

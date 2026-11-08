@@ -4,6 +4,8 @@ import type { Cancel } from '../ports/ports.ts';
 import { sameIds } from '../selection/selection.ts';
 import type { CursorKind, ToolId } from '../tools/tool.ts';
 import type { EditorCore } from './editor-core.ts';
+import { textView } from './text-session.ts';
+import type { TextEditView } from './text-session.ts';
 
 // The editor's view: what the interface reads, published to its listeners after each change.
 
@@ -18,6 +20,8 @@ export interface EditorView {
   readonly selection: readonly ElementId[];
   readonly canUndo: boolean;
   readonly canRedo: boolean;
+  /** The text being edited and its box on screen, or null when no text is edited. */
+  readonly text: TextEditView | null;
 }
 
 export const viewOf = (core: EditorCore): EditorView => ({
@@ -28,6 +32,7 @@ export const viewOf = (core: EditorCore): EditorView => ({
   selection: core.selection.get(),
   canUndo: core.history.canUndo,
   canRedo: core.history.canRedo,
+  text: textView(core),
 });
 
 export const sameView = (a: EditorView, b: EditorView): boolean =>
@@ -37,7 +42,9 @@ export const sameView = (a: EditorView, b: EditorView): boolean =>
   a.camera === b.camera &&
   sameIds(a.selection, b.selection) &&
   a.canUndo === b.canUndo &&
-  a.canRedo === b.canRedo;
+  a.canRedo === b.canRedo &&
+  // The box follows from the element and the camera, which are compared by identity.
+  a.text?.element === b.text?.element;
 
 export interface ViewPublisher {
   readonly view: () => EditorView;

@@ -32,6 +32,7 @@ describe('the tool bar', () => {
       'DiamondD or 4',
       'LineL or 5',
       'FreehandP or 6',
+      'TextT or 7',
       'Tool lockQ',
     ]);
     expect(hand).toHaveAttribute('aria-pressed', 'false');
@@ -96,7 +97,7 @@ describe('the tool bar', () => {
     const lock = within(toolbar).getByRole('button', { name: 'Tool lock' });
     expect(press('ArrowLeft')).toBe(hand);
     expect(press('ArrowLeft')).toBe(lock);
-    expect(press('ArrowLeft')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('ArrowLeft')).toBe(within(toolbar).getByRole('button', { name: 'Text' }));
     expect(press('ArrowDown')).toBe(lock);
     expect(press('ArrowDown')).toBe(hand);
     expect(press('ArrowUp')).toBe(lock);

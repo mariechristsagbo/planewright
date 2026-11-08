@@ -159,6 +159,8 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.EditorCommand>().toEqualTypeOf<Editors.EditorCommand>();
     expectTypeOf<Engine.EditorPorts>().toEqualTypeOf<Editors.EditorPorts>();
     expectTypeOf<Engine.EditorView>().toEqualTypeOf<Editors.EditorView>();
+    expectTypeOf<Engine.TextEdit>().toEqualTypeOf<Editors.TextEdit>();
+    expectTypeOf<Engine.TextEditView>().toEqualTypeOf<Editors.TextEditView>();
     expectTypeOf<Engine.InputEvent>().toEqualTypeOf<Inputs.InputEvent>();
     expectTypeOf<Engine.PointerInput>().toEqualTypeOf<Inputs.PointerInput>();
     expectTypeOf<Engine.WheelInput>().toEqualTypeOf<Inputs.WheelInput>();

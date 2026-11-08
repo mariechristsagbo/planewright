@@ -142,6 +142,16 @@ function tap(state: SelectionToolState, event: PointerGesture, context: ToolCont
   }
 }
 
+/** A double tap on a text edits it (REQ-C10); with Shift, or anywhere else, it acts as a tap. */
+function doubleTap(state: SelectionToolState, event: PointerGesture, context: ToolContext): Step {
+  if (state.type === 'pressing-element' && !event.modifiers.shift) {
+    if (context.scene.get(state.id)?.kind === 'text') {
+      return { state: IDLE, effects: [{ type: 'edit-text', id: state.id }] };
+    }
+  }
+  return tap(state, event, context);
+}
+
 /**
  * A cancelled transform reverts its previews without an undo step; a cancelled marquee disappears.
  * Either leaves the selection as it was.
@@ -153,7 +163,7 @@ function cancel(state: SelectionToolState): Step {
     : stay(IDLE);
 }
 
-/** A double tap acts as a tap until a double tap on a text edits it (ENG-12). */
+/** The Selection tool; a double tap on a text edits it. */
 export const selectionTool: Tool<SelectionToolState> = {
   id: 'selection',
   initial: IDLE,
@@ -168,8 +178,9 @@ export const selectionTool: Tool<SelectionToolState> = {
       case 'release':
         return release(state, event, context);
       case 'tap':
-      case 'double-tap':
         return tap(state, event, context);
+      case 'double-tap':
+        return doubleTap(state, event, context);
       case 'cancel':
         return cancel(state);
     }

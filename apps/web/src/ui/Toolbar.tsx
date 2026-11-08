@@ -16,6 +16,7 @@ const NOTES: Readonly<Record<ToolId, string>> = {
   diamond: 'Drag to draw a diamond; a tap draws a 100 by 100 one.',
   line: 'Drag to draw a line; a tap draws a horizontal line 100 long.',
   freehand: 'Drag to draw a freehand stroke; a tap draws a dot. The tool stays active.',
+  text: 'Tap to place a text; the text area to type it in is not here yet.',
 };
 
 const LOCK_NOTE =

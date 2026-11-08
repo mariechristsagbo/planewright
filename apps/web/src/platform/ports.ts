@@ -1,7 +1,7 @@
-import type { EditorPorts } from '@planewright/engine';
+import type { EditorPorts, TextMeasurer } from '@planewright/engine';
 
 // The editor's ports over the browser (docs/architecture/engine/modules.md#ports): the page's
-// clock, its timers and animation frames, and its random source for identifiers.
+// clock, its timers and animation frames, its random source for identifiers, and a text measurer.
 
 /** The parts of `window` that the ports use. */
 export type BrowserPage = Pick<
@@ -22,7 +22,7 @@ function randomId(page: BrowserPage): string {
     .replace(/=+$/u, '');
 }
 
-export function browserPorts(page: BrowserPage): EditorPorts {
+export function browserPorts(page: BrowserPage, text: TextMeasurer): EditorPorts {
   return {
     clock: { now: () => page.performance.now() },
     scheduler: {
@@ -40,5 +40,6 @@ export function browserPorts(page: BrowserPage): EditorPorts {
       },
     },
     ids: { next: () => randomId(page) },
+    text,
   };
 }

@@ -60,7 +60,14 @@ export type { Selection } from './selection/selection.ts';
 export type { RenderState } from './editor/frame.ts';
 export type { OverlayPrimitive, RenderFrame, Renderer, Theme } from './editor/render-frame.ts';
 export type { RenderLoop } from './editor/render-loop.ts';
-export type { Editor, EditorCommand, EditorPorts, EditorView } from './editor/editor.ts';
+export type {
+  Editor,
+  EditorCommand,
+  EditorPorts,
+  EditorView,
+  TextEdit,
+  TextEditView,
+} from './editor/editor.ts';
 export type {
   FocusLost,
   InputEvent,

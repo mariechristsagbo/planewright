@@ -17,6 +17,17 @@ export function tapper(pointer: PointerKind) {
   };
 }
 
+/** Two taps 150 ms apart at one point, which the recogniser reports as a tap and a double tap. */
+export function doubleTapper(pointer: PointerKind) {
+  let time = 100_000;
+  return (x: number, y: number) => {
+    time += 10_000;
+    const options = { pointer, time };
+    const later = (ms: number) => ({ ...options, time: time + ms });
+    return [down(x, y, options), up(x, y, later(50)), down(x, y, later(150)), up(x, y, later(200))];
+  };
+}
+
 /** A drag from one point to another through a point just past the drag threshold. */
 export function drag(pointer: PointerKind, [x0, y0, x1, y1]: readonly number[], shift = false) {
   const options = { pointer, time: 10_000, modifiers: { shift } };

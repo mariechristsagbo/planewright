@@ -1,6 +1,6 @@
 import { toColor } from './color.ts';
 import type { ElementKind } from './elements.ts';
-import type { Style } from './style.ts';
+import type { FontSpec, Style } from './style.ts';
 
 /** The editor's default style when it starts: Planewright's own values (REQ-C12). */
 export const INITIAL_DEFAULT_STYLE: Style = {
@@ -10,6 +10,9 @@ export const INITIAL_DEFAULT_STYLE: Style = {
   corners: 'round',
   sketch: 0,
 };
+
+/** The font of a new text: `sans` at size 20 with line height 1.25 (docs/architecture/engine/domain-model.md#text). */
+export const DEFAULT_TEXT_FONT: FontSpec = { family: 'sans', size: 20, lineHeight: 1.25 };
 
 /** The kinds whose corners follow the default style. */
 const ROUNDABLE_KINDS: readonly ElementKind[] = ['rectangle', 'diamond'];

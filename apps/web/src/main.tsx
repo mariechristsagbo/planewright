@@ -7,6 +7,7 @@ import { canvasRenderer } from './editor/renderer.ts';
 import { loadFonts } from './platform/fonts.ts';
 import { platformOf } from './platform/platform.ts';
 import { browserPorts } from './platform/ports.ts';
+import { pageTextMeasurer } from './platform/text-measurer.ts';
 import './styles.css';
 
 const container = document.getElementById('root');
@@ -19,7 +20,7 @@ await loadFonts(document.fonts);
 
 // The editor lives as long as the page, so components that mount again find the same one.
 const surface = {
-  editor: createEditor(browserPorts(window)),
+  editor: createEditor(browserPorts(window, pageTextMeasurer(document))),
   platform: platformOf(navigator),
   createRenderer: canvasRenderer(document),
 };

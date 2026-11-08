@@ -56,6 +56,7 @@ export const DEFAULT_COMMANDS: readonly Command[] = [
   toolCommand('diamond', 'Diamond', [{ key: 'd' }, { key: 'Digit4', physical: true }]),
   toolCommand('line', 'Line', [{ key: 'l' }, { key: 'Digit5', physical: true }]),
   toolCommand('freehand', 'Freehand', [{ key: 'p' }, { key: 'Digit6', physical: true }]),
+  toolCommand('text', 'Text', [{ key: 't' }, { key: 'Digit7', physical: true }]),
   {
     id: 'tool.lock',
     label: 'Tool lock',

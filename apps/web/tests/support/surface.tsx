@@ -40,6 +40,10 @@ export function surfaceHarness(platform: Platform = 'other'): SurfaceHarness {
       },
     },
     ids: { next: () => String((id += 1)).padStart(22, 'A') },
+    // Every character is 10 px wide at size 20, as the engine's own tests measure.
+    text: {
+      measure: (text, font) => ({ width: (text.length * font.size) / 2, ascent: 16, descent: 4 }),
+    },
   };
   const editor = createEditor(ports);
   const made: SurfaceHarness['made'] = [];

@@ -96,9 +96,17 @@ describe('the Selection tool: presses on handles and elements', () => {
     expect(run(released, [RECTANGLE, ELLIPSE]).effects).toEqual([]);
   });
 
-  it('treats a double tap as a tap until a double tap edits a text (ENG-12)', () => {
+  it('REQ-C10 edits a text on a double tap, and treats any other double tap as a tap', () => {
+    const twice = [at('press', 450, 415), at('double-tap', 450, 415)];
+    expect(run(twice, [TEXT]).effects).toEqual([{ type: 'edit-text', id: TEXT }]);
+    expect(run(twice, []).effects).toEqual([
+      { type: 'select', ids: [TEXT] },
+      { type: 'edit-text', id: TEXT },
+    ]);
     const shift = [at('press', 450, 415, SHIFTED), at('double-tap', 450, 415, SHIFTED)];
     expect(run(shift, [TEXT, ELLIPSE]).selection).toEqual([ELLIPSE]);
+    const onShape = [at('press', 200, 150), at('double-tap', 200, 150)];
+    expect(run(onShape, [RECTANGLE]).effects).toEqual([]);
     expect(run([at('press', 700, 500), at('double-tap', 700, 500)], [TEXT]).selection).toEqual([]);
   });
 });
