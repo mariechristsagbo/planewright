@@ -61,6 +61,9 @@ describe('the canvas host', () => {
       /^Choose a drawing tool, then drag on the canvas to draw, or tap for the default size; the Selection tool \(V\) selects, moves, resizes and rotates what is drawn\./,
     );
     expect(host).toHaveAccessibleDescription(/Ctrl\+scroll or pinch to zoom/);
+    expect(host).toHaveAccessibleDescription(
+      /With the Text tool \(T\), click or tap to place a text and type it; Escape, Ctrl\+Enter or a press elsewhere ends it, and a double-click or double tap on a text edits it again\./,
+    );
   });
 
   it('names Cmd in its instructions on Apple platforms', () => {

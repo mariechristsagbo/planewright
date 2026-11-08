@@ -12,12 +12,12 @@ import { surfaceHarness } from '../support/surface.tsx';
 const mount = () => render(<App surface={surfaceHarness().surface} />);
 
 describe('App', () => {
-  it('AC states what the build draws and that it has no text, saving or collaboration', () => {
+  it('AC states what the build draws and writes and that it has no saving or collaboration', () => {
     mount();
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent(BUILD_STATUS);
     expect(BUILD_STATUS).toBe(
-      'Pre-release — you can draw, select and transform shapes, lines and freehand strokes, but there is no text, saving or collaboration yet.',
+      'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them, but there is no saving or collaboration yet.',
     );
   });
 
@@ -28,9 +28,13 @@ describe('App', () => {
     for (const feature of NOT_YET_IMPLEMENTED) {
       expect(missing).toHaveTextContent(feature);
     }
-    expect(missing).toHaveTextContent(/Text: the Text tool and text editing/);
+    expect(missing).toHaveTextContent(
+      /Text formatting: every text is left-aligned in one font and size, with no font picker, wrapping or labels in shapes/,
+    );
     expect(missing).toHaveTextContent(/a reload loses the drawing/);
-    expect(missing).not.toHaveTextContent(/Drawing shapes|nothing can be drawn|Undo and Redo stay/);
+    expect(missing).not.toHaveTextContent(
+      /Drawing shapes|nothing can be drawn|Undo and Redo stay|the Text tool and text editing/,
+    );
   });
 
   it('lists what the build contains', () => {
@@ -40,7 +44,7 @@ describe('App', () => {
       expect(contents).toHaveTextContent(name);
     }
     expect(contents).toHaveTextContent(
-      /transforms and creation tools.*Drawn elements can be selected, moved, resized, rotated, duplicated, deleted and nudged, and each creation or edit is one undo step\./,
+      /creation tools and text editing.*draws texts in three bundled open-licence fonts\. Drawn elements can be selected, moved, resized, rotated, duplicated, deleted and nudged, a double-click edits a text again, and each creation or edit is one undo step\./,
     );
     expect(contents).not.toHaveTextContent(/Nothing creates elements/);
   });

@@ -53,6 +53,9 @@ describe('the tool bar', () => {
       'Shortcuts R or 2. Drag to draw a rectangle; a tap draws a 100 by 100 one.',
     );
     expect(describe('Line')).toHaveAttribute('aria-keyshortcuts', 'L 5');
+    expect(describe('Text')).toHaveAccessibleDescription(
+      'Shortcuts T or 7. Tap to place a text and type it; Escape or a tap elsewhere ends it.',
+    );
     expect(describe('Freehand')).toHaveAccessibleDescription(
       'Shortcuts P or 6. Drag to draw a freehand stroke; a tap draws a dot. The tool stays active.',
     );
