@@ -121,6 +121,12 @@ describe('the view and the commands', () => {
     expect(editor.commands.map(({ id }) => id)).toEqual([
       'tool.hand',
       'tool.selection',
+      'tool.rectangle',
+      'tool.ellipse',
+      'tool.diamond',
+      'tool.line',
+      'tool.freehand',
+      'tool.lock',
       'history.undo',
       'history.redo',
       'selection.select-all',
@@ -154,10 +160,15 @@ describe('the view and the commands', () => {
       shortcuts: [{ key: 'h' }],
       tool: 'hand',
     });
-    expect(editor.commands[2]).toEqual({
+    expect(editor.commands.find(({ id }) => id === 'history.undo')).toEqual({
       id: 'history.undo',
       label: 'Undo',
       shortcuts: [{ key: 'z', mod: true }],
+    });
+    expect(editor.commands.find(({ id }) => id === 'tool.lock')).toEqual({
+      id: 'tool.lock',
+      label: 'Tool lock',
+      shortcuts: [{ key: 'q' }],
     });
   });
 });

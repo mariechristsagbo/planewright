@@ -51,6 +51,21 @@ const cameraCommand = (
 export const DEFAULT_COMMANDS: readonly Command[] = [
   toolCommand('hand', 'Hand', [{ key: 'h' }]),
   toolCommand('selection', 'Selection', [{ key: 'v' }, { key: 'Digit1', physical: true }]),
+  toolCommand('rectangle', 'Rectangle', [{ key: 'r' }, { key: 'Digit2', physical: true }]),
+  toolCommand('ellipse', 'Ellipse', [{ key: 'o' }, { key: 'Digit3', physical: true }]),
+  toolCommand('diamond', 'Diamond', [{ key: 'd' }, { key: 'Digit4', physical: true }]),
+  toolCommand('line', 'Line', [{ key: 'l' }, { key: 'Digit5', physical: true }]),
+  toolCommand('freehand', 'Freehand', [{ key: 'p' }, { key: 'Digit6', physical: true }]),
+  {
+    id: 'tool.lock',
+    label: 'Tool lock',
+    shortcuts: [{ key: 'q' }],
+    isEnabled: always,
+    // A toggle of the editor's state, not of the document, so never an undo step (REQ-H04).
+    run: (target) => {
+      target.setToolLock(!target.toolLock);
+    },
+  },
   {
     id: 'history.undo',
     label: 'Undo',

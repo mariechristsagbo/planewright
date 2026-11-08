@@ -24,7 +24,15 @@ describe('the tool bar', () => {
       within(toolbar)
         .getAllByRole('button')
         .map((button) => button.textContent),
-    ).toEqual(['HandH', 'SelectionV or 1']);
+    ).toEqual([
+      'HandH',
+      'SelectionV or 1',
+      'RectangleR or 2',
+      'EllipseO or 3',
+      'DiamondD or 4',
+      'LineL or 5',
+      'FreehandP or 6',
+    ]);
     expect(hand).toHaveAttribute('aria-pressed', 'false');
     expect(selection).toHaveAttribute('aria-pressed', 'true');
   });
@@ -59,12 +67,15 @@ describe('the tool bar', () => {
     };
     expect(press('ArrowRight')).toBe(selection);
     expect([hand.tabIndex, selection.tabIndex]).toEqual([-1, 0]);
-    expect(press('ArrowRight')).toBe(hand);
-    expect(press('ArrowLeft')).toBe(selection);
-    expect(press('ArrowUp')).toBe(hand);
+    expect(press('ArrowLeft')).toBe(hand);
+    expect(press('ArrowLeft')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('ArrowDown')).toBe(hand);
+    expect(press('ArrowUp')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('ArrowDown')).toBe(hand);
     expect(press('ArrowDown')).toBe(selection);
     expect(press('Home')).toBe(hand);
-    expect(press('End')).toBe(selection);
+    expect(press('End')).toBe(within(toolbar).getByRole('button', { name: 'Freehand' }));
+    expect(press('ArrowRight')).toBe(hand);
   });
 
   it('runs shortcuts pressed in it and prevents only their default, leaving Space to the button', () => {
