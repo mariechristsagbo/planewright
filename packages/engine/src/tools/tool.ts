@@ -14,7 +14,7 @@ import type { SelectionState } from '../selection/selection.ts';
 // that returns effects for the editor to apply, so a tool never changes anything itself.
 
 /** The tools that create elements; the text tool joins with its issue (ENG-12). */
-export type CreationToolId = 'rectangle' | 'ellipse' | 'diamond' | 'line';
+export type CreationToolId = 'rectangle' | 'ellipse' | 'diamond' | 'line' | 'freehand';
 
 export type ToolId = 'selection' | 'hand' | CreationToolId;
 
