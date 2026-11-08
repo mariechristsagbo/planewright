@@ -28,6 +28,10 @@ function target(open: boolean) {
     setTool: (tool) => {
       asked.tools.push(tool);
     },
+    toolLock: false,
+    setToolLock: () => {
+      throw new Error('No selection command changes tool lock.');
+    },
     setCamera: () => {
       throw new Error('No selection command moves the camera.');
     },

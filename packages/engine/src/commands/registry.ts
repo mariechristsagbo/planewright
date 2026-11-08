@@ -17,6 +17,7 @@ export type NudgeDirection = 'left' | 'right' | 'up' | 'down';
 
 export type CommandId =
   | `tool.${ToolId}`
+  | 'tool.lock'
   | 'history.undo'
   | 'history.redo'
   | 'selection.select-all'
@@ -38,6 +39,9 @@ export interface CommandTarget {
   readonly scene: SceneReader;
   readonly history: Pick<History, 'canUndo' | 'canRedo' | 'inTransaction' | 'undo' | 'redo'>;
   setTool(tool: ToolId): void;
+  /** Whether a creation tool stays active after a creation (REQ-C05); never an undo step. */
+  readonly toolLock: boolean;
+  setToolLock(on: boolean): void;
   setCamera(camera: Camera): void;
   /** Replaces the selection; never an undo step (REQ-S13). */
   select(ids: readonly ElementId[]): void;

@@ -154,6 +154,12 @@ export function targetOf(core: EditorCore, cancelGesture: () => boolean): Comman
       cancelGesture();
       switchTool(core, tool);
     },
+    get toolLock() {
+      return core.toolLock;
+    },
+    setToolLock(on) {
+      core.toolLock = on;
+    },
     setCamera(camera) {
       core.loop.update({ camera });
     },

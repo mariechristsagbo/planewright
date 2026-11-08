@@ -12,7 +12,7 @@ import { recorder } from '../../support/histories.ts';
 import { changeSet } from '../../support/scene-state.ts';
 
 // The default commands (docs/architecture/engine/interaction.md#commands-and-shortcuts) that the
-// editor surface has so far: the Selection and Hand tools, Undo and Redo, and the zoom commands.
+// editor surface has so far: the tools and tool lock, Undo and Redo, and the zoom commands.
 
 const registry = createCommandRegistry(DEFAULT_COMMANDS);
 const box = shapeElement('rectangle', 420, 100, { id: 1, x: 340, y: 300 });
@@ -28,6 +28,10 @@ function target(scene: SceneStore = sceneOf(), history?: History): MutableTarget
     history: history ?? recorder(scene).history,
     setTool: (tool) => {
       self.tool = tool;
+    },
+    toolLock: false,
+    setToolLock: (on) => {
+      self.toolLock = on;
     },
     setCamera: (camera) => {
       self.camera = camera;
@@ -54,6 +58,11 @@ describe('the tool commands', () => {
     expect(tools.map(({ id, tool, label }) => [id, tool, label])).toEqual([
       ['tool.hand', 'hand', 'Hand'],
       ['tool.selection', 'selection', 'Selection'],
+      ['tool.rectangle', 'rectangle', 'Rectangle'],
+      ['tool.ellipse', 'ellipse', 'Ellipse'],
+      ['tool.diamond', 'diamond', 'Diamond'],
+      ['tool.line', 'line', 'Line'],
+      ['tool.freehand', 'freehand', 'Freehand'],
     ]);
     expect(registry.get('tool.hand').shortcuts).toEqual([{ key: 'h' }]);
     expect(registry.get('tool.selection').shortcuts).toEqual([
@@ -68,6 +77,35 @@ describe('the tool commands', () => {
     expect(view.tool).toBe('hand');
     expect(registry.run('tool.selection', view)).toBe('done');
     expect(view.tool).toBe('selection');
+  });
+});
+
+describe('the creation tools and tool lock', () => {
+  it('REQ-C14 give each creation tool its letter and the digit of its place in the tool bar', () => {
+    const shortcuts = (['rectangle', 'ellipse', 'diamond', 'line', 'freehand'] as const).map(
+      (tool) => registry.get(`tool.${tool}`).shortcuts,
+    );
+    expect(shortcuts).toEqual([
+      [{ key: 'r' }, { key: 'Digit2', physical: true }],
+      [{ key: 'o' }, { key: 'Digit3', physical: true }],
+      [{ key: 'd' }, { key: 'Digit4', physical: true }],
+      [{ key: 'l' }, { key: 'Digit5', physical: true }],
+      [{ key: 'p' }, { key: 'Digit6', physical: true }],
+    ]);
+  });
+
+  it('REQ-C05 Q toggles tool lock, which is no tool of its own', () => {
+    const view = target();
+    const lock = registry.get('tool.lock');
+    expect([lock.label, lock.shortcuts, lock.tool]).toEqual([
+      'Tool lock',
+      [{ key: 'q' }],
+      undefined,
+    ]);
+    expect(registry.run('tool.lock', view)).toBe('done');
+    expect([view.toolLock, view.tool]).toEqual([true, 'selection']);
+    registry.run('tool.lock', view);
+    expect(view.toolLock).toBe(false);
   });
 });
 

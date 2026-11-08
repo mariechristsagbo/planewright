@@ -10,6 +10,8 @@ import type { EditorCore } from './editor-core.ts';
 /** What the interface reads: a new object after every change. */
 export interface EditorView {
   readonly tool: ToolId;
+  /** Whether a creation tool stays active after a creation (REQ-C05). */
+  readonly toolLock: boolean;
   readonly cursor: CursorKind;
   readonly camera: Camera;
   /** The selected elements, in the order they were selected. */
@@ -20,6 +22,7 @@ export interface EditorView {
 
 export const viewOf = (core: EditorCore): EditorView => ({
   tool: core.tool.id,
+  toolLock: core.toolLock,
   cursor: core.cursor,
   camera: core.loop.state().camera,
   selection: core.selection.get(),
@@ -29,6 +32,7 @@ export const viewOf = (core: EditorCore): EditorView => ({
 
 export const sameView = (a: EditorView, b: EditorView): boolean =>
   a.tool === b.tool &&
+  a.toolLock === b.toolLock &&
   a.cursor === b.cursor &&
   a.camera === b.camera &&
   sameIds(a.selection, b.selection) &&
