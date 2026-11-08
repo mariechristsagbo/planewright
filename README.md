@@ -4,15 +4,16 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 
 > [!IMPORTANT]
 > **Status: pre-release.** Planewright is not a complete drawing editor yet. Its page draws
-> rectangles, ellipses, diamonds, lines and freehand strokes, which can be selected, moved,
-> resized, rotated, duplicated, deleted and nudged, with Undo and Redo; there is no text, no style
-> control, no persistence (a reload loses the drawing) and no collaboration. This repository
+> rectangles, ellipses, diamonds, lines, freehand strokes and texts, which can be selected, moved,
+> resized, rotated, duplicated, deleted and nudged, with Undo and Redo, and texts edited again;
+> there is no text formatting, no style control, no persistence (a reload loses the drawing) and no
+> collaboration. This repository
 > currently contains the workspace structure, that editor surface, a collaboration-service
 > skeleton, the first layers of the engine
 > package (math primitives, platform ports, the document model with its codec, the scene store
 > with its change sets and transactions, the undo and redo history, the camera, the geometry, text
-> layout and hit testing, the transforms, input gestures, the Hand, Selection and creation tools, commands and
-> the editor with its render loop), a Canvas 2D renderer package, and the quality gates that future work must pass.
+> layout and hit testing, the transforms, input gestures, the Hand, Selection, creation and text tools, commands and
+> the editor with its render loop and text sessions), a Canvas 2D renderer package, and the quality gates that future work must pass.
 
 ## Goals
 

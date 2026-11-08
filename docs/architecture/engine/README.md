@@ -7,10 +7,10 @@ package holds only its `math`, `ports`, `model`, `geometry`, `camera`, `scene`, 
 selection module since ENG-06 (issue #15), and the `editor` layer's render frames and render loop,
 with the `@planewright/render-canvas` renderer, since ENG-07 (issue #17), and the `input`, `tools`
 and `commands` layers with `createEditor` since ENG-08 (issue #19); the Selection tool came with
-ENG-09 (issue #21), the transforms with ENG-10 (issue #23) and the shape, line and freehand tools
-with ENG-11 (issue #25). The web app shows a pre-release editor surface on them: a canvas that pans
-and zooms, on which shapes, lines and freehand strokes can be drawn, selected, transformed and
-undone, but not texts yet.
+ENG-09 (issue #21), the transforms with ENG-10 (issue #23), the shape, line and freehand tools
+with ENG-11 (issue #25) and the Text tool with text editing with ENG-12 (issue #27). The web app
+shows a pre-release editor surface on them: a canvas that pans and zooms, on which shapes, lines,
+freehand strokes and texts can be drawn, selected, transformed and undone, and texts edited again.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
 ([reverse engineering](../../reverse-engineering/README.md)), which says what users observe, and

@@ -104,9 +104,10 @@ export interface TextBlock {
 }
 ```
 
-P0 texts use `sans` at size 20 with line height 1.25. Which open-licence font files back each
-family is decided, with its own ADR, in the text issue; the reference's fonts are never used
-([ADR 0003](../../adr/0003-clean-room-reference-policy.md)).
+P0 texts use `sans` at size 20 with line height 1.25. The open-licence fonts behind the families
+are Inter for `sans`, Patrick Hand for `hand` and JetBrains Mono for `mono`, bundled with the web
+app ([ADR 0011](../../adr/0011-bundled-open-licence-fonts.md), chosen in the text issue, ENG-12);
+the reference's fonts are never used ([ADR 0003](../../adr/0003-clean-room-reference-policy.md)).
 
 ## Elements
 

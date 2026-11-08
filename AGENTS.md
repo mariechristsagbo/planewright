@@ -8,12 +8,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 - Planewright is in its **foundation phase**. P0 engine work has started, but `packages/engine`
   holds only its math layer, ports, document model, scene store, undo history, camera, geometry,
   selection with hit testing, the transform maths, input events with the gesture recogniser, the
-  Hand, Selection, rectangle, ellipse, diamond, line and freehand tools with tool lock, the command
-  registry with its keymap, and the editor layer's render loop and `createEditor`, and
-  `packages/render-canvas` its Canvas 2D renderer. The web app shows a **pre-release** surface: a
-  canvas that pans and zooms, on which rectangles, ellipses, diamonds, lines and freehand strokes
-  can be drawn, then selected, moved, resized, rotated, duplicated, deleted and nudged, with Undo
-  and Redo. Text, styles, arrows, notes, persistence and collaboration features do **not** exist
+  Hand, Selection, rectangle, ellipse, diamond, line, freehand and text tools with tool lock, the
+  command registry with its keymap, and the editor layer's render loop, text sessions and
+  `createEditor`, and `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names.
+  The web app shows a **pre-release** surface: a canvas that pans and zooms, on which rectangles,
+  ellipses, diamonds, lines, freehand strokes and texts can be drawn, then selected, moved, resized,
+  rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo.
+  Text formatting, styles, arrows, notes, persistence and collaboration features do **not** exist
   yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
@@ -64,9 +65,11 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 ## Code map
 
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the canvas host, input adapter
-  and editor provider in `editor/`, the tool bar, Undo and Redo and the view readout in `ui/`, and
-  the browser ports, text measurer and Mod key per platform in `platform/`. Unit tests in
-  `tests/unit`, Playwright tests in `tests/e2e`, static files in `public/`.
+  and editor provider in `editor/`, the text area in `editor/text/`, the tool bar, Undo and Redo and
+  the view readout in `ui/`, and the browser ports, text measurer, font loading and Mod key per
+  platform in `platform/`. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static files
+  in `public/`, the bundled fonts with their licences in `public/fonts/`
+  ([ADR 0011](docs/adr/0011-bundled-open-licence-fonts.md)).
 - `apps/collab`: Node.js WebSocket service built with `ws` and bundled by esbuild. In
   development it runs TypeScript directly through Node's type stripping.
 - `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and

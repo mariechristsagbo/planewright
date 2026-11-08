@@ -120,17 +120,19 @@ added the selection to it. Its surface so far
 method: its gestures reach the Selection tool through `input`, and Duplicate, Delete and the nudges
 are commands that `run` and the keymap reach; nor did the creation tools issue, ENG-11, whose tools
 and tool lock are commands too, while the view gained `toolLock`,
-[what ENG-11 decided](interaction.md#what-eng-11-decided)):
+[what ENG-11 decided](interaction.md#what-eng-11-decided); the text issue, ENG-12, added the `text`
+port, `editText` and the view's `text`, [what ENG-12 decided](interaction.md#what-eng-12-decided)):
 
 ```ts
 export interface EditorPorts {
   readonly clock: Clock;
   readonly scheduler: Scheduler;
   readonly ids: IdSource;
+  readonly text: TextMeasurer;
 }
 
 export interface Editor {
-  /** Read-only view: tool, tool lock, cursor, camera, selection, and whether Undo and Redo are enabled. */
+  /** Read-only view: tool, tool lock, cursor, camera, selection, Undo and Redo, the edited text. */
   readonly view: EditorView;
   /** The registry's commands with their labels, shortcuts and tools, tools in tool bar order. */
   readonly commands: readonly EditorCommand[];
@@ -140,6 +142,8 @@ export interface Editor {
   run(command: CommandId): CommandOutcome;
   /** Replace the selection, for example from the element list; never an undo step. */
   select(ids: readonly ElementId[]): void;
+  /** The text area's value, measured again, or the end of the session on Escape or Mod+Enter. */
+  editText(edit: TextEdit): void;
   /** Report the canvas size in CSS pixels and the device pixel ratio. */
   resize(size: ViewportSize): void;
   /** Hand the listener every frame built on an animation frame, starting with a full one. */
@@ -151,9 +155,7 @@ export interface Editor {
 export function createEditor(ports: EditorPorts): Editor;
 ```
 
-The rest of the designed surface joins with its issues: the `text` port (`TextMeasurer`) with its
-first engine caller; `editText(edit: TextEdit)` and the view's text session with text editing
-(ENG-12); `repository?: DocumentRepository`, a stored document
+The rest of the designed surface joins with its issues: `repository?: DocumentRepository`, a stored document
 (`createEditor(ports, stored?: StoredDocument)`), `saveNow()`, `resolveStale(choice)` and the
 view's save status with persistence (ENG-13); and `announcer?: Announcer` with the live region
 (ENG-14). `repository` and `announcer` stay optional, so that tests and the issues before ENG-13
