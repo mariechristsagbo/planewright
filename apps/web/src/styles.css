@@ -176,6 +176,37 @@ kbd {
   font-variant-numeric: tabular-nums;
 }
 
+.save-status {
+  margin: 0;
+}
+
+.notices {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.notices:empty {
+  display: none;
+}
+
+.notice {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid #b3261e;
+  border-radius: 0.375rem;
+}
+
+.notice p {
+  margin: 0 0 0.5rem;
+}
+
+.notice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;

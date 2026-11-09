@@ -5,7 +5,7 @@ export interface FoundationItem {
 
 /** The one-line state of this build, shown as the page's status; keep in sync with the README. */
 export const BUILD_STATUS =
-  'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them, but there is no saving or collaboration yet.';
+  'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them; the drawing is saved in this browser, but there are no files or collaboration yet.';
 
 /** Facts about what this pre-release build contains; keep in sync with the README. */
 export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
@@ -18,6 +18,11 @@ export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
     name: 'Canvas engine and renderer',
     detail:
       'The engine’s document model, scene store, undo history, camera, gestures, commands, Selection tool, transforms, creation tools and text editing, and its Canvas 2D renderer, which draws texts in three bundled open-licence fonts. Drawn elements can be selected, moved, resized, rotated, duplicated, deleted and nudged, a double-click edits a text again, and each creation or edit is one undo step.',
+  },
+  {
+    name: 'Saving in this browser',
+    detail:
+      'The drawing, its view and its selection are saved in this browser’s IndexedDB storage within a second of each change and come back after a reload, with the Selection tool and an empty undo history. When another tab has saved a newer version, this tab stops saving until you load that version or keep this one, and a failed save is reported and tried again.',
   },
   {
     name: 'Collaboration service skeleton',
@@ -39,6 +44,6 @@ export const NOT_YET_IMPLEMENTED: readonly string[] = [
   'Text formatting: every text is left-aligned in one font and size, with no font picker, wrapping or labels in shapes',
   'Styles: every element is drawn in the one default style, with no way to change its colours, widths or fill',
   'Arrows, sticky notes, images and pressure-sensitive strokes',
-  'Saving, loading and exporting drawings: a reload loses the drawing',
+  'Files: opening, saving and exporting drawings as files; a drawing is kept only in this browser',
   'Real-time collaboration',
 ];

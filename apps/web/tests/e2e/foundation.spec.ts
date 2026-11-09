@@ -8,14 +8,15 @@ test('states what the build draws and lists what does not work', async ({ page }
   await expect(page).toHaveTitle('Planewright — pre-release');
   await expect(page.getByRole('heading', { level: 1, name: 'Planewright' })).toBeVisible();
   await expect(page.getByRole('status')).toHaveText(
-    'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them, but there is no saving or collaboration yet.',
+    'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them; the drawing is saved in this browser, but there are no files or collaboration yet.',
   );
   const missing = page.getByRole('region', { name: 'Not implemented yet' });
   await expect(missing).toContainText('Text formatting: every text is left-aligned in one font');
   await expect(missing).not.toContainText('the Text tool and text editing');
   await expect(missing).toContainText(
-    'Saving, loading and exporting drawings: a reload loses the drawing',
+    'Files: opening, saving and exporting drawings as files; a drawing is kept only in this browser',
   );
+  await expect(missing).not.toContainText('a reload loses the drawing');
   await expect(missing).not.toContainText('Drawing shapes');
   await expect(page.getByText('not affiliated with Excalidraw')).toBeVisible();
 });
