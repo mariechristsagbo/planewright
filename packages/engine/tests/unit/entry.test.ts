@@ -29,10 +29,15 @@ import type * as Elements from '../../src/model/elements.ts';
 import type * as Ids from '../../src/model/ids.ts';
 import type * as Keys from '../../src/model/order-key.ts';
 import type * as Patch from '../../src/model/patch.ts';
+import type * as Autosaves from '../../src/persistence/autosave.ts';
+import * as recordRepositories from '../../src/persistence/record-repository.ts';
+import type * as Records from '../../src/persistence/records.ts';
+import type * as Repositories from '../../src/persistence/repository.ts';
 import type * as Styles from '../../src/model/style.ts';
 import type * as Changes from '../../src/scene/change-set.ts';
 import type * as Check from '../../src/scene/check.ts';
 import type * as Store from '../../src/scene/store.ts';
+import type * as Savings from '../../src/editor/saving.ts';
 import type * as Transaction from '../../src/scene/transaction.ts';
 import type * as Frames from '../../src/selection/frame.ts';
 import type * as Handles from '../../src/selection/handles.ts';
@@ -42,14 +47,16 @@ import type * as Selections from '../../src/selection/selection.ts';
 import type * as Tools from '../../src/tools/tool.ts';
 
 describe('the engine entry point', () => {
-  it('exports as values only the editor, the render loop and the geometry a renderer draws with', () => {
+  it('exports as values only the editor, the render loop, the geometry a renderer draws with and the record repository', () => {
     expect(Object.keys(engine).sort()).toEqual([
       'createEditor',
+      'createRecordRepository',
       'createRenderLoop',
       'geometryOf',
       'layoutText',
       'localBox',
     ]);
+    expect(engine.createRecordRepository).toBe(recordRepositories.createRecordRepository);
     expect(engine.createEditor).toBe(editors.createEditor);
     expect(engine.createRenderLoop).toBe(renderLoops.createRenderLoop);
     expect(engine.geometryOf).toBe(kinds.geometryOf);
@@ -173,5 +180,37 @@ describe('the engine entry point', () => {
     expectTypeOf<Engine.CommandOutcome>().toEqualTypeOf<Commands.CommandOutcome>();
     expectTypeOf<Engine.ToolId>().toEqualTypeOf<Tools.ToolId>();
     expectTypeOf<Engine.CursorKind>().toEqualTypeOf<Tools.CursorKind>();
+  });
+
+  it("exports the repository port's, its records' and saving's types", () => {
+    expectTypeOf<Engine.DocumentId>().toEqualTypeOf<Repositories.DocumentId>();
+    expectTypeOf<Engine.DocumentRepository>().toEqualTypeOf<Repositories.DocumentRepository>();
+    expectTypeOf<Engine.DocumentDelta>().toEqualTypeOf<Repositories.DocumentDelta>();
+    expectTypeOf<Engine.LoadResult>().toEqualTypeOf<Repositories.LoadResult>();
+    expectTypeOf<Engine.SaveFailure>().toEqualTypeOf<Repositories.SaveFailure>();
+    expectTypeOf<Engine.SaveRequest>().toEqualTypeOf<Repositories.SaveRequest>();
+    expectTypeOf<Engine.SaveResult>().toEqualTypeOf<Repositories.SaveResult>();
+    expectTypeOf<Engine.SessionState>().toEqualTypeOf<Repositories.SessionState>();
+    expectTypeOf<Engine.StoredDocument>().toEqualTypeOf<Repositories.StoredDocument>();
+    expectTypeOf<Engine.DocumentRecord>().toEqualTypeOf<Records.DocumentRecord>();
+    expectTypeOf<Engine.ElementRecord>().toEqualTypeOf<Records.ElementRecord>();
+    expectTypeOf<Engine.RecordBackend>().toEqualTypeOf<Records.RecordBackend>();
+    expectTypeOf<Engine.SavePlan>().toEqualTypeOf<Records.SavePlan>();
+    expectTypeOf<Engine.SaveStatus>().toEqualTypeOf<Autosaves.SaveStatus>();
+    expectTypeOf<Engine.StaleChoice>().toEqualTypeOf<Savings.StaleChoice>();
+  });
+
+  it('keeps the text measurer port required and the repository optional (ENG-13)', () => {
+    expectTypeOf<Engine.EditorPorts['text']>().toEqualTypeOf<Measurers.TextMeasurer>();
+    expectTypeOf<Engine.EditorPorts>().toHaveProperty('repository');
+    expectTypeOf<Pick<Engine.EditorPorts, 'text'>>().toEqualTypeOf<{
+      readonly text: Measurers.TextMeasurer;
+    }>();
+    expectTypeOf<Pick<Engine.EditorPorts, 'repository'>>().toEqualTypeOf<{
+      readonly repository?: Repositories.DocumentRepository;
+    }>();
+    expectTypeOf(engine.createEditor)
+      .parameter(1)
+      .toEqualTypeOf<Repositories.StoredDocument | undefined>();
   });
 });
