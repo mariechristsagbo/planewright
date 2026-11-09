@@ -264,8 +264,10 @@ ENG-05 decided what the accepted rules leave open:
 - **Limits.** Zooming clamps the asked zoom before it places the camera, so the anchor stays put
   even when the zoom stops at 0.1 or 30; the position is clamped last, so only the ±10⁹ limit can
   move an anchor. An infinite input stops at the limits, and an input that would leave a NaN in the
-  camera, which only a non-finite number can, leaves the camera as it was, so the camera stays
-  within the limits for every input (REQ-V08).
+  camera, which only a non-finite number can, leaves the camera as it was; a camera that itself
+  holds NaN, as stored data could, gives way to the default camera, the origin at zoom 1 (the
+  ENG-05 review's m1, fixed by ENG-13), so the camera stays within the limits for every input
+  (REQ-V08).
 - **Ladder steps.** A level that the zoom equals but for rounding (within 10⁻⁹ of it, relatively)
   does not count, so every step moves; past the last level in either direction the zoom stays at 30
   or 0.1.

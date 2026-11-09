@@ -19,6 +19,9 @@ export const MAX_ZOOM = 30;
 /** How far the camera's position may go from the origin on each axis, in scene units. */
 export const POSITION_LIMIT = 1e9;
 
+/** The camera of a new editor: the scene's origin at the canvas's top-left corner, at zoom 1. */
+export const DEFAULT_CAMERA: Camera = Object.freeze({ x: 0, y: 0, zoom: 1 });
+
 export const sceneFromScreen = (p: Point, c: Camera): Point => ({
   x: p.x / c.zoom + c.x,
   y: p.y / c.zoom + c.y,
@@ -49,11 +52,13 @@ const isNumber = (c: Camera): boolean =>
 /**
  * The camera that an operation returns, always a new object: `next` with its zoom and position
  * clamped to the limits, so an infinite input stops at them. A NaN in `next`, which only a
- * non-finite input can cause, keeps the `previous` camera instead, so that the camera stays
- * within the limits for every input (REQ-V08).
+ * non-finite input can cause, keeps the `previous` camera instead, and the default camera
+ * replaces a `previous` camera that holds NaN too, such as a stored one, so that the camera stays
+ * within the limits for every input and every camera (REQ-V08).
  */
 export function limitCamera(next: Camera, previous: Camera): Camera {
-  const chosen = isNumber(next) ? next : previous;
+  const fallback = isNumber(previous) ? previous : DEFAULT_CAMERA;
+  const chosen = isNumber(next) ? next : fallback;
   return {
     x: clamp(chosen.x, -POSITION_LIMIT, POSITION_LIMIT),
     y: clamp(chosen.y, -POSITION_LIMIT, POSITION_LIMIT),
