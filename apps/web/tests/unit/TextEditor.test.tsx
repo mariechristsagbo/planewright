@@ -83,6 +83,27 @@ describe('the text area', () => {
     expect(screen.queryByRole('textbox', { name: 'Text' })).toBeNull();
   });
 
+  it.each([
+    ['Escape', { key: 'Escape' }],
+    ['Ctrl+Enter', { key: 'Enter', ctrlKey: true }],
+  ] as const)(
+    'gives the focus back to the canvas after %s, so Delete then removes the text',
+    (_name, keys) => {
+      const { area, editor } = placeText();
+      act(() => {
+        fireEvent.change(area, { target: { value: 'Hi' } });
+        fireEvent.keyDown(area, keys);
+      });
+      const host = screen.getByRole('region', { name: 'Drawing canvas' });
+      expect(host).toHaveFocus();
+      expect(editor.view.selection).toHaveLength(1);
+      act(() => {
+        fireEvent.keyDown(host, { key: 'Delete', code: 'Delete' });
+      });
+      expect(editor.view.selection).toEqual([]);
+    },
+  );
+
   it('ends the session on Cmd+Enter, not Ctrl+Enter, on Apple platforms', () => {
     const { area, editor } = placeText('apple');
     act(() => {

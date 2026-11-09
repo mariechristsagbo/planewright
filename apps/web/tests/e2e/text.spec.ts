@@ -105,6 +105,19 @@ test('E4 A9 REQ-C10 a double-click on a text edits it again, as one undo step', 
   await expect(page.getByRole('button', { name: 'Undo' })).toBeEnabled();
 });
 
+test('D4 Escape and Mod+Enter give the focus back to the canvas, so Delete then removes the text', async ({
+  page,
+}) => {
+  for (const key of ['Escape', 'Control+Enter']) {
+    await place(page, 'Hello');
+    await page.keyboard.press(key);
+    await expectInkIn(page, HELLO);
+    await expect(canvas(page)).toBeFocused();
+    await page.keyboard.press('Delete');
+    await expectInkIn(page, HELLO, false);
+  }
+});
+
 test('E5 A10 shortcut letters typed into the text area go into the text and leave the tool unchanged', async ({
   page,
 }) => {

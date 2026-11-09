@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { RefObject } from 'react';
 
 import { useEditorView, useSurface } from '../surface.ts';
 import { endsSession, textAreaStyle } from './text-area.ts';
@@ -8,8 +9,11 @@ import { endsSession, textAreaStyle } from './text-area.ts';
 // zoom and turned by its rotation, and the scene layer leaves it out. The area sits outside the
 // canvas host, so its pointer and key events never reach the editor, whose shortcuts pause.
 
-/** The text area of the text being edited, focused when its session starts; nothing otherwise. */
-export function TextEditor() {
+/**
+ * The text area of the text being edited, focused when its session starts; nothing otherwise. When
+ * a key in it ends the session, the canvas host takes the focus back, so its shortcuts work again.
+ */
+export function TextEditor({ host }: { readonly host: RefObject<HTMLElement | null> }) {
   const { editor, platform } = useSurface();
   const { text, camera } = useEditorView();
   const area = useRef<HTMLTextAreaElement>(null);
@@ -35,6 +39,7 @@ export function TextEditor() {
         if (!endsSession(event, platform)) return;
         event.preventDefault();
         editor.editText({ type: 'commit' });
+        host.current?.focus({ preventScroll: true });
       }}
     />
   );
