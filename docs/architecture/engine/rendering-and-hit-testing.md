@@ -509,6 +509,15 @@ decided what the rules above leave open:
   Computing rows instead of outline points, before the rows were kept, gave 4.2 to 4.4 ms and 14 to
   16 ms in three runs.
 
+- **In CI.** The marquee query did not change between ENG-15 and this issue, so the CI runs before
+  it all measured the same code (4-core runners, runner image ubuntu24 20261101.360.1, Node.js
+  24.22.1): twelve runs on four processor models missed B6 in each, at 3.9 to 5.0 ms at the 95th
+  percentile on an AMD EPYC 9V45, 5.7 to 7.1 ms on an EPYC 9V74, 7.0 to 8.2 ms on an EPYC 7763 and
+  9.2 ms on an Intel Xeon Platinum 8370C. The pull request's first CI run, 42700510340 on an EPYC
+  9V74, measured 0.097 ms at the 95th percentile and 0.062 ms at the median, where the last run on
+  `main`, 42685994872 at `c5bcfd3`, had measured 5.726 ms. The pull request keeps the record of
+  every later run.
+
 ## Export
 
 PNG and SVG export (P2, REQ-X04) reuse the outline commands: PNG through the same renderer on an

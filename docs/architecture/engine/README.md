@@ -17,11 +17,14 @@ freehand strokes and texts can be drawn, selected, transformed and undone, and t
 also from the keyboard alone through a list of its elements, with each change said in a live region,
 and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue
 #33) measures every performance budget, in CI with its benchmarks, browser measurements and
-bundle-size guardrail, and the heap by hand; B1, B6 and B7 miss their budgets in CI and B2 on a
-slower machine, and they go to issues #34 to #36
-([what ENG-15 decided](quality.md#what-eng-15-decided)). Issue #38 recorded three runs on `main` as
-the baseline, one on each of three processors, and gates a run only by three runs on its own
-processor, so CI reports only for now ([what issue #38 decided](quality.md#what-issue-38-decided)).
+bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets in CI and B2 on a
+slower machine, and they went to issues #34 to #36
+([what ENG-15 decided](quality.md#what-eng-15-decided)). Issue #35 has since brought the marquee
+query within B6 in CI
+([what issue #35 decided](rendering-and-hit-testing.md#what-issue-35-decided)). Issue #38 recorded
+three runs on `main` as the baseline, one on each of three processors, and gates a run only by three
+runs on its own processor, so CI reports only for now
+([what issue #38 decided](quality.md#what-issue-38-decided)).
 The clipboard (P1), document files, images and offline start (P2) do not exist yet.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
