@@ -120,4 +120,16 @@ describe('the tool bar', () => {
     expect(fireEvent.keyDown(hand, { key: ' ', code: 'Space' })).toBe(true);
     expect(fireEvent.keyUp(hand, { key: ' ', code: 'Space' })).toBe(true);
   });
+
+  it('REQ-Y02 leaves Enter and Space to a tool button, so they never create at the centre of the canvas', () => {
+    const { toolbar, editor } = mount();
+    act(() => {
+      editor.resize({ width: 800, height: 600, pixelRatio: 1 });
+      editor.run('tool.rectangle');
+    });
+    const ellipse = within(toolbar).getByRole('button', { name: 'Ellipse' });
+    expect(fireEvent.keyDown(ellipse, { key: 'Enter', code: 'Enter' })).toBe(true);
+    expect(fireEvent.keyDown(ellipse, { key: ' ', code: 'Space' })).toBe(true);
+    expect([editor.view.elements, editor.view.tool]).toEqual([[], 'rectangle']);
+  });
 });
