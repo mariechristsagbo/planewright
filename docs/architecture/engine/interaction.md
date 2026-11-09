@@ -540,14 +540,17 @@ text. It decided what the rules above leave open:
   left-aligned text keeps its top-left corner. A value longer than 100,000 characters, or measured
   past the 10⁷ size limit, is not applied, and an edit with no session does nothing.
 - **Ending.** `editText({ type: 'commit' })`, which Escape and Mod+Enter in the text area send, a
-  press that reaches the active tool and a tool change end the session; camera gestures do not. A
-  new text left empty is removed by cancelling its transaction, with no entry; an existing text
-  emptied is deleted as one `delete` entry; any other session commits one entry, `create` for a new
-  text and `edit-text` for a re-edit, which records nothing when the text ends as it started. The
-  text alone is then selected, before and after the commit as for creations (the ENG-06 review's
-  m2), unless it is new and tool lock is on, and the Selection tool becomes active unless tool lock
-  is on. The press that ended the session then reaches that tool, so a tap on empty canvas leaves
-  nothing selected, as B-06's mobile tap did, and a press on an element selects it.
+  press that reaches the active tool and a tool change end the session. The wheel and a
+  middle-button drag move the camera without a press, so they leave it open; a touch pinch does
+  not, because its first finger's press reaches the tool before the second finger lands, so the
+  pinch ends the session as any press does, then zooms. A new text left empty is removed by
+  cancelling its transaction, with no entry; an existing text emptied is deleted as one `delete`
+  entry; any other session commits one entry, `create` for a new text and `edit-text` for a
+  re-edit, which records nothing when the text ends as it started. The text alone is then
+  selected, before and after the commit as for creations (the ENG-06 review's m2), unless it is new
+  and tool lock is on, and the Selection tool becomes active unless tool lock is on. The press that
+  ended the session then reaches that tool, so a tap on empty canvas leaves nothing selected, as
+  B-06's mobile tap did, and a press on an element selects it.
 - **Re-editing.** A double tap on a text with the Selection tool edits it (REQ-C10); a Shift double
   tap stays a Shift tap, so it still removes the text from the selection.
 - **Resizing.** A resized text's measured size still scales with its font, as ENG-10 decided; the
