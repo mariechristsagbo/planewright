@@ -1,5 +1,29 @@
 {
-  "runs": [],
+  "runs": [
+    {
+      "label": "pull request 37, first CI run, head 7772e00 merged into main 5da946b as 13459ee: information, not one of the three main runs",
+      "branch": "perf/33-performance-budgets",
+      "event": "pull_request",
+      "commit": "13459ee2747f2a45fb3b2cad113486f351d32492",
+      "run": "https://github.com/mariechristsagbo/planewright/actions/runs/42626128521/attempts/1",
+      "date": "2026-11-09T13:32:20.489Z",
+      "values": {
+        "B1": 13.920000000007711,
+        "B2": 2.799999999989086,
+        "B3": 0.10000000000582077,
+        "B4": 1,
+        "B5": 0.07763754999998582,
+        "B6": 7.129133649999892,
+        "B7": 13.335935149999864,
+        "B8": 0.11835150000002273,
+        "B9": 0,
+        "B10": 0.12196000000000203,
+        "B11": 28.873,
+        "B12": 2.082,
+        "B13": 106.889
+      }
+    }
+  ],
   "followUps": {
     "B1": "#34",
     "B2": "#34",

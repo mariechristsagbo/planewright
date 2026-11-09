@@ -16,7 +16,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > input gestures, the Hand, Selection, creation and text tools, commands, local persistence with
 > autosave and the editor with its render loop, text sessions and announcements), a Canvas 2D
 > renderer package, and the quality gates that future work must pass, among them the measurements of
-> every performance budget, four of which are still missed and have their issues.
+> every performance budget; three miss in CI and a fourth on a slower machine, each named with its
+> issue.
 
 ## Goals
 
