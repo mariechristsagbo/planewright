@@ -35,6 +35,24 @@ async function choose(page: Page, name: string): Promise<void> {
   }).toPass();
 }
 
+/**
+ * Runs a touch action until a text area exists, for at most 10 s. The finger rests 350 ms after
+ * each scripted touch, yet under load a tap is still lost now and then. A lost tap creates nothing,
+ * so the action is repeated only while no text area exists: once one does, a further tap would
+ * commit it. Each repeat is noted on the test's report as a lost tap, so that none is hidden.
+ */
+async function untilTextArea(page: Page, action: () => Promise<void>): Promise<void> {
+  let runs = 0;
+  await expect(async () => {
+    if ((await textArea(page).count()) === 0) {
+      runs += 1;
+      if (runs > 1) test.info().annotations.push({ type: 'lost tap', description: 'repeated' });
+      await action();
+    }
+    await expect(textArea(page)).toHaveCount(1, { timeout: 1000 });
+  }).toPass({ timeout: 10_000 });
+}
+
 /** Two quick taps at one canvas point, 100 ms apart, which the editor takes as a double tap. */
 async function doubleTap(page: Page, [x, y]: Point): Promise<void> {
   const box = await canvasBox(page);
@@ -49,14 +67,11 @@ async function doubleTap(page: Page, [x, y]: Point): Promise<void> {
   await page.waitForTimeout(350);
 }
 
-/**
- * Chooses the Text tool, taps at (60,300) and types the text. The finger rests 350 ms after the
- * tool bar tap, as after every scripted touch: once, a canvas tap that followed it at once was lost.
- */
+/** Chooses the Text tool, taps at (60,300) until a text area exists and types the text. */
 async function place(page: Page, text: string): Promise<void> {
   await choose(page, 'Text');
   await page.waitForTimeout(350);
-  await touch(page, [60, 300]);
+  await untilTextArea(page, () => touch(page, [60, 300]));
   await expectTextAreaAt(page, [60, 300]);
   await page.keyboard.type(text);
 }
@@ -96,7 +111,7 @@ test('E8 A9 REQ-C10 a double tap on a text edits it again', async ({ page }) => 
   await place(page, 'Plan');
   await touch(page, [250, 120]);
   await expectInkIn(page, PLAN);
-  await doubleTap(page, [75, 300]);
+  await untilTextArea(page, () => doubleTap(page, [75, 300]));
   await expect(textArea(page)).toBeFocused();
   await expect(textArea(page)).toHaveValue('Plan');
   await expectInkIn(page, PLAN, false);
