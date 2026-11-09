@@ -67,3 +67,76 @@ export async function expectIndicator(page: Page): Promise<void> {
   expect(width).toBeGreaterThanOrEqual(2);
   expect(contrast(channels(colour), channels(background))).toBeGreaterThanOrEqual(3);
 }
+
+/**
+ * Every visible element that holds text of its own, outside the canvas and the text area, with its
+ * text colour blended by its alpha and its ancestors' opacity over the opaque background behind it.
+ */
+const TEXTS = `(() => {
+  const parse = (colour) => (colour.match(/[\\d.]+/g) || []).map(Number);
+  const clear = (colour) => { const v = parse(colour); return v.length === 4 && v[3] === 0; };
+  const backgroundOf = (element) => {
+    for (let at = element; at !== null; at = at.parentElement) {
+      const colour = getComputedStyle(at).backgroundColor;
+      if (!clear(colour)) return parse(colour).slice(0, 3);
+    }
+    return [255, 255, 255];
+  };
+  const opacityOf = (element) => {
+    let opacity = 1;
+    for (let at = element; at !== null; at = at.parentElement) opacity *= Number(getComputedStyle(at).opacity);
+    return opacity;
+  };
+  const shown = (element) => {
+    const box = element.getBoundingClientRect();
+    return box.width > 1 && box.height > 1 && getComputedStyle(element).visibility !== 'hidden';
+  };
+  const texts = [];
+  for (const element of document.body.querySelectorAll('*')) {
+    if (['SCRIPT', 'STYLE', 'TEXTAREA', 'CANVAS'].includes(element.tagName)) continue;
+    const own = [...element.childNodes].some((node) => node.nodeType === 3 && node.textContent.trim() !== '');
+    if (!own || !shown(element)) continue;
+    const [r, g, b, a = 1] = parse(getComputedStyle(element).color);
+    const alpha = a * opacityOf(element);
+    const background = backgroundOf(element);
+    const text = [r, g, b].map((channel, index) => channel * alpha + background[index] * (1 - alpha));
+    const words = [...element.childNodes].filter((node) => node.nodeType === 3).map((node) => node.textContent).join('');
+    texts.push({ text: words.trim().slice(0, 40), colour: text, background });
+  }
+  return texts;
+})()`;
+
+interface Text {
+  readonly text: string;
+  readonly colour: number[];
+  readonly background: number[];
+}
+
+/** The page's visible interface texts with their contrast against what is behind them. */
+export async function textContrasts(page: Page): Promise<{ text: string; ratio: number }[]> {
+  const texts = await page.evaluate<Text[]>(TEXTS);
+  return texts.map(({ text, colour, background }) => ({
+    text,
+    ratio: Math.round(contrast(colour, background) * 100) / 100,
+  }));
+}
+
+/** The boxes of every control that a finger can press, by role and name. */
+const TARGETS = `(() => {
+  const selector = 'button, a[href], [role="option"], [role="listbox"], [tabindex="0"], textarea';
+  return [...document.querySelectorAll(selector)]
+    .filter((element) => element.getBoundingClientRect().width > 0)
+    .map((element) => {
+      const box = element.getBoundingClientRect();
+      const name = element.getAttribute('aria-label') ?? element.textContent.trim().slice(0, 30);
+      return { name: element.tagName.toLowerCase() + ' ' + name, width: box.width, height: box.height };
+    });
+})()`;
+
+export interface Target {
+  readonly name: string;
+  readonly width: number;
+  readonly height: number;
+}
+
+export const targets = (page: Page): Promise<Target[]> => page.evaluate<Target[]>(TARGETS);
