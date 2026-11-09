@@ -20,10 +20,13 @@ export interface SceneState {
   text(font: string, align: CanvasTextAlign): void;
 }
 
-/** Whether the dash pattern set is the pattern given, step by step. */
+/**
+ * Whether the dash pattern set is the pattern given, step by step. It runs for every stroke, so it
+ * compares by index rather than through an iterator, which allocates.
+ */
 function sameDash(set: readonly number[] | undefined, dash: readonly number[]): boolean {
   if (set?.length !== dash.length) return false;
-  for (const [at, step] of set.entries()) if (step !== dash[at]) return false;
+  for (let at = 0; at < dash.length; at += 1) if (set[at] !== dash[at]) return false;
   return true;
 }
 
