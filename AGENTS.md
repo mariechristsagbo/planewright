@@ -11,7 +11,9 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   Hand, Selection, rectangle, ellipse, diamond, line, freehand and text tools with tool lock, the
   command registry with its keymap, the persistence layer's repository port and autosave, and the
   editor layer's render loop, text sessions, loading, saving, announcements and `createEditor`, and
-  `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names. The web app shows a
+  `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names. Every performance
+  budget is measured: Vitest benchmarks, Playwright measurements and a bundle-size guardrail,
+  reported in CI, with four missed budgets named with their issues. The web app shows a
   **pre-release** surface: a canvas that pans and zooms, on which rectangles, ellipses, diamonds,
   lines, freehand strokes and texts can be drawn, then selected, moved, resized, rotated,
   duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo, also from
@@ -57,9 +59,13 @@ npm run test:coverage      # all Vitest projects with coverage thresholds
 npm run test:e2e           # Playwright (Chromium) against the production build
 npm run build              # production builds
 npm run guardrails         # file-size and dependency-policy checks
+npm run check:bundle-size  # bundle sizes against their budgets (after npm run build)
 npm run secrets:scan       # secretlint
 npm run audit:deps         # npm audit and signature verification
 npm run validate           # every local gate except e2e and audit
+npm run perf:bench         # Vitest benchmarks of the performance budgets
+npm run perf:browser       # Playwright measurements of the budgets (after npm run build)
+npm run perf:report        # the performance report from perf-results/
 ```
 
 Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI changes.
@@ -95,8 +101,13 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   (`Date.now`, `new Date()`) and `Math.random`, and its sources import only the engine's entry and
   one another, by `./` paths. Tests run in the `render-canvas:unit` project against a recording fake of the
   2D context.
-- `scripts`: guardrail entry points; their pure logic lives in `scripts/lib` and is tested in
-  `scripts/tests`.
+- `scripts`: guardrail entry points, the bundle-size guardrail and the performance report and
+  baseline; their pure logic lives in `scripts/lib` and is tested in `scripts/tests`.
+- Performance: `vitest.bench.config.ts` runs the `tests/bench/*.bench.ts` of the engine and the web
+  app (`npm run perf:bench`), `apps/web/tests/perf` the Playwright measurements
+  (`npm run perf:browser`), and `npm run perf:report` writes `perf-results/`; the seeded scenes are
+  `packages/engine/tests/support/perf-scenes.ts`, and `docs/performance/baseline.json` keeps the
+  recorded runs ([what ENG-15 decided](docs/architecture/engine/quality.md#what-eng-15-decided)).
 - `research/excalidraw`: issue #1 behavioural-research tooling (loopback driver, scenarios,
   evidence builders, container browser, isolation check and self-test), plain Node.js `.mjs`
   under its own ESLint block `planewright/research` with Node and browser globals. Its tests run

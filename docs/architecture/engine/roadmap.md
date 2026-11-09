@@ -1,12 +1,11 @@
 # P0 engine roadmap
 
-The P0 engine is split into fifteen issues, each delivered by one pull request on its own branch,
-in the milestone **v0.1.0 — Engine Core**. Each issue is opened only when the one before it in the
+The P0 engine is split into fifteen issues, each delivered by one pull request on its own branch, in
+the milestone **v0.1.0 — Engine Core**. Each issue is opened only when the one before it in the
 order below has merged or no longer blocks it, and only after this architecture has been reviewed
-and merged. ENG-01 is issue #5, ENG-02 issue #7, ENG-03 issue #9, ENG-04 issue #11, ENG-05
-issue #13, ENG-06 issue #15, ENG-07 issue #17, ENG-08 issue #19, ENG-09 issue #21, ENG-10
-issue #23, ENG-11 issue #25, ENG-12 issue #27, ENG-13 issue #29 and ENG-14 issue #31; the other is
-not open yet.
+and merged. ENG-01 is issue #5, ENG-02 issue #7, ENG-03 issue #9, ENG-04 issue #11, ENG-05 issue
+#13, ENG-06 issue #15, ENG-07 issue #17, ENG-08 issue #19, ENG-09 issue #21, ENG-10 issue #23,
+ENG-11 issue #25, ENG-12 issue #27, ENG-13 issue #29, ENG-14 issue #31 and ENG-15 issue #33.
 
 Every P0 requirement of the [requirements trace](requirements.md) is delivered by exactly one
 issue below; the P1 and P2 requirements that the P0 design already accommodates are listed under
@@ -305,6 +304,8 @@ and ENG-14.
     it.
 - **Requirements:** REQ-F01, REQ-F03, REQ-F04.
 - **Out of scope:** optimisations beyond what a missed budget requires.
+- **Delivered:** by issue #33; its measurements, values, misses and their issues (#34 to #36) and
+  the gate's procedure are in [what ENG-15 decided](quality.md#what-eng-15-decided).
 
 ## Deferred requirements
 

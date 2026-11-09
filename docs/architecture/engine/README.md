@@ -3,20 +3,23 @@
 **Status: accepted in issue #3; implementation started with ENG-01 (issue #5).** These documents
 design Planewright's canvas engine and split its first usable version into issues. The engine
 package holds only its `math`, `ports`, `model`, `geometry`, `camera`, `scene`, `history`,
-`selection`, `transform`, `input`, `tools`, `commands`, `persistence` and `editor` modules so far, the geometry's outlines, distances and text layout and the
-selection module since ENG-06 (issue #15), and the `editor` layer's render frames and render loop,
-with the `@planewright/render-canvas` renderer, since ENG-07 (issue #17), and the `input`, `tools`
-and `commands` layers with `createEditor` since ENG-08 (issue #19); the Selection tool came with
-ENG-09 (issue #21), the transforms with ENG-10 (issue #23), the shape, line and freehand tools
-with ENG-11 (issue #25), the Text tool with text editing with ENG-12 (issue #27), and the
-`persistence` layer's repository port and autosave scheduler, with loading and saving in the
-editor, with ENG-13 (issue #29), and the announcer port, the view's elements and creation with
-Enter with ENG-14 (issue #31). The web app shows a pre-release editor surface on them: a canvas
-that pans and zooms, on which shapes, lines, freehand strokes and texts can be drawn, selected,
-transformed and undone, and texts edited again, also from the keyboard alone through a list of its
-elements, with each change said in a live region, and whose drawing is saved in the browser's
-IndexedDB storage and restored on reload. The clipboard (P1), document files, images and offline
-start (P2) do not exist yet.
+`selection`, `transform`, `input`, `tools`, `commands`, `persistence` and `editor` modules so far,
+the geometry's outlines, distances and text layout and the selection module since ENG-06 (issue
+#15), and the `editor` layer's render frames and render loop, with the `@planewright/render-canvas`
+renderer, since ENG-07 (issue #17), and the `input`, `tools` and `commands` layers with
+`createEditor` since ENG-08 (issue #19); the Selection tool came with ENG-09 (issue #21), the
+transforms with ENG-10 (issue #23), the shape, line and freehand tools with ENG-11 (issue #25), the
+Text tool with text editing with ENG-12 (issue #27), and the `persistence` layer's repository port
+and autosave scheduler, with loading and saving in the editor, with ENG-13 (issue #29), and the
+announcer port, the view's elements and creation with Enter with ENG-14 (issue #31). The web app
+shows a pre-release editor surface on them: a canvas that pans and zooms, on which shapes, lines,
+freehand strokes and texts can be drawn, selected, transformed and undone, and texts edited again,
+also from the keyboard alone through a list of its elements, with each change said in a live region,
+and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue
+#33) measures every performance budget in CI, with its benchmarks, browser measurements and
+bundle-size guardrail; budgets B1, B2, B6 and B7 are still missed and go to issues #34 to #36
+([what ENG-15 decided](quality.md#what-eng-15-decided)). The clipboard (P1), document files, images
+and offline start (P2) do not exist yet.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
 ([reverse engineering](../../reverse-engineering/README.md)), which says what users observe, and

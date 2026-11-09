@@ -107,10 +107,22 @@ release has been published yet.
   `Announcer` port, through which the editor announces each selection change, creation, other
   change, undo and redo with its element count, and failed and stale saves; the view's list of the
   drawn elements as last committed; and Enter on the canvas, which creates the active tool's element
-  at the centre of the view or edits the one selected text. In the web app, a keyboard-operable
-  list of the elements beside the canvas that selects, nudges and deletes them, polite and
-  assertive live regions that say the announcements and the storage notices, zoom controls, the
-  specified tab order with a visible focus indicator on every focusable element, focus kept off the
-  page when Undo or Redo becomes unavailable, the text area closes or the stale notice is answered,
-  interface text at 4.5:1 or more and touch targets of 24 px or more. Menus and the dark theme do
-  not exist yet, and no human accessibility audit has been made.
+  at the centre of the view or edits the one selected text. In the web app, a keyboard-operable list
+  of the elements beside the canvas that selects, nudges and deletes them, polite and assertive live
+  regions that say the announcements and the storage notices, zoom controls, the specified tab order
+  with a visible focus indicator on every focusable element, focus kept off the page when Undo or
+  Redo becomes unavailable, the text area closes or the stale notice is answered, interface text at
+  4.5:1 or more in the light theme, the only P0 theme, which the page keeps whatever the operating
+  system prefers since ENG-15, and touch targets of 24 px or more. Menus and the dark theme do not
+  exist yet, and no human accessibility audit has been made.
+- Performance harness and budgets (ENG-15): seeded scenes of up to 10,000 elements; Vitest
+  benchmarks of hit testing, the marquee, a 1,000-element move and autosave, and of the element
+  list's names; Playwright measurements of scene and overlay redraws, the frame that shows a pointer
+  move, long tasks while saving and a cached load, read from `performance.measure` around each
+  render of a page opened with `?measure`; a bundle-size guardrail that fails `npm run validate` and
+  CI; and a CI job that reports every value with the machine it ran on and keeps the report, whose
+  statistical budgets fail CI only once three runs on `main` are recorded in
+  `docs/performance/baseline.json`. The scene redraws of 5,000 elements, the marquee over 10,000 and
+  the 1,000-element move still miss their budgets and have issues #34 to #36. The renderer's path
+  cache no longer walks itself on every lookup, the element list names a long text from its first
+  words only, and the page declares the light colour scheme only.

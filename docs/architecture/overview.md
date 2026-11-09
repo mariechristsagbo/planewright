@@ -90,16 +90,18 @@ is tested against a recording fake of the 2D context; the web app's canvas host 
 ## Decisions and what stays open
 
 The [canvas-engine architecture](engine/README.md) (issue #3) decides how the editor is built,
-traced to the behavioural baseline of issue #1. Its ADRs are accepted. ENG-01 (issue #5) created
-the engine package with its boundary checks, its math layer and its ports, ENG-02 (issue #7)
-added the document model and its codec, ENG-03 (issue #9) the scene store, ENG-04 (issue #11)
-the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text
-layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08
-(issue #19) the editor surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the
-transforms, ENG-11 (issue #25) the shape, line and freehand creation tools, ENG-12 (issue #27)
-the Text tool, text editing and the bundled fonts, ENG-13 (issue #29) local persistence and
-autosave in the browser's IndexedDB storage, and ENG-14 (issue #31) the element list, the live
-region, focus order and creation from the keyboard; the rest is not implemented yet:
+traced to the behavioural baseline of issue #1. Its ADRs are accepted. ENG-01 (issue #5) created the
+engine package with its boundary checks, its math layer and its ports, ENG-02 (issue #7) added the
+document model and its codec, ENG-03 (issue #9) the scene store, ENG-04 (issue #11) the undo and
+redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text layout and hit
+testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08 (issue #19) the editor
+surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the transforms, ENG-11 (issue
+#25) the shape, line and freehand creation tools, ENG-12 (issue #27) the Text tool, text editing and
+the bundled fonts, ENG-13 (issue #29) local persistence and autosave in the browser's IndexedDB
+storage, ENG-14 (issue #31) the element list, the live region, focus order and creation from the
+keyboard, and ENG-15 (issue #33) the measurements of the performance budgets, reported in CI, with
+budgets B1, B2, B6 and B7 still missed and named with issues #34 to #36; the rest is not implemented
+yet:
 
 - storage beyond the element model and codec of ENG-02, the scene store of ENG-03 and the browser
   storage and autosave of ENG-13: the binary files of images, opening and saving document files and

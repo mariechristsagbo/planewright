@@ -165,6 +165,114 @@ Benchmarks start as reports. Once three consecutive runs on `main` give a baseli
 than 20 % worse than its budget or baseline fails CI. Raising a budget needs an ADR, like raising a
 guardrail.
 
+### What ENG-15 decided
+
+ENG-15 (issue #33) measures every row of the table above in CI and reports its value. It decided
+what the rules above leave open:
+
+- **Where each budget is measured.** B5 to B8 are Vitest benchmarks of engine code in Vitest's
+  benchmark mode, `npm run perf:bench` with `vitest.bench.config.ts`, apart from the test and
+  coverage runs; they import natively, since Vitest's module runner puts export getters on every
+  call between modules and warns that they distort the results. B1 to B4, B9 and B10 are Playwright
+  tests in `apps/web/tests/perf`, `npm run perf:browser`, against the production build at
+  1280 × 720 in Chromium, one test at a time and without retries. A page opened with `?measure`
+  wraps each `render` in `performance.measure`, named `planewright:render-scene` for a frame that
+  redraws the scene layer, with the overlay drawn with it, or `planewright:render-overlay` for one
+  that redraws only the overlay; without the parameter nothing is measured. B11 to B13 are
+  `npm run check:bundle-size`: the engine's and the renderer's entries bundled and minified on their
+  own by esbuild, the renderer without the engine, and the build's initial scripts, each compressed
+  at gzip level 9 and read in KB of 1,000 bytes. B14 stays a heap snapshot by hand before each
+  release, as no automated measurement of a full history ran reliably enough for CI. The table's
+  rows are budgets B1 to B14 in `scripts/lib/perf-budgets.ts`, one per target, and a test fails when
+  the two differ.
+- **Scenes.** Every measurement draws a seeded scene of the six P0 kinds, five, four, three, three,
+  three and two of every twenty, a quarter of them turned and three tenths of the closed ones
+  filled, each element in its own cell of a grid over an area (`perfElements` in the engine's test
+  support). The engine's benchmarks use 10,000 elements over 8,000 × 4,500 units; B1, B3 and B4 use
+  5,000 elements all in view at zoom 1; B2 and the pan steps use 5,000 over ten times the view, of
+  which the renderer draws 719 to 774, since it also draws what lies within 64 px of the view; B9
+  uses 5,000 and B10 1,000. The browser tests store a scene in IndexedDB as a whole save writes it
+  and open the page again, so the page loads it as a cached drawing.
+- **What each sample is.** B1: one scene render during wheel pans of 2 px back and forth, 100 after
+  20 warm-up frames. B2: one scene render of a loop of 110 wheel steps of 20 px, 100 after 10. B3:
+  one overlay render of a marquee dragged in 60 steps, those after the first 5. B4: for each pointer
+  move of that marquee and of a Hand tool drag, the animation frames from the move to the frame of
+  the first render after it, from probes that the page runs before its own scripts; 1 is the next
+  frame. B5: one hit test at one of 64 seeded points, 2,000 after 400 warm-up iterations. B6: one
+  marquee query of a marquee dragged from the scene's corner to its far corner in 32 steps, 640
+  after 128. B7: one change set moving 1,000 elements by one unit and back, 400 after 80. B8: the
+  save that autosave starts for a 50-element change made untimed before it, from its timer to its
+  result, over the in-memory record backend, 300 after 60. B9: the long tasks that overlap each of
+  eight saves, from the frame after a 50-element nudge until the stored revision rises and the page
+  says it is saved. B10: the end of the first render that draws all 1,000 elements, from the
+  navigation's start, over twelve loads after one that fills the cache. Every test first checks what
+  it measured, such as the hit test against a scan of every element or the number of elements each
+  frame drew, and fails at once when the check does.
+- **Statistics and clocks.** A budget's value is the 95th percentile of its samples, interpolated
+  linearly between the closest ranks, the largest sample for B4 and B9, or the one value of a
+  bundle. Vitest's runner times benchmarks with `performance.now()`. Chromium coarsens
+  `performance.now()` to 100 µs on a page that is not cross-origin isolated, so the browser's render
+  times are multiples of 0.1 ms, which B3's 1 ms budget can still tell apart. No test sleeps to
+  measure or compares a timing with a fixed value.
+- **The report and the baseline.** `npm run perf:report` merges the results in `perf-results/` with
+  the machine (processor, cores, memory, system, runner image, Node.js and Chromium versions,
+  commit, branch, event and run) into `report.json` and `report.md`, and writes the Markdown to the
+  CI job's summary. The CI job "Performance report" runs it on every push and pull request and
+  keeps `perf-results/` as the `performance-report` artifact for 90 days; it is not a required
+  check. `docs/performance/baseline.json` keeps recorded runs, with the issue that will fix each
+  missed budget. A run on another branch, such as this pull request's first run, is kept there as
+  information and never counts.
+- **When a statistical budget starts to fail CI.** A budget measured in CI that was not measured,
+  a failed check and a bundle over its budget fail at once. Every other budget reports only, until
+  the baseline holds three runs on `main`, recorded in this order:
+  1. Run 1/3 is the CI run of the push that merges this pull request: download its report with
+     `gh run download <run id> --name performance-report --dir perf-results/main-1`.
+  2. Runs 2/3 and 3/3 are the next two CI runs on `main`, from pushes or from
+     `gh workflow run CI --ref main`, with no failed or cancelled performance job between them;
+     after one, the count starts again from the next run. Download each in the same way.
+  3. A pull request for its own issue records them with
+     `npm run perf:baseline -- --label "main run 1/3" perf-results/main-1/report.json`, and so on
+     for 2/3 and 3/3, and commits the baseline.
+  4. From that commit on, a budget that all three runs measured fails CI when its value is more than
+     20 % above the larger of its target and its baseline, the slowest of the three runs: a met
+     budget may not drift more than 20 % past its target, and a missed one more than 20 % past what
+     `main` measured while its issue is open.
+- **Misses.** Measured on a developer machine (a 6-core AMD EPYC, headless Chromium 156, Node.js
+  24.22.1), B1 (5,000 elements redrawn in a median of 22 to 23 ms, 41 to 52 ms at the 95th
+  percentile) and B2 (10 to 27 ms at the 95th percentile) miss and go to issue #34, B6 (19 ms at the
+  95th percentile, 22 ms for a marquee over the whole scene) to issue #35 and B7 (133 ms at the 95th
+  percentile, a median of 25 ms) to issue #36; the CI values are in each run's report and in the
+  baseline. B3 to B5 and B8 to B13 are met there: the overlay at 0.2 to 0.8 ms and every pointer
+  move shown in the next frame, a hit test at 0.15 ms, a save at 1.9 ms, no long task in any save, a
+  cached load at 0.58 to 0.87 s, and the engine at 28.9 KB, the renderer at 2.1 KB and the web app's
+  initial JavaScript at 106.7 KB. The measurement found one quadratic cost and ENG-15 removed it:
+  the renderer's path cache walked its whole map on each lookup, which had put B1's median at 68 ms.
+- **Low-end check.** With Chromium's CPU slowed down four times, once on the same machine at
+  54425f4, B1 was 87 ms at the median and 433 ms at the 95th percentile, B2 17 and 61 ms, B3 0.8 ms
+  at the 95th percentile, and every pointer move was shown in the next frame.
+- **The element list (the ENG-14 review's s4).** A pan renders the list's 101 options again. I1
+  reads the main thread's busy time from each pan step of B2's loop to the frame after its render,
+  38 to 46 ms at the median, most of it Chromium committing both canvas layers, 13 to 24 ms a frame
+  without a GPU, and the render, not the list. I2 does the same with the 101 listed options texts of
+  100,000 characters, which took 141 ms while a name processed a text's whole content; a name now
+  reads a text only until its 41st character, and I2 fell to 38 to 42 ms, as I1. I3, the naming of
+  those 101 texts in Vitest, fell from 129 ms to 0.41 ms at the median, so names are not cached. The
+  list still renders only the options around its active one: a screen reader reaches only those in
+  the page, and Up, Down, Home and End move the window.
+- **The heap (B14).** By hand before each release: open the production build in Chromium with a
+  stored drawing of 10,000 elements all selected, which the browser tests' `storeScene` can store,
+  nudge them with the arrow keys until the history holds its 50 MB of change data, collect garbage
+  and read the JavaScript heap from a heap snapshot in the developer tools. Measured once that way
+  at 54425f4, through the DevTools protocol's garbage collection and heap usage rather than a
+  snapshot, it was 16.8 MB after loading and at most 57 MB with the history full after 60 nudges,
+  within its 150 MB.
+- **Light only.** P0 ships the light theme only, so the page declares `color-scheme: light` and has
+  no `prefers-color-scheme` rule (the ENG-14 review's m1): a dark preference of the operating
+  system changes nothing, and an end-to-end test with that preference measures the interface text
+  at 4.5:1 or more and the list's active-option outline at 3:1 or more.
+- **Not here.** The fixes of the misses (issues #34 to #36), any budget raised, the dark theme, and
+  the ENG-11 review's m2 (the freehand preview's cost), which no budget measures.
+
 ## Security
 
 | Threat                                 | Control                                                                                                   |
