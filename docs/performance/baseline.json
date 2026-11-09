@@ -31,6 +31,102 @@
         "B12": 2.082,
         "B13": 106.889
       }
+    },
+    {
+      "label": "main run 1/3, CI run 87, push to main at 4db483f",
+      "branch": "main",
+      "event": "push",
+      "commit": "4db483f73f481300cdf94397bb081c997305082b",
+      "run": "https://github.com/mariechristsagbo/planewright/actions/runs/42640366479/attempts/1",
+      "date": "2026-11-09T15:02:41.091Z",
+      "machine": {
+        "Processor": "Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz",
+        "Cores": "4",
+        "Memory": "15.6 GiB",
+        "System": "linux 7.0.0-1017-azure x64",
+        "Runner image": "ubuntu24 20261101.360.1",
+        "Node.js": "v24.22.1",
+        "Browser": "Chromium 156.0.8078.4"
+      },
+      "values": {
+        "B1": 10.89999999999418,
+        "B2": 3.205000000010477,
+        "B3": 0.10000000000582077,
+        "B4": 1,
+        "B5": 0.07476244999998584,
+        "B6": 9.24690574999988,
+        "B7": 15.133771399999942,
+        "B8": 0.15482544999994163,
+        "B9": 0,
+        "B10": 0.12310000000001746,
+        "B11": 28.873,
+        "B12": 2.082,
+        "B13": 106.889
+      }
+    },
+    {
+      "label": "main run 2/3, CI run 88, manual dispatch on main at 4db483f",
+      "branch": "main",
+      "event": "workflow_dispatch",
+      "commit": "4db483f73f481300cdf94397bb081c997305082b",
+      "run": "https://github.com/mariechristsagbo/planewright/actions/runs/42641527515/attempts/1",
+      "date": "2026-11-09T15:09:26.675Z",
+      "machine": {
+        "Processor": "AMD EPYC 9V74 80-Core Processor",
+        "Cores": "4",
+        "Memory": "15.6 GiB",
+        "System": "linux 7.0.0-1017-azure x64",
+        "Runner image": "ubuntu24 20261101.360.1",
+        "Node.js": "v24.22.1",
+        "Browser": "Chromium 156.0.8078.4"
+      },
+      "values": {
+        "B1": 11.619999999991704,
+        "B2": 2.3000000000029104,
+        "B3": 0.10000000000582077,
+        "B4": 1,
+        "B5": 0.057788000000073225,
+        "B6": 5.9107484999999995,
+        "B7": 11.681254850000208,
+        "B8": 0.10971064999990861,
+        "B9": 0,
+        "B10": 0.10001000000000422,
+        "B11": 28.873,
+        "B12": 2.082,
+        "B13": 106.889
+      }
+    },
+    {
+      "label": "main run 3/3, CI run 89, manual dispatch on main at 4db483f",
+      "branch": "main",
+      "event": "workflow_dispatch",
+      "commit": "4db483f73f481300cdf94397bb081c997305082b",
+      "run": "https://github.com/mariechristsagbo/planewright/actions/runs/42642158624/attempts/1",
+      "date": "2026-11-09T15:12:53.135Z",
+      "machine": {
+        "Processor": "AMD EPYC 9V45 96-Core Processor",
+        "Cores": "4",
+        "Memory": "15.6 GiB",
+        "System": "linux 7.0.0-1017-azure x64",
+        "Runner image": "ubuntu24 20261101.360.1",
+        "Node.js": "v24.22.1",
+        "Browser": "Chromium 156.0.8078.4"
+      },
+      "values": {
+        "B1": 10.60999999999185,
+        "B2": 2,
+        "B3": 0.10000000000582077,
+        "B4": 1,
+        "B5": 0.15027949999998214,
+        "B6": 4.301785999999993,
+        "B7": 5.815490250000175,
+        "B8": 0.0754910500000051,
+        "B9": 0,
+        "B10": 0.08213500000000132,
+        "B11": 28.873,
+        "B12": 2.082,
+        "B13": 106.889
+      }
     }
   ],
   "followUps": {
