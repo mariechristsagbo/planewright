@@ -59,10 +59,11 @@
     "audit:deps": "npm audit --audit-level=moderate && npm audit signatures",
     "check:file-size": "node scripts/check-file-size.ts",
     "check:deps-policy": "node scripts/check-dependency-policy.ts",
+    "check:bundle-size": "node scripts/check-bundle-size.ts",
     "check:branch": "node scripts/validate-branch-name.ts",
     "guardrails": "npm run check:file-size && npm run check:deps-policy",
     "secrets:scan": "secretlint --maskSecrets \"**/*\"",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run guardrails && npm run secrets:scan && npm run test:coverage && npm run build",
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run guardrails && npm run secrets:scan && npm run test:coverage && npm run build && npm run check:bundle-size",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -72,6 +73,7 @@
     "@secretlint/secretlint-rule-preset-recommend": "13.1.0",
     "@types/node": "24.19.2",
     "@vitest/coverage-v8": "5.1.0",
+    "esbuild": "0.28.2",
     "eslint": "10.14.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-react-hooks": "7.1.1",
