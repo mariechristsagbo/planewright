@@ -50,6 +50,12 @@ function target(open: boolean) {
     edit: () => {
       throw new Error('No command here edits.');
     },
+    tapCentre: () => {
+      throw new Error('No selection command taps.');
+    },
+    editText: () => {
+      throw new Error('No command here edits a text.');
+    },
   };
   return { target: self, asked };
 }

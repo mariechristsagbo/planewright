@@ -48,6 +48,12 @@ function target(scene: SceneStore = sceneOf(), history?: History): MutableTarget
     edit: () => {
       throw new Error('No command here edits.');
     },
+    tapCentre: () => {
+      throw new Error('No command here taps.');
+    },
+    editText: () => {
+      throw new Error('No command here edits a text.');
+    },
   };
   return self;
 }

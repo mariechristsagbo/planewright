@@ -29,7 +29,8 @@ export type CommandId =
   | 'view.zoom-in'
   | 'view.zoom-out'
   | 'view.zoom-reset'
-  | 'view.zoom-to-fit';
+  | 'view.zoom-to-fit'
+  | 'canvas.enter';
 
 /** What a command reads and changes: the editor's state, as the editor lends it. */
 export interface CommandTarget {
@@ -61,6 +62,13 @@ export interface CommandTarget {
    * given; steps with the same merge key within one burst merge into one (REQ-T10).
    */
   edit(label: HistoryLabel, changes: UnstampedChangeSet, options?: EditOptions): void;
+  /**
+   * Gives the active tool a tap at the centre of the viewport, as Enter on the canvas does so that
+   * no element kind needs a pointer (REQ-Y05).
+   */
+  tapCentre(): void;
+  /** Starts editing a text, as a double tap on it does (REQ-C10). */
+  editText(id: ElementId): void;
 }
 
 export interface EditOptions {

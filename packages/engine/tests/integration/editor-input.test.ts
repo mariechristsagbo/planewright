@@ -146,6 +146,7 @@ describe('the view and the commands', () => {
       'selection.nudge-up-10',
       'selection.nudge-down',
       'selection.nudge-down-10',
+      'canvas.enter',
     ]);
     expect(editor.commands.filter(({ id }) => id.startsWith('selection.nudge-down'))).toEqual([
       { id: 'selection.nudge-down', label: 'Nudge down', shortcuts: [{ key: 'arrowdown' }] },
