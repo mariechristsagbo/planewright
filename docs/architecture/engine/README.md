@@ -10,9 +10,11 @@ and `commands` layers with `createEditor` since ENG-08 (issue #19); the Selectio
 ENG-09 (issue #21), the transforms with ENG-10 (issue #23), the shape, line and freehand tools
 with ENG-11 (issue #25), the Text tool with text editing with ENG-12 (issue #27), and the
 `persistence` layer's repository port and autosave scheduler, with loading and saving in the
-editor, with ENG-13 (issue #29). The web app shows a pre-release editor surface on them: a canvas
+editor, with ENG-13 (issue #29), and the announcer port, the view's elements and creation with
+Enter with ENG-14 (issue #31). The web app shows a pre-release editor surface on them: a canvas
 that pans and zooms, on which shapes, lines, freehand strokes and texts can be drawn, selected,
-transformed and undone, and texts edited again, and whose drawing is saved in the browser's
+transformed and undone, and texts edited again, also from the keyboard alone through a list of its
+elements, with each change said in a live region, and whose drawing is saved in the browser's
 IndexedDB storage and restored on reload. The clipboard (P1), document files, images and offline
 start (P2) do not exist yet.
 

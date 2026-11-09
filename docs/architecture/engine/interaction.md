@@ -232,7 +232,8 @@ export type TextEdit =
   transiently and re-measures its size; a new left-aligned text keeps its top-left corner after
   creation.
 - Enter inserts a line break. Escape and Mod+Enter in the text area send a `commit` edit; a press
-  outside the text, which reaches the engine through `input`, and a tool change commit too.
+  outside the text, which reaches the engine through `input`, and a tool change commit too, and so
+  does moving the focus to another control ([what ENG-14 decided](quality.md#what-eng-14-decided)).
 - A session is one history entry; a new text left empty is removed without an entry, and an
   existing text emptied is deleted as one entry (REQ-C10).
 - While the text area has focus, editor shortcuts are paused.
@@ -277,6 +278,7 @@ registry. P0 commands and their shortcuts; digits follow the order of Planewrigh
 | Zoom in, out, reset         | Mod+=, Mod+−, Mod+0  | REQ-V02      |
 | Zoom to fit                 | Shift+1              | REQ-V09      |
 | Cancel, clear selection     | Escape               | REQ-S10      |
+| Create at the centre, edit  | Enter                | REQ-Y05      |
 
 Letter shortcuts match the produced character in lower case and fall back to the physical key on
 layouts without Latin letters. Digit shortcuts, Mod+0 included, match the physical key (`Digit0` to

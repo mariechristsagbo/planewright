@@ -48,6 +48,9 @@ describe('App', () => {
     );
     expect(contents).not.toHaveTextContent(/Nothing creates elements/);
     expect(contents).toHaveTextContent(
+      /a list of the drawn elements that selects, nudges and deletes them from the keyboard, Enter to draw at the centre of the canvas, Undo, Redo and zoom controls, and a live region that announces each change to screen readers\./,
+    );
+    expect(contents).toHaveTextContent(
       /Saving in this browser.*saved in this browser’s IndexedDB storage within a second of each change and come back after a reload/,
     );
   });

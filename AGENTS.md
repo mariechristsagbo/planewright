@@ -10,13 +10,14 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   selection with hit testing, the transform maths, input events with the gesture recogniser, the
   Hand, Selection, rectangle, ellipse, diamond, line, freehand and text tools with tool lock, the
   command registry with its keymap, the persistence layer's repository port and autosave, and the
-  editor layer's render loop, text sessions, loading, saving and `createEditor`, and
+  editor layer's render loop, text sessions, loading, saving, announcements and `createEditor`, and
   `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names. The web app shows a
   **pre-release** surface: a canvas that pans and zooms, on which rectangles, ellipses, diamonds,
   lines, freehand strokes and texts can be drawn, then selected, moved, resized, rotated,
-  duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo; the drawing
-  is saved in the browser's IndexedDB storage and restored on reload. Text formatting, styles,
-  arrows, notes, files, exporting and collaboration features do **not** exist yet.
+  duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo, also from
+  the keyboard alone, through a list of the elements and a live region that announces each change;
+  the drawing is saved in the browser's IndexedDB storage and restored on reload. Text formatting,
+  styles, arrows, notes, files, exporting and collaboration features do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -66,8 +67,9 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 ## Code map
 
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the canvas host, input adapter
-  and editor provider in `editor/`, the text area in `editor/text/`, the tool bar, Undo and Redo,
-  the view readout, the save status and the storage notices in `ui/`, and the browser ports, text
+  and editor provider in `editor/`, the text area in `editor/text/`, the element list, the live
+  region with its messages and the focus's return in `a11y/`, the tool bar, Undo and Redo, the zoom
+  controls, the view readout, the save status and the storage notices in `ui/`, and the browser ports, text
   measurer, font loading, Mod key per platform, the IndexedDB record backend, storage start-up, page
   events and the preferences entry in `platform/`. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static files
   in `public/`, the bundled fonts with their licences in `public/fonts/`

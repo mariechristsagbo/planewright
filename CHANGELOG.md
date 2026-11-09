@@ -103,3 +103,14 @@ release has been published yet.
   nothing instead of locking the history. In the web app, the drawing is saved in IndexedDB and
   restored on reload, with notices for failed, stale, unavailable and invalid storage and the
   preferences entry; files, exporting and collaboration do not exist yet.
+- Accessible element list, live region and focus order (ENG-14): in the engine, the optional
+  `Announcer` port, through which the editor announces each selection change, creation, other
+  change, undo and redo with its element count, and failed and stale saves; the view's list of the
+  drawn elements as last committed; and Enter on the canvas, which creates the active tool's element
+  at the centre of the view or edits the one selected text. In the web app, a keyboard-operable
+  list of the elements beside the canvas that selects, nudges and deletes them, polite and
+  assertive live regions that say the announcements and the storage notices, zoom controls, the
+  specified tab order with a visible focus indicator on every focusable element, focus kept off the
+  page when Undo or Redo becomes unavailable, the text area closes or the stale notice is answered,
+  interface text at 4.5:1 or more and touch targets of 24 px or more. Menus and the dark theme do
+  not exist yet, and no human accessibility audit has been made.
