@@ -189,8 +189,10 @@ export type HitResult =
 In P1, locked elements are skipped (REQ-S08) and a hit on a group member is widened to its
 outermost group by the selection layer (REQ-S11).
 
-**Box selection** uses `queryBox` for candidates and keeps an element when its whole outline is
-inside the marquee: the four rotated corners for box kinds, every point for point kinds (REQ-S06).
+**Box selection** keeps an element whose kind has a geometry, whose world bounds meet the marquee,
+as `queryBox`'s candidates do, and whose whole outline is inside the marquee: the four rotated
+corners for box kinds, every point for point kinds (REQ-S06). Each scene keeps these numbers per
+element between queries ([what issue #35 decided](#what-issue-35-decided)).
 The P2 overlap mode keeps an element when its outline meets the marquee (REQ-S07).
 
 ## Text layout
@@ -401,6 +403,111 @@ what the rules above leave open:
   the render, and the changes that would call the context less are the ones above that can change a
   pixel. Whether B1 holds in CI so depends on the runner's processor, and the pull request keeps the
   record of each run.
+
+## What issue #35 decided
+
+Issue #35 makes box selection's query cheaper for budget B6
+([performance budgets](quality.md#performance-budgets)) without changing what it selects. It
+decided what the rules above leave open:
+
+- **What B6 times.** One call of `enclosedBy` on a store of the benchmarks' 10,000 elements, as
+  ENG-15 decided: a marquee dragged from the scene's corner to its far corner in 32 steps, 640
+  samples after 128, over a scene that does not change between the queries, as it does not while a
+  marquee is dragged. Before timing, the result of each of the 32 marquees is compared with a scan
+  of every element by the rule above, in the test support, which keeps nothing between queries.
+  Until this issue the check compared the query with itself given every element as a candidate;
+  once a query scans its rows instead of the index's candidates, that comparison would have tested
+  nothing.
+- **Where a query went.** On a 6-core AMD EPYC developer machine (Node.js 24.22.1, Vitest's
+  benchmark mode), the query at `c5bcfd3` took 5.2 ms at the median and 17.6 ms at the 95th
+  percentile, and 18 ms for the whole scene, all of whose elements it encloses. A CPU profile of
+  1,536 queries of B6's loop, sampled every 50 µs, put 29 % of their time in building the outline
+  points, an object for each point and new vectors for each turn, 23 % in the filters, the sort and
+  the map that the query ran over its candidates, 17 % in the spatial index gathering the
+  candidates through a set, 14 % in looking each candidate up in the store, 11 % in garbage
+  collection, 3 % in turning vectors and 3 % in comparing order keys. Timed apart, at the median of
+  the 32 marquees, gathering the candidates took 0.7 ms, looking them up 1.1 ms, the outlines
+  2.1 ms and the sort 0.4 ms.
+- **An element's row.** The selection module computes, for each element, the four edges of its
+  world bounds and the smallest and largest x and y of its outline points, operation for operation
+  as `worldBounds` and the outline points of the rule above compute them, but without building a
+  point; a turned element's cosine and sine are taken once rather than once a point, which gives the
+  same numbers. A marquee encloses the element when its kind has a geometry, its bounds meet the
+  marquee, edges included, as the spatial index's candidates do, and the extent lies inside, edges
+  included. That holds exactly when every outline point lies inside, since the extent's edges are
+  coordinates of the points themselves, and an unturned point is still only moved by the origin.
+- **Rows kept per scene.** The module keeps each scene's rows, one for each of the store's ordered
+  elements, with the scene's revision and the ordered array they came from. While both are the
+  same, a query scans the rows in drawing order and keeps the identifiers of the elements it
+  encloses, so that no query sorts the scene. Until a query makes them again, the rows keep the
+  ordered array they came from, and with it the elements of that revision.
+- **After a change.** A marquee that meets at most a sixteenth of the elements, counted by the old
+  rows' bounds or, before the scene has rows, by its candidates against the number of ordered
+  elements, is answered from the spatial index's candidates: their rows are computed and only the
+  elements they enclose are sorted into drawing order. Any other marquee makes the rows again,
+  keeping the row of every element that is still the same object at the same place and computing
+  the others. The store gives a new ordered array whenever a change set raises its revision,
+  previews included, and never changes an element in place, so a kept row always holds its
+  element's numbers; a reader whose revision stays as it was is still followed through its ordered
+  elements. A marquee that is not finite or has a negative size is refused by the spatial index's
+  own check, as before, even when no box query runs.
+- **What stays the same.** The rule and the order of the result. Two properties compare the query
+  with the scan, exactly and in order. One loads 250 random scenes of every kind, among them
+  elements placed up to a billion units away, turned by quarter turns, by a hair or by almost a
+  whole turn, stroked as thinly as the model allows, with points normalised only within the
+  model's tolerance, and arrows, which have no geometry yet; it queries them with marquees dragged
+  from one corner of the content to the far one and with marquees on an element's outline or
+  bounds, some edges moved by one double. The other applies 120 runs of random moves, turns,
+  resizes, re-keys, additions and removals, previews included, and queries between the changes. A
+  property compares the rows of 3,000 random elements, and those of the benchmarks' 10,000, with
+  `worldBounds` and the outline points and finds no difference. Tests also follow what a query
+  reads: nothing of an unchanged scene, only the moved element after a move, and only the
+  candidates of a marquee over few elements. Of 31 regressions planted outside Git, among them
+  rows kept whatever changed, rows reused by identifier, a strict edge, a lost turn and an
+  unsorted index path, the tests caught 28, each failing 1 to 17 of them, and B6's check 11; the
+  other three, rows kept on the revision alone, a query without its own box check and a path
+  counted by enclosed rather than meeting rows, each fail one test added for them.
+- **What was measured and not done.** In a harness of B6's loop on the developer machine: a cache
+  of each element's row in a weak map, read while scanning the ordered elements, took 1.3 ms at
+  the median and 2.7 ms at the 95th percentile, its look-ups costing more than the comparisons;
+  rows built through `worldBounds` and `obbToScene` took 12.7 ms to make for 10,000 elements,
+  against 3.7 ms for numbers computed without building points into a typed array, and the row
+  objects kept now take 4 to 9 ms; rows in a typed array were no faster once made than row
+  objects, and strict TypeScript reads each of their numbers as possibly missing; answering every
+  query from the index's candidates with rows left B6 at 3.4 ms at the median and 11.9 ms at the
+  95th percentile. Making the rows again after every change, with no index path, made a small
+  marquee after one moved element take 1.1 ms against 0.13 ms before, and choosing the path by
+  the candidates themselves made a large marquee after a move run a box query for nothing, 5.8 ms
+  against 1.6 ms when the old rows count.
+- **The cost after a change.** A query on that machine, right after the change that each row
+  names, at the median of 16 (in ms):
+
+  | Query                               | 10,000 elements, before | after | 100,000, before | after |
+  | ----------------------------------- | ----------------------- | ----- | --------------- | ----- |
+  | Whole scene, nothing changed        | 18.9                    | 0.22  | 370             | 9.4   |
+  | Whole scene, one element moved      | 21.2                    | 1.1   | 349             | 16.4  |
+  | Whole scene, 1,000 elements moved   | 21.3                    | 2.5   | 383             | 17.0  |
+  | Whole scene, just loaded            | 23.1                    | 14.6  | 339             | 190   |
+  | Small marquee, one element moved    | 0.13                    | 0.16  | 0.22            | 0.28  |
+  | Small marquee, 1,000 elements moved | 0.16                    | 0.18  | 0.21            | 0.25  |
+  | Small marquee, just loaded          | 0.14                    | 0.20  | 0.21            | 0.33  |
+
+  The editor's view reads the store's ordered elements after every change, so they are ready when
+  a marquee is released, as the table assumes. A bare store makes them on the first read after a
+  change, which a small marquee over a scene that has no rows yet then pays: 3.2 to 3.3 ms for
+  10,000 elements and 63 to 73 ms for 100,000, against 0.11 to 0.21 ms before. A scene's rows take
+  2.4 MB of heap for 10,000 elements.
+
+- **Before and after.** B6 on that machine, in three runs of each taken in turn (at a load of
+  about 3):
+
+  | B6              | Before (`main` at `c5bcfd3`) | After             |
+  | --------------- | ---------------------------- | ----------------- |
+  | Median          | 5.39 to 6.10 ms              | 0.124 to 0.125 ms |
+  | 95th percentile | 18.9 to 24.2 ms              | 0.239 to 0.319 ms |
+
+  Computing rows instead of outline points, before the rows were kept, gave 4.2 to 4.4 ms and 14 to
+  16 ms in three runs.
 
 ## Export
 
