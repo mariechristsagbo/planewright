@@ -18,6 +18,10 @@ export interface EditorView {
   readonly camera: Camera;
   /** The selected elements, in the order they were selected. */
   readonly selection: readonly ElementId[];
+  /**
+   * Whether the history has a step to undo or redo; false while a text is edited, whose session
+   * holds the history's transaction and so disables both commands until it ends (REQ-H06).
+   */
   readonly canUndo: boolean;
   readonly canRedo: boolean;
   /** The text being edited and its box on screen, or null when no text is edited. */
@@ -30,8 +34,8 @@ export const viewOf = (core: EditorCore): EditorView => ({
   cursor: core.cursor,
   camera: core.loop.state().camera,
   selection: core.selection.get(),
-  canUndo: core.history.canUndo,
-  canRedo: core.history.canRedo,
+  canUndo: core.history.canUndo && core.session === null,
+  canRedo: core.history.canRedo && core.session === null,
   text: textView(core),
 });
 
