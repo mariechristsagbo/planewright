@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
+import { REPOSITORY } from '../lib/perf-baseline.ts';
+import type { PerfBaseline, PerfRun } from '../lib/perf-baseline.ts';
 import type { Measurement } from '../lib/perf-budgets.ts';
 import {
   GATE_RUNS,
   TOLERANCE,
-  appendRun,
   evaluate,
-  readBaseline,
   readMeasurement,
   reportMarkdown,
 } from '../lib/perf-report.ts';
-import type { PerfBaseline, PerfRun } from '../lib/perf-report.ts';
 
 // The performance report (docs/architecture/engine/quality.md#performance-budgets): every budget
 // reported with its value, structural failures failing at once, and statistical budgets failing
@@ -43,13 +42,25 @@ function measured(scale: number, overrides: Record<string, number[]> = {}): Meas
   ];
 }
 
+const MACHINE = {
+  Processor: 'Test CPU A',
+  Cores: '4',
+  Memory: '15.6 GiB',
+  System: 'linux',
+  'Runner image': 'ubuntu24 1',
+  'Node.js': 'v24.22.1',
+  Browser: 'Chromium 156',
+};
+
+/** A recorded run number `at` of CI on `branch`, a push on main and a pull request elsewhere. */
 const run = (branch: string, values: Record<string, number>, at = 1): PerfRun => ({
   label: `${branch} run ${String(at)}`,
   branch,
   event: branch === 'main' ? 'push' : 'pull_request',
-  commit: `c${String(at)}`,
-  run: `https://example.invalid/runs/${String(at)}`,
+  commit: String(at).repeat(40),
+  run: `https://github.com/${REPOSITORY}/actions/runs/${String(at)}/attempts/1`,
   date: `2026-11-${String(10 + at)}T00:00:00Z`,
+  machine: MACHINE,
   values,
 });
 
@@ -81,10 +92,17 @@ describe('evaluate before three main runs', () => {
     ]);
   });
 
-  it('counts only runs on main towards the gate', () => {
-    const baseline = { runs: [run('perf/33-x', {}), run('main', {}, 2)], followUps: {} };
-    const evaluation = evaluate(measured(0.5), baseline);
-    expect([evaluation.gating, evaluation.mainRuns]).toEqual([false, 1]);
+  it('counts only pushes and manual dispatches on main of this repository towards the gate', () => {
+    const fork = `https://github.com/fork/planewright/actions/runs/4/attempts/1`;
+    const runs = [
+      run('perf/33-x', {}),
+      run('main', {}, 2),
+      { ...run('main', {}, 3), event: 'pull_request' },
+      { ...run('main', {}, 4), run: fork },
+      { ...run('main', {}, 5), event: 'workflow_dispatch' },
+    ];
+    const evaluation = evaluate(measured(0.5), { runs, followUps: {} });
+    expect([evaluation.gating, evaluation.mainRuns]).toEqual([false, 2]);
     expect(GATE_RUNS).toBe(3);
   });
 });
@@ -120,45 +138,12 @@ describe('evaluate after three main runs', () => {
   });
 });
 
-describe('readMeasurement and readBaseline', () => {
-  it('read a browser measurement and a baseline, refusing malformed ones', () => {
+describe('readMeasurement', () => {
+  it('reads a browser measurement, refusing a malformed one', () => {
     const measurement = { id: 'B1', samples: [1, 2], details: { elements: 5_000 } };
     expect(readMeasurement(measurement, 'b1.json')).toEqual(measurement);
     expect(() => readMeasurement({ id: 'B1', samples: [] }, 'b1.json')).toThrow('b1.json');
     expect(() => readMeasurement({ samples: [1] }, 'x.json')).toThrow('x.json');
-    expect(readBaseline({ runs: [], followUps: {} })).toEqual(NONE);
-    expect(() => readBaseline({ runs: [{ branch: 'main' }] })).toThrow('baseline');
-  });
-});
-
-describe('appendRun', () => {
-  const report = {
-    run: { branch: 'main', event: 'push', commit: 'abc', url: 'https://example.invalid/r/9' },
-    date: '2026-11-20T00:00:00Z',
-    values: { B1: 3 },
-  };
-
-  it('records a run on main with its values', () => {
-    const next = appendRun(NONE, report, { label: 'main run 1/3' });
-    expect(next.runs).toEqual([
-      {
-        label: 'main run 1/3',
-        branch: 'main',
-        event: 'push',
-        commit: 'abc',
-        run: 'https://example.invalid/r/9',
-        date: '2026-11-20T00:00:00Z',
-        values: { B1: 3 },
-      },
-    ]);
-  });
-
-  it('records a run on another branch only when asked to, and never the same run twice', () => {
-    const elsewhere = { ...report, run: { ...report.run, branch: 'perf/33-x' } };
-    expect(() => appendRun(NONE, elsewhere, { label: 'x' })).toThrow('main');
-    expect(appendRun(NONE, elsewhere, { label: 'x', anyBranch: true }).runs).toHaveLength(1);
-    const once = appendRun(NONE, report, { label: 'a' });
-    expect(() => appendRun(once, report, { label: 'b' })).toThrow('already');
   });
 });
 

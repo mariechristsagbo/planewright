@@ -5,7 +5,8 @@ import { join } from 'node:path';
 
 import { PERF_BUDGETS, benchMeasurements } from './lib/perf-budgets.ts';
 import type { Measurement } from './lib/perf-budgets.ts';
-import { evaluate, readBaseline, readMeasurement, reportMarkdown } from './lib/perf-report.ts';
+import { readBaseline } from './lib/perf-baseline.ts';
+import { evaluate, readMeasurement, reportMarkdown } from './lib/perf-report.ts';
 
 // The performance report (docs/architecture/engine/quality.md#what-eng-15-decided): it reads what
 // `npm run perf:bench`, `npm run perf:browser` and `npm run check:bundle-size` wrote to

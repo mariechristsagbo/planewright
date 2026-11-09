@@ -1,5 +1,7 @@
 import { PERF_BUDGETS, PERF_INFO, statisticOf } from './perf-budgets.ts';
 import type { Measurement, PerfBudget, PerfUnit } from './perf-budgets.ts';
+import { isMainRun } from './perf-baseline.ts';
+import type { PerfBaseline, PerfRun } from './perf-baseline.ts';
 
 /**
  * The performance report's rules (docs/architecture/engine/quality.md#performance-budgets): every
@@ -7,7 +9,7 @@ import type { Measurement, PerfBudget, PerfUnit } from './perf-budgets.ts';
  * over its budget, fails at once; statistical budgets only report until three runs on `main` are
  * recorded in the baseline, and from then on a budget that those runs measured fails when its
  * value is more than 20 % worse than its budget or, when the baseline misses the budget, than the
- * baseline.
+ * baseline. Which runs count as runs on `main` is perf-baseline.ts's rule.
  */
 
 /** How many runs on `main` the baseline needs before statistical budgets can fail CI. */
@@ -15,24 +17,6 @@ export const GATE_RUNS = 3;
 
 /** How much worse than its reference a value may be once gated. */
 export const TOLERANCE = 0.2;
-
-/** One CI run's values, as the baseline file keeps them. */
-export interface PerfRun {
-  readonly label: string;
-  readonly branch: string;
-  readonly event: string;
-  readonly commit: string;
-  /** The CI run's address. */
-  readonly run: string;
-  readonly date: string;
-  readonly values: Readonly<Record<string, number>>;
-}
-
-export interface PerfBaseline {
-  readonly runs: readonly PerfRun[];
-  /** The issue that will fix each missed budget, by budget. */
-  readonly followUps: Readonly<Record<string, string>>;
-}
 
 export type BudgetStatus = 'met' | 'missed' | 'by hand' | 'not measured';
 
@@ -116,7 +100,7 @@ function failureOf({ budget, value, status, limit }: BudgetResult, gating: boole
 }
 
 export function evaluate(measurements: readonly Measurement[], baseline: PerfBaseline) {
-  const mainRuns = baseline.runs.filter(({ branch }) => branch === 'main');
+  const mainRuns = baseline.runs.filter(isMainRun);
   const gating = mainRuns.length >= GATE_RUNS;
   const byId = new Map(measurements.map((measurement) => [measurement.id, measurement]));
   const results: BudgetResult[] = PERF_BUDGETS.map((budget) =>
@@ -143,61 +127,6 @@ export function readMeasurement(value: unknown, file: string): Measurement {
     samples: value['samples'],
     ...(isRecord(details) ? { details } : {}),
   };
-}
-
-const RUN_FIELDS = ['label', 'branch', 'event', 'commit', 'run', 'date'] as const;
-
-function readRun(value: unknown): PerfRun {
-  const valid =
-    isRecord(value) &&
-    RUN_FIELDS.every((field) => typeof value[field] === 'string') &&
-    isRecord(value['values']) &&
-    Object.values(value['values']).every(Number.isFinite);
-  if (!valid) throw new Error('The performance baseline holds a run that is not well formed.');
-  return value as unknown as PerfRun;
-}
-
-export function readBaseline(value: unknown): PerfBaseline {
-  const runs = isRecord(value) ? value['runs'] : undefined;
-  const followUps = isRecord(value) ? value['followUps'] : undefined;
-  const validFollowUps =
-    isRecord(followUps) && Object.values(followUps).every((ref) => typeof ref === 'string');
-  if (!Array.isArray(runs) || !validFollowUps) {
-    throw new Error('The performance baseline needs a runs list and a followUps map.');
-  }
-  return { runs: runs.map(readRun), followUps: followUps as Readonly<Record<string, string>> };
-}
-
-/** What a report says about its CI run, which a baseline run records. */
-export interface ReportedRun {
-  readonly run: {
-    readonly branch: string;
-    readonly event: string;
-    readonly commit: string;
-    readonly url: string;
-  };
-  readonly date: string;
-  readonly values: Readonly<Record<string, number>>;
-}
-
-/** The baseline with a report's run added: a run on main, or on any branch when asked to. */
-export function appendRun(
-  baseline: PerfBaseline,
-  report: ReportedRun,
-  options: { readonly label: string; readonly anyBranch?: boolean },
-): PerfBaseline {
-  const { branch, event, commit, url } = report.run;
-  if (branch !== 'main' && options.anyBranch !== true) {
-    throw new Error(`Only runs on main make the baseline; this run is on ${branch}.`);
-  }
-  if (baseline.runs.some(({ run }) => run === url)) {
-    throw new Error(`The baseline already holds ${url}.`);
-  }
-  const added: PerfRun = {
-    ...{ label: options.label, branch, event, commit, run: url },
-    ...{ date: report.date, values: report.values },
-  };
-  return { ...baseline, runs: [...baseline.runs, added] };
 }
 
 const row = (cells: readonly string[]): string => `| ${cells.join(' | ')} |`;
