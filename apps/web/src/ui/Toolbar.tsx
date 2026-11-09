@@ -38,6 +38,9 @@ const itemsOf = (commands: readonly EditorCommand[], view: EditorView): Item[] =
     return command.id === 'tool.lock' ? [{ command, pressed: view.toolLock, note: LOCK_NOTE }] : [];
   });
 
+/** The keys that a focused button takes for itself, which never reach the editor's keymap. */
+const BUTTON_KEYS = new Set(['Enter', ' ']);
+
 /** The keys that move focus within the tool bar, as steps or ends. */
 const MOVES: Readonly<Partial<Record<string, number | 'first' | 'last'>>> = {
   ArrowRight: 1,
@@ -51,7 +54,8 @@ const MOVES: Readonly<Partial<Record<string, number | 'first' | 'last'>>> = {
 /**
  * The tool bar (REQ-Y03): one tab stop, the arrow keys, Home and End to move between its buttons,
  * each tool a toggle button exposing its shortcut (REQ-C14), and tool lock a toggle exposing its
- * state as a state (REQ-Y01). Other keys pressed in it reach the editor's keymap, as on the canvas.
+ * state as a state (REQ-Y01). Enter and Space press the focused button; other keys pressed in it
+ * reach the editor's keymap, as on the canvas.
  */
 export function Toolbar() {
   const { editor, platform } = useSurface();
@@ -61,6 +65,7 @@ export function Toolbar() {
   const buttons = useRef<(HTMLButtonElement | null)[]>([]);
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (BUTTON_KEYS.has(event.key)) return;
     const move = MOVES[event.key];
     if (move === undefined) {
       sendKeyDown(editor, platform, event);
