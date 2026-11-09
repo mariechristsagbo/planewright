@@ -53,6 +53,8 @@
     "test:watch": "vitest",
     "test:e2e": "npm run test:e2e --workspace @planewright/web",
     "perf:bench": "vitest bench --run --config vitest.bench.config.ts --reporter=default --reporter=json --outputFile.json=perf-results/bench.json",
+    "perf:report": "node scripts/perf-report.ts",
+    "perf:baseline": "node scripts/perf-baseline.ts",
     "build": "npm run build --workspaces --if-present",
     "audit:deps": "npm audit --audit-level=moderate && npm audit signatures",
     "check:file-size": "node scripts/check-file-size.ts",
