@@ -7,6 +7,7 @@ import { announceStorageNotice, webAnnouncer } from './a11y/announcements.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
 import { canvasRenderer } from './editor/renderer.ts';
 import { loadFonts } from './platform/fonts.ts';
+import { frameTimingOf } from './platform/frame-timing.ts';
 import { watchPage } from './platform/page-events.ts';
 import { platformOf } from './platform/platform.ts';
 import { localStorageOf, readPreferences } from './platform/preferences.ts';
@@ -43,7 +44,7 @@ watchPage({ window, document, fonts: document.fonts }, editor);
 const surface = {
   editor,
   platform: platformOf(navigator),
-  createRenderer: canvasRenderer(document),
+  createRenderer: canvasRenderer(document, frameTimingOf(window)),
   storageNotice: storage.notice,
 };
 
