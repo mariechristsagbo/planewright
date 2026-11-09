@@ -100,8 +100,9 @@ surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the transform
 the bundled fonts, ENG-13 (issue #29) local persistence and autosave in the browser's IndexedDB
 storage, ENG-14 (issue #31) the element list, the live region, focus order and creation from the
 keyboard, and ENG-15 (issue #33) the measurements of the performance budgets, reported in CI, with
-budgets B1, B6 and B7 missed in CI and B2 on a slower machine, named with issues #34 to #36; the
-rest is not implemented yet:
+budgets B1, B6 and B7 missed in CI and B2 on a slower machine, named with issues #34 to #36, and
+issue #38 their baseline, three runs on `main` on three processors, which gates a run only by runs
+on its own processor and so gates none yet; the rest is not implemented yet:
 
 - storage beyond the element model and codec of ENG-02, the scene store of ENG-03 and the browser
   storage and autosave of ENG-13: the binary files of images, opening and saving document files and

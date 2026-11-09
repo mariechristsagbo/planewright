@@ -296,7 +296,8 @@ and ENG-14.
 ### ENG-15 Performance harness and budgets
 
 - **Delivers:** the benchmarks and Playwright measurements of [quality](quality.md#performance-budgets),
-  a bundle-size guardrail, and the CI reporting that becomes a gate after three baseline runs.
+  a bundle-size guardrail, and the CI reporting that becomes a gate after three baseline runs
+  (since issue #38, three on the runner's processor model).
 - **Acceptance criteria:**
   - each budget has a measurement that runs in CI and reports its value, the next-frame budget of
     the ENG-07 render loop included;
