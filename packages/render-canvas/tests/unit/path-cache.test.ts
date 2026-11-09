@@ -173,6 +173,52 @@ describe('the path cache', () => {
     expect(cache.size).toBe(50);
   });
 
+  it('REQ-F01 keeps its use order without taking a held drawing out of its map and back in', () => {
+    // Deleting and setting an entry again on each lookup cost a tenth of B1's scene render in a
+    // profile of 5,000 elements (issue #34).
+    const { cache } = cacheOf();
+    const squares = Array.from({ length: 50 }, (_, index) =>
+      shape('rectangle', SQUARE, { id: index + 1 }),
+    );
+    for (const square of squares) cache.drawingOf(square);
+    const removed = vi.spyOn(Map.prototype, 'delete');
+    const added = vi.spyOn(Map.prototype, 'set');
+    try {
+      for (const square of squares) cache.drawingOf(square);
+      expect(removed).not.toHaveBeenCalled();
+      expect(added).not.toHaveBeenCalled();
+    } finally {
+      removed.mockRestore();
+      added.mockRestore();
+    }
+  });
+
+  it('drops the least recently used first, whatever was used, changed or dropped since', () => {
+    const { cache } = cacheOf(3);
+    const squares = [1, 2, 3, 4, 5].map((index) => shape('rectangle', SQUARE, { id: index }));
+    const [a, b, c, d, e] = squares;
+    if (!a || !b || !c || !d || !e) throw new Error('five squares');
+    const held = () => squares.map((square) => cache.peek(square.id) !== undefined);
+    cache.drawingOf(a);
+    cache.drawingOf(b);
+    cache.drawingOf(c);
+    // A new revision is used last; a dropped element is gone at once.
+    cache.drawingOf({ ...a, rev: 2 });
+    cache.drop([c.id]);
+    cache.drawingOf(d);
+    cache.drawingOf(b);
+    // In use order a, d, b: a fourth element drops a.
+    cache.drawingOf(e);
+    expect(held()).toEqual([false, true, false, true, true]);
+    expect(cache.size).toBe(3);
+    cache.drawingOf(c);
+    expect(held()).toEqual([false, true, true, false, true]);
+    cache.drop([b.id, e.id, c.id]);
+    expect(cache.size).toBe(0);
+    cache.drawingOf(a);
+    expect(held()).toEqual([true, false, false, false, false]);
+  });
+
   it('empties when cleared', () => {
     const { cache } = cacheOf();
     cache.drawingOf(shape('rectangle', SQUARE));
