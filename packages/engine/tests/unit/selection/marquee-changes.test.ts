@@ -78,6 +78,24 @@ describe('marquee queries as the scene changes', () => {
     }
   });
 
+  it('refuse such a marquee too while the scene keeps its rows', () => {
+    const scene = sceneOf(...three());
+    expect(enclosedBy(scene, EVERYTHING)).toHaveLength(3);
+    expect(() => enclosedBy(scene, { x: 0, y: Number.NaN, width: 50, height: 10 })).toThrow(
+      /^A query box needs a finite corner and size, not /,
+    );
+  });
+
+  it('follow the ordered elements of a reader whose revision does not follow them', () => {
+    const store = sceneOf(...three());
+    // A copy keeps the revision that the store had when it was made, and reads the rest from it.
+    const copy: SceneReader = { ...store };
+    expect(enclosedBy(copy, EVERYTHING)).toHaveLength(3);
+    store.apply(move(held(store, testId(2)), 50_000), 'local');
+    expect(copy.rev).not.toBe(store.rev);
+    expect(enclosedBy(copy, EVERYTHING)).toStrictEqual([testId(1), testId(3)]);
+  });
+
   it('keep the spatial index’s rule that the world bounds meet the marquee', () => {
     // A stroke of 1e-300 grows the bounds of this one-point stroke at 0 to about ±5e-301, which
     // leaves out its point, normalised within the tolerance to 1e-9.
@@ -88,6 +106,12 @@ describe('marquee queries as the scene changes', () => {
     expect(enclosedBy(scene, { x: 0, y: 0, width: 1e-9, height: 1e-9 })).toStrictEqual([dot.id]);
   });
 });
+
+/** Forty squares in a row, 10 units apart. */
+const forty = () =>
+  Array.from({ length: 40 }, (_, index) =>
+    shapeElement('rectangle', 10, 10, { id: index + 1, order: 'a', x: 20 * index, y: 0 }),
+  );
 
 /** A reader of the store whose elements count, by element, the fields read from them. */
 function watched(store: SceneStore) {
@@ -148,16 +172,24 @@ describe('what a marquee query reads', () => {
   });
 
   it('reads only the candidates of a marquee over few, after a change', () => {
-    // Forty squares in a row: a marquee over the first meets one of them, under a sixteenth.
-    const row = Array.from({ length: 40 }, (_, index) =>
-      shapeElement('rectangle', 10, 10, { id: index + 1, order: 'a', x: 20 * index, y: 0 }),
-    );
-    const store = sceneOf(...row);
+    // A marquee over the first of forty squares meets one of them, under a sixteenth.
+    const store = sceneOf(...forty());
     const { reader, reads } = watched(store);
     expect(enclosedBy(reader, EVERYTHING)).toHaveLength(40);
     store.apply(move(held(store, testId(30)), 50_000), 'local');
     reads.clear();
     expect(enclosedBy(reader, { x: -1, y: -1, width: 12, height: 12 })).toStrictEqual([testId(1)]);
     expect([...reads.keys()]).toStrictEqual([testId(1)]);
+  });
+
+  it('makes the rows again for a marquee that meets many but encloses few, after a change', () => {
+    // A thin band across the forty squares meets each of them and encloses none.
+    const store = sceneOf(...forty());
+    const { reader, reads } = watched(store);
+    expect(enclosedBy(reader, EVERYTHING)).toHaveLength(40);
+    store.apply(move(held(store, testId(30)), 50_000), 'local');
+    reads.clear();
+    expect(enclosedBy(reader, { x: -1, y: 4, width: 800, height: 2 })).toStrictEqual([]);
+    expect([...reads.keys()]).toStrictEqual([testId(30)]);
   });
 });
