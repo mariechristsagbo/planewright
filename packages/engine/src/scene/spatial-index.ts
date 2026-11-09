@@ -81,7 +81,8 @@ function distanceToBox(point: Vec, box: Aabb): number {
   return Math.hypot(dx, dy);
 }
 
-function checkBox(box: Aabb): void {
+/** Refuses a query box that is not finite or has a negative size, as every box query does. */
+export function checkQueryBox(box: Aabb): void {
   const sides = [box.x, box.y, box.width, box.height];
   if (!sides.every(Number.isFinite) || box.width < 0 || box.height < 0) {
     throw new RangeError(`A query box needs a finite corner and size, not ${JSON.stringify(box)}.`);
@@ -179,7 +180,7 @@ export function createSpatialIndex(): SpatialIndex {
   const grid: Grid = { entries: new Map(), cells: new Map(), large: new Set() };
   return {
     queryBox(box) {
-      checkBox(box);
+      checkQueryBox(box);
       return candidates(grid, spanOf(box))
         .filter(({ bounds }) => aabbIntersects(bounds, box))
         .map(({ id }) => id);

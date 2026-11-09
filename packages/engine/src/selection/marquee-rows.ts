@@ -184,7 +184,7 @@ export const marqueeEdges = (marquee: Aabb): MarqueeEdges => ({
 });
 
 /** Whether the world bounds meet the marquee, edges included, as for a spatial index candidate. */
-const meets = (row: EnclosureRow, marquee: MarqueeEdges): boolean =>
+export const meets = (row: EnclosureRow, marquee: MarqueeEdges): boolean =>
   row.boundsLeft <= marquee.right &&
   marquee.left <= row.boundsRight &&
   row.boundsTop <= marquee.bottom &&
