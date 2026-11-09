@@ -10,6 +10,8 @@ import type { DocumentState } from '../model/document.ts';
 import type { ElementId } from '../model/ids.ts';
 import type { StoredDocument } from '../persistence/repository.ts';
 import type { Cancel } from '../ports/ports.ts';
+import { createAnnouncing } from './announcing.ts';
+import type { Announcing } from './announcing.ts';
 import { createCore, finishText, routeGesture, showSelection, targetOf } from './editor-core.ts';
 import type { EditorCore, EditorPorts } from './editor-core.ts';
 import { showSession } from './load.ts';
@@ -115,7 +117,11 @@ interface Wiring {
   readonly target: CommandTarget;
   readonly recogniser: GestureRecogniser;
   readonly views: ViewPublisher;
-  /** Shows the selection on the overlay, then tells the view's listeners of any change. */
+  readonly announcing: Announcing;
+  /**
+   * Shows the selection on the overlay, then tells the view's listeners of any change and
+   * announces it.
+   */
   readonly publish: () => void;
   readonly run: (id: CommandId) => CommandOutcome;
 }
@@ -124,10 +130,12 @@ function wire(ports: EditorPorts, document: DocumentState): Wiring {
   const core = createCore(ports, document);
   const router = createViewportRouter();
   const views = createViewPublisher(core);
+  const announcing = createAnnouncing(core, ports.announcer);
   const publish = (): void => {
     measureWaiting(core);
     showSelection(core);
     views.publish();
+    announcing.publish();
   };
   const recogniser = createGestureRecogniser(ports.scheduler, (gesture) => {
     routeGesture(core, router, gesture);
@@ -139,7 +147,7 @@ function wire(ports: EditorPorts, document: DocumentState): Wiring {
     publish();
     return outcome;
   };
-  return { core, target, recogniser, views, publish, run };
+  return { core, target, recogniser, views, announcing, publish, run };
 }
 
 /** A wheel event goes to the camera; any other to the recogniser, and a chord runs its command. */
@@ -156,13 +164,18 @@ function input({ core, target, recogniser, publish, run }: Wiring, event: InputE
   return command !== undefined;
 }
 
-/** Shows the stored session, if there is one, then starts saving where the ports allow it. */
+/**
+ * Shows the stored session, if there is one, then starts saving where the ports allow it and
+ * announcing what changes from there.
+ */
 function savingFor(ports: EditorPorts, wiring: Wiring, stored: StoredDocument | undefined): Saving {
   if (stored !== undefined) {
     showSession(wiring.core, stored.session);
     wiring.publish();
   }
-  return createSaving(ports, stored, wiring);
+  const saving = createSaving(ports, stored, wiring);
+  wiring.announcing.settle();
+  return saving;
 }
 
 /** What the editor does for the document as a whole: measuring texts again and saving. */

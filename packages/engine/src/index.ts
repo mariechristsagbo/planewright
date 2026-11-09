@@ -62,6 +62,7 @@ export type { Selection } from './selection/selection.ts';
 export type { RenderState } from './editor/frame.ts';
 export type { OverlayPrimitive, RenderFrame, Renderer, Theme } from './editor/render-frame.ts';
 export type { RenderLoop } from './editor/render-loop.ts';
+export type { AnnouncementKey, AnnouncementValues, Announcer } from './editor/announcer.ts';
 export type {
   Editor,
   EditorCommand,
