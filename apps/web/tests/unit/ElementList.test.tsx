@@ -95,7 +95,7 @@ describe('the element list', () => {
     press('Enter');
     expect(editor.view.selection).toEqual([rectangle]);
     act(() => {
-      editor.select([ellipse ?? '']);
+      editor.select(ellipse === undefined ? [] : [ellipse]);
     });
     const selected = within(list)
       .getAllByRole('option')
