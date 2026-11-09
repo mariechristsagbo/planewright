@@ -36,7 +36,7 @@ export function TextEditor({ host }: { readonly host: RefObject<HTMLElement | nu
         editor.editText({ type: 'value', text: event.target.value });
       }}
       onKeyDown={(event) => {
-        if (!endsSession(event, platform)) return;
+        if (!endsSession(event.nativeEvent, platform)) return;
         event.preventDefault();
         editor.editText({ type: 'commit' });
         host.current?.focus({ preventScroll: true });

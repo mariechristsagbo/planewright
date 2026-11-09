@@ -8,11 +8,21 @@ import type { Platform } from '../../platform/platform.ts';
 
 type EditedText = NonNullable<EditorView['text']>;
 
-/** Whether a key press in the text area ends the session: Escape, or Mod+Enter (REQ-V05). */
-export function endsSession(
-  event: { readonly key: string; readonly ctrlKey: boolean; readonly metaKey: boolean },
-  platform: Platform,
-): boolean {
+/** The parts of a key press that decide whether it ends the session. */
+interface KeyPress {
+  readonly key: string;
+  readonly ctrlKey: boolean;
+  readonly metaKey: boolean;
+  readonly isComposing: boolean;
+  readonly keyCode: number;
+}
+
+/**
+ * Whether a key press in the text area ends the session: Escape, or Mod+Enter (REQ-V05), but never
+ * while an input method composes, whose keys those then are; Safari marks them only by code 229.
+ */
+export function endsSession(event: KeyPress, platform: Platform): boolean {
+  if (event.isComposing || event.keyCode === 229) return false;
   if (event.key === 'Escape') return true;
   return event.key === 'Enter' && (platform === 'apple' ? event.metaKey : event.ctrlKey);
 }
