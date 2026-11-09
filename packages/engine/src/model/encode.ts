@@ -74,7 +74,8 @@ function kindFields(element: Element) {
   }
 }
 
-const encodeElement = (element: Element) => ({
+/** One element as the document format writes it: its fields in a fixed order, nothing else. */
+export const encodeElement = (element: Element) => ({
   id: element.id,
   kind: element.kind,
   order: element.order,
