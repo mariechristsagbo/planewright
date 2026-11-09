@@ -4,15 +4,17 @@ import { isMainRun } from './perf-baseline.ts';
 import type { PerfBaseline, PerfRun } from './perf-baseline.ts';
 
 /**
- * The performance report's rules (docs/architecture/engine/quality.md#performance-budgets): every
- * budget is reported with its value; a budget measured in CI that was not measured, or a bundle
- * over its budget, fails at once; statistical budgets only report until three runs on `main` are
- * recorded in the baseline, and from then on a budget that those runs measured fails when its
- * value is more than 20 % worse than its budget or, when the baseline misses the budget, than the
- * baseline. Which runs count as runs on `main` is perf-baseline.ts's rule.
+ * The performance report's rules (docs/architecture/engine/quality.md#what-issue-38-decided):
+ * every budget is reported with its value; a budget measured in CI that was not measured, or a
+ * bundle over its budget, fails at once. Statistical budgets are compared only with the runs on
+ * `main` recorded on the run's own processor model, since runners on different processors measure
+ * the same code up to 2.6 times apart: they only report until three such runs are recorded, and
+ * from then on a budget that the last three measured fails when its value is more than 20 % worse
+ * than its budget or, when the slowest of the three misses the budget, than that slowest run.
+ * Which runs count as runs on `main` is perf-baseline.ts's rule.
  */
 
-/** How many runs on `main` the baseline needs before statistical budgets can fail CI. */
+/** How many runs on `main` on a processor the baseline needs before its budgets can fail CI. */
 export const GATE_RUNS = 3;
 
 /** How much worse than its reference a value may be once gated. */
@@ -25,7 +27,7 @@ export interface BudgetResult {
   readonly value: number | null;
   readonly samples: number;
   readonly status: BudgetStatus;
-  /** The slowest of the last three runs on `main`, once they all measured the budget. */
+  /** The slowest of the last three runs on `main` on this processor, once all measured it. */
   readonly baseline: number | null;
   /** The value above which the budget fails CI, once gated. */
   readonly limit: number | null;
@@ -34,6 +36,11 @@ export interface BudgetResult {
 
 export interface PerfEvaluation {
   readonly gating: boolean;
+  /** The processor model of the run, as Node.js names it. */
+  readonly processor: string;
+  /** The runs on `main` recorded on that processor. */
+  readonly processorRuns: number;
+  /** The runs on `main` recorded on any processor. */
   readonly mainRuns: number;
   readonly results: readonly BudgetResult[];
   /** Why CI fails, if it does. */
@@ -54,13 +61,11 @@ export function withUnit(value: number, unit: PerfUnit): string {
   return `${formatValue(value)} ${name}`;
 }
 
-/** The slowest value of a budget over the last three runs on main, if all three measured it. */
-function baselineOf(mainRuns: readonly PerfRun[], id: string): number | null {
-  const values = mainRuns.slice(-GATE_RUNS).map((run) => run.values[id]);
+/** The slowest value of a budget over the last three of the runs, if all three measured it. */
+function baselineOf(runs: readonly PerfRun[], id: string): number | null {
+  const values = runs.slice(-GATE_RUNS).map((run) => run.values[id]);
   const measured = values.filter((value) => value !== undefined);
-  return mainRuns.length >= GATE_RUNS && measured.length === GATE_RUNS
-    ? Math.max(...measured)
-    : null;
+  return runs.length >= GATE_RUNS && measured.length === GATE_RUNS ? Math.max(...measured) : null;
 }
 
 function resultOf(budget: PerfBudget, found: Measurement | undefined, context: Context) {
@@ -69,7 +74,7 @@ function resultOf(budget: PerfBudget, found: Measurement | undefined, context: C
   if (budget.source === 'manual') return { ...unmeasured, status: 'by hand' as const };
   if (found === undefined) return { ...unmeasured, status: 'not measured' as const };
   const value = statisticOf(budget.statistic, found.samples);
-  const baseline = budget.source === 'bundle' ? null : baselineOf(context.mainRuns, budget.id);
+  const baseline = budget.source === 'bundle' ? null : baselineOf(context.processorRuns, budget.id);
   return {
     ...unmeasured,
     value,
@@ -82,7 +87,8 @@ function resultOf(budget: PerfBudget, found: Measurement | undefined, context: C
 
 interface Context {
   readonly baseline: PerfBaseline;
-  readonly mainRuns: readonly PerfRun[];
+  /** The runs on `main` on the run's processor, oldest first. */
+  readonly processorRuns: readonly PerfRun[];
 }
 
 function failureOf({ budget, value, status, limit }: BudgetResult, gating: boolean) {
@@ -99,15 +105,24 @@ function failureOf({ budget, value, status, limit }: BudgetResult, gating: boole
   return [`${name} is ${shown}, more than 20 % worse than ${reference}.`];
 }
 
-export function evaluate(measurements: readonly Measurement[], baseline: PerfBaseline) {
+/** The run's measurements against the baseline's runs on `main` on the run's processor model. */
+export function evaluate(
+  measurements: readonly Measurement[],
+  baseline: PerfBaseline,
+  processor: string,
+): PerfEvaluation {
   const mainRuns = baseline.runs.filter(isMainRun);
-  const gating = mainRuns.length >= GATE_RUNS;
+  const processorRuns = mainRuns.filter(({ machine }) => machine.Processor === processor);
+  const gating = processorRuns.length >= GATE_RUNS;
   const byId = new Map(measurements.map((measurement) => [measurement.id, measurement]));
   const results: BudgetResult[] = PERF_BUDGETS.map((budget) =>
-    resultOf(budget, byId.get(budget.id), { baseline, mainRuns }),
+    resultOf(budget, byId.get(budget.id), { baseline, processorRuns }),
   );
   const failures = results.flatMap((result) => failureOf(result, gating));
-  return { gating, mainRuns: mainRuns.length, results, failures } satisfies PerfEvaluation;
+  return {
+    ...{ gating, processor, processorRuns: processorRuns.length, mainRuns: mainRuns.length },
+    ...{ results, failures },
+  };
 }
 
 const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
@@ -159,6 +174,12 @@ function infoRows(infos: readonly Measurement[]): string[] {
   });
 }
 
+const gatedMode = ({ processor, processorRuns }: PerfEvaluation): string =>
+  `Gated: ${String(processorRuns)} runs on \`main\` are recorded on this run's processor, ${processor}, so a budget more than 20 % worse than its budget, or than the slowest of the last three of them when that misses the budget, fails CI.`;
+
+const reportOnlyMode = ({ processor, processorRuns, mainRuns }: PerfEvaluation): string =>
+  `Report only: ${String(processorRuns)} of ${String(GATE_RUNS)} runs on \`main\` are recorded on this run's processor, ${processor} (${String(mainRuns)} on \`main\` on any processor), so no statistical budget fails CI yet; a measurement that is missing or a bundle over its budget does.`;
+
 /** The report as Markdown: the mode, the budgets, the other measurements, the machine, notes. */
 export function reportMarkdown(
   evaluation: PerfEvaluation,
@@ -168,9 +189,7 @@ export function reportMarkdown(
     readonly notes: readonly string[];
   },
 ): string {
-  const mode = evaluation.gating
-    ? `Gated: ${String(evaluation.mainRuns)} runs on \`main\` are recorded, so a budget more than 20 % worse than its budget or than a baseline that misses it fails CI.`
-    : `Report only: ${String(evaluation.mainRuns)} of ${String(GATE_RUNS)} consecutive runs on \`main\` are recorded, so no statistical budget fails CI yet; a measurement that is missing or a bundle over its budget does.`;
+  const mode = evaluation.gating ? gatedMode(evaluation) : reportOnlyMode(evaluation);
   return [
     '## Performance report',
     '',

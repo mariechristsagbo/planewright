@@ -101,12 +101,13 @@ const measurements = [
   ...bundleMeasurements(),
 ];
 const budgets = new Set(PERF_BUDGETS.map(({ id }) => id));
+const run = runOf();
+const machine = machineOf(run, measurements);
 const evaluation = evaluate(
   measurements.filter(({ id }) => budgets.has(id)),
   readBaseline(readJson(BASELINE)),
+  machine.Processor,
 );
-const run = runOf();
-const machine = machineOf(run, measurements);
 const infos = measurements.filter(({ id }) => !budgets.has(id));
 const markdown = reportMarkdown(evaluation, infos, { machine, notes: NOTES });
 const values = Object.fromEntries(
