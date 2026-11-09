@@ -118,6 +118,24 @@ describe('the text area', () => {
     expect(area).toHaveFocus();
   });
 
+  it('C3 REQ-Y02 ends the session when the focus moves to another control, and keeps it when the page loses the focus', () => {
+    const { area, editor } = placeText();
+    act(() => {
+      fireEvent.change(area, { target: { value: 'Hi' } });
+      fireEvent.blur(area, { relatedTarget: null });
+    });
+    expect(editor.view.text?.element.content.text).toBe('Hi');
+    const list = screen.getByRole('listbox', { name: 'Elements' });
+    act(() => {
+      list.focus();
+    });
+    expect([editor.view.text, editor.view.elements.map(({ kind }) => kind)]).toEqual([
+      null,
+      ['text'],
+    ]);
+    expect(list).toHaveFocus();
+  });
+
   it('ends the session on Cmd+Enter, not Ctrl+Enter, on Apple platforms', () => {
     const { area, editor } = placeText('apple');
     act(() => {

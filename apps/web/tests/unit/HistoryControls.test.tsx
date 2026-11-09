@@ -7,8 +7,37 @@ import { ViewReadout } from '../../src/ui/ViewReadout.tsx';
 import { surfaceHarness } from '../support/surface.tsx';
 
 // Undo and Redo controls and the view readout: what the editor's view says, in named controls.
+// Undo and Redo are unavailable through aria-disabled, not disabled, so that a focused one keeps
+// the focus when it becomes unavailable (REQ-Y02).
+
+/** Whether a control is unavailable but still focusable. */
+const unavailable = (button: HTMLElement): boolean =>
+  button.getAttribute('aria-disabled') === 'true' && !(button as HTMLButtonElement).disabled;
 
 describe('Undo and Redo', () => {
+  it('AC REQ-Y02 keep the focus when they become unavailable, and do nothing while unavailable', () => {
+    const harness = surfaceHarness();
+    const { editor } = harness;
+    editor.resize({ width: 800, height: 600, pixelRatio: 1 });
+    editor.run('tool.rectangle');
+    editor.run('canvas.enter');
+    render(harness.wrap(<HistoryControls />));
+    const undo = screen.getByRole('button', { name: 'Undo' });
+    act(() => {
+      undo.focus();
+      fireEvent.click(undo);
+    });
+    expect([editor.view.elements, unavailable(undo), document.activeElement]).toEqual([
+      [],
+      true,
+      undo,
+    ]);
+    act(() => {
+      fireEvent.click(undo);
+    });
+    expect(editor.view.canRedo).toBe(true);
+  });
+
   it('AC REQ-Y01 start disabled, named, in a History group, with their shortcuts', () => {
     const harness = surfaceHarness();
     render(harness.wrap(<HistoryControls />));
@@ -16,8 +45,7 @@ describe('Undo and Redo', () => {
     const undo = screen.getByRole('button', { name: 'Undo' });
     const redo = screen.getByRole('button', { name: 'Redo' });
     expect(group).toContainElement(undo);
-    expect(undo).toBeDisabled();
-    expect(redo).toBeDisabled();
+    expect([unavailable(undo), unavailable(redo)]).toEqual([true, true]);
     expect(undo).toHaveAttribute('aria-keyshortcuts', 'Control+Z');
     expect(redo).toHaveAttribute('aria-keyshortcuts', 'Control+Shift+Z Control+Y');
     expect(undo).toHaveAccessibleDescription(
@@ -45,8 +73,8 @@ describe('Undo and Redo', () => {
       editor.run('view.zoom-reset');
     });
     expect(editor.view.camera.y).not.toBe(0);
-    expect(screen.getByRole('button', { name: 'Undo' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Redo' })).toBeDisabled();
+    expect(unavailable(screen.getByRole('button', { name: 'Undo' }))).toBe(true);
+    expect(unavailable(screen.getByRole('button', { name: 'Redo' }))).toBe(true);
   });
 
   it('follow the history and run their commands, with Cmd on Apple platforms', () => {
@@ -61,7 +89,7 @@ describe('Undo and Redo', () => {
     );
     const undo = screen.getByRole('button', { name: 'Undo' });
     const redo = screen.getByRole('button', { name: 'Redo' });
-    expect([undo, redo].map((button) => (button as HTMLButtonElement).disabled)).toEqual([
+    expect([undo, redo].map((button) => button.hasAttribute('aria-disabled'))).toEqual([
       false,
       false,
     ]);

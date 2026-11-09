@@ -1,5 +1,6 @@
 import type { SaveStatus as Status } from '@planewright/engine';
 
+import { focusCanvas } from '../a11y/focus.ts';
 import { useEditorView, useSurface } from '../editor/surface.ts';
 import { STALE_TEXT, STORAGE_NOTICE_TEXTS, failedText } from './notices.ts';
 
@@ -31,17 +32,34 @@ export function SaveStatus() {
   );
 }
 
-/** The two answers to another tab's newer save. */
+/**
+ * The two answers to another tab's newer save. An answer gives the focus to the canvas before the
+ * notice goes, so that it never falls to the page (the ENG-13 review's m5, REQ-Y02).
+ */
 function StaleNotice() {
   const { editor } = useSurface();
+  const answer = (choice: 'load' | 'keep'): void => {
+    focusCanvas(document);
+    void editor.resolveStale(choice);
+  };
   return (
     <div role="group" aria-labelledby="stale-notice" className="notice">
       <p id="stale-notice">{STALE_TEXT}</p>
       <div className="notice-actions">
-        <button type="button" onClick={() => void editor.resolveStale('load')}>
+        <button
+          type="button"
+          onClick={() => {
+            answer('load');
+          }}
+        >
           Load the newer version
         </button>
-        <button type="button" onClick={() => void editor.resolveStale('keep')}>
+        <button
+          type="button"
+          onClick={() => {
+            answer('keep');
+          }}
+        >
           Keep this version
         </button>
       </div>

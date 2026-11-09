@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { CANVAS_ID } from '../../src/a11y/focus.ts';
 import { CanvasHost } from '../../src/editor/CanvasHost.tsx';
 import { surfaceHarness } from '../support/surface.tsx';
 
@@ -56,6 +57,7 @@ describe('the canvas host', () => {
   it('is a focusable region named Drawing canvas, described by what works and what does not', () => {
     const { host } = mount();
     expect(host).toHaveAttribute('tabindex', '0');
+    expect(host).toHaveAttribute('id', CANVAS_ID);
     expect(host.querySelectorAll('canvas')).toHaveLength(2);
     expect(host).toHaveAccessibleDescription(
       /^Choose a drawing tool, then drag on the canvas to draw, or tap for the default size; the Selection tool \(V\) selects, moves, resizes and rotates what is drawn\./,
@@ -63,6 +65,9 @@ describe('the canvas host', () => {
     expect(host).toHaveAccessibleDescription(/Ctrl\+scroll or pinch to zoom/);
     expect(host).toHaveAccessibleDescription(
       /With the Text tool \(T\), click or tap to place a text and type it; Escape, Ctrl\+Enter or a press elsewhere ends it, and a double-click or double tap on a text edits it again\./,
+    );
+    expect(host).toHaveAccessibleDescription(
+      /From the keyboard, Enter draws the drawing tool’s element at the centre of the canvas, or edits the one selected text with the Selection tool\.$/,
     );
   });
 

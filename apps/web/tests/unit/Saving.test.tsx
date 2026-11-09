@@ -2,6 +2,7 @@ import type { Editor, EditorView, SaveStatus as Status } from '@planewright/engi
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
+import { CANVAS_ID } from '../../src/a11y/focus.ts';
 import { EditorProvider } from '../../src/editor/EditorProvider.tsx';
 import type { StorageNotice } from '../../src/platform/storage.ts';
 import { SaveStatus, StorageNotices } from '../../src/ui/Saving.tsx';
@@ -75,6 +76,22 @@ describe('the storage notices', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Load the newer version' }));
     fireEvent.click(screen.getByRole('button', { name: 'Keep this version' }));
     expect(resolveStale.mock.calls).toEqual([['load'], ['keep']]);
+  });
+
+  it('C1 REQ-Y02 gives the focus to the canvas once the stale notice is answered, never to the page', () => {
+    const canvas = document.createElement('div');
+    canvas.id = CANVAS_ID;
+    canvas.tabIndex = 0;
+    document.body.append(canvas);
+    const { resolveStale } = mount({ type: 'stale' });
+    for (const name of ['Keep this version', 'Load the newer version']) {
+      const answer = screen.getByRole('button', { name });
+      answer.focus();
+      fireEvent.click(answer);
+      expect(document.activeElement).toBe(canvas);
+    }
+    expect(resolveStale).toHaveBeenCalledTimes(2);
+    canvas.remove();
   });
 
   it('says that nothing is saved when storage is unavailable', () => {
