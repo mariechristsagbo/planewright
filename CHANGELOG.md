@@ -140,4 +140,5 @@ release has been published yet.
   within a frame; its path cache keeps its use order without taking an entry out and back on each
   lookup, and an element's dash pattern and font are built once per revision. Every pixel and every
   drawing call is unchanged, which a seeded property of the calls and an end-to-end comparison of
-  the scene canvas with the earlier drawing check.
+  the scene canvas with the earlier drawing check. In CI the redraw of 5,000 elements in view now
+  meets its budget on an AMD EPYC 9V45 runner and still misses it on an AMD EPYC 7763.
