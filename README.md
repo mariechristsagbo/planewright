@@ -3,18 +3,20 @@
 An independently engineered open-source infinite canvas for drawing and diagrams.
 
 > [!IMPORTANT]
-> **Status: pre-release.** Planewright is not a complete drawing editor yet. Its page draws
-> rectangles, ellipses, diamonds, lines, freehand strokes and texts, which can be selected, moved,
-> resized, rotated, duplicated, deleted and nudged, with Undo and Redo, and texts edited again, also
-> from the keyboard alone through a list of the elements, with each change announced to screen
-> readers; the drawing is saved in the browser and restored on reload. There is no text formatting, no style
-> control, no file opening, saving or exporting and no collaboration. This repository
-> currently contains the workspace structure, that editor surface, a collaboration-service
-> skeleton, the first layers of the engine
-> package (math primitives, platform ports, the document model with its codec, the scene store
-> with its change sets and transactions, the undo and redo history, the camera, the geometry, text
-> layout and hit testing, the transforms, input gestures, the Hand, Selection, creation and text tools, commands,
-> local persistence with autosave and the editor with its render loop, text sessions and announcements), a Canvas 2D renderer package, and the quality gates that future work must pass.
+> **Status: pre-release.** Planewright is not a complete drawing editor yet. Its page
+> draws rectangles, ellipses, diamonds, lines, freehand strokes and texts, which can be selected,
+> moved, resized, rotated, duplicated, deleted and nudged, with Undo and Redo, and texts edited
+> again, also from the keyboard alone through a list of the elements, with each change announced to
+> screen readers; the drawing is saved in the browser and restored on reload. There is no text
+> formatting, no style control, no file opening, saving or exporting and no collaboration. This
+> repository currently contains the workspace structure, that editor surface, a
+> collaboration-service skeleton, the first layers of the engine package (math primitives, platform
+> ports, the document model with its codec, the scene store with its change sets and transactions,
+> the undo and redo history, the camera, the geometry, text layout and hit testing, the transforms,
+> input gestures, the Hand, Selection, creation and text tools, commands, local persistence with
+> autosave and the editor with its render loop, text sessions and announcements), a Canvas 2D
+> renderer package, and the quality gates that future work must pass, among them the measurements of
+> every performance budget, four of which are still missed and have their issues.
 
 ## Goals
 
@@ -59,7 +61,7 @@ Product names are used only to identify these references.
 | [`packages/protocol`](packages/protocol)           | Runtime-agnostic wire protocol definitions shared by clients and services |
 | [`packages/engine`](packages/engine)               | ECMAScript-only canvas engine, from math to the editor façade             |
 | [`packages/render-canvas`](packages/render-canvas) | Canvas 2D renderer of the engine's render frames, on the page's canvas    |
-| [`scripts`](scripts)                               | Repository guardrails: file size, dependency policy, branch names         |
+| [`scripts`](scripts)                               | Guardrails, bundle-size check, performance report and branch-name rule    |
 | [`docs`](docs/README.md)                           | Architecture decisions, investigation process and development guides      |
 | [`.github`](.github)                               | CI, CodeQL, Dependabot, issue forms and the pull request template         |
 
@@ -90,20 +92,22 @@ npm run dev:collab     # http://127.0.0.1:8787/healthz, WebSocket at ws://127.0.
 
 ## Quality gates
 
-| Command                    | What it checks                                                 |
-| -------------------------- | -------------------------------------------------------------- |
-| `npm run format:check`     | Prettier formatting                                            |
-| `npm run lint`             | ESLint with type-aware rules and complexity guardrails         |
-| `npm run typecheck`        | Strict TypeScript across every workspace                       |
-| `npm run test:unit`        | Unit tests (Vitest)                                            |
-| `npm run test:integration` | Integration tests, including the real WebSocket service        |
-| `npm run test:coverage`    | All Vitest projects with coverage thresholds                   |
-| `npm run test:e2e`         | Playwright tests against the production build (needs Chromium) |
-| `npm run build`            | Production builds of the web app and collaboration service     |
-| `npm run guardrails`       | File-size limits and the forbidden-dependency policy           |
-| `npm run secrets:scan`     | Secretlint scan of the working tree                            |
-| `npm run audit:deps`       | `npm audit` and registry signature verification                |
-| `npm run validate`         | Every local gate except e2e and audit, in CI order             |
+| Command                                                             | What it checks                                                                 |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `npm run format:check`                                              | Prettier formatting                                                            |
+| `npm run lint`                                                      | ESLint with type-aware rules and complexity guardrails                         |
+| `npm run typecheck`                                                 | Strict TypeScript across every workspace                                       |
+| `npm run test:unit`                                                 | Unit tests (Vitest)                                                            |
+| `npm run test:integration`                                          | Integration tests, including the real WebSocket service                        |
+| `npm run test:coverage`                                             | All Vitest projects with coverage thresholds                                   |
+| `npm run test:e2e`                                                  | Playwright tests against the production build (needs Chromium)                 |
+| `npm run build`                                                     | Production builds of the web app and collaboration service                     |
+| `npm run guardrails`                                                | File-size limits and the forbidden-dependency policy                           |
+| `npm run check:bundle-size`                                         | Bundle sizes of the engine, the renderer and the web app against their budgets |
+| `npm run perf:bench`, `npm run perf:browser`, `npm run perf:report` | The performance budgets: benchmarks, browser measurements and their report     |
+| `npm run secrets:scan`                                              | Secretlint scan of the working tree                                            |
+| `npm run audit:deps`                                                | `npm audit` and registry signature verification                                |
+| `npm run validate`                                                  | Every local gate except e2e and audit, in CI order                             |
 
 See [docs/development/quality-gates.md](docs/development/quality-gates.md) for thresholds and
 rationale.
