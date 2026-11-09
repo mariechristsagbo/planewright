@@ -150,4 +150,5 @@ release has been published yet.
   keeping those of the unchanged elements. What a marquee selects, and the order of the result, are
   unchanged, which properties against a scan of every element check. On a developer machine the
   marquee query over 10,000 elements (budget B6) fell from 18.9 to 24.2 ms to 0.24 to 0.32 ms at the
-  95th percentile.
+  95th percentile, and in CI it measured 0.097 ms on an AMD EPYC 9V74 runner, where `main` had
+  measured 5.7 to 7.1 ms.
