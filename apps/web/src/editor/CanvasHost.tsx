@@ -49,7 +49,7 @@ export function CanvasHost() {
           <canvas ref={overlay} className="canvas-layer" aria-hidden="true" />
         </div>
         <div className="text-layer">
-          <TextEditor />
+          <TextEditor host={host} />
         </div>
       </div>
       <p id="canvas-instructions" className="canvas-instructions">
