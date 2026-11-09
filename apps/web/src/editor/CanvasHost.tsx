@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 
+import { CANVAS_ID } from '../a11y/focus.ts';
 import { attachInput, observeSize } from './attach-input.ts';
 import { useEditorView, useSurface } from './surface.ts';
 import { TextEditor } from './text/TextEditor.tsx';
@@ -38,6 +39,7 @@ export function CanvasHost() {
       <div className="canvas-stage">
         <div
           ref={host}
+          id={CANVAS_ID}
           className="canvas-host"
           role="region"
           aria-label="Drawing canvas"
@@ -59,7 +61,8 @@ export function CanvasHost() {
         +0 zoom from the keyboard. Drag with the middle button, with Space held or with the Hand
         tool (H) to pan. With the Text tool (T), click or tap to place a text and type it; Escape,{' '}
         {mod}+Enter or a press elsewhere ends it, and a double-click or double tap on a text edits
-        it again.
+        it again. From the keyboard, Enter draws the drawing tool’s element at the centre of the
+        canvas, or edits the one selected text with the Selection tool.
       </p>
     </div>
   );

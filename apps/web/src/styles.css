@@ -99,7 +99,8 @@ button[aria-pressed='true'] {
   border-color: #2a62d0;
 }
 
-button:disabled {
+button:disabled,
+button[aria-disabled='true'] {
   opacity: 0.5;
 }
 

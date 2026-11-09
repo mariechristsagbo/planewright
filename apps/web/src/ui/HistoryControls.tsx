@@ -10,8 +10,9 @@ const NOTES: Readonly<Record<string, string>> = {
 };
 
 /**
- * Undo and Redo, enabled only while the history has a step to undo or redo (REQ-H02); the camera
- * never enters it (REQ-V10, REQ-H04).
+ * Undo and Redo, available only while the history has a step to undo or redo (REQ-H02); the camera
+ * never enters it (REQ-V10, REQ-H04). An unavailable one is aria-disabled, not disabled, so that it
+ * keeps the focus when it becomes unavailable instead of dropping it on the page (REQ-Y02).
  */
 export function HistoryControls() {
   const { editor, platform } = useSurface();
@@ -25,10 +26,11 @@ export function HistoryControls() {
         <Fragment key={command.id}>
           <button
             type="button"
-            disabled={!(command.id === 'history.undo' ? canUndo : canRedo)}
+            aria-disabled={(command.id === 'history.undo' ? canUndo : canRedo) ? undefined : true}
             aria-keyshortcuts={ariaKeyShortcuts(command.shortcuts, platform)}
             aria-describedby={`${command.id}-description`}
             onClick={() => {
+              // The command does nothing while it is unavailable.
               editor.run(command.id);
             }}
           >
