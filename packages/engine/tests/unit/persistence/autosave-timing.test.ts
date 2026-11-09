@@ -130,11 +130,17 @@ describe('what autosave never saves', () => {
     expect([storedX(harness, 1), storedX(harness, 2)]).toEqual([40, 50]);
   });
 
-  it('a load is never saved', async () => {
+  it('a load is never saved, neither alone nor with the next change', async () => {
     const harness = autosaveHarness();
     harness.store.apply(changeSet([{ type: 'add', element: square(4) }]), 'load');
     await harness.advance(5_000);
     expect(harness.requests).toHaveLength(0);
+    moveTo(harness.store, ONE, 40);
+    await harness.advance(300);
+    const [request] = harness.requests;
+    expect(request?.type === 'delta' ? request.delta.upserts.map(({ id }) => id) : []).toEqual([
+      ONE,
+    ]);
     await settle();
   });
 });
