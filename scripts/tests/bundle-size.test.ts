@@ -29,6 +29,12 @@ describe('initialScripts', () => {
     expect(initialScripts(HTML)).toEqual(['assets/index-q4i8ZCDh.js', 'assets/vendor-Ab12.js']);
   });
 
+  it('reads tags and attributes in any case, with either quote, as HTML allows', () => {
+    const html = `<HEAD><SCRIPT TYPE='module' SRC='/assets/a.js'></SCRIPT>
+      <Link Rel="modulepreload" HREF="/assets/b.js"><script src="/assets/classic.js"></script>`;
+    expect(initialScripts(html)).toEqual(['assets/a.js', 'assets/b.js']);
+  });
+
   it('refuses a page that loads no script, or one from another origin', () => {
     expect(() => initialScripts('<html></html>')).toThrow('no module script');
     expect(() =>
