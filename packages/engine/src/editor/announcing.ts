@@ -1,5 +1,6 @@
 import type { HistoryEntry } from '../history/entry.ts';
 import type { History } from '../history/history.ts';
+import type { SaveStatus } from '../persistence/autosave.ts';
 import type { ElementChange } from '../scene/change-set.ts';
 import type { SceneReader } from '../scene/store.ts';
 import { sameIds } from '../selection/selection.ts';
@@ -7,7 +8,8 @@ import type { AnnouncementValues, Announcer } from './announcer.ts';
 import type { EditorCore } from './editor-core.ts';
 
 // What the editor announces (docs/architecture/engine/quality.md#accessibility, REQ-Y04): after
-// each input, command or call, the change, undo or redo it made, or else the new selection count.
+// each input, command or call, the change, undo or redo it made, or else the new selection count;
+// and a save that failed or that another tab's newer save refused.
 
 /** A history entry that a commit, an undo or a redo produced since the last announcement. */
 export interface Note {
@@ -69,8 +71,23 @@ function valuesOf({ entry }: Note, scene: SceneReader, selected: number): Announ
   return { action: entry.label, count: changes.length, kind, selected };
 }
 
+/**
+ * Announces a save status that has just become a failure, or a failure for another reason, or
+ * stale; a retry that fails for the same reason and a save that succeeds say nothing.
+ */
+function announceSave(announcer: Announcer, save: SaveStatus | null, said: SaveStatus | null) {
+  if (save?.type === 'failed' && (said?.type !== 'failed' || said.reason !== save.reason)) {
+    announcer.announce('save-failed', { reason: save.reason });
+  } else if (save?.type === 'stale' && said?.type !== 'stale') {
+    announcer.announce('save-stale', {});
+  }
+}
+
 export interface Announcing {
-  /** Announces the last note since the last call, or else a change of the selection's count. */
+  /**
+   * Announces the last note since the last call, or else a change of the selection's count, and
+   * then a save that has just failed or been refused as stale.
+   */
   readonly publish: () => void;
   /**
    * Takes the editor's state as already said, without announcing it, and starts announcing: the
@@ -81,6 +98,7 @@ export interface Announcing {
 
 export function createAnnouncing(core: EditorCore, announcer: Announcer | undefined): Announcing {
   let said = core.selection.get();
+  let saidSave = core.saveStatus;
   let settled = false;
   return {
     publish() {
@@ -94,10 +112,13 @@ export function createAnnouncing(core: EditorCore, announcer: Announcer | undefi
         announcer.announce('selection', { selected: selection.length });
       }
       said = selection;
+      announceSave(announcer, core.saveStatus, saidSave);
+      saidSave = core.saveStatus;
     },
     settle() {
       core.notes.length = 0;
       said = core.selection.get();
+      saidSave = core.saveStatus;
       settled = true;
     },
   };
