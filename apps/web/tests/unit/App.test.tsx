@@ -1,5 +1,5 @@
 import { PROTOCOL_VERSION } from '@planewright/protocol';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { App } from '../../src/App.tsx';
@@ -52,15 +52,39 @@ describe('App', () => {
     );
   });
 
-  it('AC REQ-Y01 shows the tool bar, the canvas, Undo and Redo and the view as named parts', () => {
+  it('AC REQ-Y01 shows the tool bar, the canvas, the elements, Undo and Redo, zoom and the view as named parts', () => {
     mount();
     expect(screen.getByRole('toolbar', { name: 'Tools' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Drawing canvas' })).toBeInTheDocument();
+    expect(screen.getByRole('listbox', { name: 'Elements' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'History' })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Zoom' })).toBeInTheDocument();
     expect(screen.getByText('View: x 0, y 0, zoom 100%')).toBeInTheDocument();
     for (const button of screen.getAllByRole('button')) {
       expect(button).toHaveAccessibleName();
     }
+  });
+
+  it('AC REQ-Y02 puts the tab stops in the specified order: tool bar, canvas, element list, history controls, zoom controls', () => {
+    mount();
+    const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
+    const stops = [
+      toolbar.querySelector('[tabindex="0"]'),
+      screen.getByRole('region', { name: 'Drawing canvas' }),
+      screen.getByRole('listbox', { name: 'Elements' }),
+      screen.getByRole('button', { name: 'Undo' }),
+      screen.getByRole('button', { name: 'Redo' }),
+      ...within(screen.getByRole('group', { name: 'Zoom' })).getAllByRole('button'),
+    ];
+    const tabbable = [
+      ...document.querySelectorAll<HTMLElement>('button, a[href], textarea, [tabindex]'),
+    ].filter((element) => element.tabIndex >= 0 && element.closest('.workspace') !== null);
+    expect(tabbable).toEqual(stops);
+    expect(stops.map((stop) => stop?.getAttribute('tabindex') ?? null).slice(0, 3)).toEqual([
+      '0',
+      '0',
+      '0',
+    ]);
   });
 
   it('shows the shared protocol version and the independence notice', () => {

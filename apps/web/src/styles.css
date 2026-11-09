@@ -75,7 +75,8 @@ body {
 }
 
 .toolbar,
-.history-controls {
+.history-controls,
+.zoom-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
@@ -102,8 +103,8 @@ button:disabled {
   opacity: 0.5;
 }
 
-button:focus-visible,
-.canvas-host:focus-visible {
+/* Every focusable element shows a 3 px indicator, 5.3:1 against the page (REQ-Y02). */
+:is(button, a, [tabindex]):focus-visible {
   outline: 3px solid #2a62d0;
   outline-offset: 2px;
 }
@@ -144,7 +145,7 @@ kbd {
   margin: 0;
   padding: 0;
   border: 0;
-  outline: 1px dashed #2a62d0;
+  outline: 2px solid #2a62d0;
   overflow: hidden;
   resize: none;
   white-space: pre;

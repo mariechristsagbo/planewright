@@ -9,6 +9,7 @@ import { HistoryControls } from './ui/HistoryControls.tsx';
 import { SaveStatus, StorageNotices } from './ui/Saving.tsx';
 import { Toolbar } from './ui/Toolbar.tsx';
 import { ViewReadout } from './ui/ViewReadout.tsx';
+import { ZoomControls } from './ui/ZoomControls.tsx';
 
 const REPOSITORY_URL = 'https://github.com/mariechristsagbo/planewright';
 
@@ -63,6 +64,7 @@ export function App({ surface }: { readonly surface: EditorSurface }) {
             <ElementList />
             <div className="workspace-footer">
               <HistoryControls />
+              <ZoomControls />
               <ViewReadout />
               <SaveStatus />
             </div>
