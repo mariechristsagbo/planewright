@@ -2,7 +2,7 @@ import { distance } from '../math/vector.ts';
 import type { Point } from '../model/elements.ts';
 import { LIMITS } from '../model/limits.ts';
 import { CLEAR_SELECTION, created, showing } from './creation.ts';
-import { newElementOf, strokeThrough, withinLimits } from './new-elements.ts';
+import { newElementOf, roomForOne, strokeThrough, withinLimits } from './new-elements.ts';
 import type { NewElement } from './new-elements.ts';
 import type { GestureEvent, Tool, ToolContext, ToolStep } from './tool.ts';
 
@@ -61,6 +61,7 @@ function extend(stroke: Stroking, event: PointerGesture, context: ToolContext, l
 function drag(state: FreehandState, event: PointerGesture, context: ToolContext, limit: number) {
   if (state.type === 'idle') return stay(state);
   if (state.type === 'stroking') return extend(state, event, context, limit);
+  if (!roomForOne(context.scene)) return stay(state);
   const base = newElementOf(context.scene, context.newId(), context.defaults);
   const start: Stroking = {
     type: 'stroking',
@@ -82,6 +83,7 @@ function release(state: FreehandState, event: PointerGesture, context: ToolConte
 
 /** A tap commits a one-point dot of zero size at the tap (REQ-C07). */
 function tap(event: PointerGesture, context: ToolContext): Step {
+  if (!roomForOne(context.scene)) return stay(IDLE);
   const base = newElementOf(context.scene, context.newId(), context.defaults);
   const dot = strokeThrough(base, [event.scene]);
   if (!withinLimits(dot)) return stay(IDLE);

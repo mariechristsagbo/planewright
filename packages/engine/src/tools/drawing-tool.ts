@@ -1,6 +1,6 @@
 import type { Point } from '../model/elements.ts';
 import { CLEAR_SELECTION, created, showing } from './creation.ts';
-import { drawnBetween, newElementOf, tapped, withinLimits } from './new-elements.ts';
+import { drawnBetween, newElementOf, roomForOne, tapped, withinLimits } from './new-elements.ts';
 import type { DrawnKind, NewElement } from './new-elements.ts';
 import type { GestureEvent, Tool, ToolContext, ToolStep } from './tool.ts';
 
@@ -28,10 +28,12 @@ const stay = (state: DrawingState): Step => ({ state, effects: [] });
 
 /**
  * A drag shows the element from the press to the pointer: the first one clears the selection and
- * adds it, the next ones update it. A step past the document's limits keeps the last one shown.
+ * adds it, the next ones update it. A step past the document's limits keeps the last one shown,
+ * and a full document shows none.
  */
 function drag(kind: DrawnKind, state: DrawingState, event: PointerGesture, context: ToolContext) {
   if (state.type === 'idle') return stay(state);
+  if (state.type === 'pressing' && !roomForOne(context.scene)) return stay(state);
   const base =
     state.type === 'drawing'
       ? state.base
@@ -61,6 +63,7 @@ function release(
 
 /** A tap commits the default size centred on it, as one undo step. */
 function tap(kind: DrawnKind, event: PointerGesture, context: ToolContext): Step {
+  if (!roomForOne(context.scene)) return stay(IDLE);
   const base = newElementOf(context.scene, context.newId(), context.defaults);
   const element = tapped(kind, base, event.scene);
   if (!withinLimits(element)) return stay(IDLE);
