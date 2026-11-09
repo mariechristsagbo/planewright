@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { KEYS } from '../support/creation-input.ts';
-import { wheelEvent } from '../support/inputs.ts';
+import { down, move, up, wheelEvent } from '../support/inputs.ts';
 import { POINTERS } from '../support/selection-input.ts';
 import { textAndBox, textHarness } from '../support/text-input.ts';
 import { boxOf } from '../support/transform-scene.ts';
@@ -112,5 +112,41 @@ describe('the text area over a moved camera', () => {
       width: 50 * camera.zoom,
       height: 25 * camera.zoom,
     });
+  });
+});
+
+describe('camera gestures during a text session', () => {
+  it('a wheel, a zooming wheel and a middle-button drag move the camera and leave the session open', () => {
+    const harness = textHarness('mouse');
+    harness.place(820, 420, 'Hello');
+    const before = harness.editor.view.camera;
+    const middle = { button: 'middle', time: 5_000 } as const;
+    harness.feed(
+      wheelEvent({ x: 640, y: 360 }, { x: 40, y: 100 }),
+      wheelEvent({ x: 640, y: 360 }, { x: 0, y: -100 }, { zoom: true }),
+      down(400, 600, middle),
+      move(450, 650, middle),
+      up(450, 650, middle),
+    );
+    expect(harness.editor.view.camera).not.toEqual(before);
+    expect(harness.editor.view).toMatchObject({ tool: 'text', canUndo: false });
+    expect(harness.editor.view.text?.element.content.text).toBe('Hello');
+  });
+
+  it('a touch pinch commits the text: its first finger’s press reaches the tool before the second lands', () => {
+    const harness = textHarness('touch');
+    harness.place(820, 420, 'Hello');
+    const { zoom } = harness.editor.view.camera;
+    const finger = (id: number) => ({ id, pointer: 'touch', time: 5_000 }) as const;
+    harness.feed(
+      down(400, 600, finger(7)),
+      down(500, 600, finger(8)),
+      move(550, 600, finger(8)),
+      up(550, 600, finger(8)),
+      up(400, 600, finger(7)),
+    );
+    expect(harness.editor.view).toMatchObject({ text: null, tool: 'selection', canUndo: true });
+    expect(harness.editor.view.camera.zoom).toBeCloseTo(zoom * 1.5, 9);
+    expect(harness.shown().map(textAndBox)).toEqual([['Hello', [820, 407.5, 50, 25]]]);
   });
 });
