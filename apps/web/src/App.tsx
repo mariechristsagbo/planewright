@@ -1,5 +1,6 @@
 import { PROTOCOL_VERSION } from '@planewright/protocol';
 
+import { ElementList } from './a11y/ElementList.tsx';
 import { CanvasHost } from './editor/CanvasHost.tsx';
 import { EditorProvider } from './editor/EditorProvider.tsx';
 import type { EditorSurface } from './editor/surface.ts';
@@ -59,6 +60,7 @@ export function App({ surface }: { readonly surface: EditorSurface }) {
           <div className="workspace">
             <Toolbar />
             <CanvasHost />
+            <ElementList />
             <div className="workspace-footer">
               <HistoryControls />
               <ViewReadout />
