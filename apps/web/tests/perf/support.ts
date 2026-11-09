@@ -1,5 +1,4 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 
 import { expect } from '@playwright/test';
 import type { CDPSession, Page } from '@playwright/test';
@@ -7,6 +6,7 @@ import type { CDPSession, Page } from '@playwright/test';
 import { perfArea, perfRecords } from '../../../../packages/engine/tests/support/perf-scenes.ts';
 import type { PerfSceneSpec } from '../../../../packages/engine/tests/support/perf-scenes.ts';
 import { canvas, canvasBox } from '../e2e/support.ts';
+import { resultsFolder } from './results.ts';
 
 // What the browser measurements share (docs/architecture/engine/quality.md#what-eng-15-decided):
 // a seeded drawing stored in the page's IndexedDB as a whole save writes it, the page opened with
@@ -19,12 +19,7 @@ export const DOCUMENT_ID = 'PerfMeasuredDocument00';
 /** A CPU slowdown for the low-end check (B15), from PERF_CPU_SLOWDOWN; 1 in CI. */
 export const CPU_SLOWDOWN = Number(process.env['PERF_CPU_SLOWDOWN'] ?? '1');
 
-const RESULTS = fileURLToPath(
-  new URL(
-    `../../../../perf-results/${CPU_SLOWDOWN === 1 ? 'browser' : `browser-cpu-${String(CPU_SLOWDOWN)}x`}/`,
-    import.meta.url,
-  ),
-);
+const RESULTS = resultsFolder(CPU_SLOWDOWN);
 
 /**
  * Probes installed before the page's scripts: the start of each animation frame, from the first

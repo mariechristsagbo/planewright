@@ -7,10 +7,12 @@ const isCI = process.env['CI'] !== undefined;
  * The browser measurements of the performance budgets
  * (docs/architecture/engine/quality.md#what-eng-15-decided), against the production build served
  * by `vite preview`: one test at a time, so that no other test shares the machine, and no retry,
- * so that a failed check is never hidden. Each test writes its measurement to perf-results/.
+ * so that a failed check is never hidden. The global setup removes an earlier run's measurements,
+ * and each test writes its own to perf-results/.
  */
 export default defineConfig({
   testDir: './tests/perf',
+  globalSetup: './tests/perf/global-setup.ts',
   fullyParallel: false,
   workers: 1,
   forbidOnly: isCI,
