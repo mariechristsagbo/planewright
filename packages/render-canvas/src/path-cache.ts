@@ -37,9 +37,13 @@ export function createPathCache(
         held?.element.rev === element.rev ? held : drawingOf(element, createPath, measurer);
       if (drawing === undefined) return undefined;
       entries.set(element.id, drawing);
-      for (const [oldest] of entries) {
-        if (entries.size <= limit) break;
-        entries.delete(oldest);
+      // The map is walked only past the limit: a walk from its start steps over every slot that a
+      // deleted entry left, which made each lookup cost as much as the cache is large.
+      if (entries.size > limit) {
+        for (const [oldest] of entries) {
+          if (entries.size <= limit) break;
+          entries.delete(oldest);
+        }
       }
       return drawing;
     },
