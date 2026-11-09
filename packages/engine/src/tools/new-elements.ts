@@ -132,6 +132,12 @@ export function textAt(base: NewElement, at: Point, measurer: TextMeasurer): Tex
 }
 
 /**
+ * Whether the scene has room for one more element: a document holds at most 100,000, so a creation
+ * in a full one shows nothing (the ENG-11 review's m1).
+ */
+export const roomForOne = (scene: SceneReader): boolean => scene.ordered().length < LIMITS.elements;
+
+/**
  * Whether a new element lies within the document's limits, which the scene store would refuse:
  * its origin within the coordinate limit, as a drag near the camera's own limit could leave it,
  * and its size within the size limit.

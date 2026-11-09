@@ -1,5 +1,5 @@
 import { CLEAR_SELECTION, showing } from './creation.ts';
-import { newElementOf, textAt, withinLimits } from './new-elements.ts';
+import { newElementOf, roomForOne, textAt, withinLimits } from './new-elements.ts';
 import type { GestureEvent, Tool, ToolContext, ToolStep } from './tool.ts';
 
 // The Text tool (docs/architecture/engine/interaction.md#p0-tools): a tap adds an empty text whose
@@ -16,8 +16,12 @@ type PointerGesture = Exclude<GestureEvent, { readonly type: 'cancel' }>;
 const IDLE: TextToolState = { type: 'idle' };
 const STAY: Step = { state: IDLE, effects: [] };
 
-/** A tap clears the selection, adds the empty text and starts editing it; past the limits, nothing. */
+/**
+ * A tap clears the selection, adds the empty text and starts editing it; past the limits, or in a
+ * full document, nothing.
+ */
 function place(event: PointerGesture, context: ToolContext): Step {
+  if (!roomForOne(context.scene)) return STAY;
   const base = newElementOf(context.scene, context.newId(), context.defaults);
   const element = textAt(base, event.scene, context.measurer);
   if (!withinLimits(element)) return STAY;

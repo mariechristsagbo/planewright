@@ -491,8 +491,11 @@ the factual text. It decided what the rules above leave open:
   50,000 points and keeps no pressures until REQ-C08 (P1), so it draws a constant width.
 - **Limits.** A step that would put the new element's origin past the coordinate limit of 10⁹, as
   a captured pointer can beyond the camera's own limit, or its size past 10⁷, previews nothing and
-  keeps the element last shown; a creation that never showed one makes nothing. So the scene store
-  never refuses a creation, and `input` never throws for one.
+  keeps the element last shown; a creation that never showed one makes nothing, and neither does
+  one in a document that already holds 100,000 elements, the most a document may hold (the ENG-11
+  review's m1, fixed by ENG-13). So the scene store never refuses a creation, and `input` never
+  throws for one; were it to refuse a gesture's preview, the editor cancels the gesture's
+  transaction before the error goes on, so the history is never left locked.
 - **New elements.** Each has a new identifier from the identifier source, an order key above every
   element the scene holds, no rotation, no lock and the editor's current default style through
   `styleForKind`: round corners for rectangles and diamonds and sharp ones for the others
