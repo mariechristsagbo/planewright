@@ -3,6 +3,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { App } from './App.tsx';
+import { announceStorageNotice, webAnnouncer } from './a11y/announcements.ts';
+import { createLiveRegion } from './a11y/live-region.ts';
 import { canvasRenderer } from './editor/renderer.ts';
 import { loadFonts } from './platform/fonts.ts';
 import { watchPage } from './platform/page-events.ts';
@@ -21,14 +23,20 @@ if (container === null) {
 // The preferences entry is read before anything is drawn, so that the first frame has its theme.
 document.documentElement.dataset['theme'] = readPreferences(localStorageOf(window)).theme;
 
+// The live region is in the page before anything is said in it (REQ-Y04).
+const ports = browserPorts(window, pageTextMeasurer(document));
+const live = createLiveRegion(document, ports.scheduler);
+
 // The first text is measured in its bundled font (ADR 0011); a font that fails leaves its fallback.
 await loadFonts(document.fonts);
 
 // The latest drawing saved in this browser, if storage opens and holds a valid one (ADR 0009).
 const storage = await openStorage(indexedDbOf(window), () => Date.now());
-const ports = browserPorts(window, pageTextMeasurer(document));
 const repository = storage.repository === undefined ? {} : { repository: storage.repository };
-const editor = createEditor({ ...ports, ...repository }, storage.stored);
+const editor = createEditor(
+  { ...ports, ...repository, announcer: webAnnouncer(live) },
+  storage.stored,
+);
 watchPage({ window, document, fonts: document.fonts }, editor);
 
 // The editor lives as long as the page, so components that mount again find the same one.
@@ -44,3 +52,4 @@ createRoot(container).render(
     <App surface={surface} />
   </StrictMode>,
 );
+announceStorageNotice(live, storage.notice);

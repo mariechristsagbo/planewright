@@ -10,7 +10,9 @@ import {
   refuseStorage,
   saveStatus,
   setRefuseWrites,
+  storageNotices,
   storedRecords,
+  urgentAnnouncement,
 } from './storage.ts';
 import { canvas, cameraOf, expectHistoryDisabled, readout } from './support.ts';
 import type { Camera } from './support.ts';
@@ -92,16 +94,17 @@ test('E2 A12 REQ-P06 a second tab’s newer save raises the notice, and each cho
 
   await page.bringToFront();
   await rectangle(page, [500, 100], [600, 180]);
-  const notice = page.getByRole('alert');
+  const notice = storageNotices(page);
   await expect(notice).toContainText('Another tab saved a newer version of this drawing');
+  await expect(urgentAnnouncement(page)).toContainText('Another tab saved a newer version');
   await expect(saveStatus(page)).toHaveText('Not saved');
   await notice.getByRole('button', { name: 'Keep this version' }).click();
   await expectSaved(page);
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(storageNotices(page)).toHaveCount(0);
 
   await second.bringToFront();
   await rectangle(second, [700, 100], [800, 180]);
-  const secondNotice = second.getByRole('alert');
+  const secondNotice = storageNotices(second);
   await expect(secondNotice).toContainText('Another tab saved a newer version of this drawing');
   await secondNotice.getByRole('button', { name: 'Load the newer version' }).click();
   await expectSaved(second);
@@ -139,9 +142,11 @@ test('E3 A13 REQ-P07 invalid stored data is left unchanged, and a new drawing op
   const [written] = (await storedRecords(page)).documents;
 
   await page.reload();
-  await expect(page.getByRole('alert')).toHaveText(
-    'The drawing saved in this browser could not be read, so a new drawing was opened. The saved data is left unchanged.',
-  );
+  const invalidText =
+    'The drawing saved in this browser could not be read, so a new drawing was opened. The saved data is left unchanged.';
+  await expect(storageNotices(page)).toHaveText(invalidText);
+  await expect(urgentAnnouncement(page)).toHaveText(invalidText);
+  await expect(page.getByRole('alert')).toHaveCount(0);
   await canvas(page).focus();
   await rectangle(page, [100, 100], [200, 180]);
   await expectSaved(page);
@@ -151,7 +156,8 @@ test('E3 A13 REQ-P07 invalid stored data is left unchanged, and a new drawing op
 
   await page.reload();
   await expectSaved(page);
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(storageNotices(page)).toHaveCount(0);
+  await expect(urgentAnnouncement(page)).toHaveText('');
   await expectInk(page, [[100, 140]]);
 });
 
@@ -161,9 +167,10 @@ test('E4 storage that cannot be opened shows a notice, and drawing still works',
   await refuseStorage(page);
   await page.goto('/');
   await canvas(page).focus();
-  await expect(page.getByRole('alert')).toHaveText(
-    'Saving is unavailable in this browser: the drawing stays in this tab only and is lost when the tab closes.',
-  );
+  const unavailableText =
+    'Saving is unavailable in this browser: the drawing stays in this tab only and is lost when the tab closes.';
+  await expect(storageNotices(page)).toHaveText(unavailableText);
+  await expect(urgentAnnouncement(page)).toHaveText(unavailableText);
   await expect(saveStatus(page)).toHaveText('Not saved');
   await rectangle(page, [100, 100], [200, 180]);
   await expectInk(page, [[100, 140]]);
@@ -179,12 +186,13 @@ test('REQ-P05 a failed save is reported, retried, and saved once storage takes i
   await expectSaved(page);
   await setRefuseWrites(page, true);
   await rectangle(page, [300, 100], [400, 180]);
-  await expect(page.getByRole('alert')).toHaveText(
-    'Saving failed: the browser’s storage did not take the change. Your changes are kept in this tab, and saving is tried again.',
-  );
+  const failedText =
+    'Saving failed: the browser’s storage did not take the change. Your changes are kept in this tab, and saving is tried again.';
+  await expect(storageNotices(page)).toHaveText(failedText);
+  await expect(urgentAnnouncement(page)).toHaveText(failedText);
   await setRefuseWrites(page, false);
   await expectSaved(page);
-  await expect(page.getByRole('alert')).toHaveCount(0);
+  await expect(storageNotices(page)).toHaveCount(0);
   await page.reload();
   await expectInk(page, [
     [100, 140],
