@@ -3,14 +3,18 @@
 **Status: accepted in issue #3; implementation started with ENG-01 (issue #5).** These documents
 design Planewright's canvas engine and split its first usable version into issues. The engine
 package holds only its `math`, `ports`, `model`, `geometry`, `camera`, `scene`, `history`,
-`selection`, `transform`, `input`, `tools`, `commands` and `editor` modules so far, the geometry's outlines, distances and text layout and the
+`selection`, `transform`, `input`, `tools`, `commands`, `persistence` and `editor` modules so far, the geometry's outlines, distances and text layout and the
 selection module since ENG-06 (issue #15), and the `editor` layer's render frames and render loop,
 with the `@planewright/render-canvas` renderer, since ENG-07 (issue #17), and the `input`, `tools`
 and `commands` layers with `createEditor` since ENG-08 (issue #19); the Selection tool came with
 ENG-09 (issue #21), the transforms with ENG-10 (issue #23), the shape, line and freehand tools
-with ENG-11 (issue #25) and the Text tool with text editing with ENG-12 (issue #27). The web app
-shows a pre-release editor surface on them: a canvas that pans and zooms, on which shapes, lines,
-freehand strokes and texts can be drawn, selected, transformed and undone, and texts edited again.
+with ENG-11 (issue #25), the Text tool with text editing with ENG-12 (issue #27), and the
+`persistence` layer's repository port and autosave scheduler, with loading and saving in the
+editor, with ENG-13 (issue #29). The web app shows a pre-release editor surface on them: a canvas
+that pans and zooms, on which shapes, lines, freehand strokes and texts can be drawn, selected,
+transformed and undone, and texts edited again, and whose drawing is saved in the browser's
+IndexedDB storage and restored on reload. The clipboard (P1), document files, images and offline
+start (P2) do not exist yet.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
 ([reverse engineering](../../reverse-engineering/README.md)), which says what users observe, and
@@ -42,7 +46,7 @@ this work ([ADR 0003](../../adr/0003-clean-room-reference-policy.md)).
 apps/web ─ React shell, canvas host, input adapter, text overlay, IndexedDB, accessibility layer
    │  InputEvent                                  ▲ RenderFrame
    ▼                                              │
-@planewright/engine ── editor ─ commands ─ input and tools ─ history, selection, transform
+@planewright/engine ── editor ─ persistence ─ commands ─ input and tools ─ history, selection, transform
    (no DOM, no Node.js)     └─ scene ─ geometry and camera ─ model ─ math
    ports: clock, scheduler, identifiers, text measurer, repository, announcer
    │  RenderFrame
