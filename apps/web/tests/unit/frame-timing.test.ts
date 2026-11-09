@@ -1,12 +1,12 @@
 import type { RenderFrame, Renderer } from '@planewright/engine';
 import { describe, expect, it, vi } from 'vitest';
 
-import { frameTimingOf, timedRenderer } from '../../src/platform/frame-timing.ts';
+import { MEASURE_LIMIT, frameTimingOf, timedRenderer } from '../../src/platform/frame-timing.ts';
 
 // The page's measurement of its frames (docs/architecture/engine/quality.md#what-eng-15-decided):
 // opened with `?measure`, it wraps each `render` in `performance.measure`, named for the layers
-// the frame redraws, so that the browser measurements read B1 to B3; opened without it, it
-// measures nothing.
+// the frame redraws, so that the browser measurements read B1 to B3, up to a limit of renders
+// that keeps the page's timeline bounded; opened without it, it measures nothing.
 
 function pageAt(search: string) {
   let time = 10;
@@ -60,6 +60,21 @@ describe('timedRenderer', () => {
     ]);
     renderer.dispose();
     expect(dispose).toHaveBeenCalledOnce();
+  });
+
+  it('stops measuring after its limit of renders, and still draws every frame', () => {
+    expect(MEASURE_LIMIT).toBe(10_000);
+    const page = pageAt('?measure');
+    const timing = frameTimingOf(page);
+    if (timing === null) throw new Error('The page measures.');
+    const render = vi.fn<Renderer['render']>();
+    const renderer = timedRenderer({ render, dispose: () => undefined }, timing, 2);
+    for (const frame of [SCENE_FRAME, OVERLAY_FRAME, SCENE_FRAME]) renderer.render(frame);
+    expect(render).toHaveBeenCalledTimes(3);
+    expect(page.measure.mock.calls.map(([name]: unknown[]) => name)).toEqual([
+      'planewright:render-scene',
+      'planewright:render-overlay',
+    ]);
   });
 
   it('measures nothing when the render throws, and lets the error go on', () => {
