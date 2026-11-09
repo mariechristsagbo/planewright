@@ -20,6 +20,15 @@ export default defineConfig({
           benchmark: { include: ['tests/bench/**/*.bench.ts'], retainSamples: true },
         },
       },
+      {
+        test: {
+          name: 'web',
+          root: './apps/web',
+          include: [],
+          environment: 'node',
+          benchmark: { include: ['tests/bench/**/*.bench.ts'], retainSamples: true },
+        },
+      },
     ],
   },
 });

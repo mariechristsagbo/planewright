@@ -4,5 +4,5 @@
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.test.tsbuildinfo",
     "types": ["vite/client", "@testing-library/jest-dom/vitest"]
   },
-  "include": ["src", "tests/setup.ts", "tests/support", "tests/unit"]
+  "include": ["src", "tests/setup.ts", "tests/support", "tests/unit", "tests/bench"]
 }
