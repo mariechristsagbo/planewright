@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -226,5 +228,24 @@ describe('readReport', () => {
     expect(() => readReport({ ...reported, run: { branch: 'main' } }, 'b.json')).toThrow('b.json');
     expect(() => readReport({ ...reported, values: { B1: 'fast' } }, 'c.json')).toThrow('c.json');
     expect(() => readReport([], 'd.json')).toThrow('d.json');
+  });
+});
+
+describe('the committed baseline', () => {
+  const file = new URL('../../docs/performance/baseline.json', import.meta.url);
+  const committed = readBaseline(JSON.parse(readFileSync(file, 'utf8')));
+
+  it('is well formed, its runs on main once each and in order', () => {
+    expect(committed.runs.filter(isMainRun).map(({ event }) => event)).toEqual([
+      'push',
+      'workflow_dispatch',
+      'workflow_dispatch',
+    ]);
+  });
+
+  // quality.md says CI reports only: update it with this test once a processor has three runs.
+  it('holds one run on main on each processor, so that no run is gated yet', () => {
+    const processors = committed.runs.filter(isMainRun).map(({ machine }) => machine.Processor);
+    expect(new Set(processors).size).toBe(processors.length);
   });
 });
