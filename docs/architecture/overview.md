@@ -21,15 +21,20 @@ complete and ADRs are accepted.
 
 ### apps/web
 
-A React 19 application built with Vite 8. It renders the editor surface of ENG-08, ENG-11 and
-ENG-12: a canvas host whose scene and overlay canvases the canvas renderer draws, an input adapter
-that sends DOM events to the engine's editor, a text area over the canvas for the text being
-edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, and Undo and
-Redo controls; it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md).
-The page labels the build as pre-release, says that shapes, lines, freehand strokes and texts can
-be drawn, selected, transformed and undone, and lists the capabilities that are not implemented,
-text formatting, styles, saving and collaboration among them. It imports the protocol version to prove that workspace
-linking works.
+A React 19 application built with Vite 8. It renders the editor surface of ENG-08, ENG-11, ENG-12
+and ENG-13: a canvas host whose scene and overlay canvases the canvas renderer draws, an input
+adapter that sends DOM events to the engine's editor, a text area over the canvas for the text being
+edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, Undo and Redo
+controls, and the save status with the notices for failed, stale, unavailable and invalid storage;
+it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md).
+Its IndexedDB record backend (database `planewright`) stores what the engine's autosave saves, so
+the drawing, its camera and its selection are kept in the browser, and at start-up the page opens
+the most recently updated document again; it also saves at once when the page is hidden or left,
+and reads its preferences entry from `localStorage` at start-up. The page labels the build as
+pre-release, says that shapes, lines, freehand strokes and texts can be drawn, selected,
+transformed and undone and that the drawing is saved in this browser, and lists the capabilities
+that are not implemented, text formatting, styles, files and collaboration among them. It imports
+the protocol version to prove that workspace linking works.
 
 ### apps/collab
 
@@ -65,8 +70,11 @@ selection state, hit testing, handle layout and box selection), the `transform` 
 resize, rotate, line-end, duplicate and delete maths), the `input` layer (input events, the gesture
 recogniser and the viewport routing), the `tools` layer (the Hand tool and the Selection tool with
 its transforms), the `commands` layer (the command registry, its keymap, Duplicate, Delete and the
-nudges) and the `editor` layer (render frames, the renderer
-port, culling, the render loop with its dirty tracking and frame scheduling, and `createEditor`).
+nudges), the `persistence` layer (the `DocumentRepository` port with its revision rule, the stored
+records read through the codec, a repository over any record backend, and the autosave scheduler)
+and the `editor` layer (render frames, the renderer
+port, culling, the render loop with its dirty tracking and frame scheduling, and `createEditor`,
+which opens a stored document, saves through the repository port and reports the save status).
 The web app imports it.
 
 ### packages/render-canvas
@@ -86,10 +94,13 @@ added the document model and its codec, ENG-03 (issue #9) the scene store, ENG-0
 the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the geometry, text
 layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08
 (issue #19) the editor surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the
-transforms, ENG-11 (issue #25) the shape, line and freehand creation tools and ENG-12 (issue #27)
-the Text tool, text editing and the bundled fonts; the rest is not implemented yet:
+transforms, ENG-11 (issue #25) the shape, line and freehand creation tools, ENG-12 (issue #27)
+the Text tool, text editing and the bundled fonts, and ENG-13 (issue #29) local persistence and
+autosave in the browser's IndexedDB storage; the rest is not implemented yet:
 
-- storage, beyond the element model and codec of ENG-02 and the scene store of ENG-03:
+- storage beyond the element model and codec of ENG-02, the scene store of ENG-03 and the browser
+  storage and autosave of ENG-13: the binary files of images, opening and saving document files and
+  offline start, all P2:
   [ADR 0005](../adr/0005-document-model.md) and [ADR 0009](../adr/0009-persistence-and-interchange.md);
 - drawing arrows, notes and images, beyond the render loop, culling and canvas renderer of ENG-07,
   the shapes, lines and freehand strokes of ENG-11 and the texts of ENG-12:
@@ -99,7 +110,7 @@ the Text tool, text editing and the bundled fonts; the rest is not implemented y
   [ADR 0007](../adr/0007-history-model.md) and [ADR 0008](../adr/0008-input-tools-and-commands.md);
 - package boundaries for the engine, in place since ENG-01, and for its renderer:
   [ADR 0004](../adr/0004-canvas-engine-package-boundaries.md);
-- file formats: Planewright's own document and clipboard formats
+- file formats and the clipboard: Planewright's own document format (P2) and clipboard format (P1)
   ([ADR 0009](../adr/0009-persistence-and-interchange.md)); no other application's format.
 
 Still open, each for its own issue and ADR:
