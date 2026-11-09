@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createPathCache, PATH_CACHE_LIMIT } from '../../src/path-cache.ts';
 import { arrow, color, freehand, id, line, shape, text } from '../support/elements.ts';
@@ -153,6 +153,24 @@ describe('the path cache', () => {
       true,
       true,
     ]);
+  });
+
+  it('REQ-F01 finds a held drawing below its limit without walking the cache', () => {
+    // Walking a map from its start steps over every slot that a deleted entry left, so a walk on
+    // each lookup made a frame of 5,000 elements quadratic (ENG-15's B1 measurement).
+    const { cache } = cacheOf();
+    const squares = Array.from({ length: 50 }, (_, index) =>
+      shape('rectangle', SQUARE, { id: index + 1 }),
+    );
+    for (const square of squares) cache.drawingOf(square);
+    const walk = vi.spyOn(Map.prototype, Symbol.iterator);
+    try {
+      for (const square of squares) cache.drawingOf(square);
+      expect(walk).not.toHaveBeenCalled();
+    } finally {
+      walk.mockRestore();
+    }
+    expect(cache.size).toBe(50);
   });
 
   it('empties when cleared', () => {
