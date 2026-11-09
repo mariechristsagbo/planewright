@@ -10,7 +10,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:perf": "playwright test --config playwright.perf.config.ts"
   },
   "dependencies": {
     "@planewright/engine": "0.0.0",
