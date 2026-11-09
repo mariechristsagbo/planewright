@@ -25,8 +25,10 @@ function drawn(tool: 'tool.rectangle' | 'tool.line' | 'tool.freehand' | 'tool.te
 
 describe('the names of elements', () => {
   it('REQ-Y05 names a shape by its kind, its size and its position', () => {
-    expect(elementName(drawn('tool.rectangle'))).toBe('Rectangle, 100 by 100, at 350, 250');
-    expect(elementName({ ...drawn('tool.rectangle'), kind: 'diamond', x: -0.04, y: 12.345 })).toBe(
+    const rectangle = drawn('tool.rectangle');
+    expect(elementName(rectangle)).toBe('Rectangle, 100 by 100, at 350, 250');
+    if (rectangle.kind !== 'rectangle') throw new Error('The rectangle tool drew no rectangle.');
+    expect(elementName({ ...rectangle, kind: 'diamond', x: -0.04, y: 12.345 })).toBe(
       'Diamond, 100 by 100, at 0, 12.3',
     );
   });
