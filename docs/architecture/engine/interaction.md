@@ -566,8 +566,9 @@ text. It decided what the rules above leave open:
   whatever its alignment. It is focused when a session starts, sends its whole value on each input,
   holds at most 100,000 characters, and ends the session on Escape or Mod+Enter (Cmd on Apple
   platforms, Ctrl elsewhere), after which the canvas host takes the focus back, so the shortcuts
-  work again at once; Enter inserts a line break. The tool bar shows Text (T, 7) after Freehand,
-  and the page says what can be written and that text formatting does not exist yet.
+  work again at once; while an input method composes, those keys are its own and end nothing.
+  Enter inserts a line break. The tool bar shows Text (T, 7) after Freehand, and the page says what
+  can be written and that text formatting does not exist yet.
 - **Not here.** Labels in shapes, wrapping and the font picker, which are out of scope; alignment,
   font size and colour controls, sticky notes and pasting text (P1); measuring texts again when a
   font loads (ENG-13).

@@ -104,6 +104,20 @@ describe('the text area', () => {
     },
   );
 
+  it.each([
+    ['Escape', { key: 'Escape', isComposing: true }],
+    ['Ctrl+Enter', { key: 'Enter', ctrlKey: true, isComposing: true }],
+    ['Escape with key code 229 (Safari)', { key: 'Escape', keyCode: 229 }],
+  ] as const)('keeps the session open on %s during an input method composition', (_name, keys) => {
+    const { area, editor } = placeText();
+    act(() => {
+      fireEvent.change(area, { target: { value: 'か' } });
+      fireEvent.keyDown(area, keys);
+    });
+    expect(editor.view.text?.element.content.text).toBe('か');
+    expect(area).toHaveFocus();
+  });
+
   it('ends the session on Cmd+Enter, not Ctrl+Enter, on Apple platforms', () => {
     const { area, editor } = placeText('apple');
     act(() => {
@@ -160,10 +174,15 @@ describe('the text area’s rules', () => {
   });
 
   it('end a session on Escape and on Mod+Enter only', () => {
-    const key = (key: string, mods: { ctrlKey?: boolean; metaKey?: boolean } = {}) => ({
+    const key = (
+      key: string,
+      mods: { ctrlKey?: boolean; metaKey?: boolean; isComposing?: boolean; keyCode?: number } = {},
+    ) => ({
       key,
       ctrlKey: mods.ctrlKey ?? false,
       metaKey: mods.metaKey ?? false,
+      isComposing: mods.isComposing ?? false,
+      keyCode: mods.keyCode ?? (key === 'Escape' ? 27 : 13),
     });
     expect(endsSession(key('Escape'), 'other')).toBe(true);
     expect(endsSession(key('Enter', { ctrlKey: true }), 'other')).toBe(true);
@@ -171,5 +190,15 @@ describe('the text area’s rules', () => {
     expect(endsSession(key('Enter', { metaKey: true }), 'apple')).toBe(true);
     expect(endsSession(key('Enter'), 'apple')).toBe(false);
     expect(endsSession(key('a', { ctrlKey: true }), 'other')).toBe(false);
+  });
+
+  it('never end a session while an input method composes', () => {
+    const composing = { key: 'Escape', ctrlKey: false, metaKey: false, isComposing: true };
+    expect(endsSession({ ...composing, keyCode: 27 }, 'other')).toBe(false);
+    expect(endsSession({ ...composing, key: 'Enter', ctrlKey: true, keyCode: 13 }, 'other')).toBe(
+      false,
+    );
+    expect(endsSession({ ...composing, isComposing: false, keyCode: 229 }, 'other')).toBe(false);
+    expect(endsSession({ ...composing, isComposing: false, keyCode: 27 }, 'other')).toBe(true);
   });
 });
