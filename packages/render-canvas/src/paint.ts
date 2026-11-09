@@ -1,17 +1,10 @@
-import type { Stroke, TextElement, TextLayout } from '@planewright/engine';
+import type { TextElement, TextLayout } from '@planewright/engine';
 
 import type { Context2D } from './canvas.ts';
-import { canvasFont } from './fonts.ts';
 import type { Drawing } from './trace.ts';
 
 // Painting one element in its local frame
 // (docs/architecture/engine/rendering-and-hit-testing.md#drawing-the-scene-layer).
-
-/** Dash patterns in multiples of the stroke width, so they scale with it. */
-const DASHES: Readonly<Record<Exclude<Stroke['dash'], 'solid'>, readonly [number, number]>> = {
-  dashed: [4, 4],
-  dotted: [1, 2],
-};
 
 /** Where a line's anchor sits in a text's box, as a fraction of its width. */
 const ANCHOR: Readonly<Record<TextElement['content']['align'], number>> = {
@@ -24,9 +17,7 @@ function paintStroke(context: Context2D, drawing: Drawing): void {
   const { stroke } = drawing.element.style;
   context.strokeStyle = stroke.color;
   context.lineWidth = stroke.width;
-  if (stroke.dash !== 'solid') {
-    context.setLineDash(DASHES[stroke.dash].map((step) => step * stroke.width));
-  }
+  if (drawing.dash.length > 0) context.setLineDash(drawing.dash);
   if (!drawing.closed) {
     context.lineCap = 'round';
     context.lineJoin = 'round';
@@ -42,16 +33,22 @@ function paintFill(context: Context2D, drawing: Drawing): void {
   context.fill(drawing.path);
 }
 
-function paintText(context: Context2D, element: TextElement, layout: TextLayout): void {
-  const { font, align } = element.content;
-  context.font = canvasFont(font);
+function paintText(
+  context: Context2D,
+  element: TextElement,
+  layout: TextLayout,
+  font: string,
+): void {
+  const { align } = element.content;
+  context.font = font;
   context.textAlign = align;
   context.textBaseline = 'middle';
   context.fillStyle = element.style.stroke.color;
   const x = ANCHOR[align] * element.width;
-  layout.lines.forEach((line, index) => {
-    context.fillText(line.text, x, (index + 0.5) * layout.lineHeight);
-  });
+  const { lines, lineHeight } = layout;
+  for (const [index, line] of lines.entries()) {
+    context.fillText(line.text, x, (index + 0.5) * lineHeight);
+  }
 }
 
 /**
@@ -61,7 +58,7 @@ function paintText(context: Context2D, element: TextElement, layout: TextLayout)
  * global alpha; the sketch styles are P1, so every shape is drawn exactly.
  */
 export function paint(context: Context2D, drawing: Drawing): void {
-  const { element, layout } = drawing;
+  const { element, layout, font } = drawing;
   context.globalAlpha = element.style.opacity;
   if (drawing.dot) {
     context.fillStyle = element.style.stroke.color;
@@ -69,8 +66,8 @@ export function paint(context: Context2D, drawing: Drawing): void {
     return;
   }
   paintFill(context, drawing);
-  if (element.kind === 'text' && layout !== null) {
-    paintText(context, element, layout);
+  if (element.kind === 'text' && layout !== null && font !== null) {
+    paintText(context, element, layout, font);
     return;
   }
   paintStroke(context, drawing);

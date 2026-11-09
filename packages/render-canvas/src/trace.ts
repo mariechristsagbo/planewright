@@ -1,7 +1,8 @@
 import { geometryOf, layoutText, localBox } from '@planewright/engine';
-import type { Element, PathCommand, TextLayout, TextMeasurer } from '@planewright/engine';
+import type { Element, PathCommand, Stroke, TextLayout, TextMeasurer } from '@planewright/engine';
 
 import type { PathSink } from './canvas.ts';
+import { canvasFont } from './fonts.ts';
 
 // Turning the engine's outlines into paths (ADR 0006: shared geometry).
 
@@ -19,7 +20,21 @@ export interface Drawing {
   readonly height: number;
   /** A text's lines; null for every other kind. */
   readonly layout: TextLayout | null;
+  /** A text's font as a 2D context names it; null for every other kind. */
+  readonly font: string | null;
+  /** The stroke's dash pattern in scene units; empty for a solid stroke. */
+  readonly dash: readonly number[];
 }
+
+/** Dash patterns in multiples of the stroke width, so they scale with it. */
+const DASHES: Readonly<Record<Stroke['dash'], readonly number[]>> = {
+  solid: [],
+  dashed: [4, 4],
+  dotted: [1, 2],
+};
+
+const dashOf = (stroke: Stroke): readonly number[] =>
+  DASHES[stroke.dash].map((step) => step * stroke.width);
 
 /** Traces outline commands, in local coordinates, into a path. */
 export function trace(path: PathSink, commands: readonly PathCommand[]): void {
@@ -53,7 +68,8 @@ const isDot = (element: Element): boolean =>
 
 /**
  * The drawing of an element at its revision, or undefined for a kind that has no geometry yet
- * (the arrow, note, image and frame), which P0 neither creates nor draws.
+ * (the arrow, note, image and frame), which P0 neither creates nor draws. A text's font and a
+ * stroke's dash pattern are built here once, rather than in every frame that draws them.
  */
 export function drawingOf(
   element: Element,
@@ -71,6 +87,16 @@ export function drawingOf(
     trace(path, geometry.outline(element));
   }
   const { width, height } = localBox(element);
-  const layout = element.kind === 'text' ? layoutText(element.content, measurer) : null;
-  return { element, path, dot, closed: geometry.isClosed(element), width, height, layout };
+  const text = element.kind === 'text' ? element.content : null;
+  return {
+    element,
+    path,
+    dot,
+    closed: geometry.isClosed(element),
+    width,
+    height,
+    layout: text === null ? null : layoutText(text, measurer),
+    font: text === null ? null : canvasFont(text.font),
+    dash: dashOf(element.style.stroke),
+  };
 }

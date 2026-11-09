@@ -124,6 +124,26 @@ describe('the path cache', () => {
     expect(cache.drawingOf(shape('rectangle', SQUARE, { id: 2 }))?.layout).toBeNull();
   });
 
+  it("builds a stroke's dash pattern and a text's font once per revision", () => {
+    const { cache } = cacheOf();
+    const stroked = (dash: 'solid' | 'dashed' | 'dotted', index: number) =>
+      shape('rectangle', SQUARE, {
+        id: index,
+        style: { stroke: { color: color('#1e2430'), width: 3, dash } },
+      });
+    const dashed = cache.drawingOf(stroked('dashed', 1));
+    expect(dashed?.dash).toEqual([12, 12]);
+    expect(cache.drawingOf(stroked('dashed', 1))?.dash).toBe(dashed?.dash);
+    expect(cache.drawingOf(stroked('dotted', 2))?.dash).toEqual([3, 6]);
+    expect(cache.drawingOf(stroked('solid', 3))?.dash).toEqual([]);
+    const mono = text(
+      { text: 'a', font: { family: 'mono', size: 16, lineHeight: 1.5 } },
+      { id: 4 },
+    );
+    expect(cache.drawingOf(mono)?.font).toBe('16px "Planewright Mono", monospace');
+    expect(dashed?.font).toBeNull();
+  });
+
   it('drops the paths of removed elements, so that a returning element is traced again', () => {
     const { paths, cache } = cacheOf();
     const square = shape('rectangle', SQUARE);

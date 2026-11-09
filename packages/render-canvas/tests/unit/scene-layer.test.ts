@@ -137,6 +137,24 @@ describe('the scene layer', () => {
     expect(dashed('dotted')).toEqual(['setLineDash', [3, 6]]);
   });
 
+  it("dashes each frame with the pattern built once for the element's revision", () => {
+    const { context, calls } = recordingContext();
+    const { canvas } = recordingCanvas(context);
+    const cache = createPathCache(pathFactory().createPath, fixedAdvanceMeasurer());
+    const stroke = { color: color('#1e2430'), width: 3, dash: 'dashed' } as const;
+    const dashed = shape('rectangle', { width: 10, height: 10 }, { style: { stroke } });
+    const part = { elements: [dashed], hidden: [], removed: [] };
+    const frame = { ...VIEW, scene: part };
+    drawScene({ canvas, context }, frame, part, cache);
+    drawScene({ canvas, context }, frame, part, cache);
+    const patterns = calls.filter(([name]) => name === 'setLineDash').map(([, pattern]) => pattern);
+    expect(patterns).toEqual([
+      [12, 12],
+      [12, 12],
+    ]);
+    expect(patterns[1]).toBe(patterns[0]);
+  });
+
   it("fills a one-point stroke's disc with its stroke colour and does not stroke it", () => {
     expect(drawn({ elements: [freehand([{ x: 0, y: 0 }])] }).elements.slice(2, -1)).toEqual([
       ['globalAlpha=', 1],
