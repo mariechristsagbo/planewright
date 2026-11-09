@@ -7,6 +7,7 @@ import { canvasRenderer } from './editor/renderer.ts';
 import { loadFonts } from './platform/fonts.ts';
 import { watchPage } from './platform/page-events.ts';
 import { platformOf } from './platform/platform.ts';
+import { localStorageOf, readPreferences } from './platform/preferences.ts';
 import { browserPorts } from './platform/ports.ts';
 import { indexedDbOf, openStorage } from './platform/storage.ts';
 import { pageTextMeasurer } from './platform/text-measurer.ts';
@@ -16,6 +17,9 @@ const container = document.getElementById('root');
 if (container === null) {
   throw new Error('Planewright expected a #root element in index.html.');
 }
+
+// The preferences entry is read before anything is drawn, so that the first frame has its theme.
+document.documentElement.dataset['theme'] = readPreferences(localStorageOf(window)).theme;
 
 // The first text is measured in its bundled font (ADR 0011); a font that fails leaves its fallback.
 await loadFonts(document.fonts);
