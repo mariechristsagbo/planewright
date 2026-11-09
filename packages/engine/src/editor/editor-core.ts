@@ -72,6 +72,8 @@ export interface EditorCore {
   session: TextSession | null;
   /** What saving reports, or null for an editor without a repository. */
   saveStatus: SaveStatus | null;
+  /** Texts are to be measured again once the open transaction ends. */
+  measureLater: boolean;
 }
 
 /** The change set that loads a document into an empty scene store. */
@@ -110,6 +112,7 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     measurer: ports.text,
     session: null,
     saveStatus: null,
+    measureLater: false,
   };
 }
 
