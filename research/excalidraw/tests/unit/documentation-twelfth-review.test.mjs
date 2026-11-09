@@ -7,9 +7,10 @@ import { RE, flat, read } from './r76-evidence.mjs';
 const SCRIPTS = JSON.parse(read('package.json')).scripts;
 
 // Whether a shell text runs Vitest, directly or through a root npm script (validate runs
-// test:coverage, for example).
+// test:coverage, for example). Vitest with the benchmark configuration, which holds the engine's
+// and the web app's benchmarks and no research project (ENG-15), runs no record check.
 const runsVitest = (text, depth = 0) =>
-  /\bvitest\b/u.test(text) ||
+  (/\bvitest\b/u.test(text) && !/--config vitest\.bench\.config\.ts\b/u.test(text)) ||
   (depth < 4 &&
     [...text.matchAll(/\bnpm (?:run )?([\w:-]+)/gu)].some(
       ([, name]) => Object.hasOwn(SCRIPTS, name) && runsVitest(SCRIPTS[name], depth + 1),
@@ -47,6 +48,9 @@ describe('the detectors of the CI history note', () => {
       expect(runsVitest(`- run: ${run}`), run).toBe(true);
     for (const run of ['npm ci', 'npm run test:e2e', 'npm run build', 'npx --no -- commitlint'])
       expect(runsVitest(`- run: ${run}`), run).toBe(false);
+    for (const run of ['npm run perf:bench', 'npx vitest bench --config vitest.bench.config.ts'])
+      expect(runsVitest(`- run: ${run}`), run).toBe(false);
+    expect(read('vitest.bench.config.ts')).not.toMatch(/research/u);
     for (const step of [
       'fetch-depth: 0',
       'fetch-depth: 2',
