@@ -285,9 +285,11 @@ export function createAutosave(options: AutosaveOptions): Autosave {
     reset(id, rev) {
       stopTimer(state);
       pending.reset();
+      // The status last reported stays, so that the report below tells of the change.
       Object.assign(state, {
         ...initialState({ ...options, id, rev }),
         generation: state.generation + 1,
+        status: state.status,
       });
       report(machine);
     },

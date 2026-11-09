@@ -133,6 +133,7 @@ describe('a stale save', () => {
     moveTo(harness.store, ONE, 0);
     harness.autosave.reset(DOCUMENT, 2);
     expect(harness.autosave.status.type).toBe('saved');
+    expect(harness.statuses.at(-1)).toEqual({ type: 'saved' });
     await harness.advance(5_000);
     expect(harness.requests).toHaveLength(1);
     moveTo(harness.store, ONE, 30);
