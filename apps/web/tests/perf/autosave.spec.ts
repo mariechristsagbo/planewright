@@ -50,8 +50,7 @@ test('B9 REQ-F03 no long task while a 50-element change is saved', async ({ page
   await expect(saveStatus(page)).toHaveText('Saved in this browser');
   await canvas(page).focus();
 
-  const counts: number[] = [];
-  const longest: number[] = [];
+  const windows: { from: number; to: number }[] = [];
   for (let round = 0; round < ROUNDS; round += 1) {
     await page.keyboard.press(round % 2 === 0 ? 'ArrowRight' : 'ArrowLeft');
     await settle(page);
@@ -59,12 +58,19 @@ test('B9 REQ-F03 no long task while a 50-element change is saved', async ({ page
     // The save is known by the stored revision it raises, since "Saving…" may show too briefly.
     await expect.poll(() => storedRevision(page), { intervals: [50] }).toBe(round + 2);
     await expect(saveStatus(page)).toHaveText('Saved in this browser');
-    const tasks = await page.evaluate<{ start: number; duration: number }[]>(
-      `window.perfProbes.longTasks.filter((task) => task.start + task.duration > ${String(from)})`,
-    );
-    counts.push(tasks.length);
-    longest.push(Math.max(0, ...tasks.map(({ duration }) => duration)));
+    windows.push({ from, to: await page.evaluate<number>('performance.now()') });
   }
+  // Long tasks reach the observer some time after they end, so they are read once all are in.
+  await settle(page);
+  await settle(page);
+  const tasks = await page.evaluate<{ start: number; duration: number }[]>(
+    'window.perfProbes.longTasks',
+  );
+  const during = windows.map(({ from, to }) =>
+    tasks.filter(({ start, duration }) => start < to && start + duration > from),
+  );
+  const counts = during.map((found) => found.length);
+  const longest = during.flat().map(({ duration }) => duration);
   writeMeasurement(page, {
     id: 'B9',
     samples: counts,
@@ -72,7 +78,7 @@ test('B9 REQ-F03 no long task while a 50-element change is saved', async ({ page
       ...SCENE,
       changed: 50,
       rounds: ROUNDS,
-      longestTaskMs: Math.max(...longest),
+      longestTaskMs: Math.max(0, ...longest),
       by: 'long tasks from the frame after each nudge until the page says Saved in this browser',
     },
   });
