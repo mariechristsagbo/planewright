@@ -26,19 +26,36 @@ const BUNDLES = [
 /** The bytes of some content once compressed at gzip level 9. */
 export const gzipSize = (content: Uint8Array): number => gzipSync(content, { level: 9 }).length;
 
-const ATTRIBUTE = (name: string): RegExp => new RegExp(`\\b${name}="([^"]+)"`, 'u');
+/** An attribute's value in a tag's text, in any case, quoted either way or not at all. */
+function attribute(tag: string, name: string): string | undefined {
+  const found = new RegExp(`\\s${name}\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))`, 'iu').exec(tag);
+  return found?.[1] ?? found?.[2] ?? found?.[3];
+}
+
+/** The text of each start tag of a page with its name in lower case, read without a tag pattern. */
+const startTags = (html: string): { readonly name: string; readonly text: string }[] =>
+  html
+    .split('<')
+    .slice(1)
+    .map((part) => {
+      const text = part.slice(0, part.includes('>') ? part.indexOf('>') : part.length);
+      return { name: (text.split(/[\s/>]/u, 1)[0] ?? '').toLowerCase(), text: ` ${text}` };
+    });
+
+const valueIs = (value: string | undefined, expected: string): boolean =>
+  value?.toLowerCase() === expected;
 
 /**
  * The scripts that a built page loads before anything else, as paths within the build: its module
- * scripts and the modules it preloads. A script from another origin is refused, since P0 loads
- * only its own assets.
+ * scripts and the modules it preloads, with tags and attributes read in any case and quoted either
+ * way, as HTML allows. A script from another origin is refused, since P0 loads only its own
+ * assets.
  */
 export function initialScripts(html: string): string[] {
-  const tags = html.match(/<script\b[^>]*>|<link\b[^>]*>/gu) ?? [];
-  const sources = tags.flatMap((tag) => {
-    const isScript = tag.startsWith('<script') && /\btype="module"/u.test(tag);
-    const isPreload = tag.startsWith('<link') && /\brel="modulepreload"/u.test(tag);
-    const source = ATTRIBUTE(isScript ? 'src' : 'href').exec(tag)?.[1];
+  const sources = startTags(html).flatMap(({ name, text }) => {
+    const isScript = name === 'script' && valueIs(attribute(text, 'type'), 'module');
+    const isPreload = name === 'link' && valueIs(attribute(text, 'rel'), 'modulepreload');
+    const source = attribute(text, isScript ? 'src' : 'href');
     return (isScript || isPreload) && source !== undefined ? [source] : [];
   });
   if (sources.length === 0) throw new Error('The built page loads no module script.');
