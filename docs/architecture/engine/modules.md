@@ -64,7 +64,7 @@ layer check holds for it too, and it is added by the issue that first uses it
 | `IdSource`           | new 128-bit identifiers as 22 base64url characters          | `ports` (1)        | ENG-01   | `crypto.getRandomValues`                                              | a counter-based sequence            |
 | `TextMeasurer`       | width and line metrics of a string in a font                | `geometry` (3)     | ENG-06   | an offscreen 2D context's `measureText`                               | fixed advance per character         |
 | `DocumentRepository` | load a document; save changes against a stored revision     | `persistence` (8)  | ENG-13   | IndexedDB ([ADR 0009](../../adr/0009-persistence-and-interchange.md)) | an in-memory map with the same rule |
-| `Announcer`          | send a message to assistive technology                      | `editor` (9)       | ENG-14   | a polite live region                                                  | a recording array                   |
+| `Announcer`          | send a message to assistive technology                      | `editor` (9)       | ENG-14   | a polite live region, assertive for saves                             | a recording array                   |
 
 ```ts
 export interface Clock {
@@ -135,12 +135,13 @@ export interface EditorPorts {
   readonly ids: IdSource;
   readonly text: TextMeasurer;
   readonly repository?: DocumentRepository;
+  readonly announcer?: Announcer;
 }
 
 export interface Editor {
   /**
-   * Read-only view: tool, tool lock, cursor, camera, selection, Undo and Redo, the edited text and
-   * the save status.
+   * Read-only view: tool, tool lock, cursor, camera, selection, Undo and Redo, the edited text, the
+   * save status and the listed elements.
    */
   readonly view: EditorView;
   /** The registry's commands with their labels, shortcuts and tools, tools in tool bar order. */
@@ -170,8 +171,9 @@ export interface Editor {
 export function createEditor(ports: EditorPorts, stored?: StoredDocument): Editor;
 ```
 
-The rest of the designed surface joins with its issue: `announcer?: Announcer` with the live
-region (ENG-14). `repository` and `announcer` stay optional, so that tests can create an editor
+The accessibility issue, ENG-14, added the `announcer` port, the view's `elements` and the Enter
+command, which complete the designed surface
+([what ENG-14 decided](quality.md#what-eng-14-decided)). `repository` and `announcer` stay optional, so that tests can create an editor
 without them, and an editor without a repository saves nothing and reports a `null` save status.
 The engine's tests open fixture documents with `openEditor(ports, document)`, which the entry does
 not export.

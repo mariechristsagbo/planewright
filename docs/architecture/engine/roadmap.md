@@ -5,7 +5,8 @@ in the milestone **v0.1.0 — Engine Core**. Each issue is opened only when the 
 order below has merged or no longer blocks it, and only after this architecture has been reviewed
 and merged. ENG-01 is issue #5, ENG-02 issue #7, ENG-03 issue #9, ENG-04 issue #11, ENG-05
 issue #13, ENG-06 issue #15, ENG-07 issue #17, ENG-08 issue #19, ENG-09 issue #21, ENG-10
-issue #23, ENG-11 issue #25, ENG-12 issue #27 and ENG-13 issue #29; the others are not open yet.
+issue #23, ENG-11 issue #25, ENG-12 issue #27, ENG-13 issue #29 and ENG-14 issue #31; the other is
+not open yet.
 
 Every P0 requirement of the [requirements trace](requirements.md) is delivered by exactly one
 issue below; the P1 and P2 requirements that the P0 design already accommodates are listed under

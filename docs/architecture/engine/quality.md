@@ -34,6 +34,70 @@ tool's default-size element at the centre of the viewport, so no element kind ne
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
+### What ENG-14 decided
+
+ENG-14 implements this section: the announcer port, the view's elements and keyboard creation in
+the engine, and the element list, the live region, the zoom controls and focus management in
+`apps/web`. It decided what the rules above leave open:
+
+- **Announcements.** `announcer` is an optional port of `createEditor`; an editor without one
+  announces nothing. After each input, command or call the editor announces at most one thing: the
+  last history entry that a commit, an undo or a redo made, as `change`, `undo` or `redo` with its
+  label, its element count, a lone element's kind and the selection count after it, or else, when
+  the selection holds other elements than it last said, `selection` with the new count. A save that
+  has just failed, or failed for another reason, is `save-failed` with its reason, and one refused
+  as stale is `save-stale`; a retry that fails for the same reason and a save that succeeds again say
+  nothing, since the notices stay until then. The selection a stored document opens with is not
+  announced. The web app says each key in English, as in "Rectangle created. 1 element selected."
+  or "Undid move of 2 elements. 2 elements selected."
+- **The live region.** Two visually hidden regions, `aria-live` polite and assertive and
+  `aria-atomic`, are put at the end of the page's body at start-up, before anything is said, and
+  carry no role, so that the page's status keeps the only `status` role. A message empties its
+  region at once and is written 100 ms later, so that a repeat is announced again and only the
+  latest of quick messages is written. Failed and stale saves and the start-up notices for
+  unavailable or invalid storage are assertive. The notices below the canvas are no longer
+  `role="alert"` elements but a "Storage notices" region shown only while one applies (the ENG-13
+  review's s2).
+- **The element list.** The editor's view gains `elements`, the drawn elements in drawing order as
+  last committed: while a gesture or a text session holds the history's transaction it keeps the
+  list from before, so that the list never shows a preview and a drag publishes no view. The list
+  box sits under the canvas and its instructions, so that the canvas keeps its size, and names each
+  element "Kind, width by height, at x, y" from its unrotated box in scene units to one decimal, a
+  text by its first 40 characters on one line, with ", turned N degrees" for a turn. It keeps the
+  focus and points at its active option with `aria-activedescendant`, so that a deletion never moves
+  the focus: the next option becomes active. Home and End go to the ends; the list's own keys ignore
+  Shift; Left and Right without Alt do nothing; Alt+arrow keys reach the editor as the canvas's
+  arrow keys, so that a held key's repeats make one undo step; every other key reaches the keymap. A
+  click selects an element alone, and a Shift or Mod click adds or removes it. A drawing of more
+  than 101 elements renders the 101 options around the active one.
+- **Keyboard creation.** `canvas.enter` (Enter) lets go of any press and gives the active creation
+  tool a tap at the centre of the viewport, so that it makes what a tap there makes, a 100 × 100
+  shape, a 100-unit line, a freehand dot or a text opened for editing, as one undo step. With the
+  Selection tool and one selected text it edits that text again, as a double tap does. It does
+  nothing while a transaction is open, and the tool bar leaves Enter and Space to its focused
+  button.
+- **Focus.** The tab stops are the tool bar's one stop, the canvas, the element list, Undo, Redo,
+  Zoom out, Reset zoom, Zoom in and Zoom to fit; the zoom controls read the command registry and
+  show each command's first shortcut. Every focusable element shows a 3 px outline in `#2a62d0`,
+  5.3:1 against the page, and the text area a 2 px one. Undo and Redo are unavailable through
+  `aria-disabled`, not `disabled`, because Chromium moves the focus of a button that becomes
+  disabled to the page's body. Escape or Mod+Enter in the text area returns the focus to the canvas,
+  which opened it; moving the focus to another control ends the session, while a page that loses
+  the focus keeps it; answering the stale notice focuses the canvas first (the ENG-13 review's m5).
+  P0 has no menu or dialog; Escape's return applies to them when they come (P1).
+- **Targets, colour and motion.** Controls are at least 24 px, the page's link is a 24 px inline
+  block, and touch handle hit squares stay 24 px. Measured in Chromium, the shortcut hint in a
+  pressed tool button was 4.19:1 and is now opaque, 5.59:1, and an unavailable control is dark grey
+  with a dashed border, 7.2:1, instead of half transparent, 3.36:1. Each camera command and wheel
+  event sets the camera once, drawn whole in the next frame with no frame after it, and nothing in
+  the page animates, with or without reduced motion.
+- **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
+  dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
+  colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader
+  pass stays a task before each release; no human accessibility audit has been made.
+- **Not here.** Menus and the dark theme (P1, P2), forced colours, other languages, a type-ahead in
+  the list and the list's performance measurements (ENG-15).
+
 ## Testing strategy
 
 Each issue writes its failing tests first and records that failing run in its pull request. A test

@@ -21,11 +21,12 @@ complete and ADRs are accepted.
 
 ### apps/web
 
-A React 19 application built with Vite 8. It renders the editor surface of ENG-08, ENG-11, ENG-12
-and ENG-13: a canvas host whose scene and overlay canvases the canvas renderer draws, an input
+A React 19 application built with Vite 8. It renders the editor surface of ENG-08, ENG-11, ENG-12,
+ENG-13 and ENG-14: a canvas host whose scene and overlay canvases the canvas renderer draws, an input
 adapter that sends DOM events to the engine's editor, a text area over the canvas for the text being
-edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, Undo and Redo
-controls, and the save status with the notices for failed, stale, unavailable and invalid storage;
+edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, a keyboard-operable
+list of the drawn elements, Undo and Redo and zoom controls, a live region that says the editor's
+announcements, and the save status with the notices for failed, stale, unavailable and invalid storage;
 it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md).
 Its IndexedDB record backend (database `planewright`) stores what the engine's autosave saves, so
 the drawing, its camera and its selection are kept in the browser, and at start-up the page opens
@@ -74,7 +75,8 @@ nudges), the `persistence` layer (the `DocumentRepository` port with its revisio
 records read through the codec, a repository over any record backend, and the autosave scheduler)
 and the `editor` layer (render frames, the renderer
 port, culling, the render loop with its dirty tracking and frame scheduling, and `createEditor`,
-which opens a stored document, saves through the repository port and reports the save status).
+which opens a stored document, saves through the repository port, reports the save status, lists
+the drawn elements in its view and announces each change through the announcer port).
 The web app imports it.
 
 ### packages/render-canvas
@@ -95,8 +97,9 @@ the undo and redo history, ENG-05 (issue #13) the camera, ENG-06 (issue #15) the
 layout and hit testing, ENG-07 (issue #17) the render loop and the canvas renderer, ENG-08
 (issue #19) the editor surface, ENG-09 (issue #21) the Selection tool, ENG-10 (issue #23) the
 transforms, ENG-11 (issue #25) the shape, line and freehand creation tools, ENG-12 (issue #27)
-the Text tool, text editing and the bundled fonts, and ENG-13 (issue #29) local persistence and
-autosave in the browser's IndexedDB storage; the rest is not implemented yet:
+the Text tool, text editing and the bundled fonts, ENG-13 (issue #29) local persistence and
+autosave in the browser's IndexedDB storage, and ENG-14 (issue #31) the element list, the live
+region, focus order and creation from the keyboard; the rest is not implemented yet:
 
 - storage beyond the element model and codec of ENG-02, the scene store of ENG-03 and the browser
   storage and autosave of ENG-13: the binary files of images, opening and saving document files and

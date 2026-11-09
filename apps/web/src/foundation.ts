@@ -12,7 +12,7 @@ export const FOUNDATION_CONTENTS: readonly FoundationItem[] = [
   {
     name: 'Editor surface',
     detail:
-      'A canvas that pans and zooms with the wheel, the keyboard, a middle-button drag, Space+drag, the Hand tool and two-finger touch gestures, with a tool bar for the rectangle, ellipse, diamond, line, freehand and text tools and tool lock, a text area for typing texts over the canvas, and Undo and Redo controls.',
+      'A canvas that pans and zooms with the wheel, the keyboard, a middle-button drag, Space+drag, the Hand tool and two-finger touch gestures, with a tool bar for the rectangle, ellipse, diamond, line, freehand and text tools and tool lock, a text area for typing texts over the canvas, a list of the drawn elements that selects, nudges and deletes them from the keyboard, Enter to draw at the centre of the canvas, Undo, Redo and zoom controls, and a live region that announces each change to screen readers.',
   },
   {
     name: 'Canvas engine and renderer',
