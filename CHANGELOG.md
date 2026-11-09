@@ -127,3 +127,11 @@ release has been published yet.
   slower machine; they have issues #34 to #36. The renderer's path cache no longer walks itself on
   every lookup, the element list names a long text from its first words only, and the page declares
   the light colour scheme only.
+- Performance baseline (issue #38): the three CI runs on `main` that make the baseline, each with
+  the machine it ran on, and a gate that compares a run only with the runs on `main` on its own
+  processor model, once that model has three; with one run on each of three processors, CI still
+  reports the statistical budgets only. Only a push or a manual dispatch of the repository's CI on
+  `main`, at its first attempt, with a report that does not fail, is recorded as a run on `main`,
+  once and in the order of the runs; other runs are kept only as information. The browser
+  measurements remove an earlier run's files before they start, and a page opened with `?measure`
+  stops measuring after 10,000 renders.

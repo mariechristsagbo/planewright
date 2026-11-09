@@ -161,9 +161,9 @@ in Chromium with a 4× CPU slowdown as a low-end proxy. "Scene" means a mix of t
 | Bundle size, minified and gzip-compressed                         | engine ≤ 60 KB, renderer ≤ 15 KB, web app's initial JavaScript ≤ 200 KB | a guardrail script over the build output          | REQ-F04      |
 | JavaScript heap, 10,000 elements and a full history               | ≤ 150 MB                                                                | a heap snapshot, by hand, before each release     | REQ-F01      |
 
-Benchmarks start as reports. Once three consecutive runs on `main` give a baseline, a result more
-than 20 % worse than its budget or baseline fails CI. Raising a budget needs an ADR, like raising a
-guardrail.
+Benchmarks start as reports. Once three runs on `main` on the runner's processor model give a
+baseline ([what issue #38 decided](#what-issue-38-decided)), a result more than 20 % worse than its
+budget or baseline fails CI. Raising a budget needs an ADR, like raising a guardrail.
 
 ### What ENG-15 decided
 
@@ -217,11 +217,11 @@ what the rules above leave open:
 - **The report and the baseline.** `npm run perf:report` merges the results in `perf-results/` with
   the machine (processor, cores, memory, system, runner image, Node.js and Chromium versions,
   commit, branch, event and run) into `report.json` and `report.md`, and writes the Markdown to the
-  CI job's summary. The CI job "Performance report" runs it on every push and pull request and
-  keeps `perf-results/` as the `performance-report` artifact for 90 days; it is not a required
-  check. `docs/performance/baseline.json` keeps recorded runs, with the issue that will fix each
-  missed budget. A run on another branch, such as this pull request's first run, is kept there as
-  information and never counts.
+  CI job's summary. The CI job "Performance report" runs it on every pull request, every push to
+  `main` and every manual dispatch, and keeps `perf-results/` as the `performance-report` artifact
+  for 90 days; it is not a required check. `docs/performance/baseline.json` keeps recorded runs,
+  with the issue that will fix each missed budget. A run on another branch, such as this pull
+  request's first run, is kept there as information and never counts.
 - **When a statistical budget starts to fail CI.** A budget measured in CI that was not measured,
   a failed check and a bundle over its budget fail at once. Every other budget reports only, until
   the baseline holds three runs on `main`, recorded in this order:
@@ -236,7 +236,8 @@ what the rules above leave open:
   4. From that commit on, a budget that all three runs measured fails CI when its value is more than
      20 % above the larger of its target and its baseline, the slowest of the three runs: a met
      budget may not drift more than 20 % past its target, and a missed one more than 20 % past what
-     `main` measured while its issue is open.
+     `main` measured while its issue is open. Issue #38 keeps this rule and applies it to the runs
+     on each processor model on its own ([below](#what-issue-38-decided)).
 - **Misses, in CI.** The first CI run, on this pull request's merge (run 42626128521, a 4-core AMD
   EPYC 9V74, runner image ubuntu24 20261101.360.1, Chromium 156.0.8078.4, Node.js 24.22.1), misses
   B1 at 13.92 ms (issue #34), B6 at 7.13 ms (issue #35) and B7 at 13.34 ms (issue #36), all at the
@@ -244,7 +245,7 @@ what the rules above leave open:
   pointer move of B4 shown in the next frame, B5 at 0.078 ms, B8 at 0.118 ms, no long task in any
   save of B9, B10 at 0.122 s, and the engine at 28.873 KB, the renderer at 2.082 KB and the web
   app's initial JavaScript at 106.889 KB. The baseline keeps that run as information; it is none of
-  the three runs on `main`, of which none is recorded yet.
+  the runs on `main`, which issue #38 recorded.
 - **Misses, on a slower machine.** On a shared developer machine (a 6-core AMD EPYC at a load of 2
   to 3.5, the same Chromium and Node.js), three runs of each benchmark and four to seven of each
   browser measurement gave B1 41 to 52 ms, B2 10 to 27 ms (missed there, so issue #34 holds it too),
@@ -281,6 +282,80 @@ what the rules above leave open:
   at 4.5:1 or more and the list's active-option outline at 3:1 or more.
 - **Not here.** The fixes of the misses (issues #34 to #36), any budget raised, the dark theme, and
   the ENG-11 review's m2 (the freehand preview's cost), which no budget measures.
+
+### What issue #38 decided
+
+Issue #38 recorded the baseline that ENG-15 planned and decided how its gate deals with CI runners
+that differ in processor (the ENG-15 review's m1, s2, s3 and s4).
+
+- **The three runs on `main`.** CI runs 87, 88 and 89 of `main` at `4db483f` are its first three
+  runs with the performance report: the push that merged ENG-15 and two manual dispatches, every
+  job of each successful, with no other CI run on `main` between them. Each ran on 4 cores with
+  15.6 GiB, runner image ubuntu24 20261101.360.1, Node.js 24.22.1 and Chromium 156.0.8078.4, and
+  each on another processor:
+
+  | Run | CI run      | Event             | Processor                 | `performance-report` artifact |
+  | --- | ----------- | ----------------- | ------------------------- | ----------------------------- |
+  | 1/3 | 42640366479 | push              | Intel Xeon Platinum 8370C | 13684528982                   |
+  | 2/3 | 42641527515 | workflow_dispatch | AMD EPYC 9V74             | 13686076108                   |
+  | 3/3 | 42642158624 | workflow_dispatch | AMD EPYC 9V45             | 13686341225                   |
+
+  `docs/performance/baseline.json` holds them, recorded with `npm run perf:baseline` from the
+  `report.json` of each artifact, after the pull-request run that ENG-15 kept as information.
+
+- **What they measured.** At each budget's statistic, in the order of the runs: B1 10.9, 11.62 and
+  10.61 ms; B2 3.205, 2.3 and 2 ms; B3 0.1 ms in each; B4 1 frame in each; B5 0.075, 0.058 and
+  0.15 ms; B6 9.247, 5.911 and 4.302 ms; B7 15.134, 11.681 and 5.815 ms; B8 0.155, 0.11 and
+  0.075 ms; B9 no task in each; B10 0.123, 0.1 and 0.082 s; and the bundles 28.873, 2.082 and
+  106.889 KB in each. B1, B6 and B7 miss in all three (issues #34 to #36), and every other budget
+  is met in all three. The largest of the three values of B1, B2, B5 to B8 and B10 is 1.1 (B1) to
+  2.6 (B5, B7) times the smallest. The two pull-request runs of ENG-15 ran on the two AMD models
+  with the same engine code, and differ from the run on `main` on the same model by up to 1.23 times
+  for a missed budget (B7 on the EPYC 9V45, 7.161 and 5.815 ms) and 3.5 times for B5 (0.043 and
+  0.15 ms on the EPYC 9V45), which is met far below its limit.
+- **A baseline per processor.** A baseline of every run on `main` takes its limit from the slowest
+  processor: B7's would be 18.16 ms, from the Xeon, so a run on the EPYC 9V45 could become three
+  times slower and pass, and a baseline from a faster processor would fail a slower one with no
+  regression. So a run is compared only with the runs on `main` recorded on its own processor
+  model, the name that Node.js gives the runner's first CPU. Once a model has three, a budget that
+  the last three measured fails when its value is more than 20 % above the larger of its target and
+  the slowest of those three; the tolerance, the budgets and the rest of ENG-15's rule are
+  unchanged. Until then the run reports only, and its report says how many of the three runs its
+  processor has. Runs on other processors never move its limit, and runs kept as information never
+  count. A budget measured in CI that was not measured, a failed check and a bundle over its budget
+  still fail at once.
+- **The gate today.** Each of the three processors has one run on `main`, so none has a baseline
+  and CI reports the statistical budgets only. No tolerance was widened to make up for the
+  variance: a processor is gated once its own runs show what it measures. A test reads the committed
+  baseline, so this paragraph changes with it.
+- **What counts as a run on `main`.** A run of this repository's CI on `main`, from a push or a
+  manual dispatch, at its first attempt, at a full commit id, whose report has no failure.
+  `npm run perf:baseline` records it only after the last recorded run on `main`: with a larger run
+  id, and at a commit on `origin/main` that is that run's commit or a later one, as Git shows. A run
+  id is never recorded twice, whatever its attempt. A pull request's run, a fork's run, a re-run or
+  a run from any other event is refused, and `--information` keeps one as information, which never
+  counts; a local report is refused even then. The report reads only a baseline whose runs on `main`
+  are in increasing run-id order, each once, and whose every run keeps its machine (processor,
+  cores, memory, system, runner image, Node.js and Chromium).
+- **Consecutive runs, audited.** Every recorded run keeps its address, with its run id and attempt,
+  so a run on `main` left out between two recorded ones shows in the list of CI runs on `main`,
+  `gh run list --workflow CI --branch main --json databaseId,number,event,conclusion,headSha`. Runs
+  are recorded in order as they come, the slower ones too, so that no processor's baseline is a
+  choice of its fastest runs; the tool refuses an older run but cannot see one left out.
+- **The next runs.** Further runs on `main`, from pushes or `gh workflow run CI --ref main`, are
+  recorded by a pull request in the same way until a processor has three, whose own runs then gate
+  its runs. The spread between runs on one model above is why the reference is the slowest of the
+  three rather than their median; should a processor's gate fail with no change to the code it
+  measures, the remedy is more runs or an ADR, as for any budget, not a wider tolerance in passing.
+- **Local runs.** `npm run perf:browser` removes an earlier run's measurements at the same CPU
+  slowdown before its first test, so that the report can no longer read a file that a failing test
+  did not write again (s3). A page opened with `?measure` measures at most 10,000 renders, about
+  three minutes at 60 frames a second, and then draws without measuring, so that its timeline stays
+  bounded (s4).
+- **Not here.** Fixing B1, B6 and B7 (issues #34 to #36), raising a budget or the tolerance, the
+  runs a processor still needs, and a key finer than the processor model: runs on one model with
+  another runner image, Chromium or Node.js share its baseline, and each run records them so that
+  such a change shows.
 
 ## Security
 
