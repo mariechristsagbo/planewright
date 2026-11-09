@@ -7,8 +7,9 @@ ENG-02 added the `model` layer, ENG-03 the `scene` layer with the world bounds t
 `geometry`, ENG-04 the `history` module, ENG-05 the `camera` layer with the content bounds in
 `geometry`, ENG-06 the rest of `geometry` (outlines, distances, the text measurer port and text
 layout) and the `selection` module, ENG-07 the `editor` layer's render frames, renderer port and
-render loop and the `@planewright/render-canvas` package, and ENG-08 the `input`, `tools` and
-`commands` layers and `createEditor`; the other layers arrive with the issues that need them.
+render loop and the `@planewright/render-canvas` package, ENG-08 the `input`, `tools` and
+`commands` layers and `createEditor`, and ENG-13 the `persistence` layer with the repository port
+and autosave; the other layers arrive with the issues that need them.
 
 ## Packages
 
@@ -112,7 +113,8 @@ the render loop's `onFrame` and calls `render` with each frame it is handed
 
 The engine exports its types, one constructor and, for renderers, the render loop and the pure
 geometry functions they draw with (`createRenderLoop`, `geometryOf`, `localBox` and `layoutText`,
-since ENG-07). Everything else is internal to the package. The one constructor, `createEditor`,
+since ENG-07), and, for storage adapters, `createRecordRepository`, which keeps the revision rule
+and the codec in the engine (since ENG-13, [what ENG-13 decided](persistence.md#what-eng-13-decided)). Everything else is internal to the package. The one constructor, `createEditor`,
 came with the editor surface (ENG-08) and composes the render loop; the selection issue (ENG-09)
 added the selection to it. Its surface so far
 ([what ENG-08 decided](interaction.md#what-eng-08-decided),
@@ -121,7 +123,10 @@ method: its gestures reach the Selection tool through `input`, and Duplicate, De
 are commands that `run` and the keymap reach; nor did the creation tools issue, ENG-11, whose tools
 and tool lock are commands too, while the view gained `toolLock`,
 [what ENG-11 decided](interaction.md#what-eng-11-decided); the text issue, ENG-12, added the `text`
-port, `editText` and the view's `text`, [what ENG-12 decided](interaction.md#what-eng-12-decided)):
+port, `editText` and the view's `text`, [what ENG-12 decided](interaction.md#what-eng-12-decided);
+the persistence issue, ENG-13, added the `repository` port, the stored document, `measureTexts`,
+`saveNow`, `resolveStale` and the view's `save`,
+[what ENG-13 decided](persistence.md#what-eng-13-decided)):
 
 ```ts
 export interface EditorPorts {
@@ -129,10 +134,14 @@ export interface EditorPorts {
   readonly scheduler: Scheduler;
   readonly ids: IdSource;
   readonly text: TextMeasurer;
+  readonly repository?: DocumentRepository;
 }
 
 export interface Editor {
-  /** Read-only view: tool, tool lock, cursor, camera, selection, Undo and Redo, the edited text. */
+  /**
+   * Read-only view: tool, tool lock, cursor, camera, selection, Undo and Redo, the edited text and
+   * the save status.
+   */
   readonly view: EditorView;
   /** The registry's commands with their labels, shortcuts and tools, tools in tool bar order. */
   readonly commands: readonly EditorCommand[];
@@ -146,21 +155,26 @@ export interface Editor {
   editText(edit: TextEdit): void;
   /** Report the canvas size in CSS pixels and the device pixel ratio. */
   resize(size: ViewportSize): void;
+  /** Measure every text again, as when a font finishes loading; no undo step. */
+  measureTexts(): void;
+  /** Start a waiting save at once, as when the page is hidden or unloaded. */
+  saveNow(): void;
+  /** Answer a stale save: load the newer stored version, or keep this one. */
+  resolveStale(choice: 'load' | 'keep'): Promise<void>;
   /** Hand the listener every frame built on an animation frame, starting with a full one. */
   onFrame(listener: (frame: RenderFrame) => void): Cancel;
   subscribe(listener: (view: EditorView) => void): Cancel;
   dispose(): void;
 }
 
-export function createEditor(ports: EditorPorts): Editor;
+export function createEditor(ports: EditorPorts, stored?: StoredDocument): Editor;
 ```
 
-The rest of the designed surface joins with its issues: `repository?: DocumentRepository`, a stored document
-(`createEditor(ports, stored?: StoredDocument)`), `saveNow()`, `resolveStale(choice)` and the
-view's save status with persistence (ENG-13); and `announcer?: Announcer` with the live region
-(ENG-14). `repository` and `announcer` stay optional, so that tests and the issues before ENG-13
-and ENG-14 can create an editor without them. Until a stored document arrives, the engine's tests
-open fixture documents with `openEditor(ports, document)`, which the entry does not export.
+The rest of the designed surface joins with its issue: `announcer?: Announcer` with the live
+region (ENG-14). `repository` and `announcer` stay optional, so that tests can create an editor
+without them, and an editor without a repository saves nothing and reports a `null` save status.
+The engine's tests open fixture documents with `openEditor(ports, document)`, which the entry does
+not export.
 
 React reads `editor.view` through `useSyncExternalStore` with `editor.subscribe`; it never reaches
 into the scene store directly.
@@ -175,9 +189,9 @@ work (AGENTS.md: the UI stays factual).
 | -------------------------- | ----------------------------------------------------------------------------------------------------- |
 | `editor/`                  | `CanvasHost` (two canvases, resize observer, pointer capture), the input adapter, the editor provider |
 | `editor/text/`             | the text-editing overlay positioned by the camera                                                     |
-| `ui/`                      | toolbar, history buttons, zoom controls, notices; each control reads the command registry             |
+| `ui/`                      | toolbar, history buttons, view readout, save status and notices; controls read the command registry   |
 | `a11y/`                    | the element list, the live region and focus management                                                |
-| `platform/`                | IndexedDB repository, preferences, clipboard, files, text measurer, identifier source                 |
+| `platform/`                | IndexedDB backend, storage start-up, page events, preferences, clipboard, files, text measurer, ports |
 
 ## Requirements served
 

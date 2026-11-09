@@ -93,3 +93,13 @@ release has been published yet.
   the measurer and the text area use the bundled open-licence fonts of ADR 0011 (Inter, Patrick Hand
   and JetBrains Mono, with their licences), which the page loads before it starts; text formatting,
   styles, saving and collaboration do not exist yet.
+- Local persistence and autosave (ENG-13): in the engine, a `persistence` layer with the
+  `DocumentRepository` port, the revision rule and the codec over stored records, and an autosave
+  scheduler that saves committed changes 300 ms after the last one and at most 1 s after the first,
+  never a preview or a text being edited, retries failed saves and stops at another tab's newer
+  save; `createEditor` opens a stored document with its camera and selection, the Selection tool and
+  an empty history, and texts are measured again when a font finishes loading. A camera that holds
+  NaN now gives the default camera, and a creation in a document at the 100,000-element limit makes
+  nothing instead of locking the history. In the web app, the drawing is saved in IndexedDB and
+  restored on reload, with notices for failed, stale, unavailable and invalid storage and the
+  preferences entry; files, exporting and collaboration do not exist yet.

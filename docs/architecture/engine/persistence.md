@@ -138,8 +138,9 @@ At start-up the editor asks the repository for the most recently updated documen
 - `loaded`: the decoded document, its camera and its selection filtered to existing elements; the
   Selection tool; empty history (REQ-P02, REQ-H03).
 - `invalid`: the stored data is left untouched and a new, empty document with a new identifier is
-  opened beside it, with a notice that offers to download the stored data as a file. Nothing is
-  partially loaded (REQ-P07).
+  opened beside it, with a notice that says so. Nothing is partially loaded (REQ-P07). Offering the
+  stored data as a file to download comes with document files (REQ-X03, P2), which ENG-13 leaves
+  out of scope.
 - `unavailable` (private modes, disabled storage): editing works in memory, with a notice that
   nothing will be saved.
 
@@ -208,6 +209,74 @@ always gives the same text.
 Opening and saving files use the platform's file picker where it exists and a download or file
 input elsewhere (REQ-X03). Other applications' formats are not imported: each would need its own
 investigation issue and ADR.
+
+## What ENG-13 decided
+
+ENG-13 implements this document in the engine's `persistence` layer and the `editor`, and the
+IndexedDB adapter, the notices and the preferences entry in `apps/web`. It decided what the rules
+above leave open:
+
+- **Records and the revision rule.** The revision rule and the codec stay in the engine, so every
+  storage applies them alike: a `RecordBackend` reads the latest document record with its element
+  records and runs one transaction per save, in which `planSave` reads the stored record and says
+  what to write; `createRecordRepository` joins them into the `DocumentRepository`. The tests' in-memory
+  backend and the web app's IndexedDB backend implement only the backend. A record that a save
+  cannot read (a revision that is not a whole number of 0 or more, or groups that are not a list of
+  records with string identifiers) is never written over; the save fails. A session save for a
+  document with no record yet writes nothing and reports revision 0, so the camera of a drawing
+  that was never saved is not kept.
+- **Loading.** `readStored` rebuilds the document format's text from the records and decodes it, so
+  a stored document crosses the same codec as a file; records that JSON cannot hold, an element
+  record kept under another element's identifier, a malformed identifier or revision are `invalid`
+  too. The session beside the document is narrowed, not refused: a camera that is not three
+  numbers, or that holds NaN, gives the default camera, the origin at zoom 1 (the ENG-05 review's
+  m1, which ENG-13 fixed in `limitCamera`), another is limited, and the selection keeps the
+  existing elements, each once, so a malformed session never makes a valid document invalid. The
+  editor limits a stored camera again, since a repository is untrusted too.
+- **What a save holds.** The scheduler keeps its own copy of the committed document, which follows
+  every committed change set and never a preview: an element's value is read from the store as its
+  committed set is applied. A delta therefore never holds a transient value, and a replacement after
+  "keep this one" never holds a text being edited, a new empty one included, or a shape being
+  dragged; the text is saved once its session commits.
+- **Timing and results.** A change made while a save runs waits for it and is then saved by the
+  same 300 ms and 1 s rule, from its own time. A session save never moves the base of the next
+  save, since it reports the stored revision without checking it. A repository that rejects is a
+  failed save. The view's save status is `saved`, `pending` (document changes wait or are being
+  saved), `failed` with its reason, or `stale`, and `null` for an editor without a repository; a
+  camera or selection change alone does not make it `pending`.
+- **Answering a stale save.** `resolveStale` answers only a stale refusal, once. `load` reads the
+  repository's most recently updated document and, if it is loaded, cancels the gesture, discards
+  the text session, replaces the document with two `load` change sets (every element and group
+  removed, then the stored ones added with the canvas), clears the history, makes the Selection tool
+  active and shows the stored camera and selection; anything else leaves the notice in place.
+  `keep` saves the committed copy as a replacement.
+- **Measuring texts again.** `Editor.measureTexts`, which the web app calls when the page's fonts
+  finish loading a face, measures every text through the text port and updates those whose size
+  changed, keeping their origin, in one `local` change set that is no undo step and that autosave
+  saves. It waits while a gesture or a text session holds the history's transaction. An undo
+  afterwards puts back the size its entry recorded, which the next measuring or edit corrects.
+  Stored texts are not measured at load: a stored size stays as it was measured until a font loads
+  or the text is edited, as [ADR 0011](../../adr/0011-bundled-open-licence-fonts.md) says.
+- **The element limit.** A creation in a document that holds 100,000 elements shows nothing, and a
+  gesture preview that the store refuses cancels the gesture's transaction before its error goes
+  on (the ENG-11 review's m1, [interaction](interaction.md#p0-tools)), since stored documents can
+  now reach the limit.
+- **The web app.** The page opens storage after its fonts and before it creates the editor. The
+  IndexedDB backend creates the three stores of version 1, the `files` store empty until P2, closes
+  its connection when another tab upgrades the database, stamps each document record with the wall
+  clock's time, since the `Clock` port's time does not compare across tabs, and writes element
+  records in batches of 500, each started once the batch before has landed. Its failures are
+  `quota` for a full storage and `failed` otherwise, and `unavailable` when the database cannot be
+  opened. The page saves at once on `visibilitychange` to hidden and on `pagehide`. Beside the view
+  readout it says "Saved in this browser", "Saving…" or "Not saved"; below the canvas, so that they
+  never move it, alerts report a failed save, a stale one with "Load the newer version" and "Keep
+  this version", and invalid or unavailable storage at start-up.
+- **Preferences.** The entry is `planewright:preferences`, read and checked before anything is
+  drawn, and written whole. P0 draws the light theme only and has no view toggle, so the entry
+  holds the theme alone, nothing in P0 changes it, and any other stored value gives the light
+  theme; the dark theme and the view toggles join it with their issues.
+- **Not here.** Files, images, the clipboard and offline start (out of scope); downloading invalid
+  stored data (REQ-X03); the performance measurements of saving and loading (ENG-15).
 
 ## Security at the boundary
 
