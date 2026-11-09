@@ -12,6 +12,9 @@ test-results/
 blob-report/
 playwright/.cache/
 
+# Performance results (CI keeps them as an artifact; the baseline is committed elsewhere)
+perf-results/
+
 # Environment files (commit only .env.example)
 .env
 .env.*
