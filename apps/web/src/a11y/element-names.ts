@@ -13,11 +13,33 @@ const TEXT_LENGTH = 40;
 /** One decimal place, and never "-0". */
 const decimal = (value: number): string => String(Math.round(value * 10) / 10 + 0);
 
+const SPACE = /\s/u;
+
+/**
+ * A text's words on one line, white space between them made one space and none at either end,
+ * cut after 40 characters with an ellipsis. The text is read only until the cut, so that a name
+ * costs the same for a text of 100,000 characters as for a short one (ENG-15, C2).
+ */
+function wordsOf(text: string): string {
+  let words = '';
+  let spaced = false;
+  for (const character of text) {
+    if (SPACE.test(character)) {
+      spaced = words !== '';
+      continue;
+    }
+    words += spaced ? ` ${character}` : character;
+    spaced = false;
+    if (words.length > TEXT_LENGTH) return `${words.slice(0, TEXT_LENGTH)}…`;
+  }
+  return words;
+}
+
 /** The kind, and for a text its words on one line, cut after 40 characters. */
 function kindOf(element: Element): string {
-  if (element.kind !== 'text') return KIND_NAMES[element.kind];
-  const words = element.content.text.replace(/\s+/gu, ' ').trim();
-  return `Text “${words.length > TEXT_LENGTH ? `${words.slice(0, TEXT_LENGTH)}…` : words}”`;
+  return element.kind === 'text'
+    ? `Text “${wordsOf(element.content.text)}”`
+    : KIND_NAMES[element.kind];
 }
 
 /** The turn in degrees from 0 to 360, or nothing when it rounds to none. */

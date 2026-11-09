@@ -44,6 +44,37 @@ describe('the names of elements', () => {
     );
   });
 
+  it('REQ-Y05 names a text as its whole words would, reading only as far as the cut', () => {
+    // What the name held when it processed the whole text (ENG-14), for comparison.
+    const whole = (text: string): string => {
+      const words = text.replace(/\s+/gu, ' ').trim();
+      return words.length > 40 ? `${words.slice(0, 40)}…` : words;
+    };
+    const texts = [
+      '',
+      '   \n\t ',
+      'a',
+      ' a\u00a0b\u2028c ',
+      'x'.repeat(40),
+      'x'.repeat(41),
+      `${'x'.repeat(40)}   \n `,
+      `${'x'.repeat(39)} y`,
+      `${'x'.repeat(40)} y`,
+      `${'w '.repeat(19)}w  \n\n z`,
+      '😀'.repeat(25),
+      `${'a'.repeat(39)}😀b`,
+      `${' '.repeat(99_999)}z`,
+      'word '.repeat(20_000),
+      'x'.repeat(100_000),
+    ];
+    const written = drawn('tool.text');
+    if (written.kind !== 'text') throw new Error('The text tool drew no text.');
+    for (const text of texts) {
+      const element = { ...written, content: { ...written.content, text } };
+      expect(elementName(element).split('”, ')[0]).toBe(`Text “${whole(text)}`);
+    }
+  });
+
   it('REQ-Y05 says how far an element is turned, in whole and tenth degrees', () => {
     const rectangle = drawn('tool.rectangle');
     expect(elementName({ ...rectangle, rotation: Math.PI / 4 })).toBe(
