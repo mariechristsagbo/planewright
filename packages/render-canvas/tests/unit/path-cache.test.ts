@@ -108,7 +108,7 @@ describe('the path cache', () => {
     const { measurer, cache } = cacheOf();
     const note = text({ text: 'one\ntwo' }, { rev: 1 });
     const drawing = cache.drawingOf(note);
-    expect(drawing?.layout).toEqual({
+    expect(drawing?.text?.layout).toEqual({
       lines: [
         { text: 'one', width: 30 },
         { text: 'two', width: 30 },
@@ -121,7 +121,7 @@ describe('the path cache', () => {
     expect(measurer.measured).toEqual(['one', 'two']);
     cache.drawingOf({ ...note, rev: 2 });
     expect(measurer.measured).toEqual(['one', 'two', 'one', 'two']);
-    expect(cache.drawingOf(shape('rectangle', SQUARE, { id: 2 }))?.layout).toBeNull();
+    expect(cache.drawingOf(shape('rectangle', SQUARE, { id: 2 }))?.text).toBeNull();
   });
 
   it("builds a stroke's dash pattern and a text's font once per revision", () => {
@@ -140,8 +140,8 @@ describe('the path cache', () => {
       { text: 'a', font: { family: 'mono', size: 16, lineHeight: 1.5 } },
       { id: 4 },
     );
-    expect(cache.drawingOf(mono)?.font).toBe('16px "Planewright Mono", monospace');
-    expect(dashed?.font).toBeNull();
+    expect(cache.drawingOf(mono)?.text?.font).toBe('16px "Planewright Mono", monospace');
+    expect(dashed?.text).toBeNull();
   });
 
   it('drops the paths of removed elements, so that a returning element is traced again', () => {
