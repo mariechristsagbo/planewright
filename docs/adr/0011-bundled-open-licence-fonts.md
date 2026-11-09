@@ -1,6 +1,6 @@
 # ADR 0011: Bundled open-licence fonts behind the three font families
 
-- Status: Proposed
+- Status: Accepted
 - Date: 2026-11-08
 
 ## Context
