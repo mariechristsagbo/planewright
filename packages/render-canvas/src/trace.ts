@@ -6,6 +6,12 @@ import { canvasFont } from './fonts.ts';
 
 // Turning the engine's outlines into paths (ADR 0006: shared geometry).
 
+/** A text's lines, and its font as a 2D context names it. */
+export interface TextDrawing {
+  readonly layout: TextLayout;
+  readonly font: string;
+}
+
 /** What the renderer keeps of an element at one revision. */
 export interface Drawing {
   readonly element: Element;
@@ -18,10 +24,8 @@ export interface Drawing {
   /** The local box's size, about whose centre the element turns. */
   readonly width: number;
   readonly height: number;
-  /** A text's lines; null for every other kind. */
-  readonly layout: TextLayout | null;
-  /** A text's font as a 2D context names it; null for every other kind. */
-  readonly font: string | null;
+  /** A text's lines and font; null for every other kind. */
+  readonly text: TextDrawing | null;
   /** The stroke's dash pattern in scene units; empty for a solid stroke. */
   readonly dash: readonly number[];
 }
@@ -87,7 +91,6 @@ export function drawingOf(
     trace(path, geometry.outline(element));
   }
   const { width, height } = localBox(element);
-  const text = element.kind === 'text' ? element.content : null;
   return {
     element,
     path,
@@ -95,8 +98,10 @@ export function drawingOf(
     closed: geometry.isClosed(element),
     width,
     height,
-    layout: text === null ? null : layoutText(text, measurer),
-    font: text === null ? null : canvasFont(text.font),
+    text:
+      element.kind === 'text'
+        ? { layout: layoutText(element.content, measurer), font: canvasFont(element.content.font) }
+        : null,
     dash: dashOf(element.style.stroke),
   };
 }
