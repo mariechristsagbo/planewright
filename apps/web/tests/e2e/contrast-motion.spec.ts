@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { button, elementList, openPage, polite, textContrasts } from './a11y.ts';
+import { button, contrast, elementList, openPage, polite, textContrasts } from './a11y.ts';
 import { canvas, readout } from './support.ts';
 
 // Colour and motion on a desktop (ENG-14, docs/architecture/engine/quality.md#accessibility,
@@ -21,6 +21,41 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
     expect.arrayContaining(['Undo', 'Rectangle', 'Zoom in', 'Elements']),
   );
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+});
+
+test.describe('with the operating system asking for a dark scheme', () => {
+  test.use({ colorScheme: 'dark' });
+
+  const ACTIVE_OUTLINE = `(() => {
+    const option = document.querySelector('[role="option"].active');
+    const parse = (colour) => (colour.match(/[\\d.]+/g) || []).map(Number).slice(0, 3);
+    let behind = option;
+    while (behind !== null && /rgba\\(.*, 0\\)$|transparent/.test(getComputedStyle(behind).backgroundColor)) behind = behind.parentElement;
+    return { outline: parse(getComputedStyle(option).outlineColor), background: parse(getComputedStyle(behind ?? document.documentElement).backgroundColor) };
+  })()`;
+
+  test('C4 C5 REQ-Y06 the page keeps its light theme, every interface text at 4.5:1 or more', async ({
+    page,
+  }) => {
+    await openPage(page);
+    expect(await page.evaluate("matchMedia('(prefers-color-scheme: dark)').matches")).toBe(true);
+    const root = await page.evaluate<{ scheme: string; background: string }>(
+      '({ scheme: getComputedStyle(document.documentElement).colorScheme, background: getComputedStyle(document.documentElement).backgroundColor })',
+    );
+    expect(root).toEqual({ scheme: 'light', background: 'rgb(249, 250, 251)' });
+    await canvas(page).focus();
+    for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
+    await expect(elementList(page).getByRole('option')).toHaveCount(2);
+    const contrasts = await textContrasts(page);
+    expect(contrasts.map(({ text }) => text)).toEqual(expect.arrayContaining(['Undo', 'Redo']));
+    expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+    await elementList(page).focus();
+    const { outline, background } = await page.evaluate<{
+      outline: number[];
+      background: number[];
+    }>(ACTIVE_OUTLINE);
+    expect(contrast(outline, background)).toBeGreaterThanOrEqual(3);
+  });
 });
 
 test.describe('with reduced motion requested', () => {
