@@ -43,6 +43,22 @@ describe.each(POINTERS)('text sessions and undo, with %s input', (pointer) => {
     expect(harness.shown()).toEqual([]);
   });
 
+  it('REQ-H06 the view shows Undo and Redo disabled while a session is open, as the commands are', () => {
+    const harness = textHarness(pointer);
+    harness.place(820, 420, 'Hello');
+    harness.commit();
+    harness.place(820, 520, 'Two');
+    expect(harness.editor.view).toMatchObject({ canUndo: false, canRedo: false });
+    harness.commit();
+    harness.feed(KEYS.undo);
+    expect(harness.editor.view).toMatchObject({ canUndo: true, canRedo: true });
+    harness.doubleTap(830, 420);
+    expect(harness.editor.view).toMatchObject({ canUndo: false, canRedo: false });
+    expect(harness.editor.run('history.redo')).toBe('disabled');
+    harness.commit();
+    expect(harness.editor.view).toMatchObject({ text: null, canUndo: true, canRedo: true });
+  });
+
   it('REQ-C10 a text emptied by its session is deleted as one undo step', () => {
     const harness = textHarness(pointer);
     harness.place(820, 420, 'Hello');

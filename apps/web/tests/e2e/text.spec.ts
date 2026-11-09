@@ -94,6 +94,7 @@ test('E4 A9 REQ-C10 a double-click on a text edits it again, as one undo step', 
   await page.mouse.dblclick(box.x + 315, box.y + 150);
   await expect(textArea(page)).toBeFocused();
   await expect(textArea(page)).toHaveValue('Hello');
+  await expect(page.getByRole('button', { name: 'Undo' })).toBeDisabled();
   await page.keyboard.press('End');
   await page.keyboard.type(' world');
   await page.keyboard.press('Escape');

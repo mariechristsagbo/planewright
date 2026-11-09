@@ -529,8 +529,9 @@ text. It decided what the rules above leave open:
   press, a drag or a release places nothing. Placing first clears the selection, and its preview
   opens the gesture's transaction.
 - **The session.** An `edit-text` effect starts it. A new text keeps the transaction that placing
-  it opened, and a re-edit begins its own, so Undo and Redo are disabled until it ends (REQ-H06).
-  The session holds the text, whether it is new and its transaction, whose net change compares the
+  it opened, and a re-edit begins its own, so Undo and Redo are disabled until it ends (REQ-H06),
+  and the view's `canUndo` and `canRedo` are false meanwhile, so the controls show it; during a
+  gesture's transaction, which lasts one drag, they still follow the history. The session holds the text, whether it is new and its transaction, whose net change compares the
   text with its starting content, so no copy of that content is kept. Nothing is selected while it
   is open: the editor holds the session and `view.text` reports the text with its box on screen, so
   `SelectionState` gains no `editing` field. The text is the render state's hidden element.

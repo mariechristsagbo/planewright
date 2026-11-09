@@ -145,7 +145,9 @@ editor starts and after a reload (REQ-H02, REQ-H03); `canUndo` becomes true with
 with its label and element count, for example "Undid move of 2 elements" (REQ-Y04). Both flags
 follow the stacks, also while a transaction is open; an entry that another origin has left with
 nothing to apply is found to be so only when undo reaches it, so only then can `canUndo` be true
-while `undo` returns `null`.
+while `undo` returns `null`. The editor's view, which the controls read, reports both as false while
+a text is edited, because the text session holds the transaction until it ends
+([what ENG-12 decided](interaction.md#what-eng-12-decided)).
 
 ## Limits
 
