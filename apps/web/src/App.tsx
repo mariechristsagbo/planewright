@@ -5,6 +5,7 @@ import { EditorProvider } from './editor/EditorProvider.tsx';
 import type { EditorSurface } from './editor/surface.ts';
 import { BUILD_STATUS, FOUNDATION_CONTENTS, NOT_YET_IMPLEMENTED } from './foundation.ts';
 import { HistoryControls } from './ui/HistoryControls.tsx';
+import { SaveStatus, StorageNotices } from './ui/Saving.tsx';
 import { Toolbar } from './ui/Toolbar.tsx';
 import { ViewReadout } from './ui/ViewReadout.tsx';
 
@@ -61,7 +62,9 @@ export function App({ surface }: { readonly surface: EditorSurface }) {
             <div className="workspace-footer">
               <HistoryControls />
               <ViewReadout />
+              <SaveStatus />
             </div>
+            <StorageNotices />
           </div>
         </EditorProvider>
         <div className="notes">

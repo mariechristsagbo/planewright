@@ -50,6 +50,7 @@ export function surfaceHarness(platform: Platform = 'other'): SurfaceHarness {
   const surface: EditorSurface = {
     editor,
     platform,
+    storageNotice: null,
     createRenderer: (scene, overlay): Renderer => {
       const record = { canvases: [scene, overlay], frames: [] as RenderFrame[], disposed: false };
       made.push(record);
