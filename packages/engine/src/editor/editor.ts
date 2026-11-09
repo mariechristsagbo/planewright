@@ -13,6 +13,7 @@ import type { Cancel } from '../ports/ports.ts';
 import { createCore, finishText, routeGesture, showSelection, targetOf } from './editor-core.ts';
 import type { EditorCore, EditorPorts } from './editor-core.ts';
 import { showSession } from './load.ts';
+import { measureTexts, measureWaiting } from './measure.ts';
 import type { RenderFrame } from './render-frame.ts';
 import { createSaving } from './saving.ts';
 import type { Saving, StaleChoice } from './saving.ts';
@@ -57,6 +58,12 @@ export interface Editor {
   editText(edit: TextEdit): void;
   /** The canvas size in CSS pixels and the device pixel ratio, from the canvas host. */
   resize(size: ViewportSize): void;
+  /**
+   * Measures every text again through the text port, as the web app asks when a font finishes
+   * loading: a text whose size changed is updated, with no undo step, and saved. While a gesture
+   * or a text session is open, it waits until that ends.
+   */
+  measureTexts(): void;
   /**
    * Starts a waiting save at once, as the web app asks when the page is hidden or unloaded
    * (REQ-P01); nothing happens without a repository.
@@ -118,6 +125,7 @@ function wire(ports: EditorPorts, document: DocumentState): Wiring {
   const router = createViewportRouter();
   const views = createViewPublisher(core);
   const publish = (): void => {
+    measureWaiting(core);
     showSelection(core);
     views.publish();
   };
@@ -157,10 +165,17 @@ function savingFor(ports: EditorPorts, wiring: Wiring, stored: StoredDocument | 
   return createSaving(ports, stored, wiring);
 }
 
-const savingMethods = (
+/** What the editor does for the document as a whole: measuring texts again and saving. */
+const documentMethods = (
+  { core, publish }: Wiring,
   saving: Saving,
   alive: () => void,
-): Pick<Editor, 'saveNow' | 'resolveStale'> => ({
+): Pick<Editor, 'measureTexts' | 'saveNow' | 'resolveStale'> => ({
+  measureTexts() {
+    alive();
+    measureTexts(core);
+    publish();
+  },
   saveNow() {
     alive();
     saving.saveNow();
@@ -189,7 +204,7 @@ export function openEditor(
     if (disposed) throw new Error('This editor has been disposed.');
   };
   return {
-    ...savingMethods(saving, alive),
+    ...documentMethods(wiring, saving, alive),
     get view() {
       return views.view();
     },

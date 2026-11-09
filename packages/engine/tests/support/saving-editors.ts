@@ -1,6 +1,7 @@
 import { createEditor } from '../../src/editor/editor.ts';
 import type { Editor } from '../../src/editor/editor.ts';
 import type { RenderFrame } from '../../src/editor/render-frame.ts';
+import type { TextMeasurer } from '../../src/geometry/text-measurer.ts';
 import type { InputEvent } from '../../src/input/events.ts';
 import type { Element } from '../../src/model/elements.ts';
 import type { DocumentRepository, StoredDocument } from '../../src/persistence/repository.ts';
@@ -33,6 +34,7 @@ export function savingEditor(
   repository: DocumentRepository | undefined,
   stored?: StoredDocument,
   letter = 'E',
+  text: TextMeasurer = createFixedAdvanceMeasurer(),
 ): SavingEditor {
   const clock = createManualClock();
   const scheduler = createQueueScheduler(clock);
@@ -40,7 +42,7 @@ export function savingEditor(
     clock,
     scheduler,
     ids: letteredIds(letter),
-    text: createFixedAdvanceMeasurer(),
+    text,
     ...(repository === undefined ? {} : { repository }),
   };
   const editor = createEditor(ports, stored);
