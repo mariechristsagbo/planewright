@@ -76,7 +76,9 @@ move therefore costs at most one render in the next frame (REQ-F02).
 3. Draw the visible elements, found by `queryBox` on the viewport's scene box grown by 64 screen
    pixels, in drawing order. For each element: translate to its origin, rotate about its box
    centre, then fill and stroke its cached path with its style. Opacity uses the context's global
-   alpha; dashes scale with the stroke width; texts draw their laid-out lines.
+   alpha; dashes scale with the stroke width; texts draw their laid-out lines. No state is saved
+   per element: each element sets its transform and every other state that differs from what the
+   frame has set ([what issue #34 decided](#what-issue-34-decided)).
 
 The canvas renderer caches one path per element, keyed by identifier and revision, and drops the
 entry when the element is removed or the cache passes 20,000 entries (least recently used first).
@@ -306,6 +308,77 @@ the canvas renderer in `@planewright/render-canvas`. It decided what the rules a
   (`Date.now`, `new Date()`, `Date()`) or randomness; and imports of the engine's entry and of its
   own modules by `./` paths only, since its sources sit in one directory. It holds the engine's
   coverage thresholds.
+
+## What issue #34 decided
+
+Issue #34 makes the scene layer's redraw cheaper for budgets B1 and B2
+([performance budgets](quality.md#performance-budgets)) without changing a drawn pixel. It decided
+what the rules above leave open:
+
+- **What B1 and B2 time.** `performance.measure` wraps the renderer's `render` call and nothing
+  else, as ENG-15 decided, and issue #34 keeps that measurement as it is. In headless Chromium a 2D
+  context records each call when the renderer makes it and rasterises the recording only when the
+  frame is committed, after `render` returns; I1, the main thread's busy time per pan step, counts
+  both. Culling runs in the engine before `render`: `visibleElements` took about 3 ms a frame for
+  B1's 5,000 elements and 1 ms for B2's tenth, outside both budgets.
+- **Where a frame went.** A trace of 100 B1 frames on a 6-core AMD EPYC developer machine (Chromium
+  156.0.8078.4, its CPU profile sampled every 50 µs and mapped to the sources) put 16.7 of a
+  measured 28.7 ms a frame in the 2D context's own calls: `stroke` 4.4 ms, `save` 4.3, `fillText`
+  3.5, `setTransform` 1.7, `restore` 0.9, `fill` 0.8, `rotate` and `translate` 0.7 and `setLineDash`
+  0.3. The renderer's functions took the other 12.0 ms, the context's property setters included,
+  which the profile counts in their callers: each colour, width and font that an element set after a
+  `restore` was parsed again, and the path cache's lookup alone took 3.0 ms. With a context that
+  records nothing, the renderer's own JavaScript took about 2 ms of a 20 ms render, so about nine
+  tenths of B1 is the context recording calls. No rasterisation ran inside `render`: Chromium
+  rasterised each frame while committing it, 38 ms a frame there (`LayerTreeHost::DoUpdateLayers`).
+  For B2, `save` alone took 2.1 of 7.4 ms a frame.
+- **What the scene layer does now.** It saves no state per element. Each element still sets its
+  whole transform, and sets every other state its drawing calls depend on through the frame's
+  scene state, which sets a value only when it differs from what the frame has set: the global
+  alpha, the fill and stroke colours, the line width, the dash pattern, the caps and joins (round
+  for lines and freehand strokes, the default butt caps and miter joins for closed outlines), the
+  font, the text alignment and the middle baseline. A frame starts knowing nothing, so it sets
+  every state it uses at least once, whatever an earlier frame, a resize or a lost context left,
+  and fills the background at full alpha. Every value comes from an element that the scene store
+  has checked, so the context takes each one. The path cache keeps its use order in a linked list
+  beside its map, so that a hit no longer takes its entry out of the map and puts it back, and an
+  element's drawing holds its dash pattern and, for a text, its font with its layout, built once
+  per revision. The overlay layer is unchanged; it still saves the state around an element's
+  outline.
+- **What stays the same.** The drawing calls and their order, so that the z-order, the alpha and
+  the compositing of every element are as before. A seeded property replays the calls of random
+  scenes of every kind and style over frames that bring elements back at new revisions through a
+  model of the context's state, and checks that every drawing call draws with exactly the state its
+  element prescribes from a fresh context. An end-to-end test draws a stored drawing of fifteen
+  overlapping elements of every kind and style and compares the scene canvas, device pixel for
+  device pixel, with the calls that drew it before issue #34 made in the same page, at one and two
+  device pixels per CSS pixel and again after a pan back and forth and a resize; it passes against
+  the build before issue #34 too. Of fourteen regressions planted outside Git, such as a frame that
+  keeps the last frame's alpha or a closed outline that keeps round caps, the renderer's unit tests
+  caught all fourteen and the pixel test twelve: the other two change nothing drawn there, the
+  cache's use order and the hidden elements.
+- **What was measured and not done.** Drawing elements of one style together, even with a free
+  sort that ignores overlaps, saved only 2.3 of 15.4 ms a frame of B1 in a harness, and changes
+  the z-order of overlapping elements. Merging elements' paths with `addPath` would stroke them in
+  device space rather than in each element's frame, and folding the first `translate` of a turned
+  element into its `setTransform` would compose its matrix in double rather than in Skia's single
+  precision during playback; either can move an edge pixel. Drawing texts from cached bitmaps
+  resamples them and rounds their colour twice, and rounding font sizes or skipping small texts
+  changes what is drawn. None of them is done.
+- **Before and after.** B1, B2 and I1 on that machine, in three runs of each build taken in turn
+  (at a load of 2.9 to 3.7):
+
+  | Budget              | Before (`main` at `90a456d`) | After           |
+  | ------------------- | ---------------------------- | --------------- |
+  | B1, median          | 21.3 to 23.2 ms              | 17.0 to 17.7 ms |
+  | B1, 95th percentile | 36.4 to 67.1 ms              | 35.1 to 55.8 ms |
+  | B2, median          | 4.6 to 5.2 ms                | 3.6 to 4.2 ms   |
+  | B2, 95th percentile | 12.0 to 16.9 ms              | 10.3 to 13.9 ms |
+  | I1, median          | 36.3 to 39.3 ms              | 36.4 to 39.7 ms |
+
+  The traces above fell to 25.1 ms a frame for B1, the context's calls from 16.7 to 12.8 ms, and to
+  6.3 ms for B2, the context's calls from 4.9 to 2.8 ms; `save` and `restore` are gone from both.
+  The values in CI are in the pull request.
 
 ## Export
 
