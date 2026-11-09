@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { aabbFromCorners } from '../../../src/math/aabb.ts';
 import type { Element, ShapeElement } from '../../../src/model/elements.ts';
 import type { ElementId } from '../../../src/model/ids.ts';
-import type { SceneReader } from '../../../src/scene/store.ts';
+import type { SceneReader, SceneStore } from '../../../src/scene/store.ts';
 import { enclosedBy } from '../../../src/selection/marquee.ts';
 import { freehandElement, sceneOf, shapeElement, testId } from '../../support/elements.ts';
 import { changeSet, color } from '../../support/scene-state.ts';
 
-// Box selection as a scene changes (REQ-S06).
+// Box selection as a scene changes (REQ-S06), and what a query reads of the scene's elements.
 
 const EVERYTHING = { x: -1e4, y: -1e4, width: 2e4, height: 2e4 };
 
@@ -86,5 +86,78 @@ describe('marquee queries as the scene changes', () => {
     const scene = sceneOf(dot);
     expect(enclosedBy(scene, { x: 1e-9, y: 1e-9, width: 0, height: 0 })).toStrictEqual([]);
     expect(enclosedBy(scene, { x: 0, y: 0, width: 1e-9, height: 1e-9 })).toStrictEqual([dot.id]);
+  });
+});
+
+/** A reader of the store whose elements count, by element, the fields read from them. */
+function watched(store: SceneStore) {
+  const reads = new Map<ElementId, number>();
+  const proxies = new WeakMap<Element, Element>();
+  const watch = (element: Element): Element => {
+    const known = proxies.get(element);
+    if (known !== undefined) return known;
+    const proxy = new Proxy(element, {
+      get(target, key, receiver) {
+        reads.set(target.id, (reads.get(target.id) ?? 0) + 1);
+        return Reflect.get(target, key, receiver) as unknown;
+      },
+    });
+    proxies.set(element, proxy);
+    return proxy;
+  };
+  let source: readonly Element[] = [];
+  let ordered: readonly Element[] = [];
+  const reader: SceneReader = {
+    ...store,
+    get rev() {
+      return store.rev;
+    },
+    ordered() {
+      if (store.ordered() !== source) {
+        source = store.ordered();
+        ordered = source.map(watch);
+      }
+      return ordered;
+    },
+    get: (id) => {
+      const element = store.get(id);
+      return element === undefined ? undefined : watch(element);
+    },
+  };
+  return { reader, reads };
+}
+
+describe('what a marquee query reads', () => {
+  it('reads no element of a scene that has not changed since the last query', () => {
+    const { reader, reads } = watched(sceneOf(...three()));
+    expect(enclosedBy(reader, EVERYTHING)).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect([...reads.keys()].sort()).toStrictEqual([testId(1), testId(2), testId(3)]);
+    reads.clear();
+    expect(enclosedBy(reader, { x: 0, y: 0, width: 10, height: 10 })).toStrictEqual([testId(1)]);
+    expect([...reads.keys()]).toStrictEqual([]);
+  });
+
+  it('reads only the elements that changed since the last query, for a marquee over many', () => {
+    const store = sceneOf(...three());
+    const { reader, reads } = watched(store);
+    enclosedBy(reader, EVERYTHING);
+    store.apply(move(held(store, testId(2)), 50_000), 'local');
+    reads.clear();
+    expect(enclosedBy(reader, EVERYTHING)).toStrictEqual([testId(1), testId(3)]);
+    expect([...reads.keys()]).toStrictEqual([testId(2)]);
+  });
+
+  it('reads only the candidates of a marquee over few, after a change', () => {
+    // Forty squares in a row: a marquee over the first meets one of them, under a sixteenth.
+    const row = Array.from({ length: 40 }, (_, index) =>
+      shapeElement('rectangle', 10, 10, { id: index + 1, order: 'a', x: 20 * index, y: 0 }),
+    );
+    const store = sceneOf(...row);
+    const { reader, reads } = watched(store);
+    expect(enclosedBy(reader, EVERYTHING)).toHaveLength(40);
+    store.apply(move(held(store, testId(30)), 50_000), 'local');
+    reads.clear();
+    expect(enclosedBy(reader, { x: -1, y: -1, width: 12, height: 12 })).toStrictEqual([testId(1)]);
+    expect([...reads.keys()]).toStrictEqual([testId(1)]);
   });
 });
