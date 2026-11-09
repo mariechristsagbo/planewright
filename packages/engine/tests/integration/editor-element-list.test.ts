@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { FrameElement } from '../../src/model/elements.ts';
 import { KEYS } from '../support/creation-input.ts';
+import { keyEvent } from '../support/inputs.ts';
 import { editorHarness } from '../support/editors.ts';
 import { shapeElement } from '../support/elements.ts';
 import { tapper } from '../support/selection-input.ts';
@@ -57,6 +58,17 @@ describe('the elements of the editor’s view', () => {
     expect(harness.editor.view.elements).toEqual([]);
     harness.editor.editText({ type: 'commit' });
     expect(harness.editor.view.elements.map(({ kind }) => kind)).toEqual(['text']);
+  });
+
+  it('REQ-Y05 publishes a view when only the listed elements change', () => {
+    const harness = editorHarness(documentOf(...selectionElements()));
+    const right = keyEvent('key-down', 'ArrowRight', 'ArrowRight');
+    harness.editor.select([RECTANGLE]);
+    harness.feed(right);
+    const published = harness.views.length;
+    harness.feed(right);
+    expect(harness.views.length).toBe(published + 1);
+    expect(harness.views.at(-1)?.elements[0]).toMatchObject({ id: RECTANGLE, x: 102 });
   });
 
   it('REQ-Y05 keeps the same list while nothing in the document changes', () => {

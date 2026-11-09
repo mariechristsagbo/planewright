@@ -35,7 +35,8 @@ describe('the editor’s announcements', () => {
     harness.feed(...tap(900, 650));
     harness.editor.select([TEXT]);
     harness.editor.select([TEXT]);
-    expect(harness.said).toEqual([selected(1), selected(2), selected(0), selected(1)]);
+    harness.editor.select([ELLIPSE]);
+    expect(harness.said).toEqual([selected(1), selected(2), selected(0), selected(1), selected(1)]);
   });
 
   it('REQ-Y04 announces each creation with its kind and the selection after it', () => {
@@ -108,6 +109,8 @@ describe('the editor’s announcements', () => {
     const stored = { id: DOCUMENT, rev: 3, document: selectionDocument(), session };
     const editor = createEditor(ports, stored);
     expect(editor.view.selection).toEqual([RECTANGLE]);
+    editor.input(wheelEvent({ x: 300, y: 200 }, { x: 0, y: 30 }));
+    expect(announcer.said).toEqual([]);
     editor.select([RECTANGLE, ELLIPSE]);
     expect(announcer.said).toEqual([selected(2)]);
   });
