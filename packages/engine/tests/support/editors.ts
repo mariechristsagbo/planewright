@@ -1,5 +1,5 @@
 import { createEditor, openEditor } from '../../src/editor/editor.ts';
-import type { Editor, EditorView } from '../../src/editor/editor.ts';
+import type { Editor, EditorPorts, EditorView } from '../../src/editor/editor.ts';
 import type { RenderFrame } from '../../src/editor/render-frame.ts';
 import type { InputEvent } from '../../src/input/events.ts';
 import type { DocumentState } from '../../src/model/document.ts';
@@ -28,12 +28,21 @@ export const VIEWPORT = { width: 1280, height: 720, pixelRatio: 1 };
 
 /**
  * An editor whose listener has drawn its first full frame, so nothing is dirty: over an empty
- * document, or over a fixture document opened without an undo step.
+ * document, or over a fixture document opened without an undo step, with the optional ports given.
  */
-export function editorHarness(document?: DocumentState): EditorHarness {
+export function editorHarness(
+  document?: DocumentState,
+  optional: Pick<EditorPorts, 'announcer'> = {},
+): EditorHarness {
   const clock = createManualClock();
   const scheduler = createQueueScheduler(clock);
-  const ports = { clock, scheduler, ids: createCountingIds(), text: createFixedAdvanceMeasurer() };
+  const ports = {
+    clock,
+    scheduler,
+    ids: createCountingIds(),
+    text: createFixedAdvanceMeasurer(),
+    ...optional,
+  };
   const editor = document === undefined ? createEditor(ports) : openEditor(ports, document);
   editor.resize(VIEWPORT);
   const frames: RenderFrame[] = [];

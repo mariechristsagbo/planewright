@@ -27,6 +27,9 @@ import type { Selection } from '../selection/selection.ts';
 import { activeTool, isCreationTool } from '../tools/active.ts';
 import type { ActiveTool } from '../tools/active.ts';
 import type { CursorKind, GestureEvent, ToolContext, ToolEffect, ToolId } from '../tools/tool.ts';
+import type { Announcer } from './announcer.ts';
+import { notingHistory } from './announcing.ts';
+import type { Note } from './announcing.ts';
 import { applyEdit, edit } from './edits.ts';
 import { createRenderLoop } from './render-loop.ts';
 import type { RenderLoop } from './render-loop.ts';
@@ -46,6 +49,8 @@ export interface EditorPorts {
   readonly text: TextMeasurer;
   /** Where documents are saved; without one, the editor saves nothing. */
   readonly repository?: DocumentRepository;
+  /** Where announcements go (REQ-Y04); without one, the editor announces nothing. */
+  readonly announcer?: Announcer;
 }
 
 export interface EditorCore {
@@ -74,6 +79,8 @@ export interface EditorCore {
   saveStatus: SaveStatus | null;
   /** Texts are to be measured again once the open transaction ends. */
   measureLater: boolean;
+  /** The history entries committed, undone or redone since the last announcement. */
+  readonly notes: Note[];
 }
 
 /** The change set that loads a document into an empty scene store. */
@@ -93,7 +100,11 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     scene.apply(loadOf(document, stamp()), 'load');
   }
   const selection = createSelection(scene);
-  const history = createHistory({ store: scene, clock: ports.clock, selection, stamp });
+  const notes: Note[] = [];
+  const history = notingHistory(
+    createHistory({ store: scene, clock: ports.clock, selection, stamp }),
+    notes,
+  );
   const tool = activeTool('selection');
   return {
     scene,
@@ -113,6 +124,7 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     session: null,
     saveStatus: null,
     measureLater: false,
+    notes,
   };
 }
 
