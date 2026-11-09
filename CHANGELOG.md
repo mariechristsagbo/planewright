@@ -135,3 +135,9 @@ release has been published yet.
   once and in the order of the runs; other runs are kept only as information. The browser
   measurements remove an earlier run's files before they start, and a page opened with `?measure`
   stops measuring after 10,000 renders.
+- Scene redraw (issue #34): the canvas renderer no longer saves and restores the context around
+  each element, and sets a colour, width, dash pattern, font or alignment only when it changes
+  within a frame; its path cache keeps its use order without taking an entry out and back on each
+  lookup, and an element's dash pattern and font are built once per revision. Every pixel and every
+  drawing call is unchanged, which a seeded property of the calls and an end-to-end comparison of
+  the scene canvas with the earlier drawing check.
