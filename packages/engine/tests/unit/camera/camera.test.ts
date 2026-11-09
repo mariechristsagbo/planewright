@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  DEFAULT_CAMERA,
   MAX_ZOOM,
   MIN_ZOOM,
   POSITION_LIMIT,
@@ -11,6 +12,8 @@ import {
   screenFromScene,
 } from '../../../src/camera/camera.ts';
 import type { Camera } from '../../../src/camera/camera.ts';
+import { panBy } from '../../../src/camera/pan.ts';
+import { zoomAbout } from '../../../src/camera/zoom.ts';
 import { anyCamera, anyScreenPoint, gap } from '../../support/cameras.ts';
 import { checkProperty } from '../../support/property.ts';
 
@@ -73,6 +76,27 @@ describe('the camera limits', () => {
     const limited = limitCamera(next, previous);
     expect(limited).toStrictEqual(camera(5, 6, 2));
     expect(limited).not.toBe(previous);
+  });
+
+  it.each([
+    ['x', camera(Number.NaN, 0, 1)],
+    ['y', camera(0, Number.NaN, 1)],
+    ['zoom', camera(0, 0, Number.NaN)],
+  ])(
+    'REQ-V08 limitCamera gives the default camera when the previous one holds NaN in %s too',
+    (_, held) => {
+      expect(DEFAULT_CAMERA).toStrictEqual(camera(0, 0, 1));
+      const limited = limitCamera(camera(Number.NaN, Number.NaN, Number.NaN), held);
+      expect(limited).toStrictEqual(camera(0, 0, 1));
+      expect(limited).not.toBe(DEFAULT_CAMERA);
+    },
+  );
+
+  it('REQ-V08 an operation on a camera that holds NaN returns the default camera', () => {
+    const held = camera(Number.NaN, 4, 2);
+    expect(panBy(held, { x: 10, y: 20 })).toStrictEqual(camera(0, 0, 1));
+    expect(zoomAbout(held, { x: 1, y: 1 }, 2)).toStrictEqual(camera(0, 0, 1));
+    expect(panBy(camera(3, 4, Number.NaN), { x: 0, y: 0 })).toStrictEqual(camera(0, 0, 1));
   });
 
   it('limitCamera returns a new camera even when nothing needed limiting', () => {
