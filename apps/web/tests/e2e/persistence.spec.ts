@@ -47,6 +47,7 @@ test('E1 A11 REQ-P02 REQ-P03 REQ-H03 REQ-V11 a reload brings back the drawing, t
   await open(page);
   await rectangle(page, [100, 100], [250, 200]);
   await rectangle(page, [400, 100], [550, 200]);
+  await expect.poll(async () => (await storedRecords(page)).elements.length).toBe(2);
   await page.keyboard.press('Delete');
   await expectInk(page, [[400, 150]], false);
   await page.keyboard.press('Control+Equal');
