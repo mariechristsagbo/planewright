@@ -1,5 +1,6 @@
 import type { Camera } from '../camera/camera.ts';
 import type { ElementId } from '../model/ids.ts';
+import type { SaveStatus } from '../persistence/autosave.ts';
 import type { Cancel } from '../ports/ports.ts';
 import { sameIds } from '../selection/selection.ts';
 import type { CursorKind, ToolId } from '../tools/tool.ts';
@@ -26,6 +27,8 @@ export interface EditorView {
   readonly canRedo: boolean;
   /** The text being edited and its box on screen, or null when no text is edited. */
   readonly text: TextEditView | null;
+  /** Whether the drawing is saved, or null when this editor saves nothing (REQ-P05, REQ-P06). */
+  readonly save: SaveStatus | null;
 }
 
 export const viewOf = (core: EditorCore): EditorView => ({
@@ -37,16 +40,22 @@ export const viewOf = (core: EditorCore): EditorView => ({
   canUndo: core.history.canUndo && core.session === null,
   canRedo: core.history.canRedo && core.session === null,
   text: textView(core),
+  save: core.saveStatus,
 });
 
-export const sameView = (a: EditorView, b: EditorView): boolean =>
+/** The tool, its lock and the cursor; Undo and Redo; saving. */
+const sameControls = (a: EditorView, b: EditorView): boolean =>
   a.tool === b.tool &&
   a.toolLock === b.toolLock &&
   a.cursor === b.cursor &&
-  a.camera === b.camera &&
-  sameIds(a.selection, b.selection) &&
   a.canUndo === b.canUndo &&
   a.canRedo === b.canRedo &&
+  a.save === b.save;
+
+export const sameView = (a: EditorView, b: EditorView): boolean =>
+  sameControls(a, b) &&
+  a.camera === b.camera &&
+  sameIds(a.selection, b.selection) &&
   // The box follows from the element and the camera, which are compared by identity.
   a.text?.element === b.text?.element;
 

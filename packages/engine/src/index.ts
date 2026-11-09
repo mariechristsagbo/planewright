@@ -1,11 +1,13 @@
 /**
  * The public entry of `@planewright/engine` (docs/architecture/engine/modules.md#public-surface).
- * The engine exports its types, the editor, the editor's render loop and the pure geometry
- * functions that a renderer draws with: each kind's outline, an element's local box and text
- * layout. Everything else stays internal to the package.
+ * The engine exports its types, the editor, the editor's render loop, the pure geometry
+ * functions that a renderer draws with (each kind's outline, an element's local box and text
+ * layout) and the record repository that a storage adapter builds on, so that the revision rule
+ * and the codec stay in the engine. Everything else stays internal to the package.
  */
 export { createEditor } from './editor/editor.ts';
 export { createRenderLoop } from './editor/render-loop.ts';
+export { createRecordRepository } from './persistence/record-repository.ts';
 export { geometryOf } from './geometry/kinds.ts';
 export { layoutText } from './geometry/text-layout.ts';
 export { localBox } from './geometry/world-bounds.ts';
@@ -80,3 +82,22 @@ export type {
 export type { KeyChord } from './commands/chords.ts';
 export type { CommandId, CommandOutcome } from './commands/registry.ts';
 export type { CursorKind, ToolId } from './tools/tool.ts';
+export type {
+  DocumentDelta,
+  DocumentId,
+  DocumentRepository,
+  LoadResult,
+  SaveFailure,
+  SaveRequest,
+  SaveResult,
+  SessionState,
+  StoredDocument,
+} from './persistence/repository.ts';
+export type {
+  DocumentRecord,
+  ElementRecord,
+  RecordBackend,
+  SavePlan,
+} from './persistence/records.ts';
+export type { SaveStatus } from './persistence/autosave.ts';
+export type { StaleChoice } from './editor/saving.ts';

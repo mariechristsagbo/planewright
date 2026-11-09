@@ -15,6 +15,8 @@ import type { DocumentState } from '../model/document.ts';
 import { newClientId, newElementId } from '../model/ids.ts';
 import type { ElementId } from '../model/ids.ts';
 import type { Style } from '../model/style.ts';
+import type { SaveStatus } from '../persistence/autosave.ts';
+import type { DocumentRepository } from '../persistence/repository.ts';
 import type { Clock, IdSource, Scheduler } from '../ports/ports.ts';
 import type { ChangeSet, ChangeStamp } from '../scene/change-set.ts';
 import { createSceneStore } from '../scene/store.ts';
@@ -42,6 +44,8 @@ export interface EditorPorts {
   readonly ids: IdSource;
   /** Measures texts in their fonts (docs/architecture/engine/modules.md#ports). */
   readonly text: TextMeasurer;
+  /** Where documents are saved; without one, the editor saves nothing. */
+  readonly repository?: DocumentRepository;
 }
 
 export interface EditorCore {
@@ -66,10 +70,12 @@ export interface EditorCore {
   readonly measurer: TextMeasurer;
   /** The text being edited, which holds its own transaction. */
   session: TextSession | null;
+  /** What saving reports, or null for an editor without a repository. */
+  saveStatus: SaveStatus | null;
 }
 
 /** The change set that loads a document into an empty scene store. */
-const loadOf = (document: DocumentState, stamp: ChangeStamp): ChangeSet => ({
+export const loadOf = (document: DocumentState, stamp: ChangeStamp): ChangeSet => ({
   elements: [...document.elements.values()].map((element) => ({ type: 'add', element })),
   groups: [...document.groups.values()].map((group) => ({ type: 'add', group })),
   ...stamp,
@@ -103,6 +109,7 @@ export function createCore(ports: EditorPorts, document: DocumentState): EditorC
     transaction: null,
     measurer: ports.text,
     session: null,
+    saveStatus: null,
   };
 }
 

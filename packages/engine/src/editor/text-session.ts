@@ -108,3 +108,15 @@ export function textView(core: EditorCore): TextEditView | null {
     box: { ...at, width: element.width * zoom, height: element.height * zoom },
   };
 }
+
+/**
+ * Ends the open session, if any, without keeping what it changed: its transaction is cancelled,
+ * so a new text disappears and an edited one is back as it was. Loading another version does it.
+ */
+export function discardSession(core: EditorCore): void {
+  const { session } = core;
+  if (session === null) return;
+  core.session = null;
+  core.loop.update({ hidden: [] });
+  session.transaction.cancel();
+}
