@@ -196,6 +196,12 @@ export function targetOf(core: EditorCore, cancelGesture: () => boolean): Comman
     edit(label, changes, options) {
       edit(core, label, changes, options);
     },
+    tapCentre() {
+      tapCentre(core);
+    },
+    editText(id) {
+      startSession(core, id);
+    },
   };
 }
 
@@ -252,6 +258,21 @@ function contextOf(core: EditorCore, camera: Camera): ToolContext {
     newId: core.newId,
     measurer: core.measurer,
   };
+}
+
+/**
+ * Gives the active tool a tap at the centre of the viewport, with no modifier, as the keyboard's
+ * Enter does (docs/architecture/engine/quality.md#accessibility).
+ */
+function tapCentre(core: EditorCore): void {
+  const { camera, viewport } = core.loop.state();
+  const at = { x: viewport.width / 2, y: viewport.height / 2 };
+  const modifiers = { shift: false, alt: false, mod: false };
+  const scene = sceneFromScreen(at, camera);
+  const tap: GestureEvent = { type: 'tap', at, scene, pointer: 'mouse', modifiers };
+  for (const effect of core.tool.reduce(tap, contextOf(core, camera))) {
+    applyEffect(core, effect);
+  }
 }
 
 /** The handles are drawn for the pointer that pressed last: 8 px for a mouse or pen, 12 for touch. */
