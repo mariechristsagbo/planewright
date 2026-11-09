@@ -23,8 +23,9 @@
   src: url('/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
 }
 
+/* P0 ships the light theme only (ENG-15): an operating system's dark preference changes nothing. */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
   font-family:
     system-ui,
     -apple-system,
@@ -34,13 +35,6 @@
   line-height: 1.5;
   color: #111827;
   background-color: #f9fafb;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f3f4f6;
-    background-color: #111827;
-  }
 }
 
 body {
