@@ -79,9 +79,9 @@ jobs:
           retention-days: 14
 
   performance:
-    # The performance budgets (docs/architecture/engine/quality.md#what-eng-15-decided): every
+    # The performance budgets (docs/architecture/engine/quality.md#what-issue-38-decided): every
     # value is reported in the job summary and kept as an artifact; statistical budgets fail only
-    # once three runs on main are recorded in docs/performance/baseline.json.
+    # once docs/performance/baseline.json holds three runs on main on the runner's processor model.
     name: Performance report
     runs-on: ubuntu-24.04
     timeout-minutes: 30
