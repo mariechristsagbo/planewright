@@ -378,7 +378,29 @@ what the rules above leave open:
 
   The traces above fell to 25.1 ms a frame for B1, the context's calls from 16.7 to 12.8 ms, and to
   6.3 ms for B2, the context's calls from 4.9 to 2.8 ms; `save` and `restore` are gone from both.
-  The values in CI are in the pull request.
+
+- **In CI.** The first two CI runs of the pull request (4-core runners, runner image ubuntu24
+  20261101.360.1, Chromium 156.0.8078.4, Node.js 24.22.1), beside the runs before it on the same
+  processor models with the renderer as it was:
+
+  | CI run      | Renderer                 | Processor | B1, median | B1, 95th | B2, 95th |
+  | ----------- | ------------------------ | --------- | ---------- | -------- | -------- |
+  | 42627742440 | before, at `4ce8490`     | EPYC 9V45 | 7.3 ms     | 9.53 ms  | 2.11 ms  |
+  | 42642158624 | before, `main` `4db483f` | EPYC 9V45 | 7.25 ms    | 10.61 ms | 2 ms     |
+  | 42648632465 | before, at `97808ed`     | EPYC 9V45 | 6.4 ms     | 8.21 ms  | 2 ms     |
+  | 42671462319 | after, at `791f735`      | EPYC 9V45 | 5.2 ms     | 5.5 ms   | 1.7 ms   |
+  | 42656464145 | before, `main` `90a456d` | EPYC 7763 | 9.5 ms     | 12.11 ms | 2.9 ms   |
+  | 42670318550 | after, at `0d6b9ff`      | EPYC 7763 | 7.9 ms     | 11 ms    | 2.2 ms   |
+
+  B2 is met on both processors. B1 is met on the EPYC 9V45, where the slow frames are gone, and
+  still missed on the EPYC 7763, where the median frame is within its budget but about a quarter of
+  the frames took 10 to 11 ms; `791f735` only adds a dash comparison without an iterator to
+  `0d6b9ff`. The runs before the change on the two other processors seen in CI missed B1 as well:
+  10.9 ms on the Xeon Platinum 8370C and 11.62 and 13.92 ms on the EPYC 9V74. The profile leaves no
+  change of the same calls that saves that much: the context's own calls are about nine tenths of
+  the render, and the changes that would call the context less are the ones above that can change a
+  pixel. Whether B1 holds in CI so depends on the runner's processor, and the pull request keeps the
+  record of each run.
 
 ## Export
 
