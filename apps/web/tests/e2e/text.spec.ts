@@ -1,9 +1,10 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { mouseClick, toolButton } from './drawing.ts';
+import { mouseClick, mouseDrag, overlayInk, toolButton } from './drawing.ts';
+import type { Point } from './drawing.ts';
 import { canvas, canvasBox } from './support.ts';
-import { expectInkIn, expectTextAreaAt, textArea } from './text.ts';
+import { expectInkIn, expectTextAreaAt, inkAround, textArea } from './text.ts';
 
 // The Text tool and text editing on the desktop (ENG-12), with the mouse and the keyboard. A text
 // placed at (300,150) and typed "Hello" is drawn in [300,137.5,~45,25]; nothing is drawn left of it.
@@ -114,4 +115,44 @@ test('E5 A10 shortcut letters typed into the text area go into the text and leav
   await expect(toolButton(page, 'Rectangle')).toHaveAttribute('aria-pressed', 'false');
   await page.keyboard.press('Escape');
   await expect(textArea(page)).toHaveCount(0);
+});
+
+test('D4 a rotated text is edited where the canvas draws it: the text area’s glyphs lie within 1 px of the drawn ones', async ({
+  page,
+}) => {
+  await place(page, 'Hello');
+  // The text's box is the text area less the caret's room, one font size: 20 px at zoom 1.
+  const width = ((await textArea(page).boundingBox())?.width ?? 0) - 20;
+  await page.keyboard.press('Escape');
+  await expectInkIn(page, HELLO);
+  const centre: Point = [300 + width / 2, 150];
+  // A quarter turn clockwise by the rotation handle, 24 px above the selected text's top centre.
+  await mouseDrag(page, [centre[0], 137.5 - 24], [centre[0] + 80, centre[1]]);
+  await mouseClick(page, [600, 350]);
+  await expect.poll(() => overlayInk(page)).toBe(0);
+  await expect
+    .poll(async () => {
+      const { left, top, right, bottom } = await inkAround(page, centre, 60);
+      return bottom - top > 2 * (right - left);
+    })
+    .toBe(true);
+  const drawn = await inkAround(page, centre, 60);
+
+  const box = await canvasBox(page);
+  await page.mouse.dblclick(box.x + centre[0], box.y + centre[1]);
+  await expect(textArea(page)).toBeFocused();
+  await expect(textArea(page)).toHaveValue('Hello');
+  await expectInkIn(page, [centre[0] - 30, centre[1] - 30, 60, 60], false);
+  const edited = await inkAround(page, centre, 60);
+  const offsets = Object.fromEntries(
+    (['left', 'top', 'right', 'bottom', 'x', 'y'] as const).map((side) => [
+      side,
+      edited[side] - drawn[side],
+    ]),
+  );
+  test.info().annotations.push({ type: 'ink offsets', description: JSON.stringify(offsets) });
+  expect(
+    Object.values(offsets).every((offset) => Math.abs(offset) <= 1),
+    JSON.stringify(offsets),
+  ).toBe(true);
 });

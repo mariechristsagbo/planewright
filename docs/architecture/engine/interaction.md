@@ -559,12 +559,13 @@ text. It decided what the rules above leave open:
 - **The web app.** The text area lies in a layer over the canvas, inside the host's border but
   outside the canvas host, so its pointer and key events never reach the input adapter and the
   shortcuts pause while it has focus (ADR 0008 decision 7). It shows the text at its box on screen,
-  one font size wider so the caret has room, in its family's font at its size times the zoom, with
-  its line height and stroke colour, turned about its centre by its rotation. It is focused when a
-  session starts, sends its whole value on each input, holds at most 100,000 characters, and ends
-  the session on Escape or Mod+Enter (Cmd on Apple platforms, Ctrl elsewhere); Enter inserts a line
-  break. The tool bar shows Text (T, 7) after Freehand, and the page says what can be written and
-  that text formatting does not exist yet.
+  in its family's font at its size times the zoom, with its line height and stroke colour, turned
+  by its rotation about that box's centre, as the canvas turns the text; the caret's room after the
+  last character, one font size, is padding on its trailing (right) side, so the text keeps its box
+  whatever its alignment. It is focused when a session starts, sends its whole value on each input,
+  holds at most 100,000 characters, and ends the session on Escape or Mod+Enter (Cmd on Apple
+  platforms, Ctrl elsewhere); Enter inserts a line break. The tool bar shows Text (T, 7) after
+  Freehand, and the page says what can be written and that text formatting does not exist yet.
 - **Not here.** Labels in shapes, wrapping and the font picker, which are out of scope; alignment,
   font size and colour controls, sticky notes and pasting text (P1); measuring texts again when a
   font loads (ENG-13).

@@ -120,20 +120,22 @@ describe('the text area’s rules', () => {
     box: { x: 10, y: 20, width: 40, height: 45 },
   });
 
-  it('turn a rotated text about its centre, scale its font and leave room for the caret', () => {
+  it('turn a rotated text about the centre of its own box, scale its font and leave room for the caret after it', () => {
     expect(textAreaStyle(text({ rotation: Math.PI / 2 }), 2)).toEqual({
       left: 10,
       top: 20,
       width: 100,
       height: 45,
+      paddingRight: 60,
       fontFamily: '"Planewright Hand", cursive',
       fontSize: 60,
       lineHeight: 1.5,
       textAlign: 'left',
       color: '#c92a2a',
       transform: `rotate(${String(Math.PI / 2)}rad)`,
+      transformOrigin: '20px 22.5px',
     });
-    expect(textAreaStyle(text({}), 1).transform).toBeUndefined();
+    expect(textAreaStyle(text({}), 1)).toMatchObject({ transform: undefined, paddingRight: 30 });
   });
 
   it('end a session on Escape and on Mod+Enter only', () => {
