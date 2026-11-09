@@ -149,7 +149,6 @@ kbd {
   resize: none;
   white-space: pre;
   background: transparent;
-  transform-origin: center;
   pointer-events: auto;
 }
 
