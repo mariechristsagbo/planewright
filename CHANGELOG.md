@@ -142,3 +142,12 @@ release has been published yet.
   drawing call is unchanged, which a seeded property of the calls and an end-to-end comparison of
   the scene canvas with the earlier drawing check. In CI the redraw of 5,000 elements in view now
   meets its budget on an AMD EPYC 9V45 runner and still misses it on an AMD EPYC 7763.
+- Marquee query (issue #35): box selection keeps, for each scene, one row per element in drawing
+  order, with the edges of the element's world bounds and the extent of its outline points,
+  computed as the bounds and the points are but without building a point, and scans the rows while
+  the scene is unchanged, so that no query sorts the scene. After a change, a marquee over few
+  elements is answered from the spatial index's candidates, and any other makes the rows again,
+  keeping those of the unchanged elements. What a marquee selects, and the order of the result, are
+  unchanged, which properties against a scan of every element check. On a developer machine the
+  marquee query over 10,000 elements (budget B6) fell from 18.9 to 24.2 ms to 0.24 to 0.32 ms at the
+  95th percentile.
