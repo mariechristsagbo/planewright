@@ -99,9 +99,11 @@ button[aria-pressed='true'] {
   border-color: #2a62d0;
 }
 
+/* Unavailable controls keep 7.2:1 text contrast (REQ-Y06): a grey text and a dashed border. */
 button:disabled,
 button[aria-disabled='true'] {
-  opacity: 0.5;
+  color: #4b5563;
+  border-style: dashed;
 }
 
 /* Every focusable element shows a 3 px indicator, 5.3:1 against the page (REQ-Y02). */
@@ -114,7 +116,6 @@ kbd {
   margin-left: 0.5rem;
   font-family: inherit;
   font-size: 0.75rem;
-  opacity: 0.8;
 }
 
 .canvas-host {
@@ -286,4 +287,10 @@ footer {
 
 a {
   color: inherit;
+}
+
+/* A link is a touch target too, at least 24 px high (REQ-Y06). */
+footer a {
+  display: inline-block;
+  min-height: 1.5rem;
 }
