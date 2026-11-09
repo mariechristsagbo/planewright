@@ -122,7 +122,8 @@ release has been published yet.
   render of a page opened with `?measure`; a bundle-size guardrail that fails `npm run validate` and
   CI; and a CI job that reports every value with the machine it ran on and keeps the report, whose
   statistical budgets fail CI only once three runs on `main` are recorded in
-  `docs/performance/baseline.json`. The scene redraws of 5,000 elements, the marquee over 10,000 and
-  the 1,000-element move still miss their budgets and have issues #34 to #36. The renderer's path
-  cache no longer walks itself on every lookup, the element list names a long text from its first
-  words only, and the page declares the light colour scheme only.
+  `docs/performance/baseline.json`. The redraw of 5,000 elements in view, the marquee over 10,000
+  and the 1,000-element move miss their budgets in CI, and the redraw while panning misses on a
+  slower machine; they have issues #34 to #36. The renderer's path cache no longer walks itself on
+  every lookup, the element list names a long text from its first words only, and the page declares
+  the light colour scheme only.

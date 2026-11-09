@@ -237,28 +237,37 @@ what the rules above leave open:
      20 % above the larger of its target and its baseline, the slowest of the three runs: a met
      budget may not drift more than 20 % past its target, and a missed one more than 20 % past what
      `main` measured while its issue is open.
-- **Misses.** Measured on a developer machine (a 6-core AMD EPYC, headless Chromium 156, Node.js
-  24.22.1), B1 (5,000 elements redrawn in a median of 22 to 23 ms, 41 to 52 ms at the 95th
-  percentile) and B2 (10 to 27 ms at the 95th percentile) miss and go to issue #34, B6 (19 ms at the
-  95th percentile, 22 ms for a marquee over the whole scene) to issue #35 and B7 (133 ms at the 95th
-  percentile, a median of 25 ms) to issue #36; the CI values are in each run's report and in the
-  baseline. B3 to B5 and B8 to B13 are met there: the overlay at 0.2 to 0.8 ms and every pointer
-  move shown in the next frame, a hit test at 0.15 ms, a save at 1.9 ms, no long task in any save, a
-  cached load at 0.58 to 0.87 s, and the engine at 28.9 KB, the renderer at 2.1 KB and the web app's
-  initial JavaScript at 106.7 KB. The measurement found one quadratic cost and ENG-15 removed it:
-  the renderer's path cache walked its whole map on each lookup, which had put B1's median at 68 ms.
+- **Misses, in CI.** The first CI run, on this pull request's merge (run 42626128521, a 4-core AMD
+  EPYC 9V74, runner image ubuntu24 20261101.360.1, Chromium 156.0.8078.4, Node.js 24.22.1), misses
+  B1 at 13.92 ms (issue #34), B6 at 7.13 ms (issue #35) and B7 at 13.34 ms (issue #36), all at the
+  95th percentile. It meets every other budget measured in CI: B2 at 2.8 ms, B3 at 0.1 ms, every
+  pointer move of B4 shown in the next frame, B5 at 0.078 ms, B8 at 0.118 ms, no long task in any
+  save of B9, B10 at 0.122 s, and the engine at 28.873 KB, the renderer at 2.082 KB and the web
+  app's initial JavaScript at 106.889 KB. The baseline keeps that run as information; it is none of
+  the three runs on `main`, of which none is recorded yet.
+- **Misses, on a slower machine.** On a shared developer machine (a 6-core AMD EPYC at a load of 2
+  to 3.5, the same Chromium and Node.js), three runs of each benchmark and four to seven of each
+  browser measurement gave B1 41 to 52 ms, B2 10 to 27 ms (missed there, so issue #34 holds it too),
+  B6 19 to 21 ms and B7 42 to 133 ms; B5 0.149 to 0.501 ms, over its budget in two of the three runs
+  whose samples were kept, and B10 0.56 to 1.82 s, over its budget in one of five; B3, B4, B8, B9
+  and B11 to B13 met in every run. These values say how much a budget moves with the machine and its
+  load; CI's are the ones the gate reads. The measurement found one quadratic cost and ENG-15
+  removed it: the renderer's path cache walked its whole map on each lookup, which had put B1's
+  median at 68 ms there.
 - **Low-end check.** With Chromium's CPU slowed down four times, once on the same machine at
   54425f4, B1 was 87 ms at the median and 433 ms at the 95th percentile, B2 17 and 61 ms, B3 0.8 ms
   at the 95th percentile, and every pointer move was shown in the next frame.
 - **The element list (the ENG-14 review's s4).** A pan renders the list's 101 options again. I1
-  reads the main thread's busy time from each pan step of B2's loop to the frame after its render,
-  38 to 46 ms at the median, most of it Chromium committing both canvas layers, 13 to 24 ms a frame
-  without a GPU, and the render, not the list. I2 does the same with the 101 listed options texts of
-  100,000 characters, which took 141 ms while a name processed a text's whole content; a name now
-  reads a text only until its 41st character, and I2 fell to 38 to 42 ms, as I1. I3, the naming of
-  those 101 texts in Vitest, fell from 129 ms to 0.41 ms at the median, so names are not cached. The
-  list still renders only the options around its active one: a screen reader reaches only those in
-  the page, and Up, Down, Home and End move the window.
+  reads the main thread's busy time from each pan step of B2's loop to the frame after its render:
+  15.1 ms at the median and 16.7 ms at the 95th percentile in CI, and 38 to 46 ms at the median on
+  the developer machine, most of it Chromium committing both canvas layers there, 13 to 24 ms a
+  frame without a GPU, and the render, not the list. I2 does the same with the 101 listed options
+  texts of 100,000 characters, which took 141 ms while a name processed a text's whole content; a
+  name now reads a text only until its 41st character, and I2 fell to 38 to 42 ms there, as I1, and
+  is 15.5 ms at the median in CI. I3, the naming of those 101 texts in Vitest, fell from 129 ms to
+  0.41 ms at the median, so names are not cached. The list still renders only the options around its
+  active one: a screen reader reaches only those in the page, and Up, Down, Home and End move the
+  window.
 - **The heap (B14).** By hand before each release: open the production build in Chromium with a
   stored drawing of 10,000 elements all selected, which the browser tests' `storeScene` can store,
   nudge them with the arrow keys until the history holds its 50 MB of change data, collect garbage

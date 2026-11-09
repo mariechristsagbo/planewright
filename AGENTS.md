@@ -13,13 +13,14 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   editor layer's render loop, text sessions, loading, saving, announcements and `createEditor`, and
   `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names. Every performance
   budget is measured: Vitest benchmarks, Playwright measurements and a bundle-size guardrail,
-  reported in CI, with four missed budgets named with their issues. The web app shows a
-  **pre-release** surface: a canvas that pans and zooms, on which rectangles, ellipses, diamonds,
-  lines, freehand strokes and texts can be drawn, then selected, moved, resized, rotated,
-  duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo, also from
-  the keyboard alone, through a list of the elements and a live region that announces each change;
-  the drawing is saved in the browser's IndexedDB storage and restored on reload. Text formatting,
-  styles, arrows, notes, files, exporting and collaboration features do **not** exist yet.
+  reported in CI; the budgets that CI misses, and one that only a slower machine misses, are named
+  with their issues. The web app shows a **pre-release** surface: a canvas that pans and zooms, on
+  which rectangles, ellipses, diamonds, lines, freehand strokes and texts can be drawn, then
+  selected, moved, resized, rotated, duplicated, deleted and nudged, texts edited again in a text
+  area, with Undo and Redo, also from the keyboard alone, through a list of the elements and a live
+  region that announces each change; the drawing is saved in the browser's IndexedDB storage and
+  restored on reload. Text formatting, styles, arrows, notes, files, exporting and collaboration
+  features do **not** exist yet.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.

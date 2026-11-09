@@ -17,9 +17,9 @@ freehand strokes and texts can be drawn, selected, transformed and undone, and t
 also from the keyboard alone through a list of its elements, with each change said in a live region,
 and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue
 #33) measures every performance budget in CI, with its benchmarks, browser measurements and
-bundle-size guardrail; budgets B1, B2, B6 and B7 are still missed and go to issues #34 to #36
-([what ENG-15 decided](quality.md#what-eng-15-decided)). The clipboard (P1), document files, images
-and offline start (P2) do not exist yet.
+bundle-size guardrail; B1, B6 and B7 miss their budgets in CI and B2 on a slower machine, and they
+go to issues #34 to #36 ([what ENG-15 decided](quality.md#what-eng-15-decided)). The clipboard (P1),
+document files, images and offline start (P2) do not exist yet.
 
 The design is derived from two sources only: the merged clean-room behavioural baseline of issue #1
 ([reverse engineering](../../reverse-engineering/README.md)), which says what users observe, and
