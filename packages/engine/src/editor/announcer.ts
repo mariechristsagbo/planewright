@@ -9,8 +9,11 @@
  * - `change`: a change was made; `action` is its history label, `count` the elements it changed,
  *   `kind` their kind when it is one element and empty otherwise, and `selected` the count after it.
  * - `undo` and `redo`: an undo or redo, with the same values as `change`.
+ * - `save-failed`: a save failed, for `reason`; said assertively, once per reason.
+ * - `save-stale`: another tab saved a newer version, so saving stopped; said assertively.
  */
-export type AnnouncementKey = 'selection' | 'change' | 'undo' | 'redo';
+export type AnnouncementKey =
+  'selection' | 'change' | 'undo' | 'redo' | 'save-failed' | 'save-stale';
 
 export type AnnouncementValues = Readonly<Record<string, string | number>>;
 
