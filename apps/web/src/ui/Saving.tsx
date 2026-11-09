@@ -1,16 +1,12 @@
-import type { SaveFailure, SaveStatus as Status } from '@planewright/engine';
+import type { SaveStatus as Status } from '@planewright/engine';
 
 import { useEditorView, useSurface } from '../editor/surface.ts';
+import { STALE_TEXT, STORAGE_NOTICE_TEXTS, failedText } from './notices.ts';
 
 // What the page says about saving (docs/architecture/engine/persistence.md): whether the drawing
 // is saved in this browser, and the notices for failed, stale, unavailable and invalid storage
-// (REQ-P05, REQ-P06, REQ-P07). Failures and choices are alerts; the status is plain text.
-
-const FAILURES: Readonly<Record<SaveFailure, string>> = {
-  quota: 'the browser’s storage for this page is full',
-  unavailable: 'the browser’s storage cannot be reached',
-  failed: 'the browser’s storage did not take the change',
-};
+// (REQ-P05, REQ-P06, REQ-P07). The notices are no alerts: the live region says them (REQ-Y04), and
+// it is in the page before they are said, so that a notice shown at start-up is heard too.
 
 function statusText(save: Status | null): string {
   switch (save?.type) {
@@ -39,12 +35,8 @@ export function SaveStatus() {
 function StaleNotice() {
   const { editor } = useSurface();
   return (
-    <div role="alert" className="notice">
-      <p>
-        Another tab saved a newer version of this drawing, so this tab stopped saving. Load the
-        newer version, which drops this tab’s unsaved changes and its undo history, or keep this
-        version, which replaces the other one.
-      </p>
+    <div role="group" aria-labelledby="stale-notice" className="notice">
+      <p id="stale-notice">{STALE_TEXT}</p>
       <div className="notice-actions">
         <button type="button" onClick={() => void editor.resolveStale('load')}>
           Load the newer version
@@ -57,31 +49,23 @@ function StaleNotice() {
   );
 }
 
-/** The notices about storage, below the canvas so that they never move it. */
+/** The notice about the last save, if it failed or another tab's newer save refused it. */
+function SaveNotice({ save }: { readonly save: Status | null }) {
+  if (save?.type === 'failed') return <p className="notice">{failedText(save.reason)}</p>;
+  return save?.type === 'stale' ? <StaleNotice /> : null;
+}
+
+/** The notices about storage, below the canvas so that they never move it; none while it works. */
 export function StorageNotices() {
   const { storageNotice } = useSurface();
   const { save } = useEditorView();
+  if (storageNotice === null && save?.type !== 'failed' && save?.type !== 'stale') return null;
   return (
-    <div className="notices">
-      {storageNotice === 'unavailable' ? (
-        <p role="alert" className="notice">
-          Saving is unavailable in this browser: the drawing stays in this tab only and is lost when
-          the tab closes.
-        </p>
-      ) : null}
-      {storageNotice === 'invalid' ? (
-        <p role="alert" className="notice">
-          The drawing saved in this browser could not be read, so a new drawing was opened. The
-          saved data is left unchanged.
-        </p>
-      ) : null}
-      {save?.type === 'failed' ? (
-        <p role="alert" className="notice">
-          Saving failed: {FAILURES[save.reason]}. Your changes are kept in this tab, and saving is
-          tried again.
-        </p>
-      ) : null}
-      {save?.type === 'stale' ? <StaleNotice /> : null}
-    </div>
+    <section aria-label="Storage notices" className="notices">
+      {storageNotice === null ? null : (
+        <p className="notice">{STORAGE_NOTICE_TEXTS[storageNotice]}</p>
+      )}
+      <SaveNotice save={save} />
+    </section>
   );
 }

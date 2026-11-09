@@ -51,6 +51,13 @@ export async function putDocumentRecord(
 
 export const saveStatus = (page: Page): Locator => page.locator('#save-status');
 
+/** The notices below the canvas, which are no alerts (REQ-Y04). */
+export const storageNotices = (page: Page): Locator =>
+  page.getByRole('region', { name: 'Storage notices' });
+
+/** The assertive live region, which says failed and stale saves and start-up notices (REQ-Y04). */
+export const urgentAnnouncement = (page: Page): Locator => page.locator('#live-assertive');
+
 /** Waits until the page says the drawing is saved in this browser. */
 export const expectSaved = (page: Page): Promise<void> =>
   expect(saveStatus(page)).toHaveText('Saved in this browser');
