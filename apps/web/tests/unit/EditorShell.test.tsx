@@ -2,14 +2,15 @@ import { PROTOCOL_VERSION } from '@planewright/protocol';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { App } from '../../src/App.tsx';
 import { BUILD_STATUS, FOUNDATION_CONTENTS, NOT_YET_IMPLEMENTED } from '../../src/foundation.ts';
+import { EditorShell } from '../../src/shell/EditorShell.tsx';
 import { surfaceHarness } from '../support/surface.tsx';
 
-// The page (AGENTS.md: the UI stays factual): the editor surface, and what this build contains
-// and does not do yet.
+// The editor's shell, which replaces P0's page (ADR 0012, decision 13; AGENTS.md: the UI stays
+// factual): the canvas with the islands over it, and what this build contains and does not do yet
+// in About this build.
 
-const mount = () => render(<App surface={surfaceHarness().surface} />);
+const mount = () => render(<EditorShell surface={surfaceHarness().surface} />);
 
 /** Opens About this build through the Pre-release tag, and gives the dialog (ADR 0012, D5). */
 function openAbout(): HTMLElement {
@@ -27,16 +28,17 @@ function openElements(): HTMLElement {
   return screen.getByRole('listbox', { name: 'Elements' });
 }
 
-/** The tab stops of the editor surface, in document order, leaving out what is hidden. */
+/** The shell's tab stops, in document order, leaving out what is hidden. */
 const tabStops = (): HTMLElement[] =>
   [...document.querySelectorAll<HTMLElement>('button, a[href], textarea, [tabindex]')].filter(
-    (element) =>
-      element.tabIndex >= 0 &&
-      element.closest('.workspace') !== null &&
-      element.closest('[hidden]') === null,
+    (element) => element.tabIndex >= 0 && element.closest('[hidden]') === null,
   );
 
-describe('App', () => {
+/** The island that holds an element, by its name. */
+const islandOf = (element: Element): string | undefined =>
+  element.closest<HTMLElement>('[data-island]')?.dataset['island'];
+
+describe('EditorShell', () => {
   it('AC states what the build draws and writes, that it saves in this browser and that it has no files or collaboration', () => {
     mount();
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
@@ -98,11 +100,12 @@ describe('App', () => {
     }
   });
 
-  it('AC REQ-Y02 puts the tab stops in the specified order: tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls', () => {
+  it('AC REQ-Y02 puts the tab stops in the specified order: Pre-release, tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls', () => {
     mount();
     const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
     const elements = screen.getByRole('button', { name: /^Elements/u });
     const before = [
+      screen.getByRole('button', { name: 'Pre-release' }),
       toolbar.querySelector('[tabindex="0"]'),
       screen.getByRole('region', { name: 'Drawing canvas' }),
       elements,
@@ -116,11 +119,46 @@ describe('App', () => {
     const list = openElements();
     expect(tabStops()).toEqual([...before, list, ...after]);
     expect([...before, list].map((stop) => stop?.getAttribute('tabindex') ?? null)).toEqual([
+      null,
       '0',
       '0',
       null,
       '0',
     ]);
+  });
+
+  it('A7 renders a visually hidden h1, the islands with their controls, and the drawer closed', () => {
+    mount();
+    const heading = screen.getByRole('heading', { level: 1, name: 'Planewright' });
+    expect(heading).toHaveClass('visually-hidden');
+    expect(heading).not.toHaveAttribute('hidden');
+    const view = screen.getByText('View: x 0, y 0, zoom 100%');
+    expect(
+      [
+        screen.getByRole('button', { name: 'Pre-release' }),
+        screen.getByRole('toolbar', { name: 'Tools' }),
+        screen.getByRole('button', { name: 'Elements' }),
+        screen.getByRole('group', { name: 'History' }),
+        screen.getByRole('group', { name: 'Zoom' }),
+        view,
+      ].map(islandOf),
+    ).toEqual(['identity', 'tools', 'top-right', 'bottom-left', 'bottom-left', 'bottom-right']);
+    expect(islandOf(view.parentElement?.querySelector('#save-status') ?? view)).toBe(
+      'bottom-right',
+    );
+    expect(screen.getByRole('button', { name: 'Elements' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    expect(screen.queryByRole('listbox')).toBeNull();
+  });
+
+  it('REQ-C11 keeps every island a sibling of the canvas host, never inside it', () => {
+    mount();
+    const host = screen.getByRole('region', { name: 'Drawing canvas' });
+    const islands = [...document.querySelectorAll('[data-island]')];
+    expect(islands).toHaveLength(5);
+    expect(islands.filter((island) => host.contains(island) || island.contains(host))).toEqual([]);
   });
 
   it('D5 REQ-Y01 opens and closes the drawer with the Elements toggle, which exposes its state, closed at first', () => {

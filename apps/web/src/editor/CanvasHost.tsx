@@ -54,7 +54,8 @@ export function CanvasHost() {
           <TextEditor host={host} />
         </div>
       </div>
-      <p id="canvas-instructions" className="canvas-instructions">
+      {/* The canvas's description, said with its name; the full-bleed canvas shows no paragraph. */}
+      <p id="canvas-instructions" className="visually-hidden">
         Choose a drawing tool, then drag on the canvas to draw, or tap for the default size; the
         Selection tool (V) selects, moves, resizes and rotates what is drawn. Scroll to pan,
         Shift+scroll to pan sideways, and {mod}+scroll or pinch to zoom; {mod}+=, {mod}+− and {mod}

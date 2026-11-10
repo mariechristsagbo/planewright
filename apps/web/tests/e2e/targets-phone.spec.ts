@@ -3,7 +3,6 @@ import type { Page } from '@playwright/test';
 
 import { elementList, openElements, openPage, polite, targets } from './a11y.ts';
 import { toolButton, touch } from './drawing.ts';
-import { canvas } from './support.ts';
 
 // Touch on the emulated phone of docs/architecture/engine/quality.md (390 x 844 at a device pixel
 // ratio of 3, as a mobile page with touch): every target at least 24 x 24 CSS px, handle hit
@@ -24,16 +23,20 @@ async function choose(page: Page, name: string): Promise<void> {
   }).toPass();
 }
 
-/** A 100 by 100 rectangle centred on (100, 100) and an ellipse centred on (250, 250), by taps. */
+/**
+ * A 100 by 100 rectangle centred on (100, 450) and an ellipse centred on (250, 600), by taps below
+ * the islands at the top of the screen and below the open drawer (ADR 0012's row for pointer
+ * tests), then the drawer opened.
+ */
 async function drawTwo(page: Page): Promise<void> {
   await openPage(page);
   await choose(page, 'Rectangle');
-  await touch(page, [100, 100]);
+  await touch(page, [100, 450]);
   await choose(page, 'Ellipse');
-  await touch(page, [250, 250]);
+  await touch(page, [250, 600]);
   await expect((await openElements(page)).getByRole('option')).toHaveText([
-    'Ellipse, 100 by 100, at 200, 200',
-    'Rectangle, 100 by 100, at 50, 50',
+    'Ellipse, 100 by 100, at 200, 550',
+    'Rectangle, 100 by 100, at 50, 400',
   ]);
 }
 
@@ -53,10 +56,9 @@ test('E3 A9 REQ-Y06 a touch press 11.5 px off a corner handle, inside its 24 px 
   const rectangle = elementList(page).getByRole('option', { name: /^Rectangle/u });
   await rectangle.tap();
   await expect(polite(page)).toHaveText('1 element selected.');
-  // The tap scrolled the list into view, and the canvas out of it.
-  await canvas(page).scrollIntoViewIfNeeded();
-  await touch(page, [161.5, 161.5], [201.5, 201.5]);
-  await expect(rectangle).toHaveText('Rectangle, 140 by 140, at 50, 50');
+  // The page never scrolls (ADR 0012), so the canvas is in view; the handle is below the drawer.
+  await touch(page, [161.5, 511.5], [201.5, 551.5]);
+  await expect(rectangle).toHaveText('Rectangle, 140 by 140, at 50, 400');
   await expect(polite(page)).toHaveText('Resized 1 rectangle. 1 element selected.');
 });
 

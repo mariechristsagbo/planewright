@@ -81,7 +81,7 @@ test('E6 A1 A2 A5 REQ-C09 a tap shows the text area at B-06’s placement, and a
 }) => {
   await place(page, 'Plan');
   await expectInkIn(page, PLAN, false);
-  await touch(page, [250, 120]);
+  await touch(page, [250, 500]);
   await expect(textArea(page)).toHaveCount(0);
   await expectInkIn(page, PLAN);
   await expectInkIn(page, [20, 287, 38, 26], false);
@@ -93,12 +93,12 @@ test('E7 A7 A8 REQ-C10 an empty new text leaves Undo disabled, and Undo removes 
   page,
 }) => {
   await place(page, '');
-  await touch(page, [250, 120]);
+  await touch(page, [250, 500]);
   await expect(textArea(page)).toHaveCount(0);
   const undo = page.getByRole('button', { name: 'Undo' });
   await expect(undo).toBeDisabled();
   await place(page, 'Plan');
-  await touch(page, [250, 120]);
+  await touch(page, [250, 500]);
   await expectInkIn(page, PLAN);
   await expect(async () => {
     await undo.tap();
@@ -109,7 +109,7 @@ test('E7 A7 A8 REQ-C10 an empty new text leaves Undo disabled, and Undo removes 
 
 test('E8 A9 REQ-C10 a double tap on a text edits it again', async ({ page }) => {
   await place(page, 'Plan');
-  await touch(page, [250, 120]);
+  await touch(page, [250, 500]);
   await expectInkIn(page, PLAN);
   await untilTextArea(page, () => doubleTap(page, [75, 300]));
   await expect(textArea(page)).toBeFocused();
@@ -117,7 +117,7 @@ test('E8 A9 REQ-C10 a double tap on a text edits it again', async ({ page }) => 
   await expectInkIn(page, PLAN, false);
   await page.keyboard.press('End');
   await page.keyboard.type('s');
-  await touch(page, [250, 120]);
+  await touch(page, [250, 500]);
   await expect(textArea(page)).toHaveCount(0);
   await expectInkIn(page, [92, 287, 12, 26]);
 });

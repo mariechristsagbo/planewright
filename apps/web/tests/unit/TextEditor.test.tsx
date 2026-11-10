@@ -2,9 +2,9 @@ import type { EditorView, PointerInput, TextElement } from '@planewright/engine'
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { App } from '../../src/App.tsx';
 import { endsSession, textAreaStyle } from '../../src/editor/text/text-area.ts';
 import type { Platform } from '../../src/platform/platform.ts';
+import { EditorShell } from '../../src/shell/EditorShell.tsx';
 import { surfaceHarness } from '../support/surface.tsx';
 
 // The text area over the canvas (docs/architecture/engine/interaction.md#text-editing): it shows
@@ -24,7 +24,7 @@ const tapAt = (x: number, y: number): PointerInput[] =>
 
 function placeText(platform: Platform = 'other') {
   const harness = surfaceHarness(platform);
-  render(<App surface={harness.surface} />);
+  render(<EditorShell surface={harness.surface} />);
   const { editor } = harness;
   act(() => {
     editor.run('tool.text');

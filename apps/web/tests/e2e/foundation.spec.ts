@@ -1,13 +1,18 @@
 import { expect, test } from '@playwright/test';
 
 // The page states what this pre-release build is and what does not work yet (AGENTS.md: the UI
-// stays factual), in About this build, which the Pre-release tag opens (ADR 0012, D5), with named
-// controls in a tool bar that the arrow keys move through.
+// stays factual), in About this build, which the Pre-release tag opens (ADR 0012, D5), under a
+// visually hidden heading, with named controls in a tool bar that the arrow keys move through.
 
 test('states what the build draws and lists what does not work', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveTitle('Planewright — pre-release');
-  await expect(page.getByRole('heading', { level: 1, name: 'Planewright' })).toBeVisible();
+  const heading = page.getByRole('heading', { level: 1, name: 'Planewright' });
+  await expect(heading).toBeAttached();
+  expect(await heading.boundingBox()).toMatchObject({ width: 1, height: 1 });
+  expect(await page.evaluate("getComputedStyle(document.querySelector('h1')).clipPath")).toBe(
+    'inset(50%)',
+  );
   await expect(page.getByRole('status')).toHaveCount(0);
   await page.getByRole('button', { name: 'Pre-release' }).click();
   const about = page.getByRole('dialog', { name: 'About this build' });

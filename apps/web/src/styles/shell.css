@@ -1,0 +1,84 @@
+/*
+ * The full-bleed shell (ADR 0012, decision 13, and the v0.2 plan's responsive rules 1 to 4): the
+ * page never scrolls, the canvas fills the window under the shell's grid, and the islands sit in
+ * the grid's areas at the window's edges. The top row's side tracks are as wide as their islands,
+ * and the tool bar wraps within the middle one, so that no two islands ever intersect; the notices
+ * and the drawer lie under the top-right island, the notices first, and the bottom row holds
+ * history and zoom at the left and the view readout at the right. The anchors and areas that
+ * change with the viewport are in responsive.css, the only style sheet with media queries.
+ */
+:where(html, body) {
+  height: 100%;
+  overflow: hidden;
+}
+
+.editor-shell {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template-areas:
+    'identity tools top-right'
+    'notices notices notices'
+    'drawer drawer drawer'
+    'bottom bottom bottom';
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-columns: max-content minmax(0, 1fr) max-content;
+  gap: var(--pw-spacing-sm);
+  align-items: start;
+  padding: var(--pw-spacing-lg);
+  overflow: hidden;
+}
+
+.identity-island {
+  grid-area: identity;
+}
+
+.tools-island {
+  grid-area: tools;
+  justify-self: center;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.top-right-island {
+  grid-area: top-right;
+}
+
+.editor-shell > .notices {
+  position: relative;
+  z-index: var(--pw-layer-notice);
+  grid-area: notices;
+  justify-self: end;
+  box-sizing: border-box;
+  width: min(340px, 100%);
+}
+
+.elements-drawer {
+  position: relative;
+  z-index: var(--pw-layer-panel);
+  grid-area: drawer;
+  align-self: start;
+  justify-self: end;
+  box-sizing: border-box;
+  width: min(var(--pw-spacing-drawer-width), 100%);
+  max-height: 100%;
+}
+
+.elements-drawer[hidden] {
+  display: none;
+}
+
+/* The bottom row: its own box lets presses through to the canvas, its islands do not. */
+.shell-bottom {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  grid-area: bottom;
+  gap: var(--pw-spacing-sm);
+  align-items: end;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.shell-bottom > .island {
+  pointer-events: auto;
+}

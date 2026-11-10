@@ -1,11 +1,58 @@
-/* The shell's islands and what they hold (ADR 0012, decisions 10 and 13). */
+/*
+ * The shell's islands and what they hold (ADR 0012, decisions 3, 10 and 13): each a white surface
+ * with a hairline and the first elevation, over the canvas. Their controls keep the base's pressed,
+ * disabled and focus rules, so no rule here sets a control's colour, border or outline.
+ */
+.island {
+  position: relative;
+  z-index: var(--pw-layer-island);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+  padding: var(--pw-spacing-island-padding);
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e1);
+  font: var(--pw-type-label-md);
+  letter-spacing: var(--pw-type-label-md-tracking);
+}
 
-/* The Pre-release tag, which opens About this build (D5); the base keeps its focus ring. */
-.prerelease-tag {
+.island button {
   padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+}
+
+.wordmark {
+  padding: 0 var(--pw-spacing-xs);
+  font: var(--pw-type-title-sm);
+  letter-spacing: var(--pw-type-title-sm-tracking);
+}
+
+/* The Pre-release tag, which opens About this build (D5). */
+.prerelease-tag {
   border-radius: var(--pw-rounded-xs);
   color: var(--pw-color-on-primary-container);
   background: var(--pw-color-primary-tint);
   font: var(--pw-type-label-sm);
   letter-spacing: var(--pw-type-label-sm-tracking);
+}
+
+.bottom-right-island {
+  padding-inline: var(--pw-spacing-sm);
+  font: var(--pw-type-numeric-sm);
+  font-variant-numeric: var(--pw-type-numeric-sm-figures);
+}
+
+/* The Elements drawer around P0's list; S5 gives it its own styling. */
+.elements-drawer {
+  overflow-y: auto;
+  padding: var(--pw-spacing-panel-padding);
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e2);
+  font: var(--pw-type-body-sm);
 }

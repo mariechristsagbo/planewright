@@ -125,7 +125,8 @@ for (const ratio of [1, 2]) {
     }) => {
       await openFixture(page);
       const box = await canvasBox(page);
-      await page.mouse.move(box.x + box.width - 20, box.y + box.height - 20);
+      // The canvas's centre, which no island covers (ADR 0012's row for this spec).
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
       await redrawn(page, () => page.mouse.wheel(0, 40));
       await redrawn(page, () => page.mouse.wheel(0, -40));
       await expectSamePixels(page, ratio);
@@ -168,4 +169,39 @@ test('a chrome face that loads after start-up measures no text again and saves n
   await page.waitForFunction(CHROME_500_LOADED);
   await page.waitForTimeout(1_500);
   expect(storedTexts(await storedRecords(page))).toEqual(stored);
+});
+
+/** Keeps the page's font faces, to find them again after a resize. */
+const KEEP_FACES = 'window.keptFaces = [...document.fonts]';
+
+/** Whether every face is one that was kept, and every canvas face is still loaded. */
+const SAME_FACES = `(() => {
+  const faces = [...document.fonts];
+  const canvas = faces.filter((face) => /^"?Planewright (Sans|Hand|Mono)"?$/.test(face.family));
+  return faces.every((face) => window.keptFaces.includes(face)) && canvas.length === 3 &&
+    canvas.every((face) => face.status === 'loaded');
+})()`;
+
+// Media queries that change their result make Chromium recreate the font faces of their style
+// sheet, so the layout's live in a style sheet apart from the fonts' (styles/responsive.css):
+// a resize across the compact and phone breakpoints and back loads no canvas face again, and so
+// measures no text again and saves nothing.
+test('a resize across the layout’s breakpoints keeps every font face, measures no text again and saves nothing', async ({
+  page,
+}) => {
+  const { record, elements } = fixtureRecords(DOCUMENT_ID);
+  const stored = storedTexts(
+    JSON.parse(JSON.stringify({ documents: [record], elements })) as StoredRecords,
+  );
+  await openFixture(page);
+  await page.waitForFunction(CHROME_500_LOADED);
+  await page.evaluate(KEEP_FACES);
+  const size = page.viewportSize() ?? { width: 1280, height: 720 };
+  for (const next of [{ width: 1000, height: 600 }, { width: 390, height: 600 }, size]) {
+    await redrawn(page, () => page.setViewportSize(next));
+  }
+  expect(await page.evaluate(SAME_FACES)).toBe(true);
+  await page.waitForTimeout(1_500);
+  expect(storedTexts(await storedRecords(page))).toEqual(stored);
+  await expectSamePixels(page, 1);
 });
