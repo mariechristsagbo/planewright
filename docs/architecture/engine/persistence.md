@@ -270,7 +270,11 @@ above leave open:
   opened. The page saves at once on `visibilitychange` to hidden and on `pagehide`. Beside the view
   readout it says "Saved in this browser", "Saving…" or "Not saved"; below the canvas, so that they
   never move it, alerts report a failed save, a stale one with "Load the newer version" and "Keep
-  this version", and invalid or unavailable storage at start-up.
+  this version", and invalid or unavailable storage at start-up. For v0.2,
+  [ADR 0012](../../adr/0012-v02-editor-chrome.md) decides (D7) that a working save shows nothing,
+  neither "Saved in this browser" nor "Saving…", and that only the "Not saved" chip and these
+  notices appear, while storage needs attention; until its slice S7 lands, the page says what is
+  described here.
 - **Preferences.** The entry is `planewright:preferences`, read and checked before anything is
   drawn, and written whole. P0 draws the light theme only and has no view toggle, so the entry
   holds the theme alone, nothing in P0 changes it, and any other stored value gives the light

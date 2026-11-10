@@ -122,6 +122,11 @@ processor and so gates none yet; the rest is not implemented yet:
 - file formats and the clipboard: Planewright's own document format (P2) and clipboard format (P1)
   ([ADR 0009](../adr/0009-persistence-and-interchange.md)); no other application's format.
 
+The editor chrome of milestone v0.2.0 (Editor Experience) is decided in
+[ADR 0012](../adr/0012-v02-editor-chrome.md) and split into slices S1 to S13 by the
+[v0.2 plan](editor-experience.md). Issue #50 (slice S0) recorded both, and no slice is implemented
+yet, so the web app described above is still P0's page.
+
 Still open, each for its own issue and ADR:
 
 - the collaboration model (merge policy, transport, presence, room lifecycle, authentication and

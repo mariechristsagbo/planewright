@@ -23,6 +23,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   the keyboard alone, through a list of the elements and a live region that announces each change;
   the drawing is saved in the browser's IndexedDB storage and restored on reload. Text formatting,
   styles, arrows, notes, files, exporting and collaboration features do **not** exist yet.
+- **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome
+  decisions in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the
+  [v0.2 plan](docs/architecture/editor-experience.md); no slice is implemented yet, so the page is
+  still P0's. Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
