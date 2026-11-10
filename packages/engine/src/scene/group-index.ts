@@ -73,6 +73,8 @@ export function createGroupIndex(): GroupIndex {
     },
     update(deltas) {
       for (const { id, before, after } of deltas) {
+        // An element in no group, before or after, is in no list: nothing to file.
+        if (before?.group === undefined && after?.group === undefined) continue;
         if (before?.group !== undefined) file(direct, before.group, id, false);
         if (after?.group === undefined) groupOf.delete(id);
         else {
