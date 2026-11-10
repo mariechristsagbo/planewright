@@ -58,10 +58,12 @@ const existing = (draft: Draft): Element =>
   pick(draft.random, [...draft.document.elements.values()]);
 
 /** The elements that an arrow of the scene is attached to, which no valid set removes alone. */
-const targetsIn = (document: DocumentState): Set<string> =>
+const targetsIn = (document: DocumentState): ReadonlySet<string> =>
   new Set(
     [...document.elements.values()].flatMap((element) =>
-      element.kind === 'arrow' ? [element.start?.target, element.end?.target] : [],
+      element.kind === 'arrow'
+        ? [element.start?.target, element.end?.target].filter((target) => target !== undefined)
+        : [],
     ),
   );
 
