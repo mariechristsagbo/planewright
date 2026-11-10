@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { declarationsOf, rulesOf, styleSheet } from './style-sheets.ts';
+import type { Declaration } from './style-sheets.ts';
 
 // The web app's base styles (ADR 0012, decisions 5 and 8, and the v0.2 plan's S1): base.css gives
 // the root its theme and type, and puts every element rule inside :where(), at no specificity, so
@@ -18,6 +19,15 @@ const everyDeclaration = () =>
       declarationsOf(body).map((declaration) => ({ sheet, selector, ...declaration })),
     ),
   );
+
+/** The properties other than font-weight whose value can set a weight: a bold in any other is none. */
+const WEIGHT_CARRIERS = /^(font|font-variation-settings|--pw-type-.+)$/u;
+
+/** Whether a declaration sets a weight but 400 or 500, or a bold. */
+const setsAnotherWeight = ({ property, value }: Declaration): boolean =>
+  property === 'font-weight'
+    ? !['400', '500'].includes(value)
+    : WEIGHT_CARRIERS.test(property) && /\b(bold|bolder|[6-9]00)\b/u.test(value);
 
 describe("the web app's base styles", () => {
   const selectors = rulesOf(styleSheet('base.css')).map(({ selector }) => selector);
@@ -40,12 +50,24 @@ describe("the web app's base styles", () => {
   });
 
   it('leave no style sheet a weight but 400 and 500, nor a bold', () => {
-    const weights = everyDeclaration().filter(({ property, value }) =>
-      property === 'font-weight'
-        ? !['400', '500'].includes(value)
-        : /\b(bold|bolder|[6-9]00)\b/u.test(value),
-    );
-    expect(weights).toEqual([]);
+    expect(everyDeclaration().filter(setsAnotherWeight)).toEqual([]);
+  });
+
+  it('read a bold only in the properties that set a weight, so that a layer or an order is no bold', () => {
+    const planted: Declaration[] = [
+      { property: 'z-index', value: '700' },
+      { property: 'order', value: '600' },
+      { property: 'font', value: '700 16px/1.5 var(--pw-font-ui)' },
+      { property: 'font-weight', value: '600' },
+      { property: 'font-variation-settings', value: "'wght' 800" },
+      { property: '--pw-type-title-md', value: 'bold 16px/22px var(--pw-font-ui)' },
+    ];
+    expect(planted.filter(setsAnotherWeight).map(({ property }) => property)).toEqual([
+      'font',
+      'font-weight',
+      'font-variation-settings',
+      '--pw-type-title-md',
+    ]);
   });
 
   it('keep the text area at 400', () => {
