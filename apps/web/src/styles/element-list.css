@@ -1,0 +1,43 @@
+/* The keyboard-operable list of the drawn elements (ENG-14). */
+.element-list-area {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.element-list-heading {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.element-list-help {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+.element-list {
+  max-height: 12rem;
+  margin: 0;
+  padding: 0.25rem;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid currentcolor;
+  border-radius: 0.375rem;
+}
+
+.element-option {
+  min-height: 1.5rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  cursor: default;
+}
+
+.element-option[aria-selected='true'] {
+  color: #ffffff;
+  background: #2a62d0;
+}
+
+/* The active option, while the list has the focus. */
+.element-list:focus .element-option.active {
+  outline: 2px solid #111827;
+  outline-offset: -2px;
+}

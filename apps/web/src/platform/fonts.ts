@@ -1,8 +1,8 @@
 import type { FontFamily } from '@planewright/engine';
 import { canvasFont } from '@planewright/render-canvas';
 
-// The bundled fonts behind the three families (ADR 0011), declared in styles.css. The page loads
-// them before it creates the editor, so that the first text is measured in its font.
+// The bundled fonts behind the three families (ADR 0011), declared in styles/fonts.css. The page
+// loads them before it creates the editor, so that the first text is measured in its font.
 
 const FAMILIES: readonly FontFamily[] = ['sans', 'hand', 'mono'];
 

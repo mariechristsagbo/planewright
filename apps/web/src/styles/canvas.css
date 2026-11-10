@@ -1,0 +1,49 @@
+/* The canvas host, its two canvases and the text area over them (ADR 0006). */
+.canvas-host {
+  position: relative;
+  height: 60vh;
+  min-height: 20rem;
+  overflow: hidden;
+  border: 1px solid currentcolor;
+  background: #ffffff;
+  touch-action: none;
+  user-select: none;
+}
+
+.canvas-stage {
+  position: relative;
+}
+
+/* Over the canvas inside the host's 1 px border, so a text area's place is the canvas's own. */
+.text-layer {
+  position: absolute;
+  inset: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.text-editor {
+  position: absolute;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 2px solid #2a62d0;
+  overflow: hidden;
+  resize: none;
+  white-space: pre;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.canvas-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas-instructions {
+  margin: 0;
+  font-size: 0.875rem;
+}

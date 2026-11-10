@@ -3,12 +3,13 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-// The bundled fonts of ADR 0011: each family's face is declared in the web app's styles from a
+// The bundled fonts of ADR 0011: each family's face is declared in the web app's fonts.css from a
 // WOFF2 file in apps/web/public/fonts, which holds that font's licence text beside it.
 
 const ROOT = join(import.meta.dirname, '..', '..');
 const FONTS = join(ROOT, 'apps', 'web', 'public', 'fonts');
-const STYLES = readFileSync(join(ROOT, 'apps', 'web', 'src', 'styles.css'), 'utf8');
+const STYLE_SHEETS = join(ROOT, 'apps', 'web', 'src', 'styles');
+const STYLES = readFileSync(join(STYLE_SHEETS, 'fonts.css'), 'utf8');
 
 const BUNDLED = [
   {
@@ -48,6 +49,16 @@ describe('the bundled fonts (ADR 0011)', () => {
     const text = readFileSync(join(FONTS, licence), 'utf8');
     expect(text).toContain(copyright);
     expect(text).toContain('SIL OPEN FONT LICENSE Version 1.1');
+  });
+
+  it('are declared in fonts.css and in no other style sheet', () => {
+    const others = readdirSync(STYLE_SHEETS).filter((name) => name !== 'fonts.css');
+    expect(others.length).toBeGreaterThan(0);
+    expect(
+      others.filter((name) =>
+        readFileSync(join(STYLE_SHEETS, name), 'utf8').includes('@font-face'),
+      ),
+    ).toEqual([]);
   });
 
   it('hold nothing but the three fonts and their licences', () => {

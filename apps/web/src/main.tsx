@@ -14,8 +14,14 @@ import { localStorageOf, readPreferences } from './platform/preferences.ts';
 import { browserPorts } from './platform/ports.ts';
 import { indexedDbOf, openStorage } from './platform/storage.ts';
 import { pageTextMeasurer } from './platform/text-measurer.ts';
+// The style sheets in cascade order: the tokens, the fonts, the base, then P0's page (ADR 0012).
 import './styles/tokens.css';
-import './styles.css';
+import './styles/fonts.css';
+import './styles/base.css';
+import './styles/page.css';
+import './styles/canvas.css';
+import './styles/element-list.css';
+import './styles/saving.css';
 
 const container = document.getElementById('root');
 if (container === null) {

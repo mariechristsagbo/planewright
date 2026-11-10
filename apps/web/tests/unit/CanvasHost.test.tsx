@@ -8,7 +8,7 @@ import { surfaceHarness } from '../support/surface.tsx';
 // The canvas host (docs/architecture/engine/modules.md#web-app-structure): two stacked canvases in
 // a focusable region, sized from the page, whose DOM input reaches the editor.
 
-// The host has a 1 px border and the canvases fill the box inside it, as in styles.css.
+// The host has a 1 px border and the canvases fill the box inside it, as in styles/canvas.css.
 const HOST = DOMRect.fromRect({ x: 99, y: 49, width: 802, height: 602 });
 let canvasRect = DOMRect.fromRect({ x: 100, y: 50, width: 800, height: 600 });
 
