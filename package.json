@@ -56,6 +56,7 @@
     "perf:browser": "npm run test:perf --workspace @planewright/web",
     "perf:report": "node scripts/perf-report.ts",
     "perf:baseline": "node scripts/perf-baseline.ts",
+    "perf:tail": "node scripts/perf-tail.ts",
     "build": "npm run build --workspaces --if-present",
     "audit:deps": "npm audit --audit-level=moderate && npm audit signatures",
     "check:file-size": "node scripts/check-file-size.ts",
