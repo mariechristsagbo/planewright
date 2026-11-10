@@ -136,11 +136,11 @@ export function missRates(rows: readonly MissRow[]): MissRate[] {
   ];
 }
 
-/** A processor model's name without the vendor's decorations: "EPYC 7763", "Xeon Platinum 8370C". */
+/** A numbered processor model without its vendor's marks: "EPYC 7763", "Xeon Platinum 8370C". */
 export function processorName(name: string): string {
-  const epyc = /\bEPYC (\w+)/u.exec(name);
+  const epyc = /\bEPYC (\w*\d\w*)/u.exec(name);
   if (epyc !== null) return `EPYC ${epyc[1] ?? ''}`;
-  const xeon = /\bXEON\(R\) PLATINUM (\w+)/iu.exec(name);
+  const xeon = /\bXEON\(R\) PLATINUM (\w*\d\w*)/iu.exec(name);
   return xeon === null ? name : `Xeon Platinum ${(xeon[1] ?? '').toUpperCase()}`;
 }
 
