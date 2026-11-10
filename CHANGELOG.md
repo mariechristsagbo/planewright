@@ -161,4 +161,5 @@ release has been published yet.
   path of a problem is built only once it is found. What a set does and refuses is unchanged, which
   properties against the planner as it was check. On a developer machine a change set moving 1,000
   of 10,000 elements (budget B7) fell from 45.6 to 100.6 ms to 9.5 to 14.4 ms at the 95th
-  percentile.
+  percentile, and in CI it measured 1.103 ms on an AMD EPYC 9V74 runner, where `main` had measured
+  7.5 to 13.3 ms.
