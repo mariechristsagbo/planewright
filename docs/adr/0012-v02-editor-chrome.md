@@ -172,7 +172,9 @@ approved decisions recorded here govern.
     investigation. Anything that would add behaviour (the handoff's do-not-implement list, or D6)
     needs its investigation and feature issue first, as AGENTS.md requires. The order and risks are
     the handoff's (see [Slices](#slices) below); which slices must land first is derived from their
-    contents, the handoff adding only that S7 may land before S2.
+    contents, the handoff adding only that S7 may land before S2. The
+    [implementation and test plan](../architecture/editor-experience.md) details each slice's
+    contents, first tests, validation and documents, and the token values.
 16. **Test migrations.** The slice that changes a behaviour migrates the tests that assume it, in
     the same pull request, and no test is deleted to make a slice pass. The stable selectors are:
     - `page.locator('[data-save-state]')` for the save state: `expectSaved` waits for
