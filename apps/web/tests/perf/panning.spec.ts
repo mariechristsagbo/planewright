@@ -18,8 +18,10 @@ import {
 // list's cost (I1, I2; the ENG-14 review's s4) on a seeded drawing of 5,000 elements spread over
 // ten times the view: the view is panned around a loop of wheel steps, each step's scene render
 // measured, and the main thread's busy time from each step to the animation frame after its
-// render read from Chromium. The element list renders its 101 options again on every pan; for I2 those are texts
-// of 100,000 characters each, drawn far from the panned area.
+// render read from Chromium. The element list renders its 101 options again on every pan: for I1
+// in the closed Elements drawer, which keeps it mounted but hidden until S5 unmounts it, and for
+// I2 in the drawer opened through its toggle, where they are texts of 100,000 characters each,
+// drawn far from the panned area (ADR 0012's row for this spec).
 
 const SCENE = { seed: 22, count: 5_000 };
 const WARM_UP = 10;
@@ -110,6 +112,7 @@ test('I2 the same pans with the 101 listed options texts of 100,000 characters',
   page,
 }) => {
   const session = await openSpread(page, true);
+  await page.getByRole('button', { name: /^Elements/u }).click();
   await expect(page.getByRole('option')).toHaveCount(101);
   const busy = await panAround(page, session);
   writeMeasurement(page, {

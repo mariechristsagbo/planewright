@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { button, elementList, openPage, polite } from './a11y.ts';
+import { button, elementList, elementsToggle, openPage, polite } from './a11y.ts';
 import { expectInk, toolButton } from './drawing.ts';
 import { canvas, canvasBox } from './support.ts';
 
@@ -49,6 +49,11 @@ test('E1 A1 A2 A3 A4 A5 A6 REQ-Y04 REQ-Y05 every P0 kind made, selected, nudged 
   await step(page, ['Escape'], 'Text created. 1 element selected.');
   await expect(canvas(page)).toBeFocused();
 
+  // From the canvas, Tab reaches Elements, whose drawer opens to reach the list.
+  await page.keyboard.press('Tab');
+  await expect(elementsToggle(page)).toBeFocused();
+  await page.keyboard.press('Enter');
+  await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
   const list = elementList(page);
   const options = list.getByRole('option');
   await expect(options).toHaveText([

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { elementList, openPage, polite, targets } from './a11y.ts';
+import { elementList, openElements, openPage, polite, targets } from './a11y.ts';
 import { toolButton, touch } from './drawing.ts';
 import { canvas } from './support.ts';
 
@@ -31,7 +31,7 @@ async function drawTwo(page: Page): Promise<void> {
   await touch(page, [100, 100]);
   await choose(page, 'Ellipse');
   await touch(page, [250, 250]);
-  await expect(elementList(page).getByRole('option')).toHaveText([
+  await expect((await openElements(page)).getByRole('option')).toHaveText([
     'Ellipse, 100 by 100, at 200, 200',
     'Rectangle, 100 by 100, at 50, 50',
   ]);

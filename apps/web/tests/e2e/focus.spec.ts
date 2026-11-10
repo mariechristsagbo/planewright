@@ -1,6 +1,14 @@
 import { expect, test } from '@playwright/test';
 
-import { button, elementList, expectIndicator, openPage, polite } from './a11y.ts';
+import {
+  button,
+  elementList,
+  elementsToggle,
+  expectIndicator,
+  openElements,
+  openPage,
+  polite,
+} from './a11y.ts';
 import { toolButton } from './drawing.ts';
 import { expectSaved, storageNotices } from './storage.ts';
 import { canvas } from './support.ts';
@@ -9,7 +17,7 @@ import { canvas } from './support.ts';
 // stops in the specified order, each with a visible indicator, and the focus never left on the
 // page when a control or the text area goes away (REQ-Y02).
 
-test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, the element list, the history and zoom controls, each with a visible indicator', async ({
+test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, Elements, the history and zoom controls, each with a visible indicator', async ({
   page,
 }) => {
   await openPage(page);
@@ -17,7 +25,7 @@ test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, the ele
     button(page, 'Pre-release'),
     toolButton(page, 'Hand'),
     canvas(page),
-    elementList(page),
+    elementsToggle(page),
     button(page, 'Undo'),
     button(page, 'Redo'),
     button(page, 'Zoom out'),
@@ -36,6 +44,22 @@ test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, the ele
     await page.keyboard.press('Shift+Tab');
     await expect(stop).toBeFocused();
   }
+  // The list box is a stop after Elements only while the drawer is open.
+  for (const stop of stops.slice(1, 4)) {
+    await page.keyboard.press('Tab');
+    await expect(stop).toBeFocused();
+  }
+  await page.keyboard.press('Enter');
+  await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
+  for (const stop of [elementList(page), button(page, 'Undo')]) {
+    await page.keyboard.press('Tab');
+    await expect(stop).toBeFocused();
+    await expectIndicator(page);
+  }
+  await page.keyboard.press('Shift+Tab');
+  await expect(elementList(page)).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(elementsToggle(page)).toBeFocused();
 });
 
 test('E2 D5 C3 REQ-Y02 Escape in the text area gives the focus back to the canvas, and Tab ends the session', async ({
@@ -55,10 +79,11 @@ test('E2 D5 C3 REQ-Y02 Escape in the text area gives the focus back to the canva
 
   await page.keyboard.press('Enter');
   await expect(area).toBeFocused();
+  // No selection panel exists before S6, so the next stop after the canvas is Elements.
   await page.keyboard.press('Tab');
-  await expect(elementList(page)).toBeFocused();
+  await expect(elementsToggle(page)).toBeFocused();
   await expect(area).toHaveCount(0);
-  await expect(elementList(page).getByRole('option')).toHaveText([/^Text “Hi”, /u]);
+  await expect((await openElements(page)).getByRole('option')).toHaveText([/^Text “Hi”, /u]);
 });
 
 test('E2 C3 REQ-Y02 Undo and Redo keep the focus when they become unavailable', async ({
@@ -116,5 +141,5 @@ test('E2 C1 REQ-Y02 answering a second tab’s stale notice leaves the focus on 
   await second.keyboard.press('Enter');
   await expect(canvas(second)).toBeFocused();
   await expectSaved(second);
-  await expect(elementList(second).getByRole('option')).toHaveText([/^Rectangle, /u]);
+  await expect((await openElements(second)).getByRole('option')).toHaveText([/^Rectangle, /u]);
 });
