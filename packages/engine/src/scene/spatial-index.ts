@@ -24,7 +24,10 @@ export interface SpatialIndex {
 
 interface Entry {
   readonly id: ElementId;
-  readonly bounds: Aabb;
+  /** Replaced in place while the element touches the same cells: the index's own data. */
+  bounds: Aabb;
+  /** The cells that the bounds touch, kept for an element kept apart too. */
+  readonly span: Span;
   /** Empty for an element kept apart. */
   readonly cells: readonly Cell[];
 }
@@ -72,8 +75,12 @@ const inSpan = (cell: Cell, span: Span): boolean =>
   cell.row >= span.top &&
   cell.row <= span.bottom;
 
-const sameBox = (a: Aabb, b: Aabb): boolean =>
-  a.x === b.x && a.y === b.y && a.width === b.width && a.height === b.height;
+/** Whether a box touches exactly the cells of a span. */
+const touchesSpan = (box: Aabb, span: Span): boolean =>
+  column(box.x) === span.left &&
+  column(box.y) === span.top &&
+  column(box.x + box.width) === span.right &&
+  column(box.y + box.height) === span.bottom;
 
 function distanceToBox(point: Vec, box: Aabb): number {
   const dx = Math.max(box.x - point.x, 0, point.x - box.x - box.width);
@@ -117,7 +124,7 @@ function insert(grid: Grid, id: ElementId, bounds: Aabb): void {
   const span = spanOf(bounds);
   const placed =
     cellCount(span) > MAX_CELLS ? [] : [...positions(span)].map(([c, r]) => cellAt(grid, c, r));
-  const entry = { id, bounds, cells: placed };
+  const entry = { id, bounds, span, cells: placed };
   grid.entries.set(id, entry);
   for (const cell of placed) {
     cell.entries.add(entry);
@@ -158,11 +165,17 @@ const spanAround = (point: Vec, radius: number): Span => ({
   bottom: column(point.y + radius) + 1,
 });
 
+/**
+ * Files each changed element under its new bounds. An element whose new bounds touch the same
+ * cells as before, as most do while dragged, keeps its entry, whose bounds are replaced; any other
+ * leaves its cells, emptied cells included, and is filed again.
+ */
 function update(grid: Grid, deltas: readonly ElementDelta[]): void {
   for (const { id, after } of deltas) {
     const previous = grid.entries.get(id);
     const bounds = after === undefined ? undefined : worldBounds(after);
-    if (previous !== undefined && bounds !== undefined && sameBox(previous.bounds, bounds)) {
+    if (previous !== undefined && bounds !== undefined && touchesSpan(bounds, previous.span)) {
+      previous.bounds = bounds;
       continue;
     }
     if (previous !== undefined) remove(grid, previous);
