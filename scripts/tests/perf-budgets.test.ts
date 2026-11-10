@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -84,8 +84,18 @@ describe('the performance budgets', () => {
   });
 
   it('keep the measurements that are no budget apart, each with what it is read against', () => {
-    expect(PERF_INFO.map(({ id }) => id)).toEqual(['I1', 'I2', 'I3']);
+    expect(PERF_INFO.map(({ id }) => id)).toEqual(['I1', 'I2', 'I3', 'I4', 'I5', 'I6']);
     expect(PERF_INFO.every(({ reference }) => reference.length > 0)).toBe(true);
+  });
+
+  it('record each measurement that Vitest takes in one of the benchmarks', () => {
+    const benchmarks = ['packages/engine/tests/bench', 'apps/web/tests/bench'].flatMap((dir) =>
+      readdirSync(join(ROOT, dir)).map((name) => readFileSync(join(ROOT, dir, name), 'utf8')),
+    );
+    const recorded = (id: string) => benchmarks.some((text) => text.includes(`budget: '${id}'`));
+    const measured = [...PERF_BUDGETS, ...PERF_INFO].filter(({ source }) => source === 'bench');
+    expect(measured.map(({ id }) => id)).toEqual(['B5', 'B6', 'B7', 'B8', 'I3', 'I4', 'I5', 'I6']);
+    expect(measured.filter(({ id }) => !recorded(id)).map(({ id }) => id)).toEqual([]);
   });
 });
 
