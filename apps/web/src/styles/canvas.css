@@ -34,6 +34,8 @@
   white-space: pre;
   background: transparent;
   pointer-events: auto;
+  /* Canvas text, never the chrome's emphasis (ADR 0012, decision 8). */
+  font-weight: 400;
 }
 
 .canvas-layer {
