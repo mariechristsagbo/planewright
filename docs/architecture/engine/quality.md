@@ -200,14 +200,16 @@ what the rules above leave open:
   the first render after it, from probes that the page runs before its own scripts; 1 is the next
   frame. B5: one hit test at one of 64 seeded points, 2,000 after 400 warm-up iterations. B6: one
   marquee query of a marquee dragged from the scene's corner to its far corner in 32 steps, 640
-  after 128. B7: one change set moving 1,000 elements by one unit and back, 400 after 80. B8: the
-  save that autosave starts for a 50-element change made untimed before it, from its timer to its
-  result, over the in-memory record backend, 300 after 60. B9: the long tasks that overlap each of
-  eight saves, from the frame after a 50-element nudge until the stored revision rises and the page
-  says it is saved. B10: the end of the first render that draws all 1,000 elements, from the
-  navigation's start, over twelve loads after one that fills the cache. Every test first checks what
-  it measured, such as the hit test against a scan of every element or the number of elements each
-  frame drew, and fails at once when the check does.
+  after 128, over a scene that does not change, whose rows the check before timing has made since
+  issue #35, so a warm query ([what issue #43 decided](#what-issue-43-decided)). B7: one change set
+  moving 1,000 elements by one unit and back, 400 after 80. B8: the save that autosave starts for a
+  50-element change made untimed before it, from its timer to its result, over the in-memory record
+  backend, 300 after 60. B9: the long tasks that overlap each of eight saves, from the frame after a
+  50-element nudge until the stored revision rises and the page says it is saved. B10: the end of
+  the first render that draws all 1,000 elements, from the navigation's start, over twelve loads
+  after one that fills the cache. Every test first checks what it measured, such as the hit test
+  against a scan of every element or the number of elements each frame drew, and fails at once when
+  the check does.
 - **Statistics and clocks.** A budget's value is the 95th percentile of its samples, interpolated
   linearly between the closest ranks, the largest sample for B4 and B9, or the one value of a
   bundle. Vitest's runner times benchmarks with `performance.now()`. Chromium coarsens
@@ -356,6 +358,42 @@ that differ in processor (the ENG-15 review's m1, s2, s3 and s4).
   runs a processor still needs, and a key finer than the processor model: runs on one model with
   another runner image, Chromium or Node.js share its baseline, and each run records them so that
   such a change shows.
+
+### What issue #43 decided
+
+Issue #43 measures the marquee query that B6 does not time (the review of issue #35's pull
+request, its m2), with no budget:
+
+- **B6 is a warm query.** B6 is as ENG-15 defined it: one query of a marquee dragged from the
+  scene's corner to its far corner in 32 steps, 640 samples after 128. Since issue #35 the check
+  before timing makes the scene's rows, so every sample scans the rows of a scene that has not
+  changed since. The editor runs one query, when a marquee is released, and that query usually
+  follows a change or a load
+  ([what issue #43 decided](rendering-and-hit-testing.md#what-issue-43-decided)).
+- **I4 to I6.** `packages/engine/tests/bench/marquee-cold.bench.ts` times the first query of a
+  marquee 100 units larger than the scene's area on every side after a change or a load of the
+  benchmarks' 10,000 elements (seed 15): I4 after the element at 5,000 in drawing order moved by
+  one unit, I5 after every tenth element, B7's 1,000, moved so, each 200 samples after 40, and I6
+  of the scene just loaded into a new store as one load change set, 50 samples after 10, since a
+  load takes about a quarter of a second on the developer machine. Before each sample, warm-up
+  included, an untimed change moves those elements by a unit and back in turn, or a new store
+  loads the scene, and the store's ordered elements are read, as the editor's view reads them after
+  every gesture. Vitest drops the warm-up samples, which warm the code but never the rows, so every
+  timed query is the first after its change or load. Each benchmark first checks that the first
+  query after two such changes or loads encloses what a scan of every element encloses, all 10,000,
+  and afterwards that every iteration, warm-up included, followed its own change or load.
+- **In the report.** The report lists I4 to I6 under "Other measurements, no budget" at the 95th
+  percentile, read against B6's 2 ms, and its `report.json` in the `performance-report` artifact
+  keeps every sample. No value of theirs fails CI, while a failed check fails the benchmarks as any
+  other benchmark's does, and a test checks that each measurement Vitest takes, B5 to B8 and I3 to
+  I6, is recorded by one of the benchmarks.
+- **Values.** On the developer machine, in a run of the benchmark file alone and in the whole
+  performance pipeline, at a load of about 2 and 2.5, I4 took 0.83 and 0.85 ms at the median and
+  1.44 and 1.29 ms at the 95th percentile, I5 2.6 and 2.8 ms and 7.0 and 6.0 ms, and I6 12.6 and
+  15.3 ms and 36.1 and 43.1 ms, where B6 took 0.19 and 0.43 ms in the pipeline. The first query
+  after a load costs the most, since it makes every row.
+- **Not here.** A budget for the first query, or a change to what B6 times, needs an ADR first, as
+  raising any budget does.
 
 ## Security
 

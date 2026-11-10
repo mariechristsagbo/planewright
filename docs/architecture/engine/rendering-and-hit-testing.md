@@ -191,8 +191,12 @@ outermost group by the selection layer (REQ-S11).
 
 **Box selection** keeps an element whose kind has a geometry, whose world bounds meet the marquee,
 as `queryBox`'s candidates do, and whose whole outline is inside the marquee: the four rotated
-corners for box kinds, every point for point kinds (REQ-S06). Each scene keeps these numbers per
-element between queries ([what issue #35 decided](#what-issue-35-decided)).
+corners for box kinds, every point for point kinds (REQ-S06). The outline is geometric: a box
+kind's are the corners of its local box, an ellipse's and a diamond's too, and a stroke's width
+counts only through the world bounds, its caps and joins not at all. Each scene keeps these numbers
+per element between queries and makes them again after a change
+([what issue #35 decided](#what-issue-35-decided),
+[what issue #43 decided](#what-issue-43-decided)).
 The P2 overlap mode keeps an element when its outline meets the marquee (REQ-S07).
 
 ## Text layout
@@ -412,12 +416,15 @@ decided what the rules above leave open:
 
 - **What B6 times.** One call of `enclosedBy` on a store of the benchmarks' 10,000 elements, as
   ENG-15 decided: a marquee dragged from the scene's corner to its far corner in 32 steps, 640
-  samples after 128, over a scene that does not change between the queries, as it does not while a
-  marquee is dragged. Before timing, the result of each of the 32 marquees is compared with a scan
-  of every element by the rule above, in the test support, which keeps nothing between queries.
-  Until this issue the check compared the query with itself given every element as a candidate;
-  once a query scans its rows instead of the index's candidates, that comparison would have tested
-  nothing.
+  samples after 128, over a scene that does not change between the queries. Before timing, the
+  result of each of the 32 marquees is compared with a scan of every element by the rule above, in
+  the test support, which keeps nothing between queries. Until this issue the check compared the
+  query with itself given every element as a candidate; once a query scans its rows instead of the
+  index's candidates, that comparison would have tested nothing. The check's queries make the
+  scene's rows, so from this issue on every timed query scans the rows of an unchanged scene: B6
+  times a warm query. While a marquee is dragged the editor only draws its box; it runs one query,
+  when the marquee is released, which usually follows a change or a load and which B6 does not
+  time. Issue #43 measures that query apart ([below](#what-issue-43-decided)).
 - **Where a query went.** On a 6-core AMD EPYC developer machine (Node.js 24.22.1, Vitest's
   benchmark mode), the query at `c5bcfd3` took 5.2 ms at the median and 17.6 ms at the 95th
   percentile, and 18 ms for the whole scene, all of whose elements it encloses. A CPU profile of
@@ -440,17 +447,22 @@ decided what the rules above leave open:
   elements, with the scene's revision and the ordered array they came from. While both are the
   same, a query scans the rows in drawing order and keeps the identifiers of the elements it
   encloses, so that no query sorts the scene. Until a query makes them again, the rows keep the
-  ordered array they came from, and with it the elements of that revision.
+  ordered array they came from, and with it the elements of that revision
+  ([how long](#what-issue-43-decided)).
 - **After a change.** A marquee that meets at most a sixteenth of the elements, counted by the old
-  rows' bounds or, before the scene has rows, by its candidates against the number of ordered
-  elements, is answered from the spatial index's candidates: their rows are computed and only the
-  elements they enclose are sorted into drawing order. Any other marquee makes the rows again,
-  keeping the row of every element that is still the same object at the same place and computing
-  the others. The store gives a new ordered array whenever a change set raises its revision,
-  previews included, and never changes an element in place, so a kept row always holds its
-  element's numbers; a reader whose revision stays as it was is still followed through its ordered
-  elements. A marquee that is not finite or has a negative size is refused by the spatial index's
-  own check, as before, even when no box query runs.
+  rows' bounds against the old rows' number or, before the scene has rows, by its candidates against
+  the number of ordered elements, is answered from the spatial index's candidates: their rows are
+  computed and only the elements they enclose are sorted into drawing order. A marquee that meets
+  more than a sixteenth of the old rows makes the rows again, keeping the row of every element that
+  is still the same object at the same place and computing the others. Old rows that are empty, or
+  that lie elsewhere once every element moved away or most of the elements were added, meet few
+  marquees, so in those states every whole-scene marquee was still answered from its candidates and
+  the rows were not made again, for good once they were empty; issue #43 changed the count
+  ([below](#what-issue-43-decided)). The store gives a new ordered array whenever a change set
+  raises its revision, previews included, and never changes an element in place, so a kept row
+  always holds its element's numbers; a reader whose revision stays as it was is still followed
+  through its ordered elements. A marquee that is not finite or has a negative size is refused by
+  the spatial index's own check, as before, even when no box query runs.
 - **What stays the same.** The rule and the order of the result. Two properties compare the query
   with the scan, exactly and in order. One loads 250 random scenes of every kind, among them
   elements placed up to a billion units away, turned by quarter turns, by a hair or by almost a
@@ -517,6 +529,106 @@ decided what the rules above leave open:
   9V74, measured 0.097 ms at the 95th percentile and 0.062 ms at the median, where the last run on
   `main`, 42685994872 at `c5bcfd3`, had measured 5.726 ms. The pull request keeps the record of
   every later run.
+
+## What issue #43 decided
+
+Issue #43 takes up what the review of issue #35's pull request left for later, its m1, m2, s1, s2
+and s3, without changing what a marquee selects or the order of the result:
+
+- **When rows are made again.** After a change, once the scene's revision or its ordered elements
+  are no longer those of the kept rows, a query compares counts with a sixteenth of the store's
+  ordered elements now:
+  1. when the scene kept rows and more than that many of their bounds meet the marquee, the rows
+     are made again at once, with no box query;
+  2. otherwise the kept rows count as no rows, and the spatial index's candidates are counted: more
+     than that many make the rows again;
+  3. otherwise the candidates answer the query, as issue #35 decided, and the rows stay as they
+     were.
+
+  Making the rows again keeps the row of every element that is the same object at the same index
+  of the kept ordered array, computes the others, and puts the new rows, the revision and the
+  ordered array in place of the kept ones, so that the next query of the unchanged scene scans
+  them. A marquee that meets the bounds of more than a sixteenth of the elements now therefore
+  always makes the rows again. Issue #35 counted the kept rows against their own number, and the
+  rows of an empty scene, or rows that lie elsewhere, meet few marquees: after delete all, a
+  marquee and undo, after every element moved away, and after most of the elements were added,
+  every whole-scene marquee was answered from its candidates and the rows were never made again
+  (the review's m1).
+
+- **How long rows keep an ordered array (s2).** From a change until the first query after it that
+  makes the rows again by the rule above, or until the scene, the weak map's key, is collected. A
+  marquee over few elements leaves them, and with them the ordered array and the elements of the
+  revision they were made of. Each scene still has its own rows, and a query of one scene never
+  reads or replaces another's.
+- **What a query after a change reads.** The count reads the store's ordered elements. The
+  editor's view reads them after every gesture, so a marquee released after a change finds them
+  made; a bare store makes them on that read, which a small marquee then pays: in a native Node.js
+  probe on the developer machine, 4.4 to 4.5 ms instead of 0.23 to 0.32 ms right after one of
+  10,000 elements moved (three runs of each taken in turn, at the median of 11).
+- **Before and after.** In that probe (6-core AMD EPYC, Node.js 24.22.1, at a load of 2.4 to 3.9),
+  over the benchmarks' 10,000 elements and a whole-scene marquee, in three runs of each taken in
+  turn, at the median of 11 (in ms):
+
+  | After                                     | First query, before | after        | Next query, before | after        |
+  | ----------------------------------------- | ------------------- | ------------ | ------------------ | ------------ |
+  | Delete all, a marquee and undo            | 20.8 to 30.9        | 12.8 to 17.0 | 23.5 to 33.6       | 0.24 to 0.33 |
+  | Every element moved 50,000 units away     | 18.6 to 23.2        | 11.6 to 12.7 | 20.1 to 23.9       | 0.23 to 0.26 |
+  | 9,968 elements added to 32 kept elsewhere | 20.0 to 21.0        | 15.0 to 16.1 | 18.9 to 27.7       | 0.23 to 0.24 |
+
+  The first query now makes the rows, at about the cost of the first query after a load (I6
+  below), where before it looked up and sorted 10,000 candidates; each query after it scans them.
+  In each of the three states the ordered array that the rows had kept was collected after that
+  first query, and stayed reachable at `main`. After one or 1,000 elements moved, a whole-scene
+  query takes the same path as before: three runs of each taken in turn, at the median of 31,
+  measured 1.1 to 1.9 and 4.0 to 5.2 ms, against 1.5 to 2.8 and 3.7 to 4.4 ms at `main`. Each
+  query's result equalled the next one's, and the tests compare every result with a scan of every
+  element.
+
+- **Tests.** Over the benchmarks' 10,000 elements, a whole-scene marquee after delete all, a
+  marquee and undo, after every element moved 50,000 units away, after that and the removal of all
+  but 500 of them, and after 9,968 elements were added to 32 kept elsewhere encloses what a scan of
+  every element encloses, and the next query reads no element of the scene, which only a scan of
+  current rows does; a small marquee after every element moved reads only its candidates and leaves
+  the rows. A property loads up to 12 elements of every kind and, over 150 runs of 8 sweeps each
+  (removing them all or all but one in twenty, restoring them, moving all of them or one, adding
+  twenty times as many), expects the query after any marquee whose candidates are more than a
+  sixteenth to read no element. These four tests and the property fail on issue #35's query. Over a
+  few squares, a marquee that meets exactly a sixteenth of them reads only its candidates, before
+  the scene has rows and after a change; a thin band that meets many kept rows runs no box query;
+  and a query of another scene leaves a scene's rows current. Two tests load three squares under
+  one order key with the largest identifier first, which the spatial index then lists first, and
+  expect a marquee over few elements to give them by identifier before the scene has rows and after
+  a change (s1); a sort by order key alone, which passed every test before, fails both. Of 17
+  regressions planted outside Git, among them issue #35's count, kept rows trusted, rows not kept or
+  kept with their old ordered array, rows reused by index, the revision alone, the kept rows'
+  number as the limit, one cache slot for every scene, either limit at exactly a sixteenth and four
+  wrong orders, the selection tests, the editor's selection tests and B6's check caught 12, B6's
+  check 2 of them; once the tests of the removal of most, of exactly a sixteenth, of the box query
+  and of another scene were added, they caught all 17, each failing 1 to 18 tests.
+- **What B6 times, and the first query (m2).** B6 is unchanged, a warm query of an unchanged scene
+  ([above](#what-issue-35-decided)). Three benchmarks time the first whole-scene query after a
+  change or a load apart, as measurements that are no budget, I4 to I6 of the performance report
+  ([how](quality.md#what-issue-43-decided)): I4 after one of the 10,000 elements moved, I5 after
+  1,000 moved and I6 just after a load. In two runs on the developer machine, of the benchmark file
+  alone and of the whole performance pipeline, at a load of about 2 and 2.5 (in ms):
+
+  | Measurement                                  | Median        | 95th percentile |
+  | -------------------------------------------- | ------------- | --------------- |
+  | I4, the first query after one element moved  | 0.83 and 0.85 | 1.44 and 1.29   |
+  | I5, the first query after 1,000 moved        | 2.6 and 2.8   | 7.0 and 6.0     |
+  | I6, the first query just after a load        | 12.6 and 15.3 | 36.1 and 43.1   |
+  | B6, queries of an unchanged scene (pipeline) | 0.19          | 0.43            |
+
+- **Enclosure stays geometric (s3).** P0 keeps REQ-S06 as ENG-06 defined it: a marquee encloses
+  the corners of a box kind's local box, turned with it, and every point of a point kind, and a
+  stroke's width counts only through the world bounds that the candidates meet. The rendered
+  outline, with the stroke's width, caps and joins and an ellipse's curve, would change which
+  elements a marquee selects, so it needs a behavioural investigation of its own under the
+  clean-room policy ([ADR 0003](../../adr/0003-clean-room-reference-policy.md)) and then an issue
+  with acceptance criteria before any code. Issue #43 has no new behavioural evidence for it, so it
+  opened neither and changed nothing about the rule.
+- **Not here.** A budget for the first query or a change to what B6 times (an ADR first, as for
+  any budget), a cheaper first query after a load, and the rendered outline.
 
 ## Export
 
