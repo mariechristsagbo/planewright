@@ -133,9 +133,13 @@ function sameFields(before: ElementPatch, after: ElementPatch): boolean {
     return false;
   }
   const keys = Object.keys(after);
-  return (
-    keys.length === Object.keys(before).length && keys.every((key) => Object.hasOwn(before, key))
-  );
+  if (keys.length !== Object.keys(before).length) {
+    return false;
+  }
+  for (const key of keys) {
+    if (!Object.hasOwn(before, key)) return false;
+  }
+  return true;
 }
 
 /**
@@ -206,11 +210,16 @@ function checkRepeated(context: Context, ids: readonly string[], base: string): 
 
 function planElements(context: Context, changes: readonly ElementChange[]): ElementDelta[] {
   checkRepeated(context, changes.map(elementIdOf), 'elements');
-  const deltas = changes.map((change, index) => planElement(context, change, index));
-  const planned = deltas.filter((delta) => delta !== INVALID);
-  const added = planned.filter(({ before }) => before === undefined).length;
-  const removed = planned.filter(({ after }) => after === undefined).length;
-  if (context.state.elements.size + added - removed > LIMITS.elements) {
+  const planned: ElementDelta[] = [];
+  let count = context.state.elements.size;
+  changes.forEach((change, index) => {
+    const delta = planElement(context, change, index);
+    if (delta === INVALID) return;
+    planned.push(delta);
+    if (delta.before === undefined) count += 1;
+    if (delta.after === undefined) count -= 1;
+  });
+  if (count > LIMITS.elements) {
     refuse(context, 'elements', 'too-many');
   }
   return planned;

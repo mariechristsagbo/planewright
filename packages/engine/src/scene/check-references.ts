@@ -4,38 +4,56 @@ import type { ElementId, GroupId } from '../model/ids.ts';
 import { fieldPath, itemPath } from '../model/json-check.ts';
 import type { ChangeSet, GroupChange } from './change-set.ts';
 import type { ChangeError, Plan, SceneState } from './check.ts';
+import type { ElementDelta } from './delta.ts';
 
 // The last check of a change set whose changes are each valid: the references that the scene
 // will hold must exist (docs/architecture/engine/domain-model.md#invariants-and-limits). Only the
-// changed elements and groups are read, through the indexes, never the whole scene.
+// changed elements and groups are read, through the indexes, never the whole scene, and the path
+// of a problem is built only once it is found.
 
 /** The scene as it will be once the set is applied, as far as references go. */
 interface After {
   element(id: ElementId): Element | undefined;
   group(id: GroupId): GroupRecord | undefined;
-  readonly changed: ReadonlySet<ElementId>;
+  /** Whether the set adds, removes or updates the element. */
+  changes(id: ElementId): boolean;
   readonly removedGroups: ReadonlySet<GroupId>;
 }
 
 function afterOf(state: SceneState, plan: Plan): After {
-  const deltas = new Map(plan.elements.map((delta) => [delta.id, delta]));
+  // Made at the first look-up: a set whose elements refer to nothing and remove nothing needs none.
+  let deltas: ReadonlyMap<ElementId, ElementDelta> | undefined;
+  const byId = (): ReadonlyMap<ElementId, ElementDelta> =>
+    (deltas ??= new Map(plan.elements.map((delta) => [delta.id, delta])));
   const added = new Map(plan.addedGroups.map((group) => [group.id, group]));
   const removed = new Set(plan.removedGroups.map(({ id }) => id));
   return {
     element: (id) => {
-      const delta = deltas.get(id);
+      const delta = byId().get(id);
       return delta === undefined ? state.elements.get(id) : delta.after;
     },
     group: (id) => added.get(id) ?? (removed.has(id) ? undefined : state.groups.groups.get(id)),
-    changed: new Set(deltas.keys()),
+    changes: (id) => byId().has(id),
     removedGroups: removed,
   };
 }
 
-/** An added or updated element's group and attachment targets must exist afterwards. */
-function checkHeld(after: After, element: Element, base: string, errors: ChangeError[]): void {
+/** Where an added or updated element is in the set: the change's element, or the update's after. */
+const heldAt = (delta: ElementDelta, index: number): string =>
+  fieldPath(itemPath('elements', index), delta.before === undefined ? 'element' : 'after');
+
+/**
+ * An added or updated element's group and attachment targets must exist afterwards. The path of
+ * a problem is built once there is one.
+ */
+function checkHeld(
+  after: After,
+  { delta, element }: { readonly delta: ElementDelta; readonly element: Element },
+  index: number,
+  errors: ChangeError[],
+): void {
   if (element.group !== undefined && after.group(element.group) === undefined) {
-    errors.push({ path: fieldPath(base, 'group'), problem: 'unknown-reference' });
+    errors.push({ path: fieldPath(heldAt(delta, index), 'group'), problem: 'unknown-reference' });
   }
   if (element.kind !== 'arrow') {
     return;
@@ -44,7 +62,7 @@ function checkHeld(after: After, element: Element, base: string, errors: ChangeE
     const target = element[end]?.target;
     if (target !== undefined && after.element(target) === undefined) {
       errors.push({
-        path: fieldPath(fieldPath(base, end), 'target'),
+        path: fieldPath(fieldPath(heldAt(delta, index), end), 'target'),
         problem: 'unknown-reference',
       });
     }
@@ -74,9 +92,7 @@ function checkGroup(
 ): void {
   const { id, parent } = change.group;
   if (change.type === 'remove') {
-    const members = [...state.groups.directMembers(id)].some(
-      (member) => !after.changed.has(member),
-    );
+    const members = [...state.groups.directMembers(id)].some((member) => !after.changes(member));
     const nested = [...state.groups.childGroups(id)].some(
       (child) => !after.removedGroups.has(child),
     );
@@ -106,18 +122,12 @@ export function checkSceneReferences(
 ): void {
   const after = afterOf(state, plan);
   plan.elements.forEach((delta, index) => {
-    const path = itemPath('elements', index);
     if (delta.after !== undefined) {
-      checkHeld(
-        after,
-        delta.after,
-        fieldPath(path, delta.before === undefined ? 'element' : 'after'),
-        errors,
-      );
+      checkHeld(after, { delta, element: delta.after }, index, errors);
     } else if (
-      state.attachments.connectorsOf(delta.id).some((connector) => !after.changed.has(connector))
+      state.attachments.connectorsOf(delta.id).some((connector) => !after.changes(connector))
     ) {
-      errors.push({ path, problem: 'still-referenced' });
+      errors.push({ path: itemPath('elements', index), problem: 'still-referenced' });
     }
   });
   changes.groups.forEach((change, index) => {
