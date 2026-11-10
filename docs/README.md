@@ -4,6 +4,7 @@
 | ------------------------------------------------------------- | ------------------------------------------------------------ |
 | [Architecture overview](architecture/overview.md)             | What exists today and which decisions are still open         |
 | [Canvas-engine architecture](architecture/engine/README.md)   | Accepted engine design, ADRs 0004–0010 and the P0 roadmap    |
+| [v0.2 editor experience](architecture/editor-experience.md)   | ADR 0012's slices S1 to S13, their tests and token values    |
 | [Architecture decision records](adr/README.md)                | Why the foundation is built the way it is                    |
 | [Behavioural investigation](investigation/README.md)          | How reference behaviour is studied before features are built |
 | [Reverse-engineering baseline](reverse-engineering/README.md) | Guest-mode behavioural baseline for issue #1                 |

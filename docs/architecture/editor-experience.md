@@ -453,5 +453,8 @@ Measured from the approved tokens in Chromium; text needs 4.5:1, the last six (n
   before merging, and this plan.
 - `scripts/tests/adr-index.test.ts`, which checks that the [ADR index](../adr/README.md) lists each
   record once with the title and status it gives, so that accepting ADR 0012 changes both.
+- Pointers to both from the [documentation index](../README.md), the
+  [overview](overview.md#decisions-and-what-stays-open), the
+  [persistence design](engine/persistence.md) (for D7) and `AGENTS.md`.
 
 S0 changed no production code, font, token, icon, layout or test behaviour.
