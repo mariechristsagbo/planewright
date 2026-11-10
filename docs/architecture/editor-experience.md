@@ -412,10 +412,12 @@ otherwise.
 
 No blur, glass or gradient. Layers, bottom to top: the scene canvas 0, the overlay canvas 1, the
 text area 10, the tool hint and canvas chip 20, islands 30, the selection panel and drawer 40,
-notices 50, menus and More 60, tooltips 70, sheets 80, dialogs 90. Motion: 90 ms for hover and
-press feedback, 140 ms for menus and popovers, 180 ms for panels, the drawer and notices, 220 ms for
-sheets, all eased by `cubic-bezier(0.2, 0, 0, 1)`, and a tooltip delay of 500 ms on hover; every
-duration is 0 under reduced motion.
+notices 50, menus and More 60, tooltips 70, sheets 80, dialogs 90.
+
+Motion, eased by `cubic-bezier(0.2, 0, 0, 1)`: hover and press feedback fades colours in 90 ms;
+menus and popovers, the selection panel, notices and dialogs enter in 140 ms, settling 4 px; the
+Elements drawer enters in 180 ms from 8 px to its side, and sheets in 220 ms from 16 px below. A
+tooltip waits 500 ms on hover. Every duration is 0 under reduced motion.
 
 ### Contrast pairs
 
