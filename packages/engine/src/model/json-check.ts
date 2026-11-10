@@ -63,17 +63,18 @@ export const numberIn =
     return refuse(issues, path, 'out-of-range');
   };
 
-export const integerIn =
-  (min: number, max: number): Check<number> =>
-  (value, path, issues) => {
+export function integerIn(min: number, max: number): Check<number> {
+  const inRange = numberIn({ min, max });
+  return (value, path, issues) => {
     const number = finiteNumber(value, path, issues);
     if (number === INVALID) {
       return INVALID;
     }
     return Number.isInteger(number)
-      ? numberIn({ min, max })(number, path, issues)
+      ? inRange(number, path, issues)
       : refuse(issues, path, 'not-integer');
   };
+}
 
 export const boolean: Check<boolean> = (value, path, issues) =>
   typeof value === 'boolean' ? value : refuse(issues, path, 'not-boolean');

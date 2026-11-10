@@ -61,13 +61,21 @@ export function patchElement(
 
 const UNPATCHED: ReadonlySet<string> = new Set(UNPATCHED_FIELDS);
 
+/** The checks of the fields that a patch may write, for each kind: all but {@link UNPATCHED_FIELDS}. */
+const PATCH_CHECKS = new Map(
+  Object.entries(FIELD_CHECKS).map(([kind, checks]) => [
+    kind,
+    new Map([...checks].filter(([key]) => !UNPATCHED.has(key))),
+  ]),
+);
+
 /** Where the held-field path's checks report: it only counts what they report, from empty. */
 const unread: Issues = [];
 
 /** The value that a patch writes into a field the element holds, checked as the field's own; or INVALID. */
 function heldValue(element: Element, key: string, value: unknown): unknown {
-  const check = FIELD_CHECKS[element.kind].get(key);
-  if (check === undefined || UNPATCHED.has(key) || !Object.hasOwn(element, key) || value === null) {
+  const check = PATCH_CHECKS.get(element.kind)?.get(key);
+  if (check === undefined || !Object.hasOwn(element, key) || value === null) {
     return INVALID;
   }
   return check(value, key, unread);
