@@ -77,16 +77,18 @@ builds on; the handoff adds only that S7 may land before S2.
 
 - **Lands after:** S1. **Risk:** high, since most end-to-end migrations land here.
 - **Contents.** `EditorShell` replaces `App`, with the visually hidden h1. The canvas host fills
-  `100dvh` × `100vw` and keeps its 1 px border, made transparent, so that `canvas-geometry.spec.ts`
-  and the text layer's 1 px inset stay valid; `html` and `body` never scroll. Islands sit at their
-  anchors ([responsive rules](#responsive-rules)). The element list moves into a closed drawer with
-  a plain Elements toggle (S5 completes it). The Pre-release tag opens About this build, a modal
-  dialog with the focus on Close, Tab wrapping inside, and Escape or the scrim closing it and
-  returning the focus; it holds P0's pre-release sentence, the not-implemented list, the
-  independence note and the "Source on GitHub" link, since S2 removes the lines that held them.
-  The empty-canvas note shows while there are no elements and no text session. History and zoom
-  move to the bottom left, with the zoom readout as the Reset zoom button named "Reset zoom, 100%",
-  and the view readout to the bottom right.
+  `100dvh` × `100vw` and keeps its 1 px border, made transparent, so that the check of
+  `canvas-geometry.spec.ts` that the scene canvas sits inside the border and the text layer's 1 px
+  inset stay valid; the spec's fractional-height case does not, since a `100dvh` host has a
+  whole-pixel height, and S2 migrates it (ADR 0012's test migrations). `html` and `body` never
+  scroll. Islands sit at their anchors ([responsive rules](#responsive-rules)). The element list
+  moves into a closed drawer with a plain Elements toggle (S5 completes it). The Pre-release tag
+  opens About this build, a modal dialog with the focus on Close, Tab wrapping inside, and Escape or
+  the scrim closing it and returning the focus; it holds P0's pre-release sentence, the
+  not-implemented list, the independence note and the "Source on GitHub" link, since S2 removes the
+  lines that held them. The empty-canvas note shows while there are no elements and no text session.
+  History and zoom move to the bottom left, with the zoom readout as the Reset zoom button named
+  "Reset zoom, 100%", and the view readout to the bottom right.
 - **Tests first.** End-to-end: the canvas box equals the viewport less its 2 px of border at
   1280 × 720 and 390 × 844; the page does not scroll; no two islands intersect; the tab order of
   ADR 0012, decision 14, so far as S2's controls exist; About opens from the tag, holds the
@@ -111,6 +113,7 @@ builds on; the handoff adds only that S7 may land before S2.
 - **Tests first.** Unit: one button per registry tool in registry order, each with its
   `aria-keyshortcuts`; the lock's open or closed padlock with `aria-pressed`. End-to-end: a
   tooltip appears on focus and closes on Escape.
+- **Migrations.** The ADR's rows marked S3.
 - **Validation.** The rules above; the icons' cost, estimated at 3 to 4 KB gzip, shows in
   `check:bundle-size`.
 
@@ -128,6 +131,7 @@ builds on; the handoff adds only that S7 may land before S2.
 - **Tests first.** End-to-end: the menu opens, arrows move through it and Escape returns the focus;
   a dialog keeps the focus inside and returns it on closing. Unit: the dialog lists every registry
   command with its shortcut text.
+- **Migrations.** The ADR's rows marked S4.
 - **Documents.** `engine/quality.md`'s note that P0 has no menu or dialog.
 
 ### S5: the Elements drawer and the phone sheet
@@ -143,8 +147,11 @@ builds on; the handoff adds only that S7 may land before S2.
   accessible name.
 - **Tests first.** End-to-end: the toggle opens the drawer and focuses the list box; every P0 list
   key still works; the phone sheet makes the dock inert; after a reload the drawer is closed.
+- **Migrations.** The ADR's rows marked S5.
 - **Validation.** The rules above, with `perf:browser` on `main` and the head, to show that the
-  closed drawer removes the list's cost from a pan step.
+  closed drawer removes the list's cost from a pan step: I1 pans with the drawer closed and is
+  compared with I1 on `main`, and I2 pans with the drawer open (the ADR's row for
+  `perf/panning.spec.ts`).
 
 ### S6: the selection panel, the phone selection bar and the Details sheet
 
