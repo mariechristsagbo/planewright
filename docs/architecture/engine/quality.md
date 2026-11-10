@@ -250,7 +250,7 @@ what the rules above leave open:
   the runs on `main`, which issue #38 recorded.
 - **Misses, on a slower machine.** On a shared developer machine (a 6-core AMD EPYC at a load of 2
   to 3.5, the same Chromium and Node.js), three runs of each benchmark and four to seven of each
-  browser measurement gave B1 41 to 52 ms, B2 10 to 27 ms (missed there, so issue #34 holds it too),
+  browser measurement gave B1 41 to 52 ms, B2 10 to 27 ms (missed there, so issue #34 took it too),
   B6 19 to 21 ms and B7 42 to 133 ms; B5 0.149 to 0.501 ms, over its budget in two of the three runs
   whose samples were kept, and B10 0.56 to 1.82 s, over its budget in one of five; B3, B4, B8, B9
   and B11 to B13 met in every run. These values say how much a budget moves with the machine and its

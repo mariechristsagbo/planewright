@@ -385,28 +385,40 @@ what the rules above leave open:
   The traces above fell to 25.1 ms a frame for B1, the context's calls from 16.7 to 12.8 ms, and to
   6.3 ms for B2, the context's calls from 4.9 to 2.8 ms; `save` and `restore` are gone from both.
 
-- **In CI.** The first two CI runs of the pull request (4-core runners, runner image ubuntu24
-  20261101.360.1, Chromium 156.0.8078.4, Node.js 24.22.1), beside the runs before it on the same
-  processor models with the renderer as it was:
+- **In CI.** The CI runs of the pull request (4-core runners, runner image ubuntu24
+  20261101.360.1, Chromium 156.0.8078.4, Node.js 24.22.1), the first two and the four at its final
+  head `b2d60b3`, reports 1 to 4, beside the runs before it on the same processor models with the
+  renderer as it was; a frame of 9 ms or more is one of the slow frames that make a miss:
 
-  | CI run      | Renderer                 | Processor | B1, median | B1, 95th | B2, 95th |
-  | ----------- | ------------------------ | --------- | ---------- | -------- | -------- |
-  | 42627742440 | before, at `4ce8490`     | EPYC 9V45 | 7.3 ms     | 9.53 ms  | 2.11 ms  |
-  | 42642158624 | before, `main` `4db483f` | EPYC 9V45 | 7.25 ms    | 10.61 ms | 2 ms     |
-  | 42648632465 | before, at `97808ed`     | EPYC 9V45 | 6.4 ms     | 8.21 ms  | 2 ms     |
-  | 42671462319 | after, at `791f735`      | EPYC 9V45 | 5.2 ms     | 5.5 ms   | 1.7 ms   |
-  | 42656464145 | before, `main` `90a456d` | EPYC 7763 | 9.5 ms     | 12.11 ms | 2.9 ms   |
-  | 42670318550 | after, at `0d6b9ff`      | EPYC 7763 | 7.9 ms     | 11 ms    | 2.2 ms   |
+  | CI run (attempt) | Renderer                   | Processor | B1, median | B1, 95th | B1 frames ≥ 9 ms | B2, 95th |
+  | ---------------- | -------------------------- | --------- | ---------- | -------- | ---------------- | -------- |
+  | 42627742440 (1)  | before, at `4ce8490`       | EPYC 9V45 | 7.3 ms     | 9.53 ms  | 9 of 100         | 2.105 ms |
+  | 42642158624 (1)  | before, `main` `4db483f`   | EPYC 9V45 | 7.25 ms    | 10.61 ms | 18 of 100        | 2 ms     |
+  | 42648632465 (1)  | before, at `97808ed`       | EPYC 9V45 | 6.4 ms     | 8.205 ms | 2 of 100         | 2 ms     |
+  | 42671462319 (1)  | after, at `791f735`        | EPYC 9V45 | 5.2 ms     | 5.5 ms   | 1 of 100         | 1.7 ms   |
+  | 42673197733 (3)  | after, `b2d60b3`, report 2 | EPYC 9V45 | 5.5 ms     | 7.2 ms   | 1 of 100         | 1.7 ms   |
+  | 42656464145 (1)  | before, `main` `90a456d`   | EPYC 7763 | 9.5 ms     | 12.11 ms | 94 of 100        | 2.905 ms |
+  | 42670318550 (1)  | after, at `0d6b9ff`        | EPYC 7763 | 7.9 ms     | 11 ms    | 29 of 100        | 2.2 ms   |
+  | 42677720242 (1)  | after, `b2d60b3`, report 3 | EPYC 7763 | 7 ms       | 7.625 ms | 2 of 100         | 2 ms     |
+  | 42641527515 (1)  | before, `main` `4db483f`   | EPYC 9V74 | 8.3 ms     | 11.62 ms | 21 of 100        | 2.3 ms   |
+  | 42673197733 (1)  | after, `b2d60b3`, report 1 | EPYC 9V74 | 7.3 ms     | 10.01 ms | 28 of 100        | 1.9 ms   |
+  | 42678182735 (1)  | after, `b2d60b3`, report 4 | EPYC 9V74 | 6.4 ms     | 7.6 ms   | 1 of 100         | 1.8 ms   |
 
-  B2 is met on both processors. B1 is met on the EPYC 9V45, where the slow frames are gone, and
-  still missed on the EPYC 7763, where the median frame is within its budget but about a quarter of
-  the frames took 10 to 11 ms; `791f735` only adds a dash comparison without an iterator to
-  `0d6b9ff`. The runs before the change on the two other processors seen in CI missed B1 as well:
-  10.9 ms on the Xeon Platinum 8370C and 11.62 and 13.92 ms on the EPYC 9V74. The profile leaves no
-  change of the same calls that saves that much: the context's own calls are about nine tenths of
-  the render, and the changes that would call the context less are the ones above that can change a
-  pixel. Whether B1 holds in CI so depends on the runner's processor, and the pull request keeps the
-  record of each run.
+  B2 is met in every run. B1 is met in three of the four final-head reports, one on each processor
+  model, and missed in report 1. The slow frames vary by run on one processor model, not by model:
+  with the same code, report 1 missed on an EPYC 9V74 with 28 of its frames at 9 ms or more and
+  report 4 met on that model with one, and on the EPYC 7763 the pull request's first run missed with
+  29 such frames and report 3 met with two, where `791f735` only adds a dash comparison without an
+  iterator to the first run's `0d6b9ff`. In a missing run the median frame is within the budget and
+  about a quarter of the frames form a second group at 9 to 11 ms. The runs before the change on the
+  other processor seen in CI missed B1 as well, 10.9 ms on the Xeon Platinum 8370C, and so did the
+  first run of ENG-15's pull request, 13.92 ms on an EPYC 9V74. The profile leaves no change of the
+  same calls that saves that much: the context's own calls are about nine tenths of the render, and
+  the changes that would call the context less are the ones above that can change a pixel. The pull
+  request met its A1 with reports 2 to 4. Of the five reports on `main` since its merge, B1 met its
+  budget in four and missed it in one, on an EPYC 7763, and B2 met its budget in all five; those
+  reports, every other CI report with this renderer and what makes a run miss are recorded in
+  [what issue #41 decided](#what-issue-41-decided).
 
 ## What issue #35 decided
 
@@ -529,6 +541,133 @@ decided what the rules above leave open:
   9V74, measured 0.097 ms at the 95th percentile and 0.062 ms at the median, where the last run on
   `main`, 42685994872 at `c5bcfd3`, had measured 5.726 ms. The pull request keeps the record of
   every later run.
+
+## What issue #41 decided
+
+Issue #41 follows the misses of B1 ([performance budgets](quality.md#performance-budgets)) that
+remained in CI after issue #34, points the records that named that closed issue to this one, and
+looks for what makes a run miss. It changes no code that B1 measures, no budget, tolerance or
+pixel, and no processor's gate.
+
+- **The reports.** Every CI performance report from the first run of pull request #40 to the push
+  of `0a3116d` to `main`, 26 in all: the pull request's six, the five on `main` since its merge, and
+  the fifteen of the pull requests of issues #35, #36, #43 and #45, their manual dispatches
+  included. From the second on, the renderer, the web app, the browser measurements with their
+  configuration, the lockfile and the CI workflow are byte for byte those of `b2d60b3`, and the
+  first, at `0d6b9ff`, lacks only `791f735`'s dash comparison. A pull request's run measures
+  GitHub's merge of its head into `main`, whose commit the table gives. All 26 ran on 4 cores with
+  15.6 GiB, Linux 7.0.0-1017-azure, runner image ubuntu24 20261101.360.1, runner 2.338.2, Node.js
+  24.22.1 and Chromium 156.0.8078.4. Each value is computed from the samples of the report's
+  `performance-report` artifact, whose SHA-256 matched the digest GitHub gives, by
+  `npm run perf:tail`, which reads `report.json` files and prints these tables; the artifact of
+  42673197733's first attempt was replaced by its third, and a copy downloaded before, with the
+  digest GitHub gave then, stands in for it.
+
+  | CI run (attempt) | Event             | Branch                         | Commit    | Processor           | B1 median | B1 95th   | B1 frames ≥ 9 ms | B2 median | B2 95th  | Result    |
+  | ---------------- | ----------------- | ------------------------------ | --------- | ------------------- | --------- | --------- | ---------------- | --------- | -------- | --------- |
+  | 42670318550 (1)  | pull_request      | perf/34-scene-redraw-budgets   | `108dada` | EPYC 7763           | 7.9 ms    | 11 ms     | 29 of 100        | 1.7 ms    | 2.2 ms   | B1 missed |
+  | 42671462319 (1)  | pull_request      | perf/34-scene-redraw-budgets   | `0afd455` | EPYC 9V45           | 5.2 ms    | 5.5 ms    | 1 of 100         | 1.3 ms    | 1.7 ms   | met       |
+  | 42673197733 (1)  | pull_request      | perf/34-scene-redraw-budgets   | `592a0ac` | EPYC 9V74           | 7.3 ms    | 10.01 ms  | 28 of 100        | 1.6 ms    | 1.9 ms   | B1 missed |
+  | 42673197733 (3)  | pull_request      | perf/34-scene-redraw-budgets   | `592a0ac` | EPYC 9V45           | 5.5 ms    | 7.2 ms    | 1 of 100         | 1.4 ms    | 1.7 ms   | met       |
+  | 42677720242 (1)  | workflow_dispatch | perf/34-scene-redraw-budgets   | `b2d60b3` | EPYC 7763           | 7 ms      | 7.625 ms  | 2 of 100         | 1.6 ms    | 2 ms     | met       |
+  | 42678182735 (1)  | workflow_dispatch | perf/34-scene-redraw-budgets   | `b2d60b3` | EPYC 9V74           | 6.4 ms    | 7.6 ms    | 1 of 100         | 1.4 ms    | 1.8 ms   | met       |
+  | 42685994872 (1)  | push              | main                           | `c5bcfd3` | EPYC 9V74           | 6.3 ms    | 6.7 ms    | 0 of 100         | 1.4 ms    | 1.7 ms   | met       |
+  | 42700510340 (1)  | pull_request      | perf/35-marquee-query-budget   | `8bf896d` | EPYC 9V74           | 6.9 ms    | 7.805 ms  | 1 of 100         | 1.5 ms    | 1.9 ms   | met       |
+  | 42703817412 (1)  | pull_request      | perf/35-marquee-query-budget   | `450f227` | EPYC 7763           | 6.9 ms    | 7.205 ms  | 0 of 100         | 1.5 ms    | 1.905 ms | met       |
+  | 42704145240 (1)  | workflow_dispatch | perf/35-marquee-query-budget   | `465b9ae` | EPYC 9V45           | 5.4 ms    | 5.8 ms    | 1 of 100         | 1.4 ms    | 1.7 ms   | met       |
+  | 42704460935 (1)  | workflow_dispatch | perf/35-marquee-query-budget   | `465b9ae` | EPYC 9V74           | 7.8 ms    | 10.5 ms   | 13 of 100        | 1.7 ms    | 2.1 ms   | B1 missed |
+  | 42704919237 (1)  | workflow_dispatch | perf/35-marquee-query-budget   | `465b9ae` | Xeon Platinum 8573C | 6.2 ms    | 8.7 ms    | 4 of 100         | 1.7 ms    | 2.005 ms | B1 missed |
+  | 42720563032 (1)  | push              | main                           | `8a666f4` | EPYC 9V45           | 5.2 ms    | 5.61 ms   | 1 of 100         | 1.3 ms    | 1.605 ms | met       |
+  | 42730911670 (1)  | pull_request      | perf/36-change-set-move-budget | `685f8d8` | EPYC 9V74           | 6.4 ms    | 8.905 ms  | 5 of 100         | 1.4 ms    | 1.8 ms   | B1 missed |
+  | 42741209810 (1)  | pull_request      | perf/36-change-set-move-budget | `f2fad80` | EPYC 7763           | 6.8 ms    | 7.205 ms  | 0 of 100         | 1.5 ms    | 2.1 ms   | met       |
+  | 42741520852 (1)  | workflow_dispatch | perf/36-change-set-move-budget | `c203ab6` | EPYC 9V74           | 6.2 ms    | 6.6 ms    | 0 of 100         | 1.4 ms    | 1.8 ms   | met       |
+  | 42741774689 (1)  | workflow_dispatch | perf/36-change-set-move-budget | `c203ab6` | Xeon Platinum 8370C | 6.8 ms    | 10.1 ms   | 23 of 100        | 1.7 ms    | 2.205 ms | B1 missed |
+  | 42742147738 (1)  | workflow_dispatch | perf/36-change-set-move-budget | `c203ab6` | EPYC 7763           | 7.2 ms    | 10.005 ms | 23 of 100        | 1.6 ms    | 2 ms     | B1 missed |
+  | 42761184353 (1)  | push              | main                           | `f93bcfd` | EPYC 9V74           | 6.3 ms    | 6.705 ms  | 0 of 100         | 1.4 ms    | 1.9 ms   | met       |
+  | 42777441360 (1)  | pull_request      | perf/43-cold-marquee-rows      | `605a448` | EPYC 9V45           | 5.4 ms    | 6.1 ms    | 0 of 100         | 1.5 ms    | 1.8 ms   | met       |
+  | 42778196743 (1)  | workflow_dispatch | perf/43-cold-marquee-rows      | `56ec6c7` | EPYC 7763           | 7.1 ms    | 10.405 ms | 23 of 100        | 1.5 ms    | 2.205 ms | B1 missed |
+  | 42794765703 (1)  | push              | main                           | `285918c` | EPYC 7763           | 7.5 ms    | 10.715 ms | 28 of 100        | 1.8 ms    | 2.31 ms  | B1 missed |
+  | 42801523097 (1)  | pull_request      | fix/45-planning-reentry-errors | `a6db55e` | EPYC 9V74           | 6.5 ms    | 6.8 ms    | 0 of 100         | 1.45 ms   | 1.9 ms   | met       |
+  | 42801972456 (1)  | pull_request      | fix/45-planning-reentry-errors | `a6db55e` | EPYC 9V74           | 6.5 ms    | 7.6 ms    | 0 of 100         | 1.4 ms    | 1.9 ms   | met       |
+  | 42802411087 (1)  | workflow_dispatch | fix/45-planning-reentry-errors | `d377f93` | EPYC 9V74           | 6.5 ms    | 7.005 ms  | 1 of 100         | 1.4 ms    | 1.8 ms   | met       |
+  | 42810907279 (1)  | push              | main                           | `0a3116d` | EPYC 9V74           | 6.4 ms    | 6.805 ms  | 0 of 100         | 1.5 ms    | 1.9 ms   | met       |
+
+- **How often B1 missed.** Per processor model, as Node.js names the runner's processor, on `main`
+  and in all 26:
+
+  | Processor           | Reports on `main` | B1 missed on `main` | All reports | B1 missed | B2 missed |
+  | ------------------- | ----------------- | ------------------- | ----------- | --------- | --------- |
+  | EPYC 7763           | 1                 | 1                   | 7           | 4         | 0         |
+  | EPYC 9V45           | 1                 | 0                   | 5           | 0         | 0         |
+  | EPYC 9V74           | 3                 | 0                   | 12          | 3         | 0         |
+  | Xeon Platinum 8573C | 0                 | 0                   | 1           | 1         | 0         |
+  | Xeon Platinum 8370C | 0                 | 0                   | 1           | 1         | 0         |
+  | All                 | 5                 | 1                   | 26          | 9         | 0         |
+
+  B1 missed in one of the five reports on `main`, on an EPYC 7763, and in 9 of the 26, on four
+  processor models; B2 met its budget in all 26, at 1.605 to 2.31 ms, and B1's median frame was
+  within B1's budget in all 26, at 5.2 to 7.9 ms. The EPYC 9V45 met B1 in its five reports and
+  each Xeon missed in its one; the EPYC 7763 missed in four of seven and the EPYC 9V74 in three of
+  twelve, so that one model gives both results with the same code: with `b2d60b3`'s, report 1
+  missed on one EPYC 9V74 runner and report 4 met on another.
+
+- **A second group of frames.** Each of the nine missing reports has, beside its usual frames, a
+  second group of 9 to 28 frames at 2 ms or more above its median, whose own median is 1.35 to
+  1.48 times that of the usual frames, 2.2 to 3.2 ms more. The seventeen meeting reports have at
+  most four such frames each, and eight have none. How many of them reach 9 ms follows the usual
+  frames' speed: in 42730911670, on an EPYC 9V74 whose usual frames took 6.3 ms, the second group's
+  25 frames took 8.4 to 9.3 ms, only five of them 9 ms or more, and B1 missed at 8.905 ms.
+
+- **Where in the run.** In seven of the nine, the second group is spread over the whole run, in
+  every fifth of the 100 frames but the first of 42742147738, whose first slow frame is its 25th:
+  the gaps between slow frames run from 1 to 12 frames with no fixed period, successive frames are
+  no more often slow together than apart (lag-one autocorrelation −0.18 to +0.08, runs tests within
+  1.75 standard deviations of chance), and the slow frames fall on pans of both directions alike,
+  94 and 102 in all nine. In the other two they come in one stretch: frames 70 to 99 of
+  42704460935, on an EPYC 9V74, and frames 4 to 26 of 42704919237, on the Xeon Platinum 8573C. A
+  longer warm-up than B1's 20 frames would have hidden only the latter, so neither the warm-up nor
+  the order or the direction of the frames explains the misses.
+
+- **The rest of each run.** On the EPYC 9V74 the missing runs were slower runners: their B5, a hit
+  test that the job's benchmarks time in Node.js shortly before its browser measurements, was 0.071
+  to 0.078 ms and their usual B1 frames 6.3 to 7.8 ms, against 0.054 to 0.059 ms and 6.2 to 6.9 ms
+  in its nine meeting runs. On the EPYC 7763 nothing else separates them: B5 was 0.073 to 0.075 ms
+  in the four missing runs and 0.072 to 0.074 ms in the three meeting ones, and I1 14.18 to 15.89
+  ms against 14.25 to 14.48 ms. B2, timed in a page of its own later in the same job with a tenth of
+  the elements in view, shows no second group where B1 has one: its frames at 1.35 times its median
+  or more number 1 to 7 in the missing runs and 0 to 8 in the meeting ones.
+
+- **What is the same either way.** Besides the code and the versions above, the job's steps run
+  one after another and Playwright runs one test at a time, so no other step of the job runs beside
+  B1's test. The run's other jobs run on runners of their own, and they overlapped B1's test in
+  missing and meeting runs alike, both of them in 7 of the 9 missing runs and in 12 of the 17
+  meeting ones. The Azure region decides nothing that the reports show: on the EPYC 9V74, westus2
+  and westus3 each ran a missing and a meeting report. On the EPYC 7763 the four missing reports
+  ran in westus and westus2 and the three meeting ones elsewhere, which seven reports are too few
+  to tell from chance.
+
+- **Garbage collection.** Three Chromium traces of B1's loop on the developer machine at
+  `0a3116d`, 100 measured frames each, held four minor garbage collections on the page's main
+  thread while the measured frames ran, none inside a render, and no major one: too few to slow a
+  quarter of the frames, and none in them. `performance.measure` wraps the synchronous `render`
+  call only, so no other task of the page's main thread runs inside it.
+
+- **What stays unknown.** The CI reports keep no trace, garbage collection or long task of B1's
+  frames and no time of each frame, so what slows a frame on a runner that misses, and whether the
+  slow frames recur in time, is not known; a trace of B1 on such a runner would tell, and no CI job
+  records one.
+
+- **What it decides.** B1's misses depend on the run, not on its code or on its processor model
+  alone. What B1 measures, its budget, its warm-up of 20 frames and the tolerance stay as they are.
+  `docs/performance/baseline.json` names this issue as B1's follow-up while it is open, so a report
+  that misses B1 says `missed, follow-up #41`, and no issue for B2, which every report met; the
+  README, `AGENTS.md`, the engine's README and the architecture overview say the same, and tests
+  read the baseline, the report's rendering of it and this record. Once a processor model has three
+  runs on `main` and its gate is active, a run like 42704460935, at 10.5 ms on an EPYC 9V74, after
+  three runs that met B1 would exceed the 9.6 ms limit, the budget and 20 %, and fail CI with no
+  change of code; the remedy is then more runs or an ADR, as
+  [issue #38 decided](quality.md#what-issue-38-decided), not a wider tolerance in passing. The
+  reports are not recorded in the baseline, which would start a processor's gate.
 
 ## What issue #43 decided
 

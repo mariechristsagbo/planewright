@@ -124,9 +124,9 @@ release has been published yet.
   statistical budgets fail CI only once three runs on `main` are recorded in
   `docs/performance/baseline.json`. The redraw of 5,000 elements in view, the marquee over 10,000
   and the 1,000-element move miss their budgets in CI, and the redraw while panning misses on a
-  slower machine; they have issues #34 to #36. The renderer's path cache no longer walks itself on
-  every lookup, the element list names a long text from its first words only, and the page declares
-  the light colour scheme only.
+  slower machine; they went to issues #34 to #36. The renderer's path cache no longer walks itself
+  on every lookup, the element list names a long text from its first words only, and the page
+  declares the light colour scheme only.
 - Performance baseline (issue #38): the three CI runs on `main` that make the baseline, each with
   the machine it ran on, and a gate that compares a run only with the runs on `main` on its own
   processor model, once that model has three; with one run on each of three processors, CI still
@@ -135,13 +135,15 @@ release has been published yet.
   once and in the order of the runs; other runs are kept only as information. The browser
   measurements remove an earlier run's files before they start, and a page opened with `?measure`
   stops measuring after 10,000 renders.
-- Scene redraw (issue #34): the canvas renderer no longer saves and restores the context around
-  each element, and sets a colour, width, dash pattern, font or alignment only when it changes
-  within a frame; its path cache keeps its use order without taking an entry out and back on each
-  lookup, and an element's dash pattern and font are built once per revision. Every pixel and every
-  drawing call is unchanged, which a seeded property of the calls and an end-to-end comparison of
-  the scene canvas with the earlier drawing check. In CI the redraw of 5,000 elements in view now
-  meets its budget on an AMD EPYC 9V45 runner and still misses it on an AMD EPYC 7763.
+- Scene redraw (issue #34): the canvas renderer no longer saves and restores the context around each
+  element, and sets a colour, width, dash pattern, font or alignment only when it changes within a
+  frame; its path cache keeps its use order without taking an entry out and back on each lookup, and
+  an element's dash pattern and font are built once per revision. Every pixel and every drawing call
+  is unchanged, which a seeded property of the calls and an end-to-end comparison of the scene
+  canvas with the earlier drawing check. In CI the redraw of 5,000 elements in view met its budget
+  in three of the four reports at the pull request's final head, on AMD EPYC 9V45, 7763 and 9V74
+  runners, and missed it in the other, on an EPYC 9V74, with the same code: its slow frames vary by
+  run on one processor model (issue #41). The redraw while panning met its budget in every report.
 - Marquee query (issue #35): box selection keeps, for each scene, one row per element in drawing
   order, with the edges of the element's world bounds and the extent of its outline points,
   computed as the bounds and the points are but without building a point, and scans the rows while
@@ -181,3 +183,17 @@ release has been published yet.
   may hold, can neither clear what planning a set reports nor change the scene under the plan; a
   preview, a commit, an undo or a redo asked from such a value is refused the same way. What a
   JSON change set does or refuses, with its errors, is unchanged.
+- B1's slow frames in CI (issue #41): `npm run perf:tail` reads the `report.json` files of CI
+  performance reports and prints, for each, the median and 95th percentile of the redraw of 5,000
+  elements in view (B1) and of the redraw while panning (B2) and B1's frames of 9 ms or more, then
+  how many reports missed each budget per processor model. Of the five reports on `main` since the
+  merge of issue #34, B1 met its budget in four and missed it in one, on an AMD EPYC 7763, and B2
+  met its budget in all five; of all 26 CI reports with the same renderer, B1 missed in 9, on four
+  processor models, and B2 in none. A run that misses has a second group of 9 to 28 of its 100
+  frames, 1.35 to 1.48 times as long as the others; one processor model gives both results with the
+  same code, and on the AMD EPYC 9V74 the runs that missed were slower at the job's hit-test
+  benchmark too. Neither the warm-up, the order or direction of the frames, the job's other steps
+  and jobs, the Azure region nor, in traces on a developer machine, garbage collection explains it,
+  and what slows such a frame on a runner is not known. The performance report names issue #41 as
+  the follow-up of a missed B1 and no issue for B2, and the entry of issue #34 above and the
+  rendering design record B1's results by run, not by processor model.
