@@ -152,3 +152,13 @@ release has been published yet.
   marquee query over 10,000 elements (budget B6) fell from 18.9 to 24.2 ms to 0.24 to 0.32 ms at the
   95th percentile, and in CI it measured 0.097 ms on an AMD EPYC 9V74 runner, where `main` had
   measured 5.7 to 7.1 ms.
+- Change sets (issue #36): an update whose patch writes only fields that its element holds is
+  checked field by field, with each field's own check, the kind's checks across fields and the
+  element's revision, and the new version shares the fields that the update leaves with the one
+  before it, which the store checked when it took it; every other update is checked whole as
+  before, and a refused set lists the same errors. The spatial index keeps a moved element's entry
+  while its bounds touch the same cells, world bounds are computed without building points, and the
+  path of a problem is built only once it is found. What a set does and refuses is unchanged, which
+  properties against the planner as it was check. On a developer machine a change set moving 1,000
+  of 10,000 elements (budget B7) fell from 45.6 to 100.6 ms to 9.5 to 14.4 ms at the 95th
+  percentile.

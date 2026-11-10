@@ -101,6 +101,10 @@ is applied, such as re-routing connectors whose target moved (P1, REQ-M01), drop
 a removed target, or removing a group that lost its last member. Inverting a complete change set
 (swapping `add` and `remove`, `before` and `after`) is therefore always valid.
 
+An update that writes only fields its element holds is checked field by field rather than whole,
+which gives the same element and, for a refused set, the same errors
+([what issue #36 decided](#what-issue-36-decided)).
+
 ## Transient previews
 
 During a gesture the tool previews its result in the scene, so the renderer and hit testing see it.
@@ -190,7 +194,8 @@ more cell on each side, so that rounding at a cell's edge never loses one. A box
 non-finite side, or a negative or non-finite radius, is refused. Queries return candidates in no
 particular order; the caller sorts by drawing order when it needs to. The index sits behind `queryBox` and `queryPoint`, so it can become a bounding-volume
 hierarchy without any caller changing if the [performance budgets](requirements.md#performance)
-are missed.
+are missed. An element whose new bounds touch the same cells as before keeps its entry
+([what issue #36 decided](#what-issue-36-decided)).
 
 ## Coordinate spaces
 
@@ -306,6 +311,109 @@ units.
 The Mod+wheel factor differs from the reference's 1.1 by design: Planewright uses one continuous
 curve for wheels and trackpads ([REQ-V04](requirements.md#intentional-differences)); the test
 accepts zoom in `[1.09, 1.12]`.
+
+## What issue #36 decided
+
+Issue #36 makes applying a change set cheaper for budget B7
+([performance budgets](quality.md#performance-budgets)) without dropping or weakening any check
+that the store applies to a set ([change sets](#change-sets)). It decided what the rules above
+leave open:
+
+- **What B7 times.** As ENG-15 decided: one `local` set that moves 1,000 of the benchmarks' 10,000
+  elements by one unit, applied with the order, spatial, group and attachment indexes, then the set
+  that moves them back, in turn, 400 samples after 80. Its check, that the moved elements end where
+  the last set put them and that the spatial index lists each of them there, is unchanged.
+- **Where an application went.** On a 6-core AMD EPYC developer machine (Node.js 24.22.1), B7's loop
+  run natively at `8a666f4` took 24.7 to 27.5 ms at the median and 68 to 110 ms at the 95th
+  percentile. A CPU profile of 480 applications, sampled every 50 µs, put 76 % of `apply` in
+  planning the set: 41 % in checking each updated element whole with the codec's element check,
+  which built the path of every field with a regular expression and new strings (11 % of `apply`),
+  and 15 % in building the updated element from the entries of the element and the patch. Committing
+  took 23 %, 15 % in the spatial index taking every moved element out of its cells and filing it
+  again. Garbage collection took 10 % of all samples, with 112 scavenges and 3 mark-compacts over
+  the run.
+- **An update of fields that its element holds.** An update whose two sides name the same fields,
+  each a field that the element holds, is planned without the generic patch path. The `before` of
+  a `local` or `history` set must still match the element; each value written must pass its field's
+  own check, the one that the kind's element check runs, which also copies it; the element must
+  pass the kind's checks across its fields, a freehand's pressures one per point and an arrow never
+  attached to itself; and its revision must pass the revision check, because the store raises a
+  revision by one without a check and the element check reads it. The new version is the element
+  with those fields replaced, in its own field order, its revision one higher: the element that the
+  generic path makes. Every other update, one that adds, removes or names a field the element does
+  not hold, one of `id`, `kind` and `rev`, a value that a check refuses, a stale value, sides that
+  name other fields or a patch that is not a record, goes to the generic path as before, which
+  reports every reason with its path, so a refused set lists the same errors in the same order.
+- **What is checked once.** The fields that an update leaves are not checked again. The store
+  checked them when it took the element, through the element check of an addition or of an update,
+  and it never changes an element in place, so the new version shares them with the one before it.
+  The revision is the one exception, above. A value that an update writes is its field check's own
+  copy, so the store never holds an object of a change set.
+- **The indexes.** A spatial entry keeps the span of cells that its bounds touch, and an element
+  whose new bounds touch the same cells, as nearly every element of a drag does, keeps its entry,
+  whose bounds are replaced; any other change of cells goes as before. The entry is the index's own
+  data, a query reads each entry's bounds when it runs, and every caller sorts the candidates into
+  drawing order. The world bounds of a turned element are computed corner by corner with the
+  operations that the corner and bounds functions use, in their order, with the cosine and the sine
+  taken once, and the extent of points in four numbers, so that they are the same to the bit and
+  no point is built. The group index passes over an element that is in no group before or after,
+  and the attachment index over a change that is not an arrow's, before or after; neither changes a
+  list for them.
+- **Paths and look-ups.** The planner builds an update's path only when the generic path plans it,
+  and the reference check builds the path of a problem once it finds one, and the map of the set's
+  deltas at its first look-up, which a set whose elements refer to nothing and remove nothing never
+  needs. The planner counts what a set adds and removes in the loop that plans it.
+- **What stays the same.** A set is still checked whole before any of it is applied, and a refused
+  set throws the same `ChangeSetError` and changes nothing, not even the reader's order array; the
+  revisions, the drawing order, the indexes, the one update for each listener, a listener's error
+  rethrown once the set is applied, and the history are as before. The tests keep a copy of the
+  planner as it was at `8a666f4` as an oracle: for each of the four origins, the planner must give
+  the oracle's plan, field order included, or its errors in its order, or its thrown error, over 60
+  random sets of up to 1,000 updates mixing valid changes with changes that some or every origin
+  refuses, 28 named cases, the element limit and a revision raised past the largest safe integer.
+  The store must apply 96 such sets in turn as a model built on the oracle does, and a refused one
+  must leave every element, the revision and the order array as they were. Large transactions of the
+  history must keep each element's last preview, cancel back to their start, and undo and redo at
+  every size, and world bounds must equal the composition they were computed with, to the bit, for
+  13,000 elements and 200 random documents. Of 40 regressions planted outside Git, among them a
+  revision left unchecked, a removed or an unknown field let through, a value written uncopied, a
+  check across fields skipped, a stale `before` let through, a spatial entry kept after its cells
+  changed and a turned corner computed in another order, the tests caught 37, each failing 1 to 129
+  of them, and B7's own check none, since a bound one unit stale still meets the query of the new
+  one. Of the other three, two are equivalent: the path's own refusal of a
+  null value, which every field check refuses, and its own check that both sides are records, which
+  listing their keys already reads as the generic path does. The third, lines patched with the
+  freehand's field checks, let a line cut to one point through, and two cases added for it fail
+  with it.
+- **What was measured and not done.** In a harness that planned B7's sets and stored the elements,
+  building the new versions with nothing checked, the floor of any planner that keeps elements
+  immutable, took 0.57 to 0.66 ms at the median where the planner took 1.40 to 1.62 ms. A path only
+  for moves was not written: the held-field path serves every edit of fields that the elements hold,
+  moves, turns, resizes, restyles and text edits alike, and B7's set is one of them. The old bounds
+  moved by the move's offset, instead of computed, differed from `worldBounds` for 4 of B7's 1,000
+  moved elements, and the index keeps exactly `worldBounds`.
+- **Where an application goes now.** The same profile after the change puts 42 % of B7's loop in
+  planning and 53 % in committing, 35 % in the spatial index, whose world bounds take 11 %; garbage
+  collection takes 8 % of the loop's time, with 33 scavenges and 2 mark-compacts over the run. Each
+  stage timed apart, at the median of 400 applications at a load of about 2.5 (in ms):
+
+  | Stage                | Before (`8a666f4`) | After |
+  | -------------------- | ------------------ | ----- |
+  | Planning the set     | 20.0               | 1.86  |
+  | Storing the elements | 0.42               | 0.17  |
+  | The order index      | 0.41               | 0.06  |
+  | The spatial index    | 4.35               | 1.44  |
+  | The group index      | 0.38               | 0.04  |
+  | The attachment index | 0.17               | 0.05  |
+  | All of them          | 27.1               | 3.67  |
+
+- **Before and after.** B7 on that machine, in three runs of each taken in turn (at a load of about
+  2.5):
+
+  | B7              | Before (`main` at `8a666f4`) | After           |
+  | --------------- | ---------------------------- | --------------- |
+  | Median          | 24.4 to 26.7 ms              | 4.66 to 4.88 ms |
+  | 95th percentile | 45.6 to 100.6 ms             | 9.5 to 14.4 ms  |
 
 ## Requirements served
 
