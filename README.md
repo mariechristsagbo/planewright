@@ -19,7 +19,7 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > every performance budget, which CI reports and does not gate yet. The marquee query and a change
 > set that moves 1,000 elements have since met their budgets in CI, the redraw while panning meets
 > its budget in CI and misses it only on a slower machine, and the redraw of 5,000 elements in view
-> meets its budget in most CI runs but misses it in some, which issue #41 follows.
+> meets its budget in most CI runs but misses it in some, which issue #49 follows.
 
 ## Goals
 

@@ -545,20 +545,27 @@ decided what the rules above leave open:
 ## What issue #41 decided
 
 Issue #41 follows the misses of B1 ([performance budgets](quality.md#performance-budgets)) that
-remained in CI after issue #34, points the records that named that closed issue to this one, and
-looks for what makes a run miss. It changes no code that B1 measures, no budget, tolerance or
-pixel, and no processor's gate.
+remained in CI after issue #34, points the records that named that closed issue away from it, and
+looks for what makes a run miss; issue #49 follows B1's misses after it. It changes no code that
+B1 measures, no budget, tolerance or pixel, and no processor's gate.
 
 - **The reports.** Every CI performance report from the first run of pull request #40 to the push
   of `0a3116d` to `main`, 26 in all: the pull request's six, the five on `main` since its merge, and
   the fifteen of the pull requests of issues #35, #36, #43 and #45, their manual dispatches
-  included. From the second on, the renderer, the web app, the browser measurements with their
-  configuration, the lockfile and the CI workflow are byte for byte those of `b2d60b3`, and the
-  first, at `0d6b9ff`, lacks only `791f735`'s dash comparison. A pull request's run measures
-  GitHub's merge of its head into `main`, whose commit the table gives. All 26 ran on 4 cores with
-  15.6 GiB, Linux 7.0.0-1017-azure, runner image ubuntu24 20261101.360.1, runner 2.338.2, Node.js
-  24.22.1 and Chromium 156.0.8078.4. Each value is computed from the samples of the report's
-  `performance-report` artifact, whose SHA-256 matched the digest GitHub gives, by
+  included. From the second on, the renderer, the web app's source, the browser measurements with
+  their configuration, the seeded scenes, the lockfile and the CI workflow are byte for byte those
+  of `b2d60b3`, and the first, at `0d6b9ff`, lacks only `791f735`'s dash comparison. The engine is
+  not: issues #35, #36, #43 and #45 changed it, its bundle growing from 28.873 to 30.292 KB and
+  the web app's from 107.35 to 108.78 KB. Inside the measured `render` call, though, the renderer
+  reaches the engine only through `geometryOf`, `layoutText` and `localBox`, when its path cache
+  misses and it builds an element's drawing, and of the code that they run only the point extent
+  that `localBox` takes of a line or a freehand stroke changed (issue #36). B1's pans change no
+  element, and the cache holds 20,000 drawings, more than B1's 5,000 elements, so none of B1's
+  measured frames, which follow 20 frames of warm-up, builds a drawing. A pull request's run
+  measures GitHub's merge of its head into `main`, whose commit the table gives. All 26 ran on 4
+  cores with 15.6 GiB, Linux 7.0.0-1017-azure, runner image ubuntu24 20261101.360.1, runner
+  2.338.2, Node.js 24.22.1 and Chromium 156.0.8078.4. Each value is computed from the samples of
+  the report's `performance-report` artifact, whose SHA-256 matched the digest GitHub gives, by
   `npm run perf:tail`, which reads `report.json` files and prints these tables; the artifact of
   42673197733's first attempt was replaced by its third, and a copy downloaded before, with the
   digest GitHub gave then, stands in for it.
@@ -608,8 +615,10 @@ pixel, and no processor's gate.
   processor models; B2 met its budget in all 26, at 1.605 to 2.31 ms, and B1's median frame was
   within B1's budget in all 26, at 5.2 to 7.9 ms. The EPYC 9V45 met B1 in its five reports and
   each Xeon missed in its one; the EPYC 7763 missed in four of seven and the EPYC 9V74 in three of
-  twelve, so that one model gives both results with the same code: with `b2d60b3`'s, report 1
-  missed on one EPYC 9V74 runner and report 4 met on another.
+  twelve, so that one model gives both results with the same tree. On the EPYC 9V74, report 1
+  (42673197733, first attempt), whose merge `592a0ac` has `b2d60b3`'s tree, missed, and report 4,
+  at `b2d60b3`, met; on the EPYC 7763, 42741209810, whose merge `f2fad80` has `c203ab6`'s tree,
+  met, and 42742147738, at `c203ab6`, missed.
 
 - **A second group of frames.** Each of the nine missing reports has, beside its usual frames, a
   second group of 9 to 28 frames at 2 ms or more above its median, whose own median is 1.35 to
@@ -625,8 +634,8 @@ pixel, and no processor's gate.
   1.75 standard deviations of chance), and the slow frames fall on pans of both directions alike,
   94 and 102 in all nine. In the other two they come in one stretch: frames 70 to 99 of
   42704460935, on an EPYC 9V74, and frames 4 to 26 of 42704919237, on the Xeon Platinum 8573C. A
-  longer warm-up than B1's 20 frames would have hidden only the latter, so neither the warm-up nor
-  the order or the direction of the frames explains the misses.
+  longer warm-up than B1's 20 frames would have hidden only the latter, so the warm-up explains at
+  most one of the nine misses, and the order and the direction of the frames none.
 
 - **The rest of each run.** On the EPYC 9V74 the missing runs were slower runners: their B5, a hit
   test that the job's benchmarks time in Node.js shortly before its browser measurements, was 0.071
@@ -637,14 +646,15 @@ pixel, and no processor's gate.
   the elements in view, shows no second group where B1 has one: its frames at 1.35 times its median
   or more number 1 to 7 in the missing runs and 0 to 8 in the meeting ones.
 
-- **What is the same either way.** Besides the code and the versions above, the job's steps run
-  one after another and Playwright runs one test at a time, so no other step of the job runs beside
-  B1's test. The run's other jobs run on runners of their own, and they overlapped B1's test in
-  missing and meeting runs alike, both of them in 7 of the 9 missing runs and in 12 of the 17
-  meeting ones. The Azure region decides nothing that the reports show: on the EPYC 9V74, westus2
-  and westus3 each ran a missing and a meeting report. On the EPYC 7763 the four missing reports
-  ran in westus and westus2 and the three meeting ones elsewhere, which seven reports are too few
-  to tell from chance.
+- **What is the same either way.** Besides the code inside the measured call and the versions
+  above, the job's steps run one after another and Playwright runs one test at a time, so no other
+  step of the job runs beside B1's test. The run's other jobs run on runners of their own, and they
+  overlapped B1's test in missing and meeting runs alike, both of them in 7 of the 9 missing runs
+  and in 12 of the 17 meeting ones. The Azure region is not the sole decider: on the EPYC 9V74,
+  westus2 and westus3 each ran a missing and a meeting report. On the EPYC 7763 it is unknown: the
+  four missing reports ran in westus and westus2 and the three meeting ones in eastus, eastus2 and
+  westcentralus, a split that a one-sided Fisher test puts at p ≈ 0.03, but one picked after the
+  fact from seven reports.
 
 - **Garbage collection.** Three Chromium traces of B1's loop on the developer machine at
   `0a3116d`, 100 measured frames each, held four minor garbage collections on the page's main
@@ -655,19 +665,20 @@ pixel, and no processor's gate.
 - **What stays unknown.** The CI reports keep no trace, garbage collection or long task of B1's
   frames and no time of each frame, so what slows a frame on a runner that misses, and whether the
   slow frames recur in time, is not known; a trace of B1 on such a runner would tell, and no CI job
-  records one.
+  records one yet, which issue #49 is to do.
 
 - **What it decides.** B1's misses depend on the run, not on its code or on its processor model
   alone. What B1 measures, its budget, its warm-up of 20 frames and the tolerance stay as they are.
-  `docs/performance/baseline.json` names this issue as B1's follow-up while it is open, so a report
-  that misses B1 says `missed, follow-up #41`, and no issue for B2, which every report met; the
-  README, `AGENTS.md`, the engine's README and the architecture overview say the same, and tests
-  read the baseline, the report's rendering of it and this record. Once a processor model has three
-  runs on `main` and its gate is active, a run like 42704460935, at 10.5 ms on an EPYC 9V74, after
-  three runs that met B1 would exceed the 9.6 ms limit, the budget and 20 %, and fail CI with no
-  change of code; the remedy is then more runs or an ADR, as
-  [issue #38 decided](quality.md#what-issue-38-decided), not a wider tolerance in passing. The
-  reports are not recorded in the baseline, which would start a processor's gate.
+  `docs/performance/baseline.json` names issue #49, not this issue, as B1's follow-up, so that it
+  names an open issue once this one closes; issue #49 is to trace B1's frames on a CI runner and
+  find what slows them. A report that misses B1 says `missed, follow-up #49`, and no issue for B2,
+  which every report met; the README, `AGENTS.md`, the engine's README and the architecture
+  overview say the same, and tests read the baseline, the report's rendering of it and this
+  record. Once a processor model has three runs on `main` and its gate is active, a run like
+  42704460935, at 10.5 ms on an EPYC 9V74, after three runs that met B1 would exceed the 9.6 ms
+  limit, the budget and 20 %, and fail CI with no change of code; the remedy is then more runs or
+  an ADR, as [issue #38 decided](quality.md#what-issue-38-decided), not a wider tolerance in
+  passing. The reports are not recorded in the baseline, which would start a processor's gate.
 
 ## What issue #43 decided
 

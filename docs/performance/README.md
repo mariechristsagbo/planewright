@@ -24,7 +24,7 @@ or at an older commit, and a run that the file already holds. `--information` ke
 run, such as a pull request's, as information.
 
 `followUps` names the open issue of each budget that CI still misses, which the report prints beside
-a miss: issue #41 for B1, whose misses vary by run, and none for B2, which every CI report has met.
+a miss: issue #49 for B1, whose misses vary by run, and none for B2, which every CI report has met.
 `npm run perf:tail -- <report.json>...` prints B1's and B2's median and 95th percentile, B1's frames
 of 9 ms or more and the misses per processor model of any CI reports, as
 [what issue #41 decided](../architecture/engine/rendering-and-hit-testing.md#what-issue-41-decided)

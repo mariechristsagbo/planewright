@@ -105,7 +105,7 @@ describe('reportMarkdown with the committed baseline', () => {
     const evaluation = evaluate(measured(0.5, { B1: [10], B2: [5] }), committed, PROCESSOR);
     const markdown = reportMarkdown(evaluation, [], { machine: {}, notes: [] });
     expect(markdown).toContain(
-      '| B1 | Scene layer redraw, 5,000 elements all visible | ≤ 8 ms, 95th percentile | 10 ms | 1 | missed, follow-up #41 |',
+      '| B1 | Scene layer redraw, 5,000 elements all visible | ≤ 8 ms, 95th percentile | 10 ms | 1 | missed, follow-up #49 |',
     );
     expect(markdown).toContain(
       '| B2 | Scene layer redraw while panning, 5,000 elements, a tenth visible | ≤ 4 ms, 95th percentile | 5 ms | 1 | missed | – | – |',

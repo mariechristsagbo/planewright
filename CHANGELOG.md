@@ -143,7 +143,8 @@ release has been published yet.
   canvas with the earlier drawing check. In CI the redraw of 5,000 elements in view met its budget
   in three of the four reports at the pull request's final head, on AMD EPYC 9V45, 7763 and 9V74
   runners, and missed it in the other, on an EPYC 9V74, with the same code: its slow frames vary by
-  run on one processor model (issue #41). The redraw while panning met its budget in every report.
+  run on one processor model (issue #41), and issue #49 follows them. The redraw while panning met
+  its budget in every report.
 - Marquee query (issue #35): box selection keeps, for each scene, one row per element in drawing
   order, with the edges of the element's world bounds and the extent of its outline points,
   computed as the bounds and the points are but without building a point, and scans the rows while
@@ -192,8 +193,10 @@ release has been published yet.
   processor models, and B2 in none. A run that misses has a second group of 9 to 28 of its 100
   frames, 1.35 to 1.48 times as long as the others; one processor model gives both results with the
   same code, and on the AMD EPYC 9V74 the runs that missed were slower at the job's hit-test
-  benchmark too. Neither the warm-up, the order or direction of the frames, the job's other steps
-  and jobs, the Azure region nor, in traces on a developer machine, garbage collection explains it,
-  and what slows such a frame on a runner is not known. The performance report names issue #41 as
-  the follow-up of a missed B1 and no issue for B2, and the entry of issue #34 above and the
-  rendering design record B1's results by run, not by processor model.
+  benchmark too. Neither the order or direction of the frames, the job's other steps and jobs nor,
+  in traces on a developer machine, garbage collection explains it; the warm-up explains at most
+  one of the nine misses, and the Azure region is not the sole decider and is unknown on the AMD
+  EPYC 7763. What slows such a frame on a runner is not known. The performance report names
+  issue #49, which is to trace such frames in CI, as the follow-up of a missed B1 and no issue for
+  B2, and the entry of issue #34 above and the rendering design record B1's results by run, not by
+  processor model.
