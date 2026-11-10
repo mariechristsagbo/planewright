@@ -14,6 +14,7 @@ import { localStorageOf, readPreferences } from './platform/preferences.ts';
 import { browserPorts } from './platform/ports.ts';
 import { indexedDbOf, openStorage } from './platform/storage.ts';
 import { pageTextMeasurer } from './platform/text-measurer.ts';
+import './styles/tokens.css';
 import './styles.css';
 
 const container = document.getElementById('root');
