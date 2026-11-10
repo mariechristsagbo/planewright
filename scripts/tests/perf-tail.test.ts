@@ -86,6 +86,7 @@ describe('processorName', () => {
       'Xeon Platinum 8370C',
     );
     expect(processorName('Test CPU A')).toBe('Test CPU A');
+    expect(processorName('AMD EPYC Processor (with IBPB)')).toBe('AMD EPYC Processor (with IBPB)');
   });
 });
 
