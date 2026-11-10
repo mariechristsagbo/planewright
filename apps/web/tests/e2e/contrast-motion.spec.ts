@@ -16,7 +16,7 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   await expect(elementList(page).getByRole('option')).toHaveCount(2);
   await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
   const contrasts = await textContrasts(page);
-  expect(contrasts.length).toBeGreaterThan(40);
+  // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5).
   expect(contrasts.map(({ text }) => text)).toEqual(
     expect.arrayContaining(['Undo', 'Rectangle', 'Zoom in', 'Elements']),
   );

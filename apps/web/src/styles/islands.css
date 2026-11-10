@@ -1,0 +1,11 @@
+/* The shell's islands and what they hold (ADR 0012, decisions 10 and 13). */
+
+/* The Pre-release tag, which opens About this build (D5); the base keeps its focus ring. */
+.prerelease-tag {
+  padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+  border-radius: var(--pw-rounded-xs);
+  color: var(--pw-color-on-primary-container);
+  background: var(--pw-color-primary-tint);
+  font: var(--pw-type-label-sm);
+  letter-spacing: var(--pw-type-label-sm-tracking);
+}

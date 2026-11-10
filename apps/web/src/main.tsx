@@ -22,6 +22,8 @@ import './styles/page.css';
 import './styles/canvas.css';
 import './styles/element-list.css';
 import './styles/saving.css';
+import './styles/islands.css';
+import './styles/dialog.css';
 
 const container = document.getElementById('root');
 if (container === null) {

@@ -25,3 +25,14 @@ vi.stubGlobal('ResizeObserver', StillResizeObserver);
 Element.prototype.scrollIntoView = function scrollIntoView(): void {
   // Nothing scrolls in jsdom.
 };
+
+// jsdom has no modal dialogs (About this build is one): showing one opens it, and closing it fires
+// its close event, as a browser does.
+HTMLDialogElement.prototype.showModal = function showModal(this: HTMLDialogElement): void {
+  this.setAttribute('open', '');
+};
+HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement): void {
+  if (!this.hasAttribute('open')) return;
+  this.removeAttribute('open');
+  this.dispatchEvent(new Event('close'));
+};

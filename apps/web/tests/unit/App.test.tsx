@@ -1,5 +1,5 @@
 import { PROTOCOL_VERSION } from '@planewright/protocol';
-import { render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { App } from '../../src/App.tsx';
@@ -11,11 +11,21 @@ import { surfaceHarness } from '../support/surface.tsx';
 
 const mount = () => render(<App surface={surfaceHarness().surface} />);
 
+/** Opens About this build through the Pre-release tag, and gives the dialog (ADR 0012, D5). */
+function openAbout(): HTMLElement {
+  act(() => {
+    fireEvent.click(screen.getByRole('button', { name: 'Pre-release' }));
+  });
+  return screen.getByRole('dialog', { name: 'About this build' });
+}
+
 describe('App', () => {
   it('AC states what the build draws and writes, that it saves in this browser and that it has no files or collaboration', () => {
     mount();
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
-    expect(screen.getByRole('status')).toHaveTextContent(BUILD_STATUS);
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(screen.queryByText(BUILD_STATUS)).toBeNull();
+    expect(openAbout()).toHaveTextContent(BUILD_STATUS);
     expect(BUILD_STATUS).toBe(
       'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them; the drawing is saved in this browser, but there are no files or collaboration yet.',
     );
@@ -23,7 +33,8 @@ describe('App', () => {
 
   it('AC lists every capability that is not implemented yet', () => {
     mount();
-    const missing = screen.getByRole('region', { name: 'Not implemented yet' });
+    expect(screen.queryByRole('region', { name: 'Not implemented yet' })).toBeNull();
+    const missing = within(openAbout()).getByRole('region', { name: 'Not implemented yet' });
     expect(NOT_YET_IMPLEMENTED).toHaveLength(5);
     for (const feature of NOT_YET_IMPLEMENTED) {
       expect(missing).toHaveTextContent(feature);
@@ -39,7 +50,8 @@ describe('App', () => {
 
   it('lists what the build contains', () => {
     mount();
-    const contents = screen.getByRole('region', { name: 'What this build contains' });
+    expect(screen.queryByRole('region', { name: 'What this build contains' })).toBeNull();
+    const contents = within(openAbout()).getByRole('region', { name: 'What this build contains' });
     for (const { name } of FOUNDATION_CONTENTS) {
       expect(contents).toHaveTextContent(name);
     }
@@ -92,9 +104,30 @@ describe('App', () => {
 
   it('shows the shared protocol version and the independence notice', () => {
     mount();
+    expect(screen.queryByText(/not affiliated with Excalidraw/)).toBeNull();
+    const about = within(openAbout());
     expect(
-      screen.getByText(new RegExp(`Protocol version ${String(PROTOCOL_VERSION)}`)),
+      about.getByText(new RegExp(`Protocol version ${String(PROTOCOL_VERSION)}`)),
     ).toBeVisible();
-    expect(screen.getByText(/not affiliated with Excalidraw/)).toBeVisible();
+    expect(about.getByText(/MIT licensed/)).toBeVisible();
+    expect(about.getByText(/not affiliated with Excalidraw/)).toBeVisible();
+    expect(about.getByRole('link', { name: 'Source on GitHub' })).toHaveAttribute(
+      'href',
+      'https://github.com/mariechristsagbo/planewright',
+    );
+  });
+
+  it('D5 opens About this build from the Pre-release tag as a modal dialog, which Close closes', () => {
+    mount();
+    const tag = screen.getByRole('button', { name: 'Pre-release' });
+    expect(tag).toHaveAttribute('aria-haspopup', 'dialog');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    const about = openAbout();
+    expect(within(about).getByRole('button', { name: 'Close' })).toHaveFocus();
+    act(() => {
+      fireEvent.click(within(about).getByRole('button', { name: 'Close' }));
+    });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(tag).toHaveFocus();
   });
 });
