@@ -120,3 +120,61 @@ describe('patchHeldFields', () => {
     );
   });
 });
+
+/** A copy of the record whose `key` field is a getter that calls `onRead`, then gives the value. */
+function readingField(
+  value: Readonly<Record<string, unknown>>,
+  key: string,
+  onRead: () => void,
+): Record<string, unknown> {
+  const copy = { ...value };
+  const field = copy[key];
+  Object.defineProperty(copy, key, {
+    enumerable: true,
+    get: () => {
+      onRead();
+      return field;
+    },
+  });
+  return copy;
+}
+
+// A value that runs code when it is read is no JSON value, and no change set holds one (ADR 0010
+// §2); still, each call reports into its own list (issue 45), so that another call, made while one
+// of its values is read, can neither clear nor fill it.
+describe('patchHeldFields, with a value that runs code when it is read', () => {
+  it.each([
+    ['a field too many before it', (style: object) => ({ extra: 1, ...style }), 'stroke'],
+    [
+      'a malformed colour before it',
+      (style: Element['style']) => ({ ...style, stroke: { ...style.stroke, color: 'red' } }),
+      'fill',
+    ],
+  ])(
+    'keeps what a check reported with %s, when another call is made as it reads',
+    (_, broken, key) => {
+      const diamond = held(2);
+      const line = held(3);
+      const inner: (Element | undefined)[] = [];
+      const style = readingField(broken(diamond.style), key, () => {
+        inner.push(patchHeldFields(line, { x: 9 }));
+      });
+      expect(patchHeldFields(diamond, { style })).toBeUndefined();
+      expect(inner).toStrictEqual([{ ...line, x: 9, rev: line.rev + 1 }]);
+      expect(generic(diamond, { style })).toBeUndefined();
+    },
+  );
+
+  it('makes the element of a valid patch whose value makes another call as it is read', () => {
+    const diamond = held(2);
+    const restyled = { ...diamond.style, opacity: 0.5 };
+    const style = readingField(restyled, 'stroke', () => {
+      expect(patchHeldFields(held(3), { x: Number.NaN })).toBeUndefined();
+    });
+    expect(patchHeldFields(diamond, { style })).toStrictEqual({
+      ...diamond,
+      style: restyled,
+      rev: diamond.rev + 1,
+    });
+  });
+});

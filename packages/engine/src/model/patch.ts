@@ -69,16 +69,13 @@ const PATCH_CHECKS = new Map(
   ]),
 );
 
-/** Where the held-field path's checks report: it only counts what they report, from empty. */
-const unread: Issues = [];
-
 /** The value that a patch writes into a field the element holds, checked as the field's own; or INVALID. */
-function heldValue(element: Element, key: string, value: unknown): unknown {
+function heldValue(element: Element, key: string, value: unknown, issues: Issues): unknown {
   const check = PATCH_CHECKS.get(element.kind)?.get(key);
   if (check === undefined || !Object.hasOwn(element, key) || value === null) {
     return INVALID;
   }
-  return check(value, key, unread);
+  return check(value, key, issues);
 }
 
 /**
@@ -88,22 +85,24 @@ function heldValue(element: Element, key: string, value: unknown): unknown {
  * its fields; it is then the element that `patchElement` makes, field order included. The fields
  * that it leaves were checked when the scene took the element and are shared with it, all but the
  * revision, which the scene raises unchecked and which is checked again, as the whole check does.
+ * The checks report into a list of the call's own, which it only counts: no other call, even one
+ * made while a value of the patch is read, can clear or fill it.
  */
 export function patchHeldFields(element: Element, patch: ElementPatch): Element | undefined {
-  unread.length = 0;
-  if (!isRecord(patch) || revision(element.rev, 'rev', unread) === INVALID) {
+  const issues: Issues = [];
+  if (!isRecord(patch) || revision(element.rev, 'rev', issues) === INVALID) {
     return undefined;
   }
   const next: Record<string, unknown> = { ...element };
   for (const key of Object.keys(patch)) {
-    const value = heldValue(element, key, patch[key]);
+    const value = heldValue(element, key, patch[key], issues);
     if (value === INVALID) return undefined;
     next[key] = value;
   }
   // Every field of the kind is there and valid, so the object has the shape of an element.
   const patched = next as unknown as Element;
-  checkAcrossFields(patched, '', unread);
-  if (unread.length > 0) return undefined;
+  checkAcrossFields(patched, '', issues);
+  if (issues.length > 0) return undefined;
   next['rev'] = element.rev + 1;
   return patched;
 }
