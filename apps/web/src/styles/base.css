@@ -56,8 +56,13 @@
   font-size: 0.75rem;
 }
 
+/* 500 is the only emphasis weight (ADR 0012, decision 8), so that no browser synthesises a bold. */
+:where(strong, b, h1, h2, h3, th) {
+  font-weight: 500;
+}
+
 :where(dt) {
-  font-weight: 600;
+  font-weight: 500;
 }
 
 :where(dd) {
