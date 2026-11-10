@@ -80,7 +80,7 @@ export const indexed = (store: SceneStore, element: Element): boolean =>
 
 /** What the report reads about a benchmark beside Vitest's statistics. */
 export interface BenchRecord {
-  /** The budget's row in quality.md, from B5 to B8. */
+  /** The budget's row in quality.md, B5 to B8, or I4 to I6, measurements that are no budget. */
   readonly budget: string;
   readonly seed: number;
   readonly elements: number;
