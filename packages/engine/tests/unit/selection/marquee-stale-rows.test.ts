@@ -69,6 +69,20 @@ describe('kept marquee rows over the benchmarks’ 10,000 elements', () => {
     scansRowsNext(watching, AWAY, all);
   });
 
+  it('are made again by a whole-scene marquee after every element moved and most went', () => {
+    // A sixteenth of the kept rows' number would let the 500 left be answered from candidates.
+    const elements = benchElements();
+    const store = benchStore(elements);
+    const watching = watched(store);
+    expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
+    store.apply(shuttle(elements, 50_000, 0)[0], 'local');
+    const most = store.ordered().slice(500);
+    store.apply(changeSet(most.map((element) => ({ type: 'remove', element }))), 'local');
+    const all = bruteEnclosed(store.ordered(), AWAY);
+    expect(all).toHaveLength(500);
+    scansRowsNext(watching, AWAY, all);
+  });
+
   it('are made again by a whole-scene marquee after most of the elements were added', () => {
     const elements = benchElements();
     const far = elements.slice(0, 32).map((element) => ({ ...element, x: element.x + 50_000 }));
@@ -97,7 +111,14 @@ describe('kept marquee rows over the benchmarks’ 10,000 elements', () => {
   });
 });
 
-const SWEEPS = ['remove all', 'restore', 'move all', 'add many', 'move one'] as const;
+const SWEEPS = [
+  'remove all',
+  'remove most',
+  'restore',
+  'move all',
+  'add many',
+  'move one',
+] as const;
 
 interface Sweep {
   readonly kind: (typeof SWEEPS)[number];
@@ -131,14 +152,16 @@ const moved = (elements: readonly Element[], { dx, dy }: Sweep): ChangeSet =>
     })),
   );
 
-/** The change a sweep makes, keeping in `out` the elements that a removal of all takes out. */
+/** The change a sweep makes, keeping in `out` the elements that the last removal took out. */
 function sweepChanges(store: SceneStore, sweep: Sweep, out: Element[], extra: readonly Element[]) {
   const absent = (elements: readonly Element[]) =>
     elements.filter(({ id }) => store.get(id) === undefined);
   const now = store.ordered();
-  if (sweep.kind === 'remove all') {
-    out.splice(0, out.length, ...now);
-    return removal(store);
+  if (sweep.kind === 'remove all' || sweep.kind === 'remove most') {
+    // Removing most keeps one element in twenty.
+    const gone = sweep.kind === 'remove all' ? now : now.filter((_, at) => at % 20 !== 0);
+    out.splice(0, out.length, ...gone);
+    return changeSet(gone.map((element) => ({ type: 'remove', element })));
   }
   if (sweep.kind === 'restore') return addition(absent(out));
   if (sweep.kind === 'add many') return addition(absent(extra));
