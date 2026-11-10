@@ -6,7 +6,7 @@ import { createAttachmentIndex } from './attachment-index.ts';
 import type { AttachmentIndex } from './attachment-index.ts';
 import type { ChangeOrigin, ChangeSet } from './change-set.ts';
 import { planChangeSet } from './check.ts';
-import type { ChangeError, Plan } from './check.ts';
+import type { ChangeError, Plan, Planned } from './check.ts';
 import { createGroupIndex } from './group-index.ts';
 import type { GroupIndex } from './group-index.ts';
 import { rethrowFirst } from './listener-errors.ts';
@@ -58,7 +58,8 @@ export interface ApplyOptions {
 export interface SceneStore extends SceneReader {
   /**
    * Applies the whole set, or throws a {@link ChangeSetError} and changes nothing. Once the set is
-   * applied every listener is told, and the first error a listener threw is then rethrown.
+   * applied every listener is told, and the first error a listener threw is then rethrown. While
+   * the store plans a set or tells its listeners of one, it throws instead of applying another.
    */
   apply(changes: ChangeSet, origin: ChangeOrigin, options?: ApplyOptions): void;
   subscribe(listener: (update: SceneUpdate) => void): Cancel;
@@ -90,6 +91,8 @@ interface Scene {
   ordered: readonly Element[] | undefined;
   /** Whether listeners are being told of a set. */
   notifying: boolean;
+  /** Whether a set is being planned, during which reading one of its values may run code. */
+  planning: boolean;
 }
 
 /** Step 2: the checked plan is applied, and the indexes follow the changed elements only. */
@@ -126,6 +129,20 @@ function notify(scene: Scene, update: SceneUpdate): void {
   rethrowFirst(failures);
 }
 
+/**
+ * Step 1, during which the store applies no other set. A change set holds JSON values only, but a
+ * value that runs code when the check reads it could otherwise apply a set to the store, which the
+ * plan would not see; the flag is lowered however planning ends, even by a throw.
+ */
+function plan(scene: Scene, changes: ChangeSet, origin: ChangeOrigin): Planned {
+  scene.planning = true;
+  try {
+    return planChangeSet(scene, changes, origin);
+  } finally {
+    scene.planning = false;
+  }
+}
+
 function apply(
   scene: Scene,
   changes: ChangeSet,
@@ -135,7 +152,10 @@ function apply(
   if (scene.notifying) {
     throw new Error('A scene update listener cannot apply a change set while it is notified.');
   }
-  const planned = planChangeSet(scene, changes, origin);
+  if (scene.planning) {
+    throw new Error('The scene store cannot apply a change set while it is planning one.');
+  }
+  const planned = plan(scene, changes, origin);
   if (!planned.ok) {
     throw new ChangeSetError(planned.errors);
   }
@@ -168,7 +188,7 @@ const documentOf = (scene: Scene): DocumentState => ({
  * applying it as a `load` change set. Applying is atomic: the set is checked whole first, then
  * applied, then one {@link SceneUpdate} goes to each listener in turn, even after one throws. A
  * listener may not apply a change set of its own while it is told of one, since every set is
- * complete before it is applied.
+ * complete before it is applied, and nothing may apply one while the store plans a set.
  */
 export function createSceneStore(canvas: CanvasState): SceneStore {
   const scene: Scene = {
@@ -182,6 +202,7 @@ export function createSceneStore(canvas: CanvasState): SceneStore {
     rev: 0,
     ordered: undefined,
     notifying: false,
+    planning: false,
   };
   return {
     get rev() {

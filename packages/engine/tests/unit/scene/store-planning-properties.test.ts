@@ -13,11 +13,13 @@ import { checkProperty } from '../../support/property.ts';
 import { readThrough } from '../../support/read-hooks.ts';
 import { AUTHOR } from '../../support/scene-state.ts';
 import { chance, pick } from '../../support/scenes.ts';
-import { edit, fixtureStore, present } from '../../support/stores.ts';
+import { PLANNING_REFUSAL, moveLine } from '../../support/planning-sets.ts';
+import { fixtureStore, present } from '../../support/stores.ts';
 
 // Mixed change sets of valid and refused changes (issue 45), applied once as plain JSON and once
 // read through getters that run code at every read of a field or an item: the store must plan
-// both alike, whatever that code applies to another store meanwhile.
+// both alike, whatever that code applies to another store meanwhile, and refuse every set that it
+// tries to apply to the store planning them.
 
 const ORIGINS: readonly ChangeOrigin[] = ['local', 'history', 'load', 'remote'];
 
@@ -85,11 +87,16 @@ interface Outcome {
   readonly told: number;
 }
 
-function outcome(document: DocumentState, changes: ChangeSet, origin: ChangeOrigin): Outcome {
+/** Loads the document, applies the set made for that store, and says what happened. */
+function outcome(
+  document: DocumentState,
+  setFor: (store: SceneStore) => ChangeSet,
+  origin: ChangeOrigin,
+): Outcome {
   const watched = loaded(document);
   let refused: Outcome['refused'];
   try {
-    watched.store.apply(changes, origin);
+    watched.store.apply(setFor(watched.store), origin);
   } catch (error) {
     refused =
       error instanceof ChangeSetError
@@ -99,9 +106,26 @@ function outcome(document: DocumentState, changes: ChangeSet, origin: ChangeOrig
   return { refused, document: watched.store.document(), told: watched.told };
 }
 
-/** Moves the fixture's line one unit right, from where the store holds it now. */
-const moveLine = (store: SceneStore): void => {
-  store.apply(edit(store, 3, { x: present(store, 3).x + 1 }), 'local');
+/** The same outcome: the same reasons or error, the same document, field order included. */
+function expectSame(actual: Outcome, expected: Outcome): void {
+  expect(actual).toStrictEqual(expected);
+  expect(JSON.stringify([...actual.document.elements])).toBe(
+    JSON.stringify([...expected.document.elements]),
+  );
+}
+
+/** What an apply tried from a getter did: the text of its error, or that it applied. */
+function tried(store: SceneStore): string {
+  try {
+    moveLine(store);
+    return 'applied';
+  } catch (error) {
+    return error instanceof ChangeSetError ? 'refused as a set' : (error as Error).message;
+  }
+}
+
+const counted = (counts: Record<'applied' | 'refused', number>, expected: Outcome): void => {
+  counts[expected.refused === undefined ? 'applied' : 'refused'] += 1;
 };
 
 describe('the scene store, planning sets read through getters', () => {
@@ -111,26 +135,51 @@ describe('the scene store, planning sets read through getters', () => {
     () => {
       const counts = { applied: 0, refused: 0, reads: 0 };
       checkProperty({ seed: 4501, runs: 40 }, anyRun, ({ document, changes, origin }) => {
-        const expected = outcome(document, changes, origin);
+        const expected = outcome(document, () => changes, origin);
         const other = fixtureStore();
         let reads = 0;
         const hooked = readThrough(changes, () => {
           reads += 1;
           moveLine(other);
         });
-        const actual = outcome(document, hooked, origin);
-        expect(actual).toStrictEqual(expected);
-        expect(JSON.stringify([...actual.document.elements])).toBe(
-          JSON.stringify([...expected.document.elements]),
+        expectSame(
+          outcome(document, () => hooked, origin),
+          expected,
         );
         expect({ rev: other.rev, x: present(other, 3).x }).toStrictEqual({
           rev: 1 + reads,
           x: 300 + reads,
         });
-        counts[expected.refused === undefined ? 'applied' : 'refused'] += 1;
+        counted(counts, expected);
         counts.reads += reads;
       });
       // Both outcomes ran often, and every run read its set through the getters.
+      expect(counts.applied).toBeGreaterThan(5);
+      expect(counts.refused).toBeGreaterThan(5);
+      expect(counts.reads).toBeGreaterThan(40 * 10);
+    },
+  );
+
+  it(
+    'plans each mixed set as its plain JSON, refusing every apply that a read tries on the same store',
+    { timeout: 60_000 },
+    () => {
+      const counts = { applied: 0, refused: 0, reads: 0 };
+      checkProperty({ seed: 4502, runs: 40 }, anyRun, ({ document, changes, origin }) => {
+        const expected = outcome(document, () => changes, origin);
+        const results = new Map<string, number>();
+        const hookedFor = (store: SceneStore): ChangeSet =>
+          readThrough(changes, () => {
+            const result = tried(store);
+            results.set(result, (results.get(result) ?? 0) + 1);
+          });
+        expectSame(outcome(document, hookedFor, origin), expected);
+        const [result, reads] = [...results][0] ?? ['none', 0];
+        expect(results.size).toBe(1);
+        expect(result).toContain(PLANNING_REFUSAL);
+        counted(counts, expected);
+        counts.reads += reads;
+      });
       expect(counts.applied).toBeGreaterThan(5);
       expect(counts.refused).toBeGreaterThan(5);
       expect(counts.reads).toBeGreaterThan(40 * 10);
