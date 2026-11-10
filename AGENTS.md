@@ -14,7 +14,7 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names. Every performance
   budget is measured: Vitest benchmarks, Playwright measurements and a bundle-size guardrail,
   reported in CI, and the heap by hand; B1, the redraw of 5,000 elements in view, misses its budget
-  in some CI runs and is named with issue #41, and B2 misses only on a slower machine. The baseline
+  in some CI runs and is named with issue #49, and B2 misses only on a slower machine. The baseline
   holds three runs on `main`, one on each of three processors, and a run is gated only by three runs
   on its own processor, so CI does not gate the statistical budgets yet. The web app shows a
   **pre-release** surface: a canvas that pans and zooms, on which rectangles, ellipses, diamonds,

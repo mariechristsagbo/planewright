@@ -21,10 +21,9 @@ bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets 
 slower machine, and they went to issues #34 to #36
 ([what ENG-15 decided](quality.md#what-eng-15-decided)). Issue #34 has since made the scene layer's
 redraw cheaper ([what issue #34 decided](rendering-and-hit-testing.md#what-issue-34-decided)): B2 is
-met in every CI report, as before, and B1 in most; B1's misses vary by run on one processor model,
-and issue #41 follows them
-([what issue #41 decided](rendering-and-hit-testing.md#what-issue-41-decided)). Issue #35 has since
-brought the marquee query within B6 in CI
+met in every CI report, as before, and B1 in most; B1's misses vary by run on one processor model
+([what issue #41 decided](rendering-and-hit-testing.md#what-issue-41-decided)), and issue #49
+follows them. Issue #35 has since brought the marquee query within B6 in CI
 ([what issue #35 decided](rendering-and-hit-testing.md#what-issue-35-decided)), and issue #36 a
 change set that moves 1,000 elements within B7 in CI
 ([what issue #36 decided](scene-and-viewport.md#what-issue-36-decided)). Issue #43 makes the
