@@ -251,9 +251,9 @@ above leave open:
   active and shows the stored camera and selection; anything else leaves the notice in place.
   `keep` saves the committed copy as a replacement.
 - **Measuring texts again.** `Editor.measureTexts`, which the web app calls when the page's fonts
-  finish loading a face, measures every text through the text port and updates those whose size
-  changed, keeping their origin, in one `local` change set that is no undo step and that autosave
-  saves. It waits while a gesture or a text session holds the history's transaction. An undo
+  finish loading a face of a canvas family (never for the chrome's Planewright UI alone, ADR 0012
+  decision 8), measures every text through the text port and updates those whose size changed,
+  keeping their origin, in one `local` change set that is no undo step and that autosave saves. It waits while a gesture or a text session holds the history's transaction. An undo
   afterwards puts back the size its entry recorded, which the next measuring or edit corrects.
   Stored texts are not measured at load: a stored size stays as it was measured until a font loads
   or the text is edited, as [ADR 0011](../../adr/0011-bundled-open-licence-fonts.md) says.
