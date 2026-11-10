@@ -22,3 +22,34 @@
   font-display: block;
   src: url('/fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');
 }
+
+/*
+ * The chrome's family (ADR 0012, decision 8, which amends ADR 0011): Inter 400 at the canvas's own
+ * URL, so that the file is downloaded once, and Inter 500, each shown in the fallback until it has
+ * loaded. loadFonts() does not wait for them, and canvas text never uses them.
+ */
+@font-face {
+  font-family: 'Planewright UI';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Planewright UI';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/inter-latin-500-normal.woff2') format('woff2');
+}
+
+/* A local face sized to Inter's metrics, so that the chrome barely moves when Inter arrives. */
+@font-face {
+  font-family: 'Planewright UI Fallback';
+  src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+  size-adjust: 106.8%;
+  ascent-override: 90.7%;
+  descent-override: 22.6%;
+  line-gap-override: 0%;
+}

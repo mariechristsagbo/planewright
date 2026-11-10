@@ -3,15 +3,13 @@
  * :where(), at no specificity, so that a rule with a single class always wins over it.
  */
 
-/* P0 ships the light theme only (ENG-15): an operating system's dark preference changes nothing. */
+/*
+ * P0 ships the light theme only (ENG-15): an operating system's dark preference changes
+ * nothing. The page's text is in the chrome's family, Planewright UI (ADR 0012, decision 8).
+ */
 :root {
   color-scheme: light;
-  font-family:
-    system-ui,
-    -apple-system,
-    'Segoe UI',
-    Roboto,
-    sans-serif;
+  font-family: var(--pw-font-ui);
   line-height: 1.5;
   color: #111827;
   background-color: #f9fafb;
