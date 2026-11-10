@@ -26,16 +26,17 @@ function boundsOf(points: readonly Point[]): Bounds {
   if (points.length === 0) {
     throw new RangeError('A point element needs at least one point.');
   }
-  let bounds = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
   for (const { x, y } of points) {
-    bounds = {
-      minX: Math.min(bounds.minX, x),
-      minY: Math.min(bounds.minY, y),
-      maxX: Math.max(bounds.maxX, x),
-      maxY: Math.max(bounds.maxY, y),
-    };
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x);
+    maxY = Math.max(maxY, y);
   }
-  return bounds;
+  return { minX, minY, maxX, maxY };
 }
 
 /** The width and height of the box around the points: a point element's derived size. */
