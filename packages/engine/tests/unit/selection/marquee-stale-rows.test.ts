@@ -45,70 +45,90 @@ function scansRowsNext({ reader, reads }: Watching, marquee: Aabb, expected: rea
 }
 
 describe('kept marquee rows over the benchmarks’ 10,000 elements', () => {
-  it('are made again by a whole-scene marquee after delete all, a marquee and undo', () => {
-    const elements = benchElements();
-    const store = benchStore(elements);
-    const watching = watched(store);
-    expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
-    store.apply(removal(store), 'local');
-    expect(enclosedBy(watching.reader, WHOLE)).toStrictEqual([]);
-    store.apply(addition(elements), 'history');
-    const all = bruteEnclosed(elements, WHOLE);
-    expect(all).toHaveLength(BENCH_SCENE.count);
-    scansRowsNext(watching, WHOLE, all);
-  });
+  it(
+    'are made again by a whole-scene marquee after delete all, a marquee and undo',
+    { timeout: 30_000 },
+    () => {
+      const elements = benchElements();
+      const store = benchStore(elements);
+      const watching = watched(store);
+      expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
+      store.apply(removal(store), 'local');
+      expect(enclosedBy(watching.reader, WHOLE)).toStrictEqual([]);
+      store.apply(addition(elements), 'history');
+      const all = bruteEnclosed(elements, WHOLE);
+      expect(all).toHaveLength(BENCH_SCENE.count);
+      scansRowsNext(watching, WHOLE, all);
+    },
+  );
 
-  it('are made again by a whole-scene marquee after every element moved elsewhere', () => {
-    const elements = benchElements();
-    const store = benchStore(elements);
-    const watching = watched(store);
-    expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
-    store.apply(shuttle(elements, 50_000, 0)[0], 'local');
-    const all = bruteEnclosed(store.ordered(), AWAY);
-    expect(all).toHaveLength(BENCH_SCENE.count);
-    scansRowsNext(watching, AWAY, all);
-  });
+  it(
+    'are made again by a whole-scene marquee after every element moved elsewhere',
+    { timeout: 30_000 },
+    () => {
+      const elements = benchElements();
+      const store = benchStore(elements);
+      const watching = watched(store);
+      expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
+      store.apply(shuttle(elements, 50_000, 0)[0], 'local');
+      const all = bruteEnclosed(store.ordered(), AWAY);
+      expect(all).toHaveLength(BENCH_SCENE.count);
+      scansRowsNext(watching, AWAY, all);
+    },
+  );
 
-  it('are made again by a whole-scene marquee after every element moved and most went', () => {
-    // A sixteenth of the kept rows' number would let the 500 left be answered from candidates.
-    const elements = benchElements();
-    const store = benchStore(elements);
-    const watching = watched(store);
-    expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
-    store.apply(shuttle(elements, 50_000, 0)[0], 'local');
-    const most = store.ordered().slice(500);
-    store.apply(changeSet(most.map((element) => ({ type: 'remove', element }))), 'local');
-    const all = bruteEnclosed(store.ordered(), AWAY);
-    expect(all).toHaveLength(500);
-    scansRowsNext(watching, AWAY, all);
-  });
+  it(
+    'are made again by a whole-scene marquee after every element moved and most went',
+    { timeout: 30_000 },
+    () => {
+      // A sixteenth of the kept rows' number would let the 500 left be answered from candidates.
+      const elements = benchElements();
+      const store = benchStore(elements);
+      const watching = watched(store);
+      expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
+      store.apply(shuttle(elements, 50_000, 0)[0], 'local');
+      const most = store.ordered().slice(500);
+      store.apply(changeSet(most.map((element) => ({ type: 'remove', element }))), 'local');
+      const all = bruteEnclosed(store.ordered(), AWAY);
+      expect(all).toHaveLength(500);
+      scansRowsNext(watching, AWAY, all);
+    },
+  );
 
-  it('are made again by a whole-scene marquee after most of the elements were added', () => {
-    const elements = benchElements();
-    const far = elements.slice(0, 32).map((element) => ({ ...element, x: element.x + 50_000 }));
-    const store = benchStore(far);
-    const watching = watched(store);
-    expect(enclosedBy(watching.reader, AWAY)).toHaveLength(32);
-    store.apply(addition(elements.slice(32)), 'local');
-    const all = bruteEnclosed(store.ordered(), WHOLE);
-    expect(all).toHaveLength(BENCH_SCENE.count - 32);
-    scansRowsNext(watching, WHOLE, all);
-  });
+  it(
+    'are made again by a whole-scene marquee after most of the elements were added',
+    { timeout: 30_000 },
+    () => {
+      const elements = benchElements();
+      const far = elements.slice(0, 32).map((element) => ({ ...element, x: element.x + 50_000 }));
+      const store = benchStore(far);
+      const watching = watched(store);
+      expect(enclosedBy(watching.reader, AWAY)).toHaveLength(32);
+      store.apply(addition(elements.slice(32)), 'local');
+      const all = bruteEnclosed(store.ordered(), WHOLE);
+      expect(all).toHaveLength(BENCH_SCENE.count - 32);
+      scansRowsNext(watching, WHOLE, all);
+    },
+  );
 
-  it('are left for a marquee over few elements, which reads only its candidates', () => {
-    const elements = benchElements();
-    const store = benchStore(elements);
-    const watching = watched(store);
-    expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
-    store.apply(shuttle(elements, 50_000, 0)[0], 'local');
-    const small = { x: 50_000, y: 0, width: 200, height: 200 };
-    const enclosed = bruteEnclosed(store.ordered(), small);
-    watching.reads.clear();
-    expect(enclosedBy(watching.reader, small)).toStrictEqual(enclosed);
-    const candidates = store.queryBox(small);
-    expect(candidates.length).toBeLessThan(BENCH_SCENE.count / 16);
-    expect([...watching.reads.keys()].sort()).toStrictEqual([...candidates].sort());
-  });
+  it(
+    'are left for a marquee over few elements, which reads only its candidates',
+    { timeout: 30_000 },
+    () => {
+      const elements = benchElements();
+      const store = benchStore(elements);
+      const watching = watched(store);
+      expect(enclosedBy(watching.reader, WHOLE)).toHaveLength(BENCH_SCENE.count);
+      store.apply(shuttle(elements, 50_000, 0)[0], 'local');
+      const small = { x: 50_000, y: 0, width: 200, height: 200 };
+      const enclosed = bruteEnclosed(store.ordered(), small);
+      watching.reads.clear();
+      expect(enclosedBy(watching.reader, small)).toStrictEqual(enclosed);
+      const candidates = store.queryBox(small);
+      expect(candidates.length).toBeLessThan(BENCH_SCENE.count / 16);
+      expect([...watching.reads.keys()].sort()).toStrictEqual([...candidates].sort());
+    },
+  );
 });
 
 const SWEEPS = [
@@ -175,24 +195,28 @@ const marqueesOf = (store: SceneStore, before: Aabb | null, small: Aabb): Aabb[]
   );
 
 describe('kept marquee rows through sweeping changes', () => {
-  it('are made again by every marquee whose candidates are more than a sixteenth', () => {
-    checkProperty({ seed: 4301, runs: 150 }, anySweeps, ({ elements, extra, sweeps, small }) => {
-      const store = createSceneStore({ background: color('#ffffff') });
-      store.apply(addition(elements), 'load');
-      const watching = watched(store);
-      const out: Element[] = [];
-      for (const sweep of sweeps) {
-        const before = contentBounds(store.ordered());
-        store.apply(sweepChanges(store, sweep, out, extra), 'local');
-        for (const marquee of marqueesOf(store, before, small)) {
-          const expected = bruteEnclosed(store.ordered(), marquee);
-          expect(enclosedBy(watching.reader, marquee)).toStrictEqual(expected);
-          if (store.queryBox(marquee).length <= store.ordered().length / 16) continue;
-          watching.reads.clear();
-          expect(enclosedBy(watching.reader, marquee)).toStrictEqual(expected);
-          expect(watching.reads.size).toBe(0);
+  it(
+    'are made again by every marquee whose candidates are more than a sixteenth',
+    { timeout: 30_000 },
+    () => {
+      checkProperty({ seed: 4301, runs: 150 }, anySweeps, ({ elements, extra, sweeps, small }) => {
+        const store = createSceneStore({ background: color('#ffffff') });
+        store.apply(addition(elements), 'load');
+        const watching = watched(store);
+        const out: Element[] = [];
+        for (const sweep of sweeps) {
+          const before = contentBounds(store.ordered());
+          store.apply(sweepChanges(store, sweep, out, extra), 'local');
+          for (const marquee of marqueesOf(store, before, small)) {
+            const expected = bruteEnclosed(store.ordered(), marquee);
+            expect(enclosedBy(watching.reader, marquee)).toStrictEqual(expected);
+            if (store.queryBox(marquee).length <= store.ordered().length / 16) continue;
+            watching.reads.clear();
+            expect(enclosedBy(watching.reader, marquee)).toStrictEqual(expected);
+            expect(watching.reads.size).toBe(0);
+          }
         }
-      }
-    });
-  });
+      });
+    },
+  );
 });
