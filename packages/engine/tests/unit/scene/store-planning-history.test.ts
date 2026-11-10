@@ -20,9 +20,10 @@ import { AUTHOR } from '../../support/scene-state.ts';
 import { expectNoneWritten, expectUnchanged, heldBy } from '../../support/store-model.ts';
 import { edit, fixtureStore, present } from '../../support/stores.ts';
 
-// The history's transaction, previewing or committing from a value that runs code while the store
-// plans a set (issue 45): the store refuses its apply as it refuses any other, so the transaction
-// and the history stay as they were, and the transaction still commits its previews afterwards.
+// The history, previewing, committing, undoing or redoing from a value that runs code while the
+// store plans a set (issue 45): the store refuses its apply as it refuses any other, so the
+// transaction and the history stay as they were, and the transaction still commits its previews
+// afterwards.
 
 const STAMP = { author: AUTHOR, seq: 45 };
 
@@ -133,6 +134,40 @@ describe('a history transaction, called while the store plans a set', () => {
       expect(told).toHaveLength(1);
       expect(flags(history)).toStrictEqual([true, false, false]);
       expect(transaction.commit('move')).toStrictEqual(movedLineEntry());
+    },
+  );
+
+  it.each(['undo', 'redo'] as const)(
+    'cannot %s while the store plans a set, and leaves the stacks as they were',
+    (step) => {
+      const { store, told } = watched();
+      const history = historyOver(store);
+      const transaction = history.begin();
+      transaction.preview(edit(store, 3, { x: 900 }));
+      transaction.commit('move');
+      if (step === 'redo') history.undo();
+      const held = heldBy(store);
+      const [before, toldBefore] = [flags(history), told.length];
+      const refusals: unknown[] = [];
+      const style = readingStyle(
+        present(store, 2).style,
+        () => {
+          refusals.push(thrownBy(() => history[step]()));
+        },
+        true,
+      );
+      const thrown = thrownBy(() => {
+        store.apply(edit(store, 2, { style }), 'local');
+      });
+      expect((thrown as ChangeSetError).errors).toStrictEqual([
+        { path: 'elements[0].after.style.extra', problem: 'unknown-field' },
+      ]);
+      expectRefusedForPlanning(refusals);
+      expectUnchanged(store, held);
+      expect(told).toHaveLength(toldBefore);
+      expect(flags(history)).toStrictEqual(before);
+      expect(history[step]()).not.toBeNull();
+      expect(present(store, 3).x).toBe(step === 'undo' ? 300 : 900);
     },
   );
 });
