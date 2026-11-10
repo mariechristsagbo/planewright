@@ -2,6 +2,8 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import { fixtureRecords, referenceCalls } from './scene-fixture.ts';
+import { storedRecords } from './storage.ts';
+import type { StoredRecords } from './storage.ts';
 import { canvasBox } from './support.ts';
 
 // The scene layer's pixels (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-34-decided):
@@ -134,3 +136,36 @@ for (const ratio of [1, 2]) {
     });
   });
 }
+
+/** The stored revision, and each stored text's id and size. */
+function storedTexts({ documents, elements }: StoredRecords) {
+  const texts = elements.flatMap(({ element }) => {
+    const { id, kind, width, height } = element as Readonly<Record<string, unknown>>;
+    return kind === 'text' ? [{ id, width, height }] : [];
+  });
+  return { rev: documents[0]?.['rev'], texts };
+}
+
+/** Whether the chrome's 500 face, which no canvas text uses, has loaded. */
+const CHROME_500_LOADED = `[...document.fonts].some((face) =>
+  face.family.replaceAll(/["']/g, '') === 'Planewright UI' && face.weight === '500' && face.status === 'loaded')`;
+
+// The S1 review's m3 (issue #55, A12): the chrome's faces load after the editor starts, and none
+// of them draws canvas text, so their arrival measures no text again and saves nothing; the
+// fixture's texts are not sized as the canvas font measures them, so a new measure would change
+// them and autosave would write them within its one-second limit.
+test('a chrome face that loads after start-up measures no text again and saves nothing', async ({
+  page,
+}) => {
+  const { record, elements } = fixtureRecords(DOCUMENT_ID);
+  // The records as the fixture stores them, plain data as IndexedDB keeps it.
+  const stored = storedTexts(
+    JSON.parse(JSON.stringify({ documents: [record], elements })) as StoredRecords,
+  );
+  expect(stored.texts.length).toBeGreaterThan(0);
+  await openFixture(page);
+  await page.evaluate(`document.fonts.load('500 16px "Planewright UI"')`);
+  await page.waitForFunction(CHROME_500_LOADED);
+  await page.waitForTimeout(1_500);
+  expect(storedTexts(await storedRecords(page))).toEqual(stored);
+});
