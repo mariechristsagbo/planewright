@@ -133,6 +133,31 @@ export const PERF_INFO: readonly PerfInfo[] = [
     source: 'bench',
     reference: 'the part of a pan step that the element list spends on names',
   },
+  {
+    id: 'I4',
+    label: 'First whole-scene marquee query after one of 10,000 elements moved',
+    unit: 'ms',
+    statistic: 'p95',
+    source: 'bench',
+    reference:
+      "B6's 2 ms, which times queries of an unchanged scene only; a marquee's release follows a change",
+  },
+  {
+    id: 'I5',
+    label: 'First whole-scene marquee query after 1,000 of 10,000 elements moved',
+    unit: 'ms',
+    statistic: 'p95',
+    source: 'bench',
+    reference: "B6's 2 ms, as I4; the rows of the moved elements are made again",
+  },
+  {
+    id: 'I6',
+    label: 'First whole-scene marquee query of 10,000 elements just loaded',
+    unit: 'ms',
+    statistic: 'p95',
+    source: 'bench',
+    reference: "B6's 2 ms, as I4; every row is made",
+  },
 ];
 
 /** The value at share `p` of the sorted samples, interpolated linearly between the closest ranks. */
