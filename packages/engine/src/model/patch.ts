@@ -24,8 +24,12 @@ export const patchValue = (element: Element, key: string): unknown =>
   Object.hasOwn(element, key) ? fields(element)[key] : null;
 
 /** Whether each field of the patch holds the element's current value, null meaning absent. */
-export const matchesPatch = (element: Element, patch: ElementPatch): boolean =>
-  Object.entries(patch).every(([key, value]) => jsonEqual(patchValue(element, key), value));
+export function matchesPatch(element: Element, patch: ElementPatch): boolean {
+  for (const key of Object.keys(patch)) {
+    if (!jsonEqual(patchValue(element, key), patch[key])) return false;
+  }
+  return true;
+}
 
 /**
  * The element's fields with the patch applied, unchecked: each field of the patch set to its
