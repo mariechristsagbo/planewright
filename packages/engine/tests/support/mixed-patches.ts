@@ -121,7 +121,8 @@ const RESHAPING: readonly PatchOf[] = [
 const BROKEN: readonly PatchOf[] = [
   () => ({ foo: 1 }),
   () => JSON.parse('{"__proto__":{"x":1},"y":2}') as ElementPatch,
-  (random) => pick(random, [{ constructor: 1 }, { toString: 'x' }, { hasOwnProperty: null }]),
+  (random) =>
+    pick<ElementPatch>(random, [{ constructor: 1 }, { toString: 'x' }, { hasOwnProperty: null }]),
   (random, element) => pick(random, [{ id: element.id }, { kind: 'ellipse' }, { rev: 3 }]),
   (random) => pick(random, [{ x: null }, { style: null }, { order: null }]),
   (random, { y }) => ({
