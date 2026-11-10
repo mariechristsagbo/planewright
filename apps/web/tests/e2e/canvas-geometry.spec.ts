@@ -51,11 +51,25 @@ const CASES = [
   },
 ] as const;
 
+/**
+ * Makes the canvas host 60 % of the viewport's height as soon as it is in the page, as P0's page
+ * did: 540.6 px of 901, so that the scene canvas's height is fractional, which a host as tall as
+ * the viewport never is (ADR 0012's row for this spec). Set before the editor first sizes, it
+ * leaves the camera at the scene's origin, which a later resize would move to keep the centre.
+ */
+const FRACTIONAL_HOST = `new MutationObserver((_, observer) => {
+  const host = document.getElementById('drawing-canvas');
+  if (host === null) return;
+  host.style.height = '60vh';
+  observer.disconnect();
+}).observe(document, { childList: true, subtree: true });`;
+
 for (const { name, deviceScaleFactor, height, fractional } of CASES) {
   test.describe(`at ${name}`, () => {
     test.use({ deviceScaleFactor, viewport: { width: 1280, height } });
 
     test.beforeEach(async ({ page }) => {
+      if (fractional) await page.addInitScript(FRACTIONAL_HOST);
       await page.goto('/');
       await expect(readout(page)).toHaveText('View: x 0, y 0, zoom 100%');
       await expectInsideBorder(page);

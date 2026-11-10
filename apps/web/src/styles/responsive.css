@@ -1,0 +1,51 @@
+/*
+ * The layout's media queries (ADR 0012, decision 14, and the v0.2 plan's responsive rules 1 to 4).
+ * They live in this style sheet alone, which main.tsx adds as a style element of its own: when a
+ * style sheet's media queries change their result, as a resize across a breakpoint makes them,
+ * Chromium recreates every font face that the same style sheet declares, and the canvas's faces
+ * would load again, so that every text would be measured again. The bundled style sheet, which
+ * declares the fonts, therefore holds no media query.
+ */
+/* Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices. */
+@media (max-width: 1199px) {
+  .editor-shell {
+    padding: var(--pw-spacing-md);
+  }
+
+  .editor-shell > .notices {
+    width: min(320px, 100%);
+  }
+
+  .wordmark {
+    display: none;
+  }
+}
+
+/* A phone in portrait, under 600 px wide: 8 px anchors, the tool bar in a row of its own. */
+@media (max-width: 599px) {
+  .editor-shell {
+    grid-template-areas:
+      'identity . top-right'
+      'tools tools tools'
+      'notices notices notices'
+      'drawer drawer drawer'
+      'bottom bottom bottom';
+    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    padding: var(--pw-spacing-sm);
+  }
+
+  .editor-shell > .notices {
+    width: 100%;
+  }
+}
+
+/* A phone in landscape, under 500 px high, after the compact rules: 8 px anchors. */
+@media (max-height: 499px) {
+  .editor-shell {
+    padding: var(--pw-spacing-sm);
+  }
+
+  .editor-shell > .notices {
+    width: min(300px, 100%);
+  }
+}

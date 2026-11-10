@@ -79,8 +79,12 @@ test('D3 the chrome computes Planewright UI first and is drawn in Inter at 400 a
   await expect
     .poll(() => page.evaluate<string[]>(LOADED))
     .toEqual(expect.arrayContaining(['Planewright UI 400', 'Planewright UI 500']));
-  expect(await renderedFonts(page, '[role="toolbar"] button')).toEqual([
+  // The islands set their buttons in the text buttons' 500 and the view readout in 400 (ADR 0012).
+  expect(await renderedFonts(page, '#view-readout')).toEqual([
     { familyName: 'Inter', isCustomFont: true },
+  ]);
+  expect(await renderedFonts(page, '[role="toolbar"] button')).toEqual([
+    { familyName: 'Inter Medium', isCustomFont: true },
   ]);
   expect(await renderedFonts(page, 'h1')).toEqual([
     { familyName: 'Inter Medium', isCustomFont: true },

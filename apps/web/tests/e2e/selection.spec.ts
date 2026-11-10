@@ -36,7 +36,8 @@ test('REQ-S06 a drag from the empty canvas draws a marquee and never pans, even 
   const box = await canvasBox(page);
   await canvas(page).focus();
   await page.keyboard.down('Space');
-  await page.getByRole('heading', { level: 1, name: 'Planewright' }).click();
+  // A press on the view readout, which nothing else answers, takes the focus off the canvas.
+  await readout(page).click();
   await page.keyboard.up('Space');
   await page.mouse.move(box.x + 400, box.y + 300);
   await page.mouse.down();

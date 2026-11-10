@@ -18,6 +18,8 @@
   padding: 0.5rem 0.75rem;
   border: 2px solid #b3261e;
   border-radius: 0.375rem;
+  /* Over the canvas, under the top-right island (ADR 0012, decision 13); S7 restyles notices. */
+  background: var(--pw-color-surface);
 }
 
 .notice p {

@@ -86,6 +86,41 @@ test('E2 D5 C3 REQ-Y02 Escape in the text area gives the focus back to the canva
   await expect((await openElements(page)).getByRole('option')).toHaveText([/^Text “Hi”, /u]);
 });
 
+test('A5 REQ-Y02 while storage needs attention, the notices’ buttons come between the canvas and Elements', async ({
+  context,
+  page,
+}) => {
+  await openPage(page);
+  await canvas(page).focus();
+  await page.keyboard.press('r');
+  await page.keyboard.press('Enter');
+  await expectSaved(page);
+  const second = await context.newPage();
+  await openPage(second);
+  await canvas(second).focus();
+  await second.keyboard.press('o');
+  await second.keyboard.press('Enter');
+  await expectSaved(second);
+
+  await page.bringToFront();
+  await canvas(page).focus();
+  await page.keyboard.press('ArrowRight');
+  const notices = storageNotices(page);
+  const load = notices.getByRole('button', { name: 'Load the newer version' });
+  await expect(load).toBeVisible();
+  await canvas(page).focus();
+  const keep = notices.getByRole('button', { name: 'Keep this version' });
+  for (const stop of [load, keep, elementsToggle(page), button(page, 'Undo')]) {
+    await page.keyboard.press('Tab');
+    await expect(stop).toBeFocused();
+    await expectIndicator(page);
+  }
+  for (const stop of [elementsToggle(page), keep, load, canvas(page)]) {
+    await page.keyboard.press('Shift+Tab');
+    await expect(stop).toBeFocused();
+  }
+});
+
 test('E2 C3 REQ-Y02 Undo and Redo keep the focus when they become unavailable', async ({
   page,
 }) => {

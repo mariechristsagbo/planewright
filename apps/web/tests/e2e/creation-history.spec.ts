@@ -5,40 +5,42 @@ import { expectChrome, expectInk, mouseClick, mouseDrag, toolButton } from './dr
 import { canvas } from './support.ts';
 
 // Drawn elements selected and undone on the desktop (ENG-11): each selection probe is a handle
-// position that only one selection has, so the overlay shows which elements are selected.
+// position that only one selection has, so the overlay shows which elements are selected. Every
+// press lies below the islands at the top of the window (ADR 0012's row for pointer tests), so the
+// pair is drawn 60 px lower than ENG-11 drew it.
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/');
   await canvas(page).focus();
 });
 
-/** The rectangle [60,60,100,80] and the ellipse [220,180,100,80], drawn by drags. */
+/** The rectangle [60,120,100,80] and the ellipse [220,240,100,80], drawn by drags. */
 async function drawPair(page: Page) {
   await page.keyboard.press('r');
-  await mouseDrag(page, [60, 60], [160, 140]);
+  await mouseDrag(page, [60, 120], [160, 200]);
   await page.keyboard.press('o');
-  await mouseDrag(page, [220, 180], [320, 260]);
+  await mouseDrag(page, [220, 240], [320, 320]);
 }
 
 /** The rectangle's south-east corner, the ellipse's north-west one and the pair's north-east. */
-const PROBES = { rectangle: [160, 140], ellipse: [220, 180], both: [320, 60] } as const;
+const PROBES = { rectangle: [160, 200], ellipse: [220, 240], both: [320, 120] } as const;
 
 test('A9 to A14 drawn elements are selected by press, Shift+press, marquee and Mod+A, and cleared by an empty press and Escape', async ({
   page,
 }) => {
   await drawPair(page);
   await expectChrome(page, PROBES, ['ellipse']);
-  await mouseClick(page, [60, 100]);
+  await mouseClick(page, [60, 160]);
   await expectChrome(page, PROBES, ['rectangle']);
-  await mouseClick(page, [320, 220], true);
+  await mouseClick(page, [320, 280], true);
   await expectChrome(page, PROBES, ['both']);
-  await mouseClick(page, [60, 100], true);
+  await mouseClick(page, [60, 160], true);
   await expectChrome(page, PROBES, ['ellipse']);
-  await mouseDrag(page, [30, 30], [180, 160]);
+  await mouseDrag(page, [30, 90], [180, 220]);
   await expectChrome(page, PROBES, ['rectangle']);
-  await mouseDrag(page, [30, 30], [340, 280]);
+  await mouseDrag(page, [30, 90], [340, 340]);
   await expectChrome(page, PROBES, ['both']);
-  await mouseClick(page, [600, 350]);
+  await mouseClick(page, [600, 410]);
   await expectChrome(page, PROBES, []);
   await page.keyboard.press('ControlOrMeta+A');
   await expectChrome(page, PROBES, ['both']);

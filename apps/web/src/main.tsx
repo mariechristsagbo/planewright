@@ -2,7 +2,6 @@ import { createEditor } from '@planewright/engine';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { App } from './App.tsx';
 import { announceStorageNotice, webAnnouncer } from './a11y/announcements.ts';
 import { createLiveRegion } from './a11y/live-region.ts';
 import { canvasRenderer } from './editor/renderer.ts';
@@ -14,7 +13,9 @@ import { localStorageOf, readPreferences } from './platform/preferences.ts';
 import { browserPorts } from './platform/ports.ts';
 import { indexedDbOf, openStorage } from './platform/storage.ts';
 import { pageTextMeasurer } from './platform/text-measurer.ts';
-// The style sheets in cascade order: the tokens, the fonts, the base, then P0's page (ADR 0012).
+import { EditorShell } from './shell/EditorShell.tsx';
+// The style sheets in cascade order: the tokens, the fonts, the base, the controls' shared rules,
+// then the shell's layout, its islands and what they hold (ADR 0012, decision 5).
 import './styles/tokens.css';
 import './styles/fonts.css';
 import './styles/base.css';
@@ -22,8 +23,16 @@ import './styles/page.css';
 import './styles/canvas.css';
 import './styles/element-list.css';
 import './styles/saving.css';
+import './styles/shell.css';
 import './styles/islands.css';
 import './styles/dialog.css';
+import responsive from './styles/responsive.css?inline';
+
+// The layout's media queries, last in the cascade and in a style sheet apart from the fonts', so
+// that a breakpoint never makes the canvas's faces load again (styles/responsive.css).
+const media = document.createElement('style');
+media.textContent = responsive;
+document.head.append(media);
 
 const container = document.getElementById('root');
 if (container === null) {
@@ -59,7 +68,7 @@ const surface = {
 
 createRoot(container).render(
   <StrictMode>
-    <App surface={surface} />
+    <EditorShell surface={surface} />
   </StrictMode>,
 );
 announceStorageNotice(live, storage.notice);
