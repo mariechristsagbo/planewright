@@ -1,6 +1,6 @@
 # ADR 0012: v0.2 editor chrome: tokens, type, icons, motion and saving
 
-- Status: Accepted
+- Status: Proposed
 - Date: 2026-11-10
 
 ## Context
