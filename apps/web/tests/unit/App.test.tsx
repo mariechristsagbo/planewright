@@ -19,6 +19,23 @@ function openAbout(): HTMLElement {
   return screen.getByRole('dialog', { name: 'About this build' });
 }
 
+/** Opens the Elements drawer through its toggle, and gives the list box (ADR 0012, decision 16). */
+function openElements(): HTMLElement {
+  act(() => {
+    fireEvent.click(screen.getByRole('button', { name: /^Elements/u }));
+  });
+  return screen.getByRole('listbox', { name: 'Elements' });
+}
+
+/** The tab stops of the editor surface, in document order, leaving out what is hidden. */
+const tabStops = (): HTMLElement[] =>
+  [...document.querySelectorAll<HTMLElement>('button, a[href], textarea, [tabindex]')].filter(
+    (element) =>
+      element.tabIndex >= 0 &&
+      element.closest('.workspace') !== null &&
+      element.closest('[hidden]') === null,
+  );
+
 describe('App', () => {
   it('AC states what the build draws and writes, that it saves in this browser and that it has no files or collaboration', () => {
     mount();
@@ -71,7 +88,8 @@ describe('App', () => {
     mount();
     expect(screen.getByRole('toolbar', { name: 'Tools' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Drawing canvas' })).toBeInTheDocument();
-    expect(screen.getByRole('listbox', { name: 'Elements' })).toBeInTheDocument();
+    expect(screen.queryByRole('listbox', { name: 'Elements' })).toBeNull();
+    expect(openElements()).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'History' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Zoom' })).toBeInTheDocument();
     expect(screen.getByText('View: x 0, y 0, zoom 100%')).toBeInTheDocument();
@@ -80,26 +98,47 @@ describe('App', () => {
     }
   });
 
-  it('AC REQ-Y02 puts the tab stops in the specified order: tool bar, canvas, element list, history controls, zoom controls', () => {
+  it('AC REQ-Y02 puts the tab stops in the specified order: tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls', () => {
     mount();
     const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
-    const stops = [
+    const elements = screen.getByRole('button', { name: /^Elements/u });
+    const before = [
       toolbar.querySelector('[tabindex="0"]'),
       screen.getByRole('region', { name: 'Drawing canvas' }),
-      screen.getByRole('listbox', { name: 'Elements' }),
+      elements,
+    ];
+    const after = [
       screen.getByRole('button', { name: 'Undo' }),
       screen.getByRole('button', { name: 'Redo' }),
       ...within(screen.getByRole('group', { name: 'Zoom' })).getAllByRole('button'),
     ];
-    const tabbable = [
-      ...document.querySelectorAll<HTMLElement>('button, a[href], textarea, [tabindex]'),
-    ].filter((element) => element.tabIndex >= 0 && element.closest('.workspace') !== null);
-    expect(tabbable).toEqual(stops);
-    expect(stops.map((stop) => stop?.getAttribute('tabindex') ?? null).slice(0, 3)).toEqual([
+    expect(tabStops()).toEqual([...before, ...after]);
+    const list = openElements();
+    expect(tabStops()).toEqual([...before, list, ...after]);
+    expect([...before, list].map((stop) => stop?.getAttribute('tabindex') ?? null)).toEqual([
       '0',
       '0',
+      null,
       '0',
     ]);
+  });
+
+  it('D5 REQ-Y01 opens and closes the drawer with the Elements toggle, which exposes its state, closed at first', () => {
+    mount();
+    const toggle = screen.getByRole('button', { name: 'Elements' });
+    const drawer = document.getElementById(toggle.getAttribute('aria-controls') ?? '');
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(drawer).not.toBeVisible();
+    expect(screen.queryByRole('listbox', { name: 'Elements' })).toBeNull();
+    const list = openElements();
+    expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    expect(drawer).toBeVisible();
+    expect(drawer).toContainElement(list);
+    act(() => {
+      fireEvent.click(toggle);
+    });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByRole('listbox', { name: 'Elements' })).toBeNull();
   });
 
   it('shows the shared protocol version and the independence notice', () => {

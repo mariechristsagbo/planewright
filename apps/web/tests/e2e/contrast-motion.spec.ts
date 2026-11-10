@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { button, contrast, elementList, openPage, polite, textContrasts } from './a11y.ts';
+import { button, contrast, openElements, openPage, polite, textContrasts } from './a11y.ts';
 import { canvas, readout } from './support.ts';
 
 // Colour and motion on a desktop (ENG-14, docs/architecture/engine/quality.md#accessibility,
@@ -13,8 +13,8 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   await openPage(page);
   await canvas(page).focus();
   for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
-  await expect(elementList(page).getByRole('option')).toHaveCount(2);
   await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
+  await expect((await openElements(page)).getByRole('option')).toHaveCount(2);
   const contrasts = await textContrasts(page);
   // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5).
   expect(contrasts.map(({ text }) => text)).toEqual(
@@ -45,11 +45,12 @@ test.describe('with the operating system asking for a dark scheme', () => {
     expect(root).toEqual({ scheme: 'light', background: 'rgb(249, 250, 251)' });
     await canvas(page).focus();
     for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
-    await expect(elementList(page).getByRole('option')).toHaveCount(2);
+    const list = await openElements(page);
+    await expect(list.getByRole('option')).toHaveCount(2);
     const contrasts = await textContrasts(page);
     expect(contrasts.map(({ text }) => text)).toEqual(expect.arrayContaining(['Undo', 'Redo']));
     expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
-    await elementList(page).focus();
+    await list.focus();
     const { outline, background } = await page.evaluate<{
       outline: number[];
       background: number[];

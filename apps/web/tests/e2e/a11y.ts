@@ -12,6 +12,23 @@ export const polite = (page: Page): Locator => page.locator('#live-polite');
 
 export const elementList = (page: Page): Locator => page.getByRole('listbox', { name: 'Elements' });
 
+/** The Elements toggle, found by the start of its name (ADR 0012, decision 16). */
+export const elementsToggle = (page: Page): Locator =>
+  page.getByRole('button', { name: /^Elements/u });
+
+/**
+ * Opens the Elements drawer through its toggle, unless it is open, and gives the list box, which
+ * the closed drawer hides. A press that a touch drag swallowed is pressed again.
+ */
+export async function openElements(page: Page): Promise<Locator> {
+  const toggle = elementsToggle(page);
+  await expect(async () => {
+    if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
+    await expect(toggle).toHaveAttribute('aria-expanded', 'true', { timeout: 1000 });
+  }).toPass();
+  return elementList(page);
+}
+
 export const button = (page: Page, name: string | RegExp): Locator =>
   page.getByRole('button', { name, exact: true });
 
