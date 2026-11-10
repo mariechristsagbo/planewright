@@ -109,11 +109,13 @@ describe('marquee queries as the scene changes', () => {
   });
 });
 
-/** Forty squares in a row, 10 units apart. */
-const forty = () =>
-  Array.from({ length: 40 }, (_, index) =>
+/** Squares in a row, 10 units apart. */
+const squares = (count: number) =>
+  Array.from({ length: count }, (_, index) =>
     shapeElement('rectangle', 10, 10, { id: index + 1, order: 'a', x: 20 * index, y: 0 }),
   );
+
+const forty = () => squares(40);
 
 describe('what a marquee query reads', () => {
   it('reads no element of a scene that has not changed since the last query', () => {
@@ -147,14 +149,43 @@ describe('what a marquee query reads', () => {
   });
 
   it('makes the rows again for a marquee that meets many but encloses few, after a change', () => {
-    // A thin band across the forty squares meets each of them and encloses none.
+    // A thin band across the forty squares meets each of them and encloses none; the kept rows
+    // show that, so no box query runs.
     const store = sceneOf(...forty());
-    const { reader, reads } = watched(store);
+    const { reader, reads, queries } = watched(store);
     expect(enclosedBy(reader, EVERYTHING)).toHaveLength(40);
     store.apply(move(held(store, testId(30)), 50_000), 'local');
     reads.clear();
+    queries.box = 0;
     expect(enclosedBy(reader, { x: -1, y: 4, width: 800, height: 2 })).toStrictEqual([]);
     expect([...reads.keys()]).toStrictEqual([testId(30)]);
+    expect(queries.box).toBe(0);
+  });
+
+  it('reads only the candidates of a marquee over exactly a sixteenth, before and after a change', () => {
+    // A marquee over the first three of forty-eight squares meets three of them.
+    const store = sceneOf(...squares(48));
+    const { reader, reads } = watched(store);
+    const firstThree = { x: -1, y: -1, width: 52, height: 12 };
+    expect(enclosedBy(reader, firstThree)).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect([...reads.keys()].sort()).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect(enclosedBy(reader, EVERYTHING)).toHaveLength(48);
+    store.apply(move(held(store, testId(40)), 50_000), 'local');
+    reads.clear();
+    expect(enclosedBy(reader, firstThree)).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect([...reads.keys()].sort()).toStrictEqual([testId(1), testId(2), testId(3)]);
+  });
+
+  it('keeps each scene’s rows apart, so that a query of another scene leaves them', () => {
+    const one = watched(sceneOf(...three()));
+    const other = watched(sceneOf(...forty()));
+    expect(enclosedBy(one.reader, EVERYTHING)).toHaveLength(3);
+    expect(enclosedBy(other.reader, EVERYTHING)).toHaveLength(40);
+    one.reads.clear();
+    other.reads.clear();
+    expect(enclosedBy(one.reader, EVERYTHING)).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect(enclosedBy(other.reader, EVERYTHING)).toHaveLength(40);
+    expect([...one.reads.keys(), ...other.reads.keys()]).toStrictEqual([]);
   });
 });
 
