@@ -67,18 +67,12 @@
   margin: 0 0 0.75rem;
 }
 
-:where(footer) {
-  margin-top: 2.5rem;
-  font-size: 0.875rem;
-  opacity: 0.85;
-}
-
 :where(a) {
   color: inherit;
 }
 
 /* A link is a touch target too, at least 24 px high (REQ-Y06). */
-:where(footer a) {
+:where(dialog a) {
   display: inline-block;
   min-height: 1.5rem;
 }

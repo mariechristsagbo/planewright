@@ -1,0 +1,49 @@
+/*
+ * The shell's modal dialogs, About this build first (ADR 0012, decisions 10 and 13): a native
+ * dialog in the top layer, above every island, over a scrim; it scrolls inside itself, never the
+ * page. Its controls keep the base's pressed, disabled and focus rules.
+ */
+.dialog {
+  box-sizing: border-box;
+  width: min(var(--pw-spacing-dialog-width), calc(100vw - 2 * var(--pw-spacing-lg)));
+  max-height: calc(100dvh - 2 * var(--pw-spacing-lg));
+  padding: var(--pw-spacing-dialog-padding);
+  overflow-y: auto;
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-lg);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e3);
+  font: var(--pw-type-body-md);
+  letter-spacing: var(--pw-type-body-md-tracking);
+}
+
+.dialog::backdrop {
+  background: var(--pw-color-scrim);
+}
+
+.dialog-header {
+  display: flex;
+  gap: var(--pw-spacing-lg);
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--pw-spacing-md);
+}
+
+.dialog-title {
+  margin: 0;
+  font: var(--pw-type-title-md);
+  letter-spacing: var(--pw-type-title-md-tracking);
+}
+
+.dialog h3 {
+  margin: var(--pw-spacing-lg) 0 var(--pw-spacing-xs);
+  font: var(--pw-type-title-sm);
+  letter-spacing: var(--pw-type-title-sm-tracking);
+}
+
+.dialog p,
+.dialog ul,
+.dialog dl {
+  margin: 0 0 var(--pw-spacing-sm);
+}

@@ -35,14 +35,20 @@ test('D3 every element computes 400 or 500, and the text area keeps Planewright 
   const fonts = await page.evaluate<Font[]>(FONTS);
   expect(fonts.length).toBeGreaterThan(40);
   expect(fonts.filter(({ weight }) => weight !== '400' && weight !== '500')).toEqual([]);
-  const emphasis = fonts.filter(({ name }) => /^(h1|h2|dt|p\.status)$/u.test(name));
-  expect(emphasis.length).toBeGreaterThan(5);
-  expect(new Set(emphasis.map(({ weight }) => weight))).toEqual(new Set(['500']));
   expect(fonts.find(({ name }) => name === 'textarea.text-editor')).toEqual({
     name: 'textarea.text-editor',
     weight: '400',
     family: '"Planewright Sans", sans-serif',
   });
+  // The headings and terms that P0's page showed are in About this build now (ADR 0012, D5).
+  await page.keyboard.press('Escape');
+  await page.getByRole('button', { name: 'Pre-release' }).click();
+  await expect(page.getByRole('dialog', { name: 'About this build' })).toBeVisible();
+  const opened = await page.evaluate<Font[]>(FONTS);
+  expect(opened.filter(({ weight }) => weight !== '400' && weight !== '500')).toEqual([]);
+  const emphasis = opened.filter(({ name }) => /^(h1|h2|h3|dt)(\.|$)/u.test(name));
+  expect(emphasis.length).toBeGreaterThan(5);
+  expect(new Set(emphasis.map(({ weight }) => weight))).toEqual(new Set(['500']));
 });
 
 /** The faces that have loaded, as their family and weight. */
