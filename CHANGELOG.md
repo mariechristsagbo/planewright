@@ -175,3 +175,9 @@ release has been published yet.
   report also lists I4 to I6, the first whole-scene marquee query over 10,000 elements after one or
   1,000 of them moved and just after a load, beside B6, which times queries of an unchanged scene
   only; they have no budget.
+- Change-set planning (issue #45): each call of the held-field path reports its checks into a list
+  of its own, and a scene store refuses to apply a change set while it plans one, as it refuses one
+  while it tells its listeners, so that a value that runs code when it is read, which no change set
+  may hold, can neither clear what planning a set reports nor change the scene under the plan; a
+  preview, a commit, an undo or a redo asked from such a value is refused the same way. What a
+  JSON change set does or refuses, with its errors, is unchanged.
