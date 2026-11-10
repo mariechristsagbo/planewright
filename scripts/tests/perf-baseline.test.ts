@@ -243,6 +243,11 @@ describe('the committed baseline', () => {
     ]);
   });
 
+  // Issue #41 tracks B1's misses while it is open; B2 met in every CI report since issue #34.
+  it('names issue #41 as the follow-up of B1 and none for B2', () => {
+    expect(committed.followUps).toEqual({ B1: '#41' });
+  });
+
   // quality.md says CI reports only: update it with this test once a processor has three runs.
   it('holds one run on main on each processor, so that no run is gated yet', () => {
     const processors = committed.runs.filter(isMainRun).map(({ machine }) => machine.Processor);

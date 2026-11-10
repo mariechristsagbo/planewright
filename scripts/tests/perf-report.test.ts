@@ -1,5 +1,8 @@
+import { readFileSync } from 'node:fs';
+
 import { describe, expect, it } from 'vitest';
 
+import { readBaseline } from '../lib/perf-baseline.ts';
 import type { PerfBaseline } from '../lib/perf-baseline.ts';
 import { GATE_RUNS, evaluate, readMeasurement, reportMarkdown } from '../lib/perf-report.ts';
 import { PROCESSOR, measured, recordedRun } from './perf-fixtures.ts';
@@ -91,5 +94,22 @@ describe('reportMarkdown', () => {
     );
     expect(markdown).toContain('- Processor: Test CPU');
     expect(markdown).toContain('- The element list renders at most 101 options.');
+  });
+});
+
+describe('reportMarkdown with the committed baseline', () => {
+  const file = new URL('../../docs/performance/baseline.json', import.meta.url);
+  const committed = readBaseline(JSON.parse(readFileSync(file, 'utf8')));
+
+  it('names the open issue of a missed B1, and no issue for a missed B2', () => {
+    const evaluation = evaluate(measured(0.5, { B1: [10], B2: [5] }), committed, PROCESSOR);
+    const markdown = reportMarkdown(evaluation, [], { machine: {}, notes: [] });
+    expect(markdown).toContain(
+      '| B1 | Scene layer redraw, 5,000 elements all visible | ≤ 8 ms, 95th percentile | 10 ms | 1 | missed, follow-up #41 |',
+    );
+    expect(markdown).toContain(
+      '| B2 | Scene layer redraw while panning, 5,000 elements, a tenth visible | ≤ 4 ms, 95th percentile | 5 ms | 1 | missed | – | – |',
+    );
+    expect(markdown).not.toContain('#34');
   });
 });
