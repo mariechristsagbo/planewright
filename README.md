@@ -16,9 +16,10 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > input gestures, the Hand, Selection, creation and text tools, commands, local persistence with
 > autosave and the editor with its render loop, text sessions and announcements), a Canvas 2D
 > renderer package, and the quality gates that future work must pass, among them the measurements of
-> every performance budget, which CI reports and does not gate yet; three missed in CI and a fourth
-> on a slower machine, each named with its issue, and the marquee query and a change set that moves
-> 1,000 elements have since met their budgets.
+> every performance budget, which CI reports and does not gate yet. The marquee query and a change
+> set that moves 1,000 elements have since met their budgets in CI, the redraw while panning meets
+> its budget in CI and misses it only on a slower machine, and the redraw of 5,000 elements in view
+> meets its budget in most CI runs but misses it in some, which issue #41 follows.
 
 ## Goals
 
