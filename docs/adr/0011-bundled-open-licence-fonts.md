@@ -2,6 +2,9 @@
 
 - Status: Accepted
 - Date: 2026-11-08
+- Amended by: [ADR 0012](0012-v02-editor-chrome.md), decision 8, which adds the chrome's own
+  family, `Planewright UI` (Inter 400 from this record's file, and Inter 500), in slice S1; the
+  three faces, their loading and canvas text stay as decided here.
 
 ## Context
 

@@ -27,7 +27,9 @@ adapter that sends DOM events to the engine's editor, a text area over the canva
 edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, a keyboard-operable
 list of the drawn elements, Undo and Redo and zoom controls, a live region that says the editor's
 announcements, and the save status with the notices for failed, stale, unavailable and invalid storage;
-it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md).
+it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md), and sets its
+own text in the chrome's family, `Planewright UI` (Inter at 400 and 500), over the design tokens of
+[ADR 0012](../adr/0012-v02-editor-chrome.md), decision 8.
 Its IndexedDB record backend (database `planewright`) stores what the engine's autosave saves, so
 the drawing, its camera and its selection are kept in the browser, and at start-up the page opens
 the most recently updated document again; it also saves at once when the page is hidden or left,
@@ -124,8 +126,9 @@ processor and so gates none yet; the rest is not implemented yet:
 
 The editor chrome of milestone v0.2.0 (Editor Experience) is decided in
 [ADR 0012](../adr/0012-v02-editor-chrome.md) and split into slices S1 to S13 by the
-[v0.2 plan](editor-experience.md). Issue #50 (slice S0) recorded both, and no slice is implemented
-yet, so the web app described above is still P0's page.
+[v0.2 plan](editor-experience.md). Issue #50 (slice S0) recorded both, and issue #53 (slice S1)
+added the chrome's design tokens, base styles and typeface, with no layout change; S2 to S13 are not
+implemented yet, so the web app described above is still P0's page.
 
 Still open, each for its own issue and ADR:
 

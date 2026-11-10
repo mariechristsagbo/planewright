@@ -25,8 +25,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   styles, arrows, notes, files, exporting and collaboration features do **not** exist yet.
 - **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome
   decisions in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the
-  [v0.2 plan](docs/architecture/editor-experience.md); no slice is implemented yet, so the page is
-  still P0's. Work on a slice follows both.
+  [v0.2 plan](docs/architecture/editor-experience.md). Slice S1 (issue #53) added the chrome's
+  design tokens, base styles and typeface, `Planewright UI` (Inter at 400 and 500), with no layout
+  change; S2 to S13 are not implemented yet, so the page is still P0's, set in the chrome's
+  typeface. Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -85,9 +87,11 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   region with its messages and the focus's return in `a11y/`, the tool bar, Undo and Redo, the zoom
   controls, the view readout, the save status and the storage notices in `ui/`, and the browser ports, text
   measurer, font loading, Mod key per platform, the IndexedDB record backend, storage start-up, page
-  events and the preferences entry in `platform/`. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static files
+  events and the preferences entry in `platform/`, and the style sheets in `styles/`: the design
+  tokens, the fonts, the base and P0's page. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static files
   in `public/`, the bundled fonts with their licences in `public/fonts/`
-  ([ADR 0011](docs/adr/0011-bundled-open-licence-fonts.md)).
+  ([ADR 0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter 500 of
+  [ADR 0012](docs/adr/0012-v02-editor-chrome.md)).
 - `apps/collab`: Node.js WebSocket service built with `ws` and bundled by esbuild. In
   development it runs TypeScript directly through Node's type stripping.
 - `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and

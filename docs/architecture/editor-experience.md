@@ -1,7 +1,9 @@
 # v0.2 editor experience: implementation and test plan
 
-**Status: slice S0 (issue #50) wrote this plan and [ADR 0012](../adr/0012-v02-editor-chrome.md);
-slices S1 to S13 are not implemented, and the web app still shows P0's page.** This plan turns ADR
+**Status: slice S0 (issue #50) wrote this plan and [ADR 0012](../adr/0012-v02-editor-chrome.md),
+and slice S1 (issue #53) added the chrome's tokens, base styles and typeface
+([what S1 delivered](#what-s1-delivered)); slices S2 to S13 are not implemented, and the web app
+still shows P0's page, set in the chrome's typeface.** This plan turns ADR
 0012's decisions into thirteen issues for milestone v0.2.0 (Editor Experience): what each slice
 contains, what must land before it, the tests it writes first, how it is validated and which
 documents it updates. The decisions themselves, the tests to migrate and the visual-regression
@@ -72,6 +74,7 @@ builds on; the handoff adds only that S7 may land before S2.
   `<link rel="preload">` of the 500 file is added, which stays only if B10 is unchanged.
 - **Documents.** If the base styles change the focus ring to 2 px of Construction Violet outside a
   2 px white halo, `engine/quality.md`'s "Focus" bullet, which gives 3 px of `#2a62d0`.
+- **Delivered** by issue #53, which kept P0's focus ring ([what S1 delivered](#what-s1-delivered)).
 
 ### S2: the full-bleed shell
 
@@ -334,8 +337,9 @@ across camera changes.
 
 ## Tokens
 
-These are the values that S1's `tokens.css` holds, from the approved design. Colours are sRGB hex;
-an eight-digit value carries its alpha.
+These are the values that S1's `tokens.css` holds, from the approved design, under the
+[custom properties](#custom-properties) below. Colours are sRGB hex; an eight-digit value carries
+its alpha.
 
 | Token                  | Value       | Role                                                    |
 | ---------------------- | ----------- | ------------------------------------------------------- |
@@ -456,6 +460,24 @@ Measured from the approved tokens in Chromium; text needs 4.5:1, the last six (n
 | `outline-strong` on `surface`                 | 3.96  |
 | `ink` on `canvas`                             | 15.55 |
 
+### Custom properties
+
+`apps/web/src/styles/tokens.css` declares each value above once, on `:root`, as a `--pw-*` custom
+property; hex colours are in lower case, as Prettier writes them. S12 sets the durations to 0 under
+reduced motion and decides whether the tooltip's delay follows them.
+
+| Tokens              | Custom properties                                                                                                                                                                            |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Colours             | `--pw-color-<token>`, such as `--pw-color-primary` and `--pw-color-on-surface-muted`                                                                                                         |
+| Font stacks         | `--pw-font-ui` (`'Planewright UI', 'Planewright UI Fallback', sans-serif`), `--pw-font-mono` and `--pw-font-canvas`                                                                          |
+| Type                | `--pw-type-<role>`, a `font` shorthand such as `500 16px/22px var(--pw-font-ui)`; `--pw-type-<role>-tracking`; `--pw-type-numeric-md-figures` and `-sm-figures`                              |
+| Radii               | `--pw-rounded-xs`, `-sm`, `-md` and `-lg`                                                                                                                                                    |
+| Spacing             | `--pw-spacing-unit`; the steps `--pw-spacing-2xs`, `-xs`, `-sm`, `-md`, `-lg`, `-xl` and `-2xl`; `--pw-spacing-island-padding`, `-island-gap`, `-panel-padding` and `-dialog-padding`        |
+| Controls and widths | `--pw-spacing-control-compact`, `-desktop`, `-tablet` and `-touch`; `--pw-spacing-panel-width`, `-drawer-width`, `-menu-width` and `-dialog-width`; `--pw-spacing-sheet-max-height`, `62dvh` |
+| Elevation           | `--pw-shadow-e0` to `--pw-shadow-e3`                                                                                                                                                         |
+| Layers              | `--pw-layer-canvas`, `-overlay`, `-text-editor`, `-hint`, `-island`, `-panel`, `-notice`, `-popover`, `-tooltip`, `-sheet` and `-dialog`                                                     |
+| Motion              | `--pw-ease`; `--pw-dur-quick`, `-enter`, `-panel` and `-sheet`; `--pw-shift-enter`, `-panel` and `-sheet`, their distances; `--pw-delay-tooltip`                                             |
+
 ## What S0 delivered
 
 - [ADR 0012](../adr/0012-v02-editor-chrome.md), Proposed until its pull request's last commit
@@ -467,3 +489,36 @@ Measured from the approved tokens in Chromium; text needs 4.5:1, the last six (n
   [persistence design](engine/persistence.md) (for D7) and `AGENTS.md`.
 
 S0 changed no production code, font, token, icon, layout or test behaviour.
+
+## What S1 delivered
+
+Issue #53 delivered slice S1 with no layout change.
+
+- `apps/web/src/styles/tokens.css`: the 114 [custom properties](#custom-properties), generated once
+  from this plan's tables by a script kept outside the repository and maintained in Git since.
+  `scripts/tests/chrome-tokens.test.ts` checks each value and that nothing else is declared, and
+  `scripts/tests/chrome-contrast.test.ts` measures the 23 [contrast pairs](#contrast-pairs) from
+  them, one test each. They are tooling tests, since the web project's Vitest empties CSS imports.
+- `apps/web/src/styles/fonts.css`: ADR 0011's three faces as they were, then `Planewright UI` 400 at
+  the canvas's Inter 400 URL, `Planewright UI` 500 and `Planewright UI Fallback` (ADR 0012, decision
+  8), with `inter-latin-500-normal.woff2` from Fontsource 5.3.0 in `apps/web/public/fonts`.
+  `scripts/tests/bundled-fonts.test.ts` reads the faces there, keeps its ADR 0011 checks, checks
+  that each canvas face is unchanged, and admits the chrome's faces and the 500 file by its size and
+  hash.
+- P0's `styles.css`, split into `base.css`, `page.css`, `canvas.css`, `element-list.css` and
+  `saving.css` beside them. `base.css` keeps every element rule inside `:where()` and gives
+  `strong`, `b`, `h1` to `h3` and `th` the weight 500, the only emphasis weight, and the text area
+  keeps `Planewright Sans` at 400; `scripts/tests/base-styles.test.ts` checks both and that no style
+  sheet sets another weight.
+- `apps/web/tests/e2e/chrome-type.spec.ts`: a tool button computes `"Planewright UI"` first and is
+  drawn in Inter, a heading in Inter Medium; Chromium requests each font file once, the Inter 400
+  file included; and no element computes a weight but 400 or 500.
+- One change this plan did not foresee: the web app measured every text again whenever a font
+  finished loading, and the chrome's faces finish loading after the editor starts. `watchPage`
+  (`apps/web/src/platform/page-events.ts`) now measures only when a canvas family's face loads, so
+  that canvas text and its measurement stay as ADR 0011 decided; without it the scene-pixels spec,
+  whose stored texts are not sized as measured, failed.
+- P0's colours, focus ring, save status and layout rules are unchanged, and no
+  `<link rel="preload">` was added. The new face changes only how P0's text wraps: at 390 px wide
+  the canvas starts 24 px higher, since the pre-release sentence above it takes one line fewer, and
+  the canvas host keeps its size. S2 to S13 are not implemented.

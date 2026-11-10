@@ -200,3 +200,13 @@ release has been published yet.
   issue #49, which is to trace such frames in CI, as the follow-up of a missed B1 and no issue for
   B2, and the entry of issue #34 above and the rendering design record B1's results by run, not by
   processor model.
+- The v0.2 chrome's tokens and typeface (slice S1, issue #53, ADR 0012 decision 8):
+  `apps/web/src/styles/tokens.css` holds the v0.2 plan's 114 design tokens as `--pw-*` custom
+  properties, P0's style sheet is split into files under `apps/web/src/styles/` with every element
+  rule inside `:where()`, and the page's text is set in `Planewright UI`, Inter at 400 and 500 behind
+  a metric-matched local fallback. Its 400 face is the canvas's own Inter file, which the browser
+  downloads once, and Inter 500 (24,272 bytes, Fontsource 5.3.0) is the one file added. 500 is the
+  only emphasis weight, so P0's headings, terms and pre-release pill show 500 instead of 700 or 600.
+  Canvas text, its fonts and its measurement are unchanged, and a chrome face that finishes loading
+  no longer has every text measured again. No layout rule changed; the new face only wraps P0's text
+  differently, so that at 390 px wide the canvas starts 24 px higher.
