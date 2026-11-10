@@ -21,7 +21,9 @@ bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets 
 slower machine, and they went to issues #34 to #36
 ([what ENG-15 decided](quality.md#what-eng-15-decided)). Issue #35 has since brought the marquee
 query within B6 in CI
-([what issue #35 decided](rendering-and-hit-testing.md#what-issue-35-decided)). Issue #38 recorded
+([what issue #35 decided](rendering-and-hit-testing.md#what-issue-35-decided)), and issue #36 a
+change set that moves 1,000 elements within B7 in CI
+([what issue #36 decided](scene-and-viewport.md#what-issue-36-decided)). Issue #38 recorded
 three runs on `main` as the baseline, one on each of three processors, and gates a run only by three
 runs on its own processor, so CI reports only for now
 ([what issue #38 decided](quality.md#what-issue-38-decided)).

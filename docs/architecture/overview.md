@@ -101,9 +101,10 @@ the bundled fonts, ENG-13 (issue #29) local persistence and autosave in the brow
 storage, ENG-14 (issue #31) the element list, the live region, focus order and creation from the
 keyboard, and ENG-15 (issue #33) the measurements of the performance budgets, reported in CI, with
 budgets B1, B6 and B7 missed in CI and B2 on a slower machine, named with issues #34 to #36, of
-which issue #35 has since brought the marquee query within B6, and issue #38 their baseline, three
-runs on `main` on three processors, which gates a run only by runs on its own processor and so
-gates none yet; the rest is not implemented yet:
+which issue #35 has since brought the marquee query within B6 and issue #36 a change set that moves
+1,000 elements within B7, and issue #38 their baseline, three runs on `main` on three processors,
+which gates a run only by runs on its own processor and so gates none yet; the rest is not
+implemented yet:
 
 - storage beyond the element model and codec of ENG-02, the scene store of ENG-03 and the browser
   storage and autosave of ENG-13: the binary files of images, opening and saving document files and

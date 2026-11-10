@@ -17,7 +17,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > autosave and the editor with its render loop, text sessions and announcements), a Canvas 2D
 > renderer package, and the quality gates that future work must pass, among them the measurements of
 > every performance budget, which CI reports and does not gate yet; three missed in CI and a fourth
-> on a slower machine, each named with its issue, and the marquee query has since met its budget.
+> on a slower machine, each named with its issue, and the marquee query and a change set that moves
+> 1,000 elements have since met their budgets.
 
 ## Goals
 

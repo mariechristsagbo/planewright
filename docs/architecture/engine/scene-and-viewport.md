@@ -415,6 +415,15 @@ leave open:
   | Median          | 24.4 to 26.7 ms              | 4.66 to 4.88 ms |
   | 95th percentile | 45.6 to 100.6 ms             | 9.5 to 14.4 ms  |
 
+- **In CI.** The code that B7 runs did not change between ENG-15 and this issue, so the 19 CI runs
+  before it measured the same code (4-core runners, runner image ubuntu24 20261101.360.1, Node.js
+  24.22.1) and missed B7 in each, at 5.5 to 7.4 ms at the 95th percentile on an AMD EPYC 9V45 (seven
+  runs), 7.5 to 13.3 ms on an EPYC 9V74 (six), 9.8 to 13.5 ms on an EPYC 7763 (four), 15.1 ms on an
+  Intel Xeon Platinum 8370C and 12.4 ms on a Xeon Platinum 8573C. The pull request's first CI run,
+  42730911670 on an EPYC 9V74, measured 1.103 ms at the 95th percentile and 0.837 ms at the median,
+  where the last run on `main` on that processor, 42685994872 at `c5bcfd3`, had measured 7.621 ms.
+  The pull request keeps the record of every later run.
+
 ## Requirements served
 
 REQ-V01 to REQ-V11, REQ-K01, REQ-K02, REQ-P01 and, through the spatial index, REQ-F01.
