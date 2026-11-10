@@ -20,7 +20,7 @@ test('E2 A7 A8 REQ-Y02 Tab visits the tool bar, the canvas, the element list, th
     button(page, 'Undo'),
     button(page, 'Redo'),
     button(page, 'Zoom out'),
-    button(page, 'Reset zoom'),
+    button(page, /^Reset zoom/u),
     button(page, 'Zoom in'),
     button(page, 'Zoom to fit'),
     page.getByRole('link', { name: 'Source on GitHub' }),
