@@ -4,11 +4,11 @@ import { checkElement } from '../model/element-checks.ts';
 import type { Element } from '../model/elements.ts';
 import { color, groupId } from '../model/field-checks.ts';
 import type { ElementId } from '../model/ids.ts';
-import { INVALID, fieldPath, itemPath, record } from '../model/json-check.ts';
+import { INVALID, fieldPath, isRecord, itemPath, record } from '../model/json-check.ts';
 import type { Invalid, Issues } from '../model/json-check.ts';
 import { jsonEqual } from '../model/json-equal.ts';
 import { LIMITS } from '../model/limits.ts';
-import { matchesPatch, patchElement } from '../model/patch.ts';
+import { matchesPatch, patchElement, patchHeldFields } from '../model/patch.ts';
 import type { ElementPatch } from '../model/patch.ts';
 import type { AttachmentIndex } from './attachment-index.ts';
 import type {
@@ -125,11 +125,38 @@ function planRemove(context: Context, element: Element, path: string): ElementDe
   return { id: element.id, before, after: undefined };
 }
 
-function planUpdate(
-  context: Context,
-  change: Extract<ElementChange, { type: 'update' }>,
-  path: string,
-): ElementDelta | Invalid {
+type UpdateChange = Extract<ElementChange, { type: 'update' }>;
+
+/** Whether both sides of an update are records that name the same fields. */
+function sameFields(before: ElementPatch, after: ElementPatch): boolean {
+  if (!isRecord(before) || !isRecord(after)) {
+    return false;
+  }
+  const keys = Object.keys(after);
+  return (
+    keys.length === Object.keys(before).length && keys.every((key) => Object.hasOwn(before, key))
+  );
+}
+
+/**
+ * An update that writes only fields its element holds, planned without building a path: both
+ * sides name the same fields, the `before` of a `local` or `history` set matches the element, and
+ * the `after` passes {@link patchHeldFields}. Then {@link planUpdate} would plan the same delta and
+ * report nothing; any other update is left to it, which reports every reason to refuse it.
+ */
+function planHeldUpdate(context: Context, change: UpdateChange): ElementDelta | undefined {
+  const before = context.state.elements.get(change.id);
+  if (before === undefined || !sameFields(change.before, change.after)) {
+    return undefined;
+  }
+  if (context.strict && !matchesPatch(before, change.before)) {
+    return undefined;
+  }
+  const after = patchHeldFields(before, change.after);
+  return after === undefined ? undefined : { id: change.id, before, after };
+}
+
+function planUpdate(context: Context, change: UpdateChange, path: string): ElementDelta | Invalid {
   const before = context.state.elements.get(change.id);
   if (before === undefined) {
     return refuse(context, fieldPath(path, 'id'), 'not-found');
@@ -154,15 +181,17 @@ const elementIdOf = (change: ElementChange): ElementId =>
 function planElement(
   context: Context,
   change: ElementChange,
-  path: string,
+  index: number,
 ): ElementDelta | Invalid {
   switch (change.type) {
     case 'add':
-      return planAdd(context, change.element, path);
+      return planAdd(context, change.element, itemPath('elements', index));
     case 'remove':
-      return planRemove(context, change.element, path);
+      return planRemove(context, change.element, itemPath('elements', index));
     case 'update':
-      return planUpdate(context, change, path);
+      return (
+        planHeldUpdate(context, change) ?? planUpdate(context, change, itemPath('elements', index))
+      );
   }
 }
 
@@ -177,9 +206,7 @@ function checkRepeated(context: Context, ids: readonly string[], base: string): 
 
 function planElements(context: Context, changes: readonly ElementChange[]): ElementDelta[] {
   checkRepeated(context, changes.map(elementIdOf), 'elements');
-  const deltas = changes.map((change, index) =>
-    planElement(context, change, itemPath('elements', index)),
-  );
+  const deltas = changes.map((change, index) => planElement(context, change, index));
   const planned = deltas.filter((delta) => delta !== INVALID);
   const added = planned.filter(({ before }) => before === undefined).length;
   const removed = planned.filter(({ after }) => after === undefined).length;

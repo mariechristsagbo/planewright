@@ -1,6 +1,7 @@
-import { checkElement } from './element-checks.ts';
+import { FIELD_CHECKS, checkAcrossFields, checkElement } from './element-checks.ts';
 import type { Element } from './elements.ts';
-import { INVALID, fieldPath } from './json-check.ts';
+import { revision } from './field-checks.ts';
+import { INVALID, fieldPath, isRecord } from './json-check.ts';
 import type { Invalid, Issues } from './json-check.ts';
 import { jsonEqual } from './json-equal.ts';
 
@@ -52,4 +53,45 @@ export function patchElement(
     issues.push({ path: fieldPath(path, key), problem: 'unknown-field' });
   }
   return held.length > 0 ? INVALID : checkElement(applyPatch(element, patch), path, issues);
+}
+
+const UNPATCHED: ReadonlySet<string> = new Set(UNPATCHED_FIELDS);
+
+/** Where the held-field path's checks report: it only counts what they report, from empty. */
+const unread: Issues = [];
+
+/** The value that a patch writes into a field the element holds, checked as the field's own; or INVALID. */
+function heldValue(element: Element, key: string, value: unknown): unknown {
+  const check = FIELD_CHECKS[element.kind].get(key);
+  if (check === undefined || UNPATCHED.has(key) || !Object.hasOwn(element, key) || value === null) {
+    return INVALID;
+  }
+  return check(value, key, unread);
+}
+
+/**
+ * The element's next version, its revision one higher, when the patch writes only fields that the
+ * element holds; otherwise undefined, which leaves the patch to {@link patchElement}. Each value
+ * written passes its field's own check, which copies it, and the element the kind's checks across
+ * its fields; it is then the element that `patchElement` makes, field order included. The fields
+ * that it leaves were checked when the scene took the element and are shared with it, all but the
+ * revision, which the scene raises unchecked and which is checked again, as the whole check does.
+ */
+export function patchHeldFields(element: Element, patch: ElementPatch): Element | undefined {
+  unread.length = 0;
+  if (!isRecord(patch) || revision(element.rev, 'rev', unread) === INVALID) {
+    return undefined;
+  }
+  const next: Record<string, unknown> = { ...element };
+  for (const key of Object.keys(patch)) {
+    const value = heldValue(element, key, patch[key]);
+    if (value === INVALID) return undefined;
+    next[key] = value;
+  }
+  // Every field of the kind is there and valid, so the object has the shape of an element.
+  const patched = next as unknown as Element;
+  checkAcrossFields(patched, '', unread);
+  if (unread.length > 0) return undefined;
+  next['rev'] = element.rev + 1;
+  return patched;
 }

@@ -161,6 +161,17 @@ export type Fields<T> = {
 
 type AnyField = Check<unknown> | Optional<unknown>;
 
+/** The check of a value of each field: an optional field's check of a value that is present. */
+export const valueChecks = (
+  fields: Readonly<Record<string, AnyField>>,
+): ReadonlyMap<string, Check<unknown>> =>
+  new Map(
+    Object.entries(fields).map(([key, field]) => [
+      key,
+      typeof field === 'function' ? field : field.optional,
+    ]),
+  );
+
 interface Place {
   readonly path: string;
   readonly issues: Issues;
