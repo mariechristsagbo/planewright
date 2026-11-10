@@ -156,6 +156,13 @@ const CASES: readonly (readonly [string, readonly ElementChange[]])[] = [
     ],
   ],
   ['freehand points fewer than its pressures', [edit(4, { points: [{ x: 0, y: 0 }] })]],
+  [
+    'a line cut to one point, and one point too many',
+    [
+      edit(3, { points: [{ x: 0, y: 0 }] }),
+      edit(6, { points: Array.from({ length: LIMITS.linePoints + 1 }, (_, x) => ({ x, y: 0 })) }),
+    ],
+  ],
   ['freehand pressures removed, or too few', [edit(4, { pressures: null }), edit(3, { x: 2 })]],
   ['freehand pressures too few', [edit(4, { pressures: [1] })]],
   ['a field of another kind', [edit(3, { width: 4 })]],

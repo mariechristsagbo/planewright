@@ -79,6 +79,7 @@ describe('patchHeldFields', () => {
     ['a value that its check refuses', 0, { x: Number.NaN, y: 1 }],
     ['a value with a field too many', 3, { style: { ...held(3).style, extra: 1 } }],
     ['pressures that no longer match the points', 4, { points: [{ x: 0, y: 0 }] }],
+    ['a line cut to one point', 3, { points: [{ x: 0, y: 0 }] }],
     ['an arrow attached to itself', 6, { start: { target: elementId(6), anchor: { x: 0, y: 0 } } }],
     ['an own __proto__ field', 0, JSON.parse('{"__proto__":{"x":1}}') as ElementPatch],
     ['an array', 0, [] as unknown as ElementPatch],
