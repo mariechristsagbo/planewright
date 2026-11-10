@@ -39,8 +39,9 @@ import {
   record,
   refine,
   text,
+  valueChecks,
 } from './json-check.ts';
-import type { Check, Issues } from './json-check.ts';
+import type { Check, Fields, Issues } from './json-check.ts';
 import { LIMITS } from './limits.ts';
 
 // One record check per kind, with the fields of the domain model; an element's kind picks it.
@@ -60,44 +61,77 @@ const common = {
 
 const boxSize = { width: size, height: size };
 
-const shape = record<ShapeElement>({
+const shapeFields = {
   ...common,
   kind: oneOf(['rectangle', 'ellipse', 'diamond']),
   ...boxSize,
   label: { optional: textBlock },
-});
+} satisfies Fields<ShapeElement>;
 
-const line = record<LineElement>({
+const lineFields = {
   ...common,
   kind: oneOf(['line']),
   points: points(2, LIMITS.linePoints),
-});
+} satisfies Fields<LineElement>;
 
-const freehand = refine(
-  record<FreehandElement>({
-    ...common,
-    kind: oneOf(['freehand']),
-    points: points(1, LIMITS.freehandPoints),
-    pressures: { optional: listOf(unit, { min: 0, max: LIMITS.freehandPoints }) },
-  }),
-  (element, path, issues) => {
-    if (element.pressures !== undefined && element.pressures.length !== element.points.length) {
-      issues.push({ path: fieldPath(path, 'pressures'), problem: 'length-mismatch' });
-    }
-  },
-);
+const freehandFields = {
+  ...common,
+  kind: oneOf(['freehand']),
+  points: points(1, LIMITS.freehandPoints),
+  pressures: { optional: listOf(unit, { min: 0, max: LIMITS.freehandPoints }) },
+} satisfies Fields<FreehandElement>;
 
-const textElement = record<TextElement>({
+const textFields = {
   ...common,
   kind: oneOf(['text']),
   ...boxSize,
   content: textBlock,
-});
+} satisfies Fields<TextElement>;
 
 const attachment = record<Attachment>({
   target: elementId,
   anchor: record<Point>({ x: unit, y: unit }),
 });
+
+const arrowFields = {
+  ...common,
+  kind: oneOf(['arrow']),
+  points: points(2, LIMITS.linePoints),
+  start: { optional: attachment },
+  end: { optional: attachment },
+  heads: record<ArrowElement['heads']>({ start: oneOf(ARROW_HEADS), end: oneOf(ARROW_HEADS) }),
+  route: oneOf(ARROW_ROUTES),
+  label: { optional: textBlock },
+} satisfies Fields<ArrowElement>;
+
+const noteFields = {
+  ...common,
+  kind: oneOf(['note']),
+  ...boxSize,
+  label: textBlock,
+} satisfies Fields<NoteElement>;
+
+const imageFields = {
+  ...common,
+  kind: oneOf(['image']),
+  ...boxSize,
+  file: fileId,
+  crop: { optional: record<Box>({ x: coordinate, y: coordinate, ...boxSize }) },
+} satisfies Fields<ImageElement>;
+
+const frameFields = {
+  ...common,
+  kind: oneOf(['frame']),
+  ...boxSize,
+  name: text(),
+} satisfies Fields<FrameElement>;
+
+/** A freehand's pressures, when it has them, are one per point. */
+function pressuresMatch(element: FreehandElement, path: string, issues: Issues): void {
+  if (element.pressures !== undefined && element.pressures.length !== element.points.length) {
+    issues.push({ path: fieldPath(path, 'pressures'), problem: 'length-mismatch' });
+  }
+}
 
 /** An attachment never targets its own connector; whether the target exists is checked later. */
 function notSelfAttached(arrow: ArrowElement, path: string, issues: Issues): void {
@@ -108,48 +142,49 @@ function notSelfAttached(arrow: ArrowElement, path: string, issues: Issues): voi
   }
 }
 
-const arrow = refine(
-  record<ArrowElement>({
-    ...common,
-    kind: oneOf(['arrow']),
-    points: points(2, LIMITS.linePoints),
-    start: { optional: attachment },
-    end: { optional: attachment },
-    heads: record<ArrowElement['heads']>({ start: oneOf(ARROW_HEADS), end: oneOf(ARROW_HEADS) }),
-    route: oneOf(ARROW_ROUTES),
-    label: { optional: textBlock },
-  }),
-  notSelfAttached,
-);
+/**
+ * The checks of an element that span its fields, which run once each field is valid: a
+ * freehand's pressures match its points, and an arrow is not attached to itself.
+ */
+export function checkAcrossFields(element: Element, path: string, issues: Issues): void {
+  if (element.kind === 'freehand') pressuresMatch(element, path, issues);
+  if (element.kind === 'arrow') notSelfAttached(element, path, issues);
+}
 
-const note = record<NoteElement>({
-  ...common,
-  kind: oneOf(['note']),
-  ...boxSize,
-  label: textBlock,
-});
+/** A kind's check: each of its fields, then the checks across them. */
+const kindCheck = <T extends Element>(fields: Fields<T>): Check<T> =>
+  refine(record<T>(fields), checkAcrossFields);
 
-const image = record<ImageElement>({
-  ...common,
-  kind: oneOf(['image']),
-  ...boxSize,
-  file: fileId,
-  crop: { optional: record<Box>({ x: coordinate, y: coordinate, ...boxSize }) },
-});
-
-const frame = record<FrameElement>({ ...common, kind: oneOf(['frame']), ...boxSize, name: text() });
+const shape = kindCheck<ShapeElement>(shapeFields);
 
 const BY_KIND: Readonly<Record<ElementKind, Check<Element>>> = {
   rectangle: shape,
   ellipse: shape,
   diamond: shape,
-  line,
-  freehand,
-  text: textElement,
-  arrow,
-  note,
-  image,
-  frame,
+  line: kindCheck<LineElement>(lineFields),
+  freehand: kindCheck<FreehandElement>(freehandFields),
+  text: kindCheck<TextElement>(textFields),
+  arrow: kindCheck<ArrowElement>(arrowFields),
+  note: kindCheck<NoteElement>(noteFields),
+  image: kindCheck<ImageElement>(imageFields),
+  frame: kindCheck<FrameElement>(frameFields),
+};
+
+/**
+ * The check of a value of each field of each kind, by name: what checks a patch's values one by
+ * one, as the kind's own check checks them.
+ */
+export const FIELD_CHECKS: Readonly<Record<ElementKind, ReadonlyMap<string, Check<unknown>>>> = {
+  rectangle: valueChecks(shapeFields),
+  ellipse: valueChecks(shapeFields),
+  diamond: valueChecks(shapeFields),
+  line: valueChecks(lineFields),
+  freehand: valueChecks(freehandFields),
+  text: valueChecks(textFields),
+  arrow: valueChecks(arrowFields),
+  note: valueChecks(noteFields),
+  image: valueChecks(imageFields),
+  frame: valueChecks(frameFields),
 };
 
 const kindOf = oneOf(ELEMENT_KINDS);
