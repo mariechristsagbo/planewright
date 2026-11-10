@@ -56,3 +56,21 @@
   box-shadow: var(--pw-shadow-e2);
   font: var(--pw-type-body-sm);
 }
+
+/* The empty-canvas note (D5), centred over the canvas; presses go through it to the canvas. */
+.empty-canvas-note {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: var(--pw-layer-hint);
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(28rem, 100% - 2 * var(--pw-spacing-lg));
+  margin: 0;
+  color: var(--pw-color-on-surface-muted);
+  font: var(--pw-type-body-md);
+  letter-spacing: var(--pw-type-body-md-tracking);
+  text-align: center;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}

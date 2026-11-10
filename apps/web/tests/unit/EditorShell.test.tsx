@@ -43,7 +43,8 @@ describe('EditorShell', () => {
     mount();
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
     expect(screen.queryByRole('status')).toBeNull();
-    expect(screen.queryByText(BUILD_STATUS)).toBeNull();
+    // On the page, the sentence shows only in the empty-canvas note, which is no status.
+    expect(screen.getByText(BUILD_STATUS)).not.toHaveAttribute('role');
     expect(openAbout()).toHaveTextContent(BUILD_STATUS);
     expect(BUILD_STATUS).toBe(
       'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them; the drawing is saved in this browser, but there are no files or collaboration yet.',

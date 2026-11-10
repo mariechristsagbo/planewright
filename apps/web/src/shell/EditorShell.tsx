@@ -10,6 +10,7 @@ import { ViewReadout } from '../ui/ViewReadout.tsx';
 import { ZoomControls } from '../ui/ZoomControls.tsx';
 import { ElementsDrawer } from './ElementsDrawer.tsx';
 import { ElementsToggle } from './ElementsToggle.tsx';
+import { EmptyCanvasNote } from './EmptyCanvasNote.tsx';
 import { IdentityIsland } from './IdentityIsland.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { useShellState } from './shell-state.ts';
@@ -33,6 +34,7 @@ function Shell() {
         <Toolbar />
       </div>
       <CanvasHost />
+      <EmptyCanvasNote />
       <StorageNotices />
       <div className="island top-right-island" data-island="top-right">
         <ElementsToggle open={drawer} onToggle={toggleDrawer} />
