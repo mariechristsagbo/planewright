@@ -1,0 +1,161 @@
+import { describe, expect, it } from 'vitest';
+
+import { declarationsOf, rulesOf, styleSheet, tokenValues } from './style-sheets.ts';
+
+// The chrome's tokens (ADR 0012, decision 5): apps/web/src/styles/tokens.css holds the values of
+// the v0.2 plan's tables (docs/architecture/editor-experience.md#tokens) as `--pw-*` custom
+// properties on `:root`, and nothing else. Colours are in lower case, as Prettier writes them.
+
+const COLOURS = {
+  '--pw-color-primary': '#6547b4',
+  '--pw-color-on-primary': '#ffffff',
+  '--pw-color-primary-container': '#eeeaff',
+  '--pw-color-on-primary-container': '#513991',
+  '--pw-color-primary-tint': '#f7f5ff',
+  '--pw-color-primary-line': '#dcd6ff',
+  '--pw-color-primary-strong': '#513991',
+  '--pw-color-secondary': '#4f4e5b',
+  '--pw-color-canvas': '#ffffff',
+  '--pw-color-surface': '#ffffff',
+  '--pw-color-surface-muted': '#f6f6f9',
+  '--pw-color-surface-hover': '#ededf1',
+  '--pw-color-surface-pressed': '#e6e6eb',
+  '--pw-color-on-surface': '#1d1d27',
+  '--pw-color-on-surface-variant': '#4f4e5b',
+  '--pw-color-on-surface-muted': '#686873',
+  '--pw-color-outline-subtle': '#dddde4',
+  '--pw-color-outline': '#cacad2',
+  '--pw-color-outline-strong': '#7f7f8a',
+  '--pw-color-disabled-content': '#686873',
+  '--pw-color-focus-ring': '#6547b4',
+  '--pw-color-focus-halo': '#ffffff',
+  '--pw-color-selection': '#6547b4',
+  '--pw-color-selection-fill': '#6547b41a',
+  '--pw-color-ink': '#1e2430',
+  '--pw-color-error': '#b02b27',
+  '--pw-color-on-error': '#ffffff',
+  '--pw-color-error-container': '#fff1ef',
+  '--pw-color-on-error-container': '#901e1c',
+  '--pw-color-warning-container': '#fff6dd',
+  '--pw-color-on-warning-container': '#834b14',
+  '--pw-color-inverse-surface': '#1d1d27',
+  '--pw-color-on-inverse-surface': '#ffffff',
+  '--pw-color-scrim': '#1d1d273d',
+};
+
+const TYPE = {
+  '--pw-font-ui': "'Planewright UI', 'Planewright UI Fallback', sans-serif",
+  '--pw-font-mono': "'Planewright Mono', monospace",
+  '--pw-font-canvas': "'Planewright Sans', sans-serif",
+  '--pw-type-title-md': '500 16px/22px var(--pw-font-ui)',
+  '--pw-type-title-md-tracking': '-0.011em',
+  '--pw-type-title-sm': '500 14px/20px var(--pw-font-ui)',
+  '--pw-type-title-sm-tracking': '-0.006em',
+  '--pw-type-body-md': '400 14px/20px var(--pw-font-ui)',
+  '--pw-type-body-md-tracking': '-0.006em',
+  '--pw-type-body-sm': '400 13px/18px var(--pw-font-ui)',
+  '--pw-type-body-sm-tracking': '0',
+  '--pw-type-label-md': '500 13px/16px var(--pw-font-ui)',
+  '--pw-type-label-md-tracking': '0',
+  '--pw-type-label-sm': '500 12px/16px var(--pw-font-ui)',
+  '--pw-type-label-sm-tracking': '0',
+  '--pw-type-caption': '400 12px/16px var(--pw-font-ui)',
+  '--pw-type-caption-tracking': '0',
+  '--pw-type-numeric-md': '400 13px/16px var(--pw-font-ui)',
+  '--pw-type-numeric-md-tracking': '0',
+  '--pw-type-numeric-md-figures': 'tabular-nums',
+  '--pw-type-numeric-sm': '400 12px/16px var(--pw-font-ui)',
+  '--pw-type-numeric-sm-tracking': '0',
+  '--pw-type-numeric-sm-figures': 'tabular-nums',
+  '--pw-type-geometry': '400 12px/16px var(--pw-font-mono)',
+  '--pw-type-geometry-tracking': '0',
+  '--pw-type-kbd': '400 11px/14px var(--pw-font-mono)',
+  '--pw-type-kbd-tracking': '0',
+  '--pw-type-kbd-corner': '400 10px/10px var(--pw-font-mono)',
+  '--pw-type-kbd-corner-tracking': '0',
+  '--pw-type-canvas-text': '400 20px/1.25 var(--pw-font-canvas)',
+  '--pw-type-canvas-text-tracking': '0',
+};
+
+const SHAPE_AND_SIZE = {
+  '--pw-rounded-xs': '3px',
+  '--pw-rounded-sm': '6px',
+  '--pw-rounded-md': '8px',
+  '--pw-rounded-lg': '12px',
+  '--pw-spacing-unit': '4px',
+  '--pw-spacing-2xs': '2px',
+  '--pw-spacing-xs': '4px',
+  '--pw-spacing-sm': '8px',
+  '--pw-spacing-md': '12px',
+  '--pw-spacing-lg': '16px',
+  '--pw-spacing-xl': '24px',
+  '--pw-spacing-2xl': '32px',
+  '--pw-spacing-island-padding': '4px',
+  '--pw-spacing-island-gap': '8px',
+  '--pw-spacing-panel-padding': '12px',
+  '--pw-spacing-dialog-padding': '24px',
+  '--pw-spacing-control-compact': '32px',
+  '--pw-spacing-control-desktop': '36px',
+  '--pw-spacing-control-tablet': '40px',
+  '--pw-spacing-control-touch': '44px',
+  '--pw-spacing-panel-width': '232px',
+  '--pw-spacing-drawer-width': '300px',
+  '--pw-spacing-menu-width': '264px',
+  '--pw-spacing-dialog-width': '560px',
+  '--pw-spacing-sheet-max-height': '62dvh',
+};
+
+const ELEVATION_LAYERS_AND_MOTION = {
+  '--pw-shadow-e0': 'none',
+  '--pw-shadow-e1': '0 1px 2px rgb(29 29 39 / 0.06), 0 2px 8px rgb(29 29 39 / 0.04)',
+  '--pw-shadow-e2': '0 2px 4px rgb(29 29 39 / 0.06), 0 8px 24px rgb(29 29 39 / 0.08)',
+  '--pw-shadow-e3': '0 4px 8px rgb(29 29 39 / 0.08), 0 16px 40px rgb(29 29 39 / 0.12)',
+  '--pw-layer-canvas': '0',
+  '--pw-layer-overlay': '1',
+  '--pw-layer-text-editor': '10',
+  '--pw-layer-hint': '20',
+  '--pw-layer-island': '30',
+  '--pw-layer-panel': '40',
+  '--pw-layer-notice': '50',
+  '--pw-layer-popover': '60',
+  '--pw-layer-tooltip': '70',
+  '--pw-layer-sheet': '80',
+  '--pw-layer-dialog': '90',
+  '--pw-ease': 'cubic-bezier(0.2, 0, 0, 1)',
+  '--pw-dur-quick': '90ms',
+  '--pw-dur-enter': '140ms',
+  '--pw-shift-enter': '4px',
+  '--pw-dur-panel': '180ms',
+  '--pw-shift-panel': '8px',
+  '--pw-dur-sheet': '220ms',
+  '--pw-shift-sheet': '16px',
+  '--pw-delay-tooltip': '500ms',
+};
+
+const TABLES = { COLOURS, TYPE, SHAPE_AND_SIZE, ELEVATION_LAYERS_AND_MOTION };
+
+/** The tokens that tokens.css gives the names of an expected table. */
+const declared = (table: Record<string, string>): Record<string, string | undefined> => {
+  const values = tokenValues();
+  return Object.fromEntries(Object.keys(table).map((name) => [name, values.get(name)]));
+};
+
+describe('the chrome tokens in tokens.css', () => {
+  it('are one :root rule of --pw-* custom properties, each declared once', () => {
+    const rules = rulesOf(styleSheet('tokens.css'));
+    expect(rules.map(({ selector }) => selector)).toEqual([':root']);
+    const names = rules.flatMap(({ body }) => declarationsOf(body).map(({ property }) => property));
+    expect(names.filter((name) => !name.startsWith('--pw-'))).toEqual([]);
+    expect(names.length).toBe(new Set(names).size);
+  });
+
+  it('are exactly the tokens of the plan, 114 of them', () => {
+    const expected = Object.values(TABLES).flatMap((table) => Object.keys(table));
+    expect(expected).toHaveLength(114);
+    expect([...tokenValues().keys()].sort()).toEqual(expected.sort());
+  });
+
+  it.each(Object.entries(TABLES))('hold the values of the plan in %s', (_, table) => {
+    expect(declared(table)).toEqual(table);
+  });
+});
