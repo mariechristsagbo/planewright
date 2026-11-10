@@ -146,12 +146,12 @@ release has been published yet.
   order, with the edges of the element's world bounds and the extent of its outline points,
   computed as the bounds and the points are but without building a point, and scans the rows while
   the scene is unchanged, so that no query sorts the scene. After a change, a marquee over few
-  elements is answered from the spatial index's candidates, and any other makes the rows again,
-  keeping those of the unchanged elements. What a marquee selects, and the order of the result, are
-  unchanged, which properties against a scan of every element check. On a developer machine the
-  marquee query over 10,000 elements (budget B6) fell from 18.9 to 24.2 ms to 0.24 to 0.32 ms at the
-  95th percentile, and in CI it measured 0.097 ms on an AMD EPYC 9V74 runner, where `main` had
-  measured 5.7 to 7.1 ms.
+  elements is answered from the spatial index's candidates, and one that meets many of the rows kept
+  from before the change makes the rows again, keeping those of the unchanged elements. What a
+  marquee selects, and the order of the result, are unchanged, which properties against a scan of
+  every element check. On a developer machine the marquee query over 10,000 elements (budget B6)
+  fell from 18.9 to 24.2 ms to 0.24 to 0.32 ms at the 95th percentile, and in CI it measured 0.097
+  ms on an AMD EPYC 9V74 runner, where `main` had measured 5.7 to 7.1 ms.
 - Change sets (issue #36): an update whose patch writes only fields that its element holds is
   checked field by field, with each field's own check, the kind's checks across fields and the
   element's revision, and the new version shares the fields that the update leaves with the one
@@ -163,3 +163,15 @@ release has been published yet.
   of 10,000 elements (budget B7) fell from 45.6 to 100.6 ms to 9.5 to 14.4 ms at the 95th
   percentile, and in CI it measured 1.103 ms on an AMD EPYC 9V74 runner, where `main` had measured
   7.5 to 13.3 ms.
+- Marquee rows (issue #43): after a change, rows that a change left empty or elsewhere count as no
+  rows, and a marquee that meets more than a sixteenth of the elements now, counted among the
+  spatial index's candidates or among the kept rows, makes the rows again, so that the next query
+  scans them; after delete all and undo, after every element moved away and after most of the
+  elements were added, every whole-scene marquee had been answered from its candidates, 18.9 to 33.6
+  ms each on a developer machine, where the query after the one that makes the rows again now takes
+  0.23 to 0.33 ms. A marquee over few elements still leaves the rows, and with them the ordered
+  array they came from, until such a marquee. What a marquee selects, and the order of the result,
+  are unchanged, and a marquee still encloses an element by its geometric outline. The performance
+  report also lists I4 to I6, the first whole-scene marquee query over 10,000 elements after one or
+  1,000 of them moved and just after a load, beside B6, which times queries of an unchanged scene
+  only; they have no budget.

@@ -23,9 +23,12 @@ slower machine, and they went to issues #34 to #36
 query within B6 in CI
 ([what issue #35 decided](rendering-and-hit-testing.md#what-issue-35-decided)), and issue #36 a
 change set that moves 1,000 elements within B7 in CI
-([what issue #36 decided](scene-and-viewport.md#what-issue-36-decided)). Issue #38 recorded
-three runs on `main` as the baseline, one on each of three processors, and gates a run only by three
-runs on its own processor, so CI reports only for now
+([what issue #36 decided](scene-and-viewport.md#what-issue-36-decided)). Issue #43 makes the
+marquee's kept rows again after a change that left them empty or elsewhere, and reports the first
+marquee query after a change or a load beside B6, which times queries of an unchanged scene, with
+no budget ([what issue #43 decided](rendering-and-hit-testing.md#what-issue-43-decided)).
+Issue #38 recorded three runs on `main` as the baseline, one on each of three processors, and gates
+a run only by three runs on its own processor, so CI reports only for now
 ([what issue #38 decided](quality.md#what-issue-38-decided)).
 The clipboard (P1), document files, images and offline start (P2) do not exist yet.
 
