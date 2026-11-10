@@ -3,10 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { aabbFromCorners } from '../../../src/math/aabb.ts';
 import type { Element, ShapeElement } from '../../../src/model/elements.ts';
 import type { ElementId } from '../../../src/model/ids.ts';
-import type { SceneReader, SceneStore } from '../../../src/scene/store.ts';
+import type { SceneReader } from '../../../src/scene/store.ts';
 import { enclosedBy } from '../../../src/selection/marquee.ts';
+import { bruteEnclosed } from '../../support/enclosure.ts';
 import { freehandElement, sceneOf, shapeElement, testId } from '../../support/elements.ts';
 import { changeSet, color } from '../../support/scene-state.ts';
+import { watched } from '../../support/watched-scene.ts';
 
 // Box selection as a scene changes (REQ-S06), and what a query reads of the scene's elements.
 
@@ -113,44 +115,6 @@ const forty = () =>
     shapeElement('rectangle', 10, 10, { id: index + 1, order: 'a', x: 20 * index, y: 0 }),
   );
 
-/** A reader of the store whose elements count, by element, the fields read from them. */
-function watched(store: SceneStore) {
-  const reads = new Map<ElementId, number>();
-  const proxies = new WeakMap<Element, Element>();
-  const watch = (element: Element): Element => {
-    const known = proxies.get(element);
-    if (known !== undefined) return known;
-    const proxy = new Proxy(element, {
-      get(target, key, receiver) {
-        reads.set(target.id, (reads.get(target.id) ?? 0) + 1);
-        return Reflect.get(target, key, receiver) as unknown;
-      },
-    });
-    proxies.set(element, proxy);
-    return proxy;
-  };
-  let source: readonly Element[] = [];
-  let ordered: readonly Element[] = [];
-  const reader: SceneReader = {
-    ...store,
-    get rev() {
-      return store.rev;
-    },
-    ordered() {
-      if (store.ordered() !== source) {
-        source = store.ordered();
-        ordered = source.map(watch);
-      }
-      return ordered;
-    },
-    get: (id) => {
-      const element = store.get(id);
-      return element === undefined ? undefined : watch(element);
-    },
-  };
-  return { reader, reads };
-}
-
 describe('what a marquee query reads', () => {
   it('reads no element of a scene that has not changed since the last query', () => {
     const { reader, reads } = watched(sceneOf(...three()));
@@ -191,5 +155,44 @@ describe('what a marquee query reads', () => {
     reads.clear();
     expect(enclosedBy(reader, { x: -1, y: 4, width: 800, height: 2 })).toStrictEqual([]);
     expect([...reads.keys()]).toStrictEqual([testId(30)]);
+  });
+});
+
+/**
+ * Three squares under one order key, loaded with the largest identifier first, which the spatial
+ * index then lists first, and fifty more under the same key away from them.
+ */
+function tied(): Element[] {
+  const ties = [3, 2, 1].map((id) =>
+    shapeElement('rectangle', 10, 10, { id, order: 'a', x: 10, y: 10 }),
+  );
+  const others = Array.from({ length: 50 }, (_, index) =>
+    shapeElement('rectangle', 10, 10, { id: index + 4, order: 'a', x: 2_000 + 20 * index, y: 0 }),
+  );
+  return [...ties, ...others];
+}
+
+/** A marquee around the three squares, which meets 3 of the 53 elements, under a sixteenth. */
+const TIES = { x: 0, y: 0, width: 30, height: 30 };
+
+describe('marquee queries among elements under one order key', () => {
+  it('order the candidates of a marquee over few by identifier, as a scan does', () => {
+    const elements = tied();
+    const { reader, reads } = watched(sceneOf(...elements));
+    expect(reader.queryBox(TIES)).toStrictEqual([testId(3), testId(2), testId(1)]);
+    expect(enclosedBy(reader, TIES)).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect(enclosedBy(reader, TIES)).toStrictEqual(bruteEnclosed(elements, TIES));
+    expect([...reads.keys()].sort()).toStrictEqual([testId(1), testId(2), testId(3)]);
+  });
+
+  it('order them by identifier after a change too, while the rows made before it are kept', () => {
+    const elements = tied();
+    const store = sceneOf(...elements);
+    const { reader, reads } = watched(store);
+    expect(enclosedBy(reader, EVERYTHING)).toStrictEqual(bruteEnclosed(elements, EVERYTHING));
+    store.apply(move(held(store, testId(4)), 5_000), 'local');
+    reads.clear();
+    expect(enclosedBy(reader, TIES)).toStrictEqual([testId(1), testId(2), testId(3)]);
+    expect([...reads.keys()].sort()).toStrictEqual([testId(1), testId(2), testId(3)]);
   });
 });
