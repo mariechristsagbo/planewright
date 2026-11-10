@@ -83,7 +83,8 @@ Applying a change set is atomic:
    or group that something the set leaves alone still uses cannot be removed. Only the changed
    elements and groups are read, through the indexes. A failed check rejects the whole set and
    changes nothing: `apply` throws a `ChangeSetError` that lists every reason with its path in the
-   set, such as `elements[2].before` and `stale`.
+   set, such as `elements[2].before` and `stale`. While the store plans a set, it applies no other
+   ([what issue #45 decided](#what-issue-45-decided)).
 2. The document revision increases by one per applied set, transient sets included, and an updated
    element's revision by one; an added element keeps the revision it carries, so a `load` keeps the
    stored revisions and an undone deletion brings the element back as it was. The indexes are
@@ -423,6 +424,68 @@ leave open:
   42730911670 on an EPYC 9V74, measured 1.103 ms at the 95th percentile and 0.837 ms at the median,
   where the last run on `main` on that processor, 42685994872 at `c5bcfd3`, had measured 7.621 ms.
   The pull request keeps the record of every later run.
+
+## What issue #45 decided
+
+Issue #45 hardens the planning of a change set against a value that runs code when a check reads it,
+such as a getter, which the review of issue #36's pull request found could re-enter it (its m1).
+Change sets hold JSON values only ([ADR 0010](../../adr/0010-collaboration-ready-change-model.md),
+§2), and nothing decoded from JSON, a file or the network holds such a value, so no set that the
+contract allows was affected, and the contract is unchanged:
+
+- **What went wrong.** The held-field path ([above](#what-issue-36-decided)) reported its checks
+  into one list kept by its module and emptied at the start of every call. A getter that applied
+  another set, to the same store or to another one, emptied that list while a check of the outer
+  set was filling it, so that a style with an unknown field was taken with the field dropped. And
+  before issue #36 as after it, a getter could apply a set to the store that was planning the
+  outer one, which was then planned against a scene that changed under it.
+- **One list per call.** Each call of the held-field path now reports into a list of its own, which
+  it only counts. The planner's errors were already its own, and each check of the generic path
+  reports into a new list; the checks and their tables are made once, when their module loads, and
+  planning keeps nothing else beyond a call.
+- **No apply while planning.** A store raises a flag before it plans a set and lowers it in a
+  `finally`, however planning ends: with a plan, with a refusal, or with an error that the planner
+  or a value throws. While the flag is up, `apply` throws an `Error` that says that the store
+  cannot apply a change set while it is planning one, as it throws one while it tells its
+  listeners of a set, a check that is unchanged. The flag is lowered before the set is applied and
+  its listeners are told, so a listener's apply is still refused as one made while it is notified.
+  The error is not a `ChangeSetError`, so undo and redo, which leave out the changes that the store
+  refuses, pass it on instead of leaving a change out. Each store has its own flag, and another
+  store applies its sets meanwhile.
+- **Through the history.** A transaction's preview and commit, undo and redo all apply through the
+  store, so one asked from such a value is refused too. A refused preview is not remembered; a
+  commit whose revert is refused leaves the transaction open with its previews, as any refused
+  revert does, so that they can be committed later; and a refused undo or redo leaves the stacks
+  and the document as they were.
+- **What the outer set does.** If the refusal leaves the getter, the outer set fails with it and
+  changes nothing. If the getter catches it, the outer set is planned as its plain JSON is: refused
+  with the same errors, in the same order and at the same paths, or applied the same.
+- **What stays the same.** Nothing copies or freezes a set at `apply`, and nothing checks it for
+  getters or other values that are not JSON, which stay outside the contract; such a value may
+  still read the store, apply sets to another store or throw, and its error then fails the set.
+  For a JSON set, what it does or refuses, its errors, their paths and their order are unchanged,
+  which the planner's and the store's differential tests of issue #36 still check. The held-field
+  path makes one empty list per update where it emptied a shared one. In B7's loop, run natively on
+  the developer machine in four runs of each taken in turn at a load of about 3.3, applying the set
+  took 3.86 to 4.90 ms at the median, against 4.23 to 4.88 ms at `main`, and planning it alone 1.59
+  to 1.87 ms, against 1.79 to 2.45 ms. The pull request keeps B7's CI values.
+- **Tests.** In the scene's tests, a style whose stroke is a getter is written by a held-field
+  update, by a generic update and by an addition. With a field too many, the outer set is refused
+  with the errors of the same set with a plain style, and the store's revision, elements, groups,
+  canvas, drawing order and listeners are unchanged, whether the getter applies a set to another
+  store, which applies it, or to the same store, or asks for a transaction's preview or commit, an
+  undo or a redo, each of which is refused for planning; after an apply refused on the same store,
+  the indexes also agree with a scan of the unchanged document. With a valid style the set is
+  applied as the plain one, and a refusal that leaves the getter fails the set. The flag is lowered
+  after a getter or the planner throws, after a refused set and before the listeners are told. The
+  held-field path keeps what a check reported when another call is made while a value is read, and
+  two seeded properties plan 40 mixed sets each, read through getters at every field and item, as
+  their plain JSON, while each read applies a set to another store or tries one on the same store.
+  Of these 33 tests, 26 fail at `main`. Of 11 regressions planted outside Git, a list shared again,
+  a flag never raised or never checked, a flag lowered only when planning returns, only for a valid
+  set or only after the listeners (twice), one flag for every store, a refusal thrown as a
+  `ChangeSetError` or without naming planning, and planning outside the flag, the scene's, the
+  history's and the held-field path's tests caught all 11, each failing 5 to 29 of them.
 
 ## Requirements served
 
