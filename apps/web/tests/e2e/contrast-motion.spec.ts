@@ -79,7 +79,7 @@ test.describe('with reduced motion requested', () => {
     })`);
     const [zoomed] = frames;
     expect([new Set(frames).size, zoomed]).toEqual([1, expect.stringMatching(/, zoom 110%$/u)]);
-    await button(page, 'Reset zoom').click();
+    await button(page, /^Reset zoom/u).click();
     await expect(readout(page)).toHaveText(/, zoom 100%$/u);
     expect(await page.evaluate('document.getAnimations().length')).toBe(0);
   });

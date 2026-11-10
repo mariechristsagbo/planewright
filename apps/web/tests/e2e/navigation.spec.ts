@@ -67,6 +67,24 @@ test('REQ-V02 keyboard zoom keeps the canvas centre, and reset returns to 100 %'
   await expectHistoryDisabled(page);
 });
 
+test('A9 the Reset zoom button shows the zoom, is named "Reset zoom, 100%" at zoom 1, follows the zoom and resets it', async ({
+  page,
+}) => {
+  const reset = page.getByRole('button', { name: /^Reset zoom/u });
+  await expect(reset).toHaveAccessibleName('Reset zoom, 100%');
+  await expect(reset).toHaveText('100%');
+  await canvas(page).focus();
+  await page.keyboard.press('Control+Equal');
+  await expect(reset).toHaveAccessibleName('Reset zoom, 110%');
+  await expect(reset).toHaveText('110%');
+  await page.keyboard.press('Control+Minus');
+  await page.keyboard.press('Control+Minus');
+  await expect(reset).toHaveAccessibleName('Reset zoom, 90%');
+  await reset.click();
+  await expect(reset).toHaveAccessibleName('Reset zoom, 100%');
+  await expect(readout(page)).toHaveText('View: x 0, y 0, zoom 100%');
+});
+
 test('REQ-V06 Space+drag pans by the pointer delta and leaves the tool unchanged', async ({
   page,
 }) => {

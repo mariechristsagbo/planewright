@@ -12,7 +12,7 @@ export const polite = (page: Page): Locator => page.locator('#live-polite');
 
 export const elementList = (page: Page): Locator => page.getByRole('listbox', { name: 'Elements' });
 
-export const button = (page: Page, name: string): Locator =>
+export const button = (page: Page, name: string | RegExp): Locator =>
   page.getByRole('button', { name, exact: true });
 
 /** Opens the page and waits until the canvas is there. */

@@ -12,7 +12,7 @@ function mount() {
   harness.editor.resize({ width: 800, height: 600, pixelRatio: 1 });
   render(harness.wrap(<ZoomControls />));
   const group = screen.getByRole('group', { name: 'Zoom' });
-  const button = (name: string) => within(group).getByRole('button', { name });
+  const button = (name: string | RegExp) => within(group).getByRole('button', { name });
   return { ...harness, group, button };
 }
 
@@ -22,14 +22,17 @@ describe('the zoom controls', () => {
     expect(
       within(group)
         .getAllByRole('button')
-        .map((each) => each.textContent),
-    ).toEqual(['Zoom out', 'Reset zoom', 'Zoom in', 'Zoom to fit']);
+        .map((each) => each.getAttribute('aria-label') ?? each.textContent),
+    ).toEqual(['Zoom out', expect.stringMatching(/^Reset zoom/u), 'Zoom in', 'Zoom to fit']);
+    for (const name of ['Zoom out', /^Reset zoom/u, 'Zoom in', 'Zoom to fit']) {
+      expect(button(name)).toBeInTheDocument();
+    }
     expect(button('Zoom in')).toHaveAttribute('aria-keyshortcuts', 'Control+=');
     expect(button('Zoom in')).toHaveAccessibleDescription(
       'Shortcut Ctrl+=. Zooms in one step about the centre of the canvas.',
     );
     expect(button('Zoom out')).toHaveAttribute('aria-keyshortcuts', 'Control+-');
-    expect(button('Reset zoom')).toHaveAccessibleDescription(
+    expect(button(/^Reset zoom/u)).toHaveAccessibleDescription(
       'Shortcut Ctrl+0. Zooms to 100% about the centre of the canvas.',
     );
     expect(button('Zoom to fit')).toHaveAccessibleDescription(
@@ -49,7 +52,7 @@ describe('the zoom controls', () => {
     });
     expect(editor.view.camera.zoom).toBe(1.1);
     act(() => {
-      fireEvent.click(button('Reset zoom'));
+      fireEvent.click(button(/^Reset zoom/u));
       fireEvent.click(button('Zoom to fit'));
     });
     expect(editor.view.camera.zoom).toBe(1);
@@ -57,5 +60,18 @@ describe('the zoom controls', () => {
       expect(each).toBeEnabled();
       expect(each).not.toHaveAttribute('aria-disabled');
     }
+  });
+
+  it('D4 show the zoom on Reset zoom, named "Reset zoom, 100%" at zoom 1, and follow the zoom', () => {
+    const { button } = mount();
+    expect(button('Reset zoom, 100%')).toHaveTextContent(/^100%$/u);
+    act(() => {
+      fireEvent.click(button('Zoom in'));
+    });
+    expect(button('Reset zoom, 110%')).toHaveTextContent(/^110%$/u);
+    act(() => {
+      fireEvent.click(button('Reset zoom, 110%'));
+    });
+    expect(button('Reset zoom, 100%')).toHaveTextContent(/^100%$/u);
   });
 });
