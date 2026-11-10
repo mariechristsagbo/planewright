@@ -75,11 +75,11 @@ approved decisions recorded here govern.
    marquee edge change from P0's `#2a62d0` to Construction Violet `#6547B4`, and the marquee's fill
    from `#2a62d01a` to `#6547B41A`, so that chrome and canvas state share one colour (6.74:1 on the
    white canvas). It lands in S11, in `packages/render-canvas/src/overlay-layer.ts`.
-7. **D2, restrained motion.** Menus, popovers, panels, the drawer, notices and sheets enter in 140
-   to 220 ms (140 ms for menus and popovers, 180 ms for panels, the drawer and notices, 220 ms for
-   sheets) by opacity and a translation of 4 to 16 px, and hover and press feedback may fade colours
-   in 90 ms. Under `prefers-reduced-motion: reduce` nothing animates. The camera never animates,
-   with or without reduced motion. It lands in S12.
+7. **D2, restrained motion.** Surfaces enter by opacity and a short translation in 140 to 220 ms:
+   menus and popovers, the selection panel, notices and dialogs in 140 ms, settling 4 px; the
+   Elements drawer in 180 ms, from 8 px to its side; sheets in 220 ms, from 16 px below. Hover and
+   press feedback may fade colours in 90 ms. Under `prefers-reduced-motion: reduce` nothing
+   animates. The camera never animates, with or without reduced motion. It lands in S12.
 8. **D3, the chrome's typeface.** The chrome uses Inter at 400 and 500, declared as the family
    `Planewright UI` with `font-display: swap` behind a metric-matched local fallback,
    `Planewright UI Fallback` (Arial, Helvetica or Liberation Sans at `size-adjust: 106.8%`,
