@@ -77,7 +77,7 @@ describe('resolveImport', () => {
   });
 
   it.each([
-    ['math/vector.ts', '../../../apps/web/src/App.tsx'],
+    ['math/vector.ts', '../../../apps/web/src/shell/EditorShell.tsx'],
     ['index.ts', '../package.json'],
     ['math/vector.ts', 'node:fs'],
     ['math/vector.ts', '@planewright/protocol'],
@@ -139,7 +139,7 @@ describe('layerViolations', () => {
     ).toEqual(['editor/editor.ts → ../index.ts: layer 9 (editor) imports the entry point']);
   });
 
-  it.each(['node:fs', '@planewright/protocol', '../../../apps/web/src/App.tsx'])(
+  it.each(['node:fs', '@planewright/protocol', '../../../apps/web/src/shell/EditorShell.tsx'])(
     'rejects an import from outside the engine: %s',
     (specifier) => {
       expect(check({ path: 'math/vector.ts', text: `import x from '${specifier}';` })).toEqual([
