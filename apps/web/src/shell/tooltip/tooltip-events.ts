@@ -1,10 +1,10 @@
 // The chrome's tooltips' events (ADR 0012 and the v0.2 plan's S3), delegated rather than one
 // listener per control: the shell's root follows the pointer and the focus for every control that
 // names a tip, and its document follows the keys, so that Escape closes a tip wherever the focus
-// is. A tip opens after the hover delay, at once on keyboard focus and never on touch, and closes
-// on Escape, on a press, when the focus leaves its control and when the pointer leaves both the
-// control and the tip, which the pointer can move onto (WCAG 2.1, 1.4.13). The Escape that closes
-// a tip does nothing else.
+// is. A tip opens after the hover delay unless its control's popup is open by then, at once on
+// keyboard focus and never on touch, and closes on Escape, on a press, when the focus leaves its
+// control and when the pointer leaves both the control and the tip, which the pointer can move
+// onto (WCAG 2.1, 1.4.13). The Escape that closes a tip does nothing else.
 
 /** The delay without the --pw-delay-tooltip token, as in a page without its style sheets. */
 const DELAY_MS = 500;
@@ -12,6 +12,13 @@ const DELAY_MS = 500;
 /** The control whose tip an event's target is in: the element that names a tip. */
 export const tipControlOf = (node: EventTarget | null): HTMLElement | null =>
   node instanceof Element ? node.closest<HTMLElement>('[data-chrome-tip]') : null;
+
+/**
+ * Whether a control's popup, such as the menu button's menu, is open, so that a hover tip would lie
+ * over the popup and take its presses. The focus reaches no such control without closing its popup.
+ */
+const expanded = (control: HTMLElement): boolean =>
+  control.getAttribute('aria-expanded') === 'true';
 
 /**
  * How long the pointer rests on a control before its tip opens, from tokens.css, in milliseconds or
@@ -75,7 +82,8 @@ type TipsState = ReturnType<typeof tipsOf>;
 
 /**
  * The pointer's handlers: resting on a control, leaving it and pressing. The showing tip counts as
- * its control, so that the pointer can move from one to the other and the tip stays open.
+ * its control, so that the pointer can move from one to the other and the tip stays open. A rest
+ * that ends while the control's popup is open, however it opened meanwhile, opens no tip.
  */
 function pointerHandlers(
   root: HTMLElement,
@@ -92,7 +100,8 @@ function pointerHandlers(
     stopWaiting();
     tips.waiting = control;
     tips.timer = setTimeout(() => {
-      open(control);
+      if (expanded(control)) stopWaiting();
+      else open(control);
     }, hoverDelay(root));
   };
   const leave = (event: PointerEvent): void => {
