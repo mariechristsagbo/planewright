@@ -89,10 +89,15 @@ test('D3 the chrome computes Planewright UI first and is drawn in Inter at 400 a
     { familyName: 'Inter', isCustomFont: true },
   ]);
   // The tool buttons show a glyph and their corner key since S3, so a text button that keeps its
-  // word, Elements, shows Inter at 500, and the corner keys are drawn in JetBrains Mono.
-  expect(await renderedFonts(page, '[aria-controls="element-list-drawer"]')).toEqual([
-    { familyName: 'Inter Medium', isCustomFont: true },
-  ]);
+  // word, Elements, shows Inter at 500, beside its count in Inter at 400 since S5, and the corner
+  // keys are drawn in JetBrains Mono.
+  expect(await renderedFonts(page, '[aria-controls="element-list-drawer"]')).toEqual(
+    expect.arrayContaining([
+      { familyName: 'Inter Medium', isCustomFont: true },
+      { familyName: 'Inter', isCustomFont: true },
+    ]),
+  );
+  expect(await renderedFonts(page, '[aria-controls="element-list-drawer"]')).toHaveLength(2);
   expect(await renderedFonts(page, '[role="toolbar"] button')).toEqual([
     { familyName: 'JetBrains Mono', isCustomFont: true },
   ]);

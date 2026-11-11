@@ -29,6 +29,30 @@ test('A9 D4 the Elements toggle opens and closes the drawer, which is closed aft
   await expect(elementList(page)).toBeHidden();
 });
 
+/** The toggle's count's text, whether it is hidden, and its face and figures. */
+const COUNT = `(() => {
+  const count = document.querySelector('[aria-controls="element-list-drawer"] .toggle-count');
+  const style = getComputedStyle(count);
+  return { text: count.textContent, hidden: count.getAttribute('aria-hidden'), family: style.fontFamily, figures: style.fontVariantNumeric };
+})()`;
+
+test('D1 A2 the toggle shows the count in Inter’s tabular figures, following the elements, and keeps its name', async ({
+  page,
+}) => {
+  await openPage(page);
+  const toggle = elementsToggle(page);
+  const count = { hidden: 'true', family: expect.stringMatching(/^"Planewright UI"/u) };
+  expect(await page.evaluate(COUNT)).toEqual({ ...count, text: '0', figures: 'tabular-nums' });
+  await canvas(page).focus();
+  for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
+  await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
+  await expect.poll(() => page.evaluate(COUNT)).toMatchObject({ ...count, text: '2' });
+  await page.keyboard.press('Delete');
+  await expect(polite(page)).toHaveText('Deleted 1 ellipse. Nothing selected.');
+  await expect.poll(() => page.evaluate(COUNT)).toMatchObject({ text: '1' });
+  await expect(toggle).toHaveAccessibleName('Elements');
+});
+
 test('A9 REQ-Y05 P0’s list keys move, select, nudge and delete inside the open drawer', async ({
   page,
 }) => {
