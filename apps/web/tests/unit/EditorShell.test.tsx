@@ -128,9 +128,12 @@ describe('EditorShell', () => {
     ]);
   });
 
-  it('A7 renders a visually hidden h1, the islands with their controls, and the drawer closed', () => {
+  it('A7 renders the main landmark with a visually hidden h1, the islands with their controls, and the drawer closed', () => {
     mount();
-    const heading = screen.getByRole('heading', { level: 1, name: 'Planewright' });
+    // The shell's root is the page's one main landmark, as P0's main was (the S2 review's m4).
+    const main = screen.getByRole('main');
+    expect(main).toHaveClass('editor-shell');
+    const heading = within(main).getByRole('heading', { level: 1, name: 'Planewright' });
     expect(heading).toHaveClass('visually-hidden');
     expect(heading).not.toHaveAttribute('hidden');
     const view = screen.getByText('View: x 0, y 0, zoom 100%');
@@ -152,6 +155,9 @@ describe('EditorShell', () => {
       'false',
     );
     expect(screen.queryByRole('listbox')).toBeNull();
+    expect(
+      [...document.querySelectorAll('[data-island]')].every((island) => main.contains(island)),
+    ).toBe(true);
   });
 
   it('REQ-C11 keeps every island a sibling of the canvas host, never inside it', () => {
