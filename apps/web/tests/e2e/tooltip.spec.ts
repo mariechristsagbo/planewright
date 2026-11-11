@@ -14,6 +14,26 @@ const tip = (page: Page): Locator => page.getByRole('tooltip');
 /** Longer than the live region's pause before a message, so that a change would have shown. */
 const SETTLE_MS = 300;
 
+/** The hover delay token as the page computes it, which the built style sheet may write ".5s". */
+const DELAY_TOKEN = `getComputedStyle(document.querySelector('main')).getPropertyValue('--pw-delay-tooltip').trim()`;
+
+/**
+ * Starts measuring in the page, apart from the test's own round trips, the time from the pointer's
+ * arrival on a control that names a tip to the tip's showing, in milliseconds, which HOVER_TO_TIP
+ * then gives.
+ */
+const MEASURE_HOVER = `void (window.hoverToTip = new Promise((resolve) => {
+  const tip = document.getElementById('chrome-tip');
+  let arrived = null;
+  document.addEventListener('pointerover', (event) => {
+    if (arrived === null && event.target.closest('[data-chrome-tip]') !== null) arrived = performance.now();
+  }, true);
+  new MutationObserver(() => {
+    if (!tip.hidden && arrived !== null) resolve(performance.now() - arrived);
+  }).observe(tip, { attributeFilter: ['hidden'] });
+}))`;
+const HOVER_TO_TIP = 'window.hoverToTip';
+
 /** The centre of a control, where the mouse rests on it. */
 async function centreOf(control: Locator): Promise<[number, number]> {
   const box = await control.boundingBox();
@@ -97,14 +117,17 @@ test('D4 D6 A6 a hover tooltip appears after its delay and closes when the point
   page,
 }) => {
   await openPage(page);
+  expect(await page.evaluate<string>(DELAY_TOKEN)).toMatch(/^(?:500ms|0?\.5s)$/u);
   const rectangle = toolButton(page, 'Rectangle');
   const [x, y] = await centreOf(rectangle);
+  await page.evaluate(MEASURE_HOVER);
   await page.mouse.move(x, y);
-  const start = Date.now();
-  await page.waitForTimeout(250);
-  await expect(tip(page)).toHaveCount(0);
+  // Bounded from both sides in the page, since the test's own round trips can run late on a loaded
+  // machine: still hidden at 250 ms and up to 450 ms after the pointer arrives, shown by 700 ms.
+  const delay = await page.evaluate<number>(HOVER_TO_TIP);
+  expect(delay).toBeGreaterThanOrEqual(450);
+  expect(delay).toBeLessThanOrEqual(700);
   await expect(tip(page)).toBeVisible();
-  expect(Date.now() - start).toBeGreaterThanOrEqual(450);
   await expect(tip(page)).toHaveText(/^Rectangle\s*R\s*or\s*2$/u);
   const box = await canvasBox(page);
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
