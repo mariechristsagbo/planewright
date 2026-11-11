@@ -67,6 +67,29 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
 });
 
+test('A4 REQ-Y06 the open menu, its keys on a highlighted item, and Keyboard shortcuts keep every text at 4.5:1', async ({
+  page,
+}) => {
+  await openPage(page);
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('menuitem', { name: 'Select all' })).toBeFocused();
+  const menu = await textContrasts(page);
+  expect(menu.map(({ text }) => text)).toEqual(
+    expect.arrayContaining(['Select all', 'Ctrl+A', 'Show elements', 'Source on GitHub']),
+  );
+  expect(menu.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+  // The highlighted item's keys, muted text on the hover surface, are the closest to the floor.
+  expect(menu.find(({ text }) => text === 'Ctrl+A')?.ratio).toBeLessThan(5);
+  await page.keyboard.press('Escape');
+  await button(page, 'Keyboard shortcuts').click();
+  const dialog = await textContrasts(page);
+  expect(dialog.map(({ text }) => text)).toEqual(
+    expect.arrayContaining(['Keyboard shortcuts', 'Tools', 'Hand', 'Ctrl+Shift+Z', 'or']),
+  );
+  expect(dialog.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+});
+
 test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whole pixels', () => {
   test.use({ deviceScaleFactor: 2 });
 
