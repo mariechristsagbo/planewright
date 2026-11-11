@@ -23,7 +23,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo,
   also from the keyboard alone, through a list of the elements in a drawer, which an Elements
   button showing their count opens and which is a sheet on phones, and a live region that
-  announces each change; a Pre-release tag opens About this build, a menu at the top left runs
+  announces each change; while something is selected, a selection panel near the upper left, or on
+  phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
+  size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
+  Pre-release tag opens About this build, a menu at the top left runs
   Select all and the zoom commands, shows the elements and opens About this build and a Keyboard
   shortcuts dialog that lists every command's keys, which a button at the bottom right opens too,
   and the drawing is saved in the browser's IndexedDB storage and restored on reload. Text
@@ -47,8 +50,14 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   and compact 280 px widths, its Close and folded keys, its focus moves to the list box and back to
   the toggle, its rows of a kind glyph, a label and mono figures under P0's names, the list mounted
   only while it is open with its options memoised, and on phones a sheet of at most 62 % of the
-  height that makes the tool bar and the bottom islands inert and closes on Escape. S6 to S13 are
-  not implemented yet.
+  height that makes the tool bar and the bottom islands inert and closes on Escape. Slice S6
+  (issue #69) added the selection panel, 232 px wide at 16 / 72 on desktops and mounted only while
+  something drawn is selected and no text is edited, with the kind's glyph and name or the count,
+  read-only figures in JetBrains Mono from a pure geometry module, Duplicate and Delete from the
+  registry, Edit text only where Enter would edit the lone selected text, and a footnote that style
+  controls are not in this build; on phones in portrait a selection bar in its place, above the
+  notices, whose Details opens a Details sheet, never open with the Elements sheet, closed at every
+  load and stored nowhere. S7 to S13 are not implemented yet.
   Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
@@ -108,17 +117,19 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   toggle with its count and the drawer with its focus moves and the phone's sheet query, the
   empty-canvas note and the Keyboard shortcuts button, the menu's button, the
   menu and its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon`
-  in `shell/icons.tsx`, the tooltip and its delegated listeners in `shell/tooltip/`, and the modal
-  dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host, input
-  adapter and editor provider in `editor/`, the text area in `editor/text/`, the element list, the
-  live region with its
-  messages and the focus's return in `a11y/`, the tool bar shown as the palette, Undo and Redo, the
+  in `shell/icons.tsx` and the kinds' glyphs in `shell/kind-glyphs.ts`, the selection panel, the
+  phone's selection bar and Details sheet, what they read of the view and the selection's pure
+  geometry in `shell/selection/`, the tooltip and its delegated listeners in `shell/tooltip/`, and
+  the modal dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host,
+  input adapter and editor provider in `editor/`, the text area in `editor/text/`, the element list,
+  the live region with its messages, the figures' rounding and the focus's return in `a11y/`, the
+  tool bar shown as the palette, Undo and Redo, the
   zoom controls, the view readout, the save status and the storage notices in `ui/`, and the browser
   ports, text measurer, font loading, Mod key per platform, the IndexedDB record backend, storage
   start-up, page events and the preferences entry in `platform/`, and the style sheets in `styles/`:
   the design tokens, the fonts, the base, the controls', canvas's, list's and saving's rules, the
   shell's layout, islands and dialogs, the glyph buttons', the Elements toggle's and drawer's, the
-  menu's and the tooltip's rules, and
+  selection panel's, bar's and sheet's (`selection.css`), the menu's and the tooltip's rules, and
   `responsive.css`, the only one with media queries, which `main.tsx` adds as a style element of its
   own so that a breakpoint never makes the fonts load again. Unit tests in `tests/unit`, Playwright
   tests in `tests/e2e`, static files in `public/`, the bundled fonts with their licences in

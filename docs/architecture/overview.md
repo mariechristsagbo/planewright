@@ -51,7 +51,14 @@ list only while it is open, puts the focus on the list box when it opens and on 
 closes, holds a Close button and the list's keys folded under a summary, and shows in each row the
 kind's glyph, a label and the figures in mono while each option keeps P0's name; on a phone in
 portrait it is a sheet of at most 62 % of the height, which makes the tool bar and the bottom
-islands inert and closes on Escape. Its IndexedDB record backend
+islands inert and closes on Escape. Since slice S6, issue #69, a selection panel, 232 px wide near
+the upper left, shows while something drawn is selected and no text is edited: the kind's glyph and
+name, or the count, the selection's position, size and turn read-only in mono, with a line's length,
+a freehand stroke's points or a text's lines, Duplicate and Delete, which run the registry's
+commands, Edit text for a lone text that Enter would edit, and a line saying that style controls are
+not in this build; on a phone in portrait a bar under the tool bar takes its place, with Details,
+which opens the figures in a sheet along the bottom, never together with the Elements sheet. Its
+IndexedDB record backend
 (database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
 selection are kept in the browser, and at start-up the page opens the most recently updated document
 again; it also saves at once when the page is hidden or left, and reads its preferences entry from
@@ -153,8 +160,9 @@ the chrome's design tokens, base styles and typeface, with no layout rule change
 rewrapped in the new face, issue #55 (slice S2) replaced P0's page with the full-bleed shell
 described above, and issue #62 (slice S3) drew the chrome's 35 original glyphs, turned the tool bar
 into the palette and added tooltips, issue #64 (slice S4) added the menu and the Keyboard
-shortcuts dialog, and issue #66 (slice S5) gave the Elements drawer its count, its rows and its
-phone sheet; S6 to S13 are not implemented yet.
+shortcuts dialog, issue #66 (slice S5) gave the Elements drawer its count, its rows and its phone
+sheet, and issue #69 (slice S6) added the selection panel, the phone's selection bar and the
+Details sheet; S7 to S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 
