@@ -1,9 +1,11 @@
+import type { SaveStatus } from '@planewright/engine';
 import { PROTOCOL_VERSION } from '@planewright/protocol';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { BUILD_STATUS, FOUNDATION_CONTENTS, NOT_YET_IMPLEMENTED } from '../../src/foundation.ts';
 import { EditorShell } from '../../src/shell/EditorShell.tsx';
+import { saveHarness } from '../support/saving.ts';
 import { surfaceHarness } from '../support/surface.tsx';
 
 // The editor's shell, which replaces P0's page (ADR 0012, decision 13; AGENTS.md: the UI stays
@@ -267,5 +269,41 @@ describe('EditorShell', () => {
     });
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(tag).toHaveFocus();
+  });
+});
+
+describe('the shell root’s save state', () => {
+  it.each([
+    [{ type: 'saved' }, 'saved'],
+    [{ type: 'pending' }, 'pending'],
+    [{ type: 'failed', reason: 'quota' }, 'failed'],
+    [{ type: 'stale' }, 'stale'],
+    [null, 'none'],
+  ] satisfies [SaveStatus | null, string][])(
+    'A3 D2 gives view.save %j as data-save-state="%s" on the main landmark',
+    (save, state) => {
+      render(<EditorShell surface={saveHarness(save).surface} />);
+      expect(screen.getByRole('main')).toHaveAttribute('data-save-state', state);
+      expect(document.querySelectorAll('[data-save-state]')).toHaveLength(1);
+    },
+  );
+
+  it('A3 follows view.save as it changes', () => {
+    const harness = saveHarness({ type: 'saved' });
+    render(<EditorShell surface={harness.surface} />);
+    const states = (
+      [
+        { type: 'pending' },
+        { type: 'failed', reason: 'failed' },
+        { type: 'pending' },
+        { type: 'saved' },
+        { type: 'stale' },
+        null,
+      ] satisfies (SaveStatus | null)[]
+    ).map((save) => {
+      harness.setSave(save);
+      return screen.getByRole('main').getAttribute('data-save-state');
+    });
+    expect(states).toEqual(['pending', 'failed', 'pending', 'saved', 'stale', 'none']);
   });
 });

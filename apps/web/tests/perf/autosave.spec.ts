@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test';
 
 import { perfElements } from '../../../../packages/engine/tests/support/perf-scenes.ts';
 import { canvas } from '../e2e/support.ts';
-import { saveStatus } from '../e2e/storage.ts';
+import { saveState } from '../e2e/storage.ts';
 import {
   DOCUMENT_ID,
   PROBES,
@@ -18,8 +18,9 @@ import {
 // Budget B9 (docs/architecture/engine/quality.md#performance-budgets, REQ-F03): no task over 50 ms
 // while a 50-element change is saved. The stored drawing of 5,000 elements opens with 50 of them
 // selected; each round nudges them from the keyboard and, from the frame after the nudge until the
-// stored revision rises and the page says the drawing is saved, collects the long tasks that the
-// page's observer reports.
+// stored revision rises and the shell's root says the drawing is saved (data-save-state="saved",
+// ADR 0012, decision 16, since the page shows nothing while saving works), collects the long tasks
+// that the page's observer reports.
 
 const SCENE = { seed: 23, count: 5_000 };
 const ROUNDS = 8;
@@ -47,7 +48,7 @@ test('B9 REQ-F03 no long task while a 50-element change is saved', async ({ page
     .map(({ id }) => id);
   await storeScene(page, spec, selected);
   await openMeasured(page, SCENE.count);
-  await expect(saveStatus(page)).toHaveText('Saved in this browser');
+  await expect(saveState(page)).toHaveAttribute('data-save-state', 'saved');
   await canvas(page).focus();
 
   const windows: { from: number; to: number }[] = [];
@@ -55,9 +56,10 @@ test('B9 REQ-F03 no long task while a 50-element change is saved', async ({ page
     await page.keyboard.press(round % 2 === 0 ? 'ArrowRight' : 'ArrowLeft');
     await settle(page);
     const from = await page.evaluate<number>('performance.now()');
-    // The save is known by the stored revision it raises, since "Saving…" may show too briefly.
+    // The save is known by the stored revision it raises, since the pending state may last too
+    // briefly to be seen, and then by the root's save state.
     await expect.poll(() => storedRevision(page), { intervals: [50] }).toBe(round + 2);
-    await expect(saveStatus(page)).toHaveText('Saved in this browser');
+    await expect(saveState(page)).toHaveAttribute('data-save-state', 'saved');
     windows.push({ from, to: await page.evaluate<number>('performance.now()') });
   }
   // Long tasks reach the observer some time after they end, so they are read once all are in.
@@ -79,7 +81,7 @@ test('B9 REQ-F03 no long task while a 50-element change is saved', async ({ page
       changed: 50,
       rounds: ROUNDS,
       longestTaskMs: Math.max(0, ...longest),
-      by: 'long tasks from the frame after each nudge until the page says Saved in this browser',
+      by: 'long tasks from the frame after each nudge until data-save-state says saved',
     },
   });
 });
