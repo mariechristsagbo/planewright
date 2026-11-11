@@ -16,10 +16,11 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
   await expect((await openElements(page)).getByRole('option')).toHaveCount(2);
   const contrasts = await textContrasts(page);
-  // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5).
-  expect(contrasts.map(({ text }) => text)).toEqual(
-    expect.arrayContaining(['Undo', 'Rectangle', 'Zoom in', 'Elements']),
-  );
+  // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5), and
+  // the tools show glyphs rather than words (S3).
+  const texts = contrasts.map(({ text }) => text);
+  expect(texts).toEqual(expect.arrayContaining(['Undo', 'Zoom in', 'Elements']));
+  expect(texts).not.toContain('Rectangle');
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
 });
 

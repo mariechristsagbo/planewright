@@ -1,0 +1,41 @@
+/*
+ * The palette and the other glyph buttons (ADR 0012, decision 3, and the v0.2 plan's S3): square
+ * controls that show an original glyph in the text colour, 36 px on desktops (32 px compact, in
+ * responsive.css), the palette's tools with their first key in the bottom-right corner in JetBrains
+ * Mono and hairlines between their groups. They keep the base's pressed, disabled and focus rules,
+ * which S10 coordinates, so no rule here sets a control's pressed, disabled or focus styles.
+ */
+.toolbar {
+  align-items: center;
+}
+
+.island .glyph-button {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--pw-spacing-control-desktop);
+  height: var(--pw-spacing-control-desktop);
+  padding: 0;
+}
+
+.glyph-button > svg {
+  display: block;
+}
+
+/* A tool's first key, which its name, aria-keyshortcuts and description also give. */
+.tool-key {
+  position: absolute;
+  right: 3px;
+  bottom: 2px;
+  margin: 0;
+  font: var(--pw-type-kbd-corner);
+  letter-spacing: var(--pw-type-kbd-corner-tracking);
+}
+
+/* The hairline between two groups of the palette, 1 by 20 px. */
+.tool-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--pw-color-outline-subtle);
+}

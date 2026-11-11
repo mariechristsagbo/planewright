@@ -51,6 +51,11 @@ test('D3 every element computes 400 or 500, and the text area keeps Planewright 
   expect(new Set(emphasis.map(({ weight }) => weight))).toEqual(new Set(['500']));
 });
 
+/** Each tool button's corner key: whether it is hidden from assistive technology, and its family. */
+const CORNER_KEYS = `[...document.querySelectorAll('[role="toolbar"] button kbd')].map(
+  (key) => key.getAttribute('aria-hidden') + ' ' + getComputedStyle(key).fontFamily,
+)`;
+
 /** The faces that have loaded, as their family and weight. */
 const LOADED = `[...document.fonts]
   .filter((face) => face.status === 'loaded')
@@ -83,9 +88,17 @@ test('D3 the chrome computes Planewright UI first and is drawn in Inter at 400 a
   expect(await renderedFonts(page, '#view-readout')).toEqual([
     { familyName: 'Inter', isCustomFont: true },
   ]);
-  expect(await renderedFonts(page, '[role="toolbar"] button')).toEqual([
+  // The tool buttons show a glyph and their corner key since S3, so a text button that keeps its
+  // word, Elements, shows Inter at 500, and the corner keys are drawn in JetBrains Mono.
+  expect(await renderedFonts(page, '[aria-controls="element-list-drawer"]')).toEqual([
     { familyName: 'Inter Medium', isCustomFont: true },
   ]);
+  expect(await renderedFonts(page, '[role="toolbar"] button')).toEqual([
+    { familyName: 'JetBrains Mono', isCustomFont: true },
+  ]);
+  expect(await page.evaluate<string[]>(CORNER_KEYS)).toEqual(
+    Array.from({ length: 9 }, () => 'true "Planewright Mono", monospace'),
+  );
   expect(await renderedFonts(page, 'h1')).toEqual([
     { familyName: 'Inter Medium', isCustomFont: true },
   ]);

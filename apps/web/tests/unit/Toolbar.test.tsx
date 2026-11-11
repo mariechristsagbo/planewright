@@ -4,6 +4,19 @@ import { describe, expect, it } from 'vitest';
 import { Toolbar } from '../../src/ui/Toolbar.tsx';
 import { surfaceHarness } from '../support/surface.tsx';
 
+/** The tool bar's buttons' names in the registry's order: the tools, then tool lock. */
+const NAMES = [
+  'Hand',
+  'Selection',
+  'Rectangle',
+  'Ellipse',
+  'Diamond',
+  'Line',
+  'Freehand',
+  'Text',
+  'Tool lock',
+];
+
 // The tool bar (docs/architecture/engine/quality.md#accessibility): a toolbar with one tab stop and
 // arrow-key movement, whose tools are toggle buttons exposing their shortcuts (REQ-C14, REQ-Y01,
 // REQ-Y03).
@@ -20,21 +33,14 @@ function mount() {
 describe('the tool bar', () => {
   it('AC REQ-Y01 REQ-Y03 is a toolbar named Tools whose tools are named toggle buttons', () => {
     const { toolbar, hand, selection } = mount();
-    expect(
-      within(toolbar)
-        .getAllByRole('button')
-        .map((button) => button.textContent),
-    ).toEqual([
-      'HandH',
-      'SelectionV or 1',
-      'RectangleR or 2',
-      'EllipseO or 3',
-      'DiamondD or 4',
-      'LineL or 5',
-      'FreehandP or 6',
-      'TextT or 7',
-      'Tool lockQ',
-    ]);
+    // ADR 0012's row for this test: the buttons show a glyph and an aria-hidden corner key, so
+    // their accessible names are asserted in registry order, not their text.
+    const buttons = within(toolbar).getAllByRole('button');
+    expect(buttons).toHaveLength(NAMES.length);
+    buttons.forEach((button, index) => {
+      expect(button).toHaveAccessibleName(NAMES[index]);
+      expect(button).not.toHaveTextContent(NAMES[index] ?? '');
+    });
     expect(hand).toHaveAttribute('aria-pressed', 'false');
     expect(selection).toHaveAttribute('aria-pressed', 'true');
   });
