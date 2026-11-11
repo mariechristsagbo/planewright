@@ -36,3 +36,14 @@ HTMLDialogElement.prototype.close = function close(this: HTMLDialogElement): voi
   this.removeAttribute('open');
   this.dispatchEvent(new Event('close'));
 };
+
+// jsdom has no matchMedia: no media query matches, as on a desktop, unless a test answers them.
+window.matchMedia = (query: string): MediaQueryList =>
+  ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: () => undefined,
+    removeEventListener: () => undefined,
+    dispatchEvent: () => false,
+  }) as Partial<MediaQueryList> as MediaQueryList;

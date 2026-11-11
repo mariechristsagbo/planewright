@@ -38,4 +38,14 @@ describe("the web app's media queries", () => {
     expect(MAIN.indexOf('responsive.css?inline')).toBeGreaterThan(lastSheet);
     expect(MAIN).toMatch(/media\.textContent = responsive;\s*document\.head\.append\(media\);/u);
   });
+
+  it('hold the phone sheet’s query that shell/sheet.ts follows, so that the sheet and its inert islands agree', () => {
+    const source = readFileSync(join(SOURCES, 'shell', 'sheet.ts'), 'utf8');
+    const query = /^export const SHEET_QUERY = '(?<query>[^']+)';$/mu.exec(source)?.groups?.[
+      'query'
+    ];
+    expect(query).toBe('(max-width: 599px) and (min-height: 500px)');
+    const media = [...plain(styleSheet('responsive.css')).matchAll(/@media ([^{]+?) \{/gu)];
+    expect(media.map((match) => match[1])).toContain(query);
+  });
 });

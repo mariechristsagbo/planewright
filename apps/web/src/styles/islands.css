@@ -21,6 +21,11 @@
   letter-spacing: var(--pw-type-label-md-tracking);
 }
 
+/* An island's controls, in a box that adds nothing to its layout, inert while a sheet covers them. */
+.island-controls {
+  display: contents;
+}
+
 .island button {
   padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
 }
