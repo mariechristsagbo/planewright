@@ -27,12 +27,12 @@ export function saveHarness(
   storageNotice: StorageNotice | null = null,
 ): SaveHarness {
   const { editor: inner, surface, said } = surfaceHarness();
-  const listeners = new Set<() => void>();
+  const listeners = new Set<(view: EditorView) => void>();
   let status = save;
   let view: EditorView = { ...inner.view, save: status };
   const publish = (): void => {
     view = { ...inner.view, save: status };
-    for (const listener of [...listeners]) listener();
+    for (const listener of [...listeners]) listener(view);
   };
   inner.subscribe(publish);
   const editor: Editor = {
