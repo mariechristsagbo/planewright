@@ -19,7 +19,8 @@ interface IdentityIslandProps {
  * compact widths hide, both hidden from assistive technology since the page's hidden heading
  * already names Planewright, then the Pre-release tag. The menu's items run the registry's
  * commands or the shell's own ways to the drawer and the dialogs; a dialog opened from the menu
- * gives the focus back to the menu button.
+ * gives the focus back to the menu button. While the menu is open the island carries a class that
+ * raises it above the other islands.
  */
 export function IdentityIsland({ shell, menuButton, tag }: IdentityIslandProps) {
   const { editor } = useSurface();
@@ -44,7 +45,10 @@ export function IdentityIsland({ shell, menuButton, tag }: IdentityIslandProps) 
     close(true);
   };
   return (
-    <div className="island identity-island" data-island="identity">
+    <div
+      className={`island identity-island${shell.menu ? ' chrome-menu-open' : ''}`}
+      data-island="identity"
+    >
       <MenuButton
         ref={menuButton}
         open={shell.menu}
