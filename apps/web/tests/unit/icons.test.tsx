@@ -11,7 +11,7 @@ import { Icon } from '../../src/shell/icons.tsx';
 
 /** The commands and numbers of a path, such as ['M', 6.5, 12, 'V', 5.25]. */
 const tokensOf = (d: string): (string | number)[] =>
-  (d.match(/[a-z]|-?(?:\d+\.?\d*|\.\d+)/giu) ?? []).map((token) =>
+  (d.match(/[a-z]|-?(?:\d+(?:\.\d*)?|\.\d+)/giu) ?? []).map((token) =>
     /[a-z]/iu.test(token) ? token : Number(token),
   );
 
