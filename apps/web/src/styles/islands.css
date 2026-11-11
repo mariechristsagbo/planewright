@@ -1,7 +1,8 @@
 /*
  * The shell's islands and what they hold (ADR 0012, decisions 3, 10 and 13): each a white surface
  * with a hairline and the first elevation, over the canvas. Their controls keep the base's pressed,
- * disabled and focus rules, so no rule here sets a control's colour, border or outline.
+ * disabled and focus rules, so no rule here sets a control's pressed, disabled or focus styles; the
+ * Pre-release tag sets its own text and background colours.
  */
 .island {
   position: relative;
