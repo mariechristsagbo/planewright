@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { button, expectIndicator, openPage } from './a11y.ts';
+import { canvas } from './support.ts';
 
 // About this build (ADR 0012, D5, issue #55's A6): the persistent Pre-release tag opens a modal
 // dialog that holds what P0's page said around the editor. The focus lands on Close and Tab wraps
@@ -76,6 +77,24 @@ test('A6 REQ-Y02 a press on the scrim closes About and gives the focus back to t
   await expect(tag).toBeFocused();
   await tag.click();
   await about.getByRole('button', { name: 'Close' }).click();
+  await expect(about).toHaveCount(0);
+  await expect(tag).toBeFocused();
+});
+
+test('A6 REQ-Y02 closing About gives the focus to the tag even when the press that opened it did not focus the tag', async ({
+  page,
+}) => {
+  await openPage(page);
+  const tag = button(page, 'Pre-release');
+  // Some browsers, Safari among them, do not focus a button that a click presses, so the focus can
+  // still be on the canvas when About opens.
+  await canvas(page).focus();
+  await page.evaluate(
+    "document.querySelector('[aria-haspopup=\"dialog\"]').dispatchEvent(new MouseEvent('click', { bubbles: true }))",
+  );
+  const about = page.getByRole('dialog', { name: 'About this build' });
+  await expect(about.getByRole('button', { name: 'Close' })).toBeFocused();
+  await page.keyboard.press('Escape');
   await expect(about).toHaveCount(0);
   await expect(tag).toBeFocused();
 });
