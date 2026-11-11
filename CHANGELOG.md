@@ -228,3 +228,14 @@ release has been published yet.
   queries are in a style sheet of their own, so that a resize across a breakpoint does not make
   the fonts load again and every text be measured again. The tool bar keeps its words until S3
   and wraps at narrower widths; S3 to S13 are not implemented.
+- The v0.2 original glyphs and palette (slice S3, issue #62, ADR 0012 decision 3): 35 glyphs drawn
+  for Planewright from geometric primitives on a 20 px grid, 34 interface glyphs and the mark, in
+  one typed record with an `Icon` component that strokes them 1.5 px wide in the text colour. The
+  tool bar is now a palette: each tool shows its glyph with its first key in a corner, hidden from
+  screen readers, hairlines split its groups, and tool lock shows a padlock that is closed while it
+  is on. Undo, Redo, Zoom out, Zoom in and Zoom to fit show glyphs, Reset zoom keeps showing the
+  zoom, Elements keeps its word, and the identity island shows the mark. Every control keeps its
+  name, keys and description. The glyph controls and Reset zoom show a tooltip of their name and
+  keys after 500 ms of hover or at once on keyboard focus, never on touch, closed by Escape, a press
+  or leaving the control. Glyphs and their controls' borders measure 3:1 or more against their
+  surfaces. S4 to S13 are not implemented.
