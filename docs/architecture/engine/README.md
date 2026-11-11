@@ -12,10 +12,11 @@ transforms with ENG-10 (issue #23), the shape, line and freehand tools with ENG-
 Text tool with text editing with ENG-12 (issue #27), and the `persistence` layer's repository port
 and autosave scheduler, with loading and saving in the editor, with ENG-13 (issue #29), and the
 announcer port, the view's elements and creation with Enter with ENG-14 (issue #31). The web app
-shows a pre-release editor surface on them: a canvas that pans and zooms, on which shapes, lines,
-freehand strokes and texts can be drawn, selected, transformed and undone, and texts edited again,
-also from the keyboard alone through a list of its elements, with each change said in a live region,
-and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue
+shows a pre-release editor surface on them: a canvas that fills the window and pans and zooms, with
+the controls floating over it since v0.2's slice S2 (issue #55), on which shapes, lines, freehand
+strokes and texts can be drawn, selected, transformed and undone, and texts edited again, also from
+the keyboard alone through a list of its elements in a drawer, with each change said in a live
+region, and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue
 #33) measures every performance budget, in CI with its benchmarks, browser measurements and
 bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets in CI and B2 on a
 slower machine, and they went to issues #34 to #36
