@@ -13,7 +13,7 @@ REQ-Y06).
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
 | Tool bar           | `role="toolbar"` with a label; one tab stop, arrow keys move between tools; each tool a toggle button with `aria-pressed`, a name, its shortcut in `aria-keyshortcuts` and in its description        | REQ-C14, REQ-Y01, REQ-Y03 |
 | Canvas host        | a focusable region labelled "Drawing canvas", described by short instructions; it receives the editor's shortcuts                                                                                    | REQ-Y02                   |
-| Element list       | a list box beside the canvas with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                          | REQ-Y05                   |
+| Element list       | a list box in the Elements drawer with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                     | REQ-Y05                   |
 | Live region        | one polite region for selection counts, created and deleted elements, undo and redo; save failures use an assertive message                                                                          | REQ-Y04                   |
 | Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                    | REQ-Y02                   |
 | Menus (P1)         | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                       | REQ-Y01, REQ-Y03          |
@@ -30,7 +30,10 @@ focused one for large documents, with `aria-setsize` and `aria-posinset`, so its
 tool's default-size element at the centre of the viewport, so no element kind needs a pointer
 (REQ-C04, REQ-Y05).
 
-**Order of tab stops.** Tool bar, canvas, element list, history controls, zoom controls.
+**Order of tab stops.** Pre-release, the tool bar, the canvas, the storage notices' buttons while
+storage needs attention, Elements and the element list while its drawer is open, history controls,
+zoom controls (ADR 0012, decision 14, as far as slice S2's controls go). P0's order was the tool
+bar, the canvas, the element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
@@ -52,16 +55,20 @@ the engine, and the element list, the live region, the zoom controls and focus m
   or "Undid move of 2 elements. 2 elements selected."
 - **The live region.** Two visually hidden regions, `aria-live` polite and assertive and
   `aria-atomic`, are put at the end of the page's body at start-up, before anything is said, and
-  carry no role, so that the page's status keeps the only `status` role. A message empties its
+  carry no role, so that the page's status kept the only `status` role; since slice S2 the
+  pre-release sentence that it held is in About this build, and the page has no `status` role. A
+  message empties its
   region at once and is written 100 ms later, so that a repeat is announced again and only the
   latest of quick messages is written. Failed and stale saves and the start-up notices for
-  unavailable or invalid storage are assertive. The notices below the canvas are no longer
-  `role="alert"` elements but a "Storage notices" region shown only while one applies (the ENG-13
-  review's s2).
+  unavailable or invalid storage are assertive. The notices, below the canvas in P0 and under the
+  top-right island since S2, are no longer `role="alert"` elements but a "Storage notices" region
+  shown only while one applies (the ENG-13 review's s2).
 - **The element list.** The editor's view gains `elements`, the drawn elements in drawing order as
   last committed: while a gesture or a text session holds the history's transaction it keeps the
   list from before, so that the list never shows a preview and a drag publishes no view. The list
-  box sits under the canvas and its instructions, so that the canvas keeps its size, and names each
+  box sat under the canvas and its instructions, so that the canvas kept its size; since slice S2 it
+  is in the Elements drawer, closed at every load, which keeps it mounted but hidden while closed,
+  until S5 unmounts it. It names each
   element "Kind, width by height, at x, y" from its unrotated box in scene units to one decimal, a
   text by its first 40 characters on one line, with ", turned N degrees" for a turn. It keeps the
   focus and points at its active option with `aria-activedescendant`, so that a deletion never moves
@@ -76,21 +83,25 @@ the engine, and the element list, the live region, the zoom controls and focus m
   Selection tool and one selected text it edits that text again, as a double tap does. It does
   nothing while a transaction is open, and the tool bar leaves Enter and Space to its focused
   button.
-- **Focus.** The tab stops are the tool bar's one stop, the canvas, the element list, Undo, Redo,
-  Zoom out, Reset zoom, Zoom in and Zoom to fit; the zoom controls read the command registry and
-  show each command's first shortcut. Every focusable element shows a 3 px outline in `#2a62d0`,
-  5.3:1 against the page, and the text area a 2 px one. Undo and Redo are unavailable through
-  `aria-disabled`, not `disabled`, because Chromium moves the focus of a button that becomes
-  disabled to the page's body. Escape or Mod+Enter in the text area returns the focus to the canvas,
-  which opened it; moving the focus to another control ends the session, while a page that loses
-  the focus keeps it; answering the stale notice focuses the canvas first (the ENG-13 review's m5).
-  P0 has no menu or dialog; Escape's return applies to them when they come (P1).
-- **Targets, colour and motion.** Controls are at least 24 px, the page's link is a 24 px inline
-  block, and touch handle hit squares stay 24 px. Measured in Chromium, the shortcut hint in a
-  pressed tool button was 4.19:1 and is now opaque, 5.59:1, and an unavailable control is dark grey
-  with a dashed border, 7.2:1, instead of half transparent, 3.36:1. Each camera command and wheel
-  event sets the camera once, drawn whole in the next frame with no frame after it, and nothing in
-  the page animates, with or without reduced motion.
+- **Focus.** The tab stops were the tool bar's one stop, the canvas, the element list, Undo, Redo,
+  Zoom out, Reset zoom, Zoom in and Zoom to fit; since slice S2 they are those of the order above.
+  The zoom controls read the command registry and show each command's first shortcut, and since S2
+  Reset zoom shows the zoom and is named by it, "Reset zoom, 100%". Every focusable element shows a
+  3 px outline in `#2a62d0`, 5.3:1 against the page, and the text area a 2 px one; since S2 the
+  canvas host, as large as the window, draws its outline 3 px inside its edge. Undo and Redo are
+  unavailable through `aria-disabled`, not `disabled`, because Chromium moves the focus of a button
+  that becomes disabled to the page's body. Escape or Mod+Enter in the text area returns the focus
+  to the canvas, which opened it; moving the focus to another control ends the session, while a page
+  that loses the focus keeps it; answering the stale notice focuses the canvas first (the ENG-13
+  review's m5). P0 had no menu or dialog. Slice S2 adds About this build, a modal dialog that the
+  Pre-release tag opens with the focus on Close, Tab wrapping inside, and Escape or the scrim
+  closing it and returning the focus to the tag; S4 adds the menu.
+- **Targets, colour and motion.** Controls are at least 24 px, the page's link, in About this build
+  since S2, is a 24 px inline block, and touch handle hit squares stay 24 px. Measured in Chromium,
+  the shortcut hint in a pressed tool button was 4.19:1 and is now opaque, 5.59:1, and an
+  unavailable control is dark grey with a dashed border, 7.2:1, instead of half transparent, 3.36:1.
+  Each camera command and wheel event sets the camera once, drawn whole in the next frame with no
+  frame after it, and nothing in the page animates, with or without reduced motion.
 - **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
   dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
   colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader
@@ -270,7 +281,8 @@ what the rules above leave open:
   is 15.5 ms at the median in CI. I3, the naming of those 101 texts in Vitest, fell from 129 ms to
   0.41 ms at the median, so names are not cached. The list still renders only the options around its
   active one: a screen reader reaches only those in the page, and Up, Down, Home and End move the
-  window.
+  window. Since slice S2, I1 pans with the Elements drawer closed, the list mounted but hidden, and
+  I2 opens the drawer through its toggle before it pans (ADR 0012's test migrations).
 - **The heap (B14).** By hand before each release: open the production build in Chromium with a
   stored drawing of 10,000 elements all selected, which the browser tests' `storeScene` can store,
   nudge them with the arrow keys until the history holds its 50 MB of change data, collect garbage
