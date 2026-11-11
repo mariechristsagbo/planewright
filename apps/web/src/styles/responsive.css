@@ -8,7 +8,7 @@
  */
 /*
  * Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices and 32 px glyph
- * buttons.
+ * buttons, whose corner keys sit against the buttons' inner edge to keep clear of their glyphs.
  */
 @media (max-width: 1199px) {
   .editor-shell {
@@ -18,6 +18,10 @@
   .island .glyph-button {
     width: var(--pw-spacing-control-compact);
     height: var(--pw-spacing-control-compact);
+  }
+
+  .tool-key {
+    right: 0;
   }
 
   .editor-shell > .notices {
