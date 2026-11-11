@@ -5,11 +5,12 @@ slice S1 (issue #53) added the chrome's tokens, base styles and typeface
 ([what S1 delivered](#what-s1-delivered)), slice S2 (issue #55) the full-bleed shell with its
 islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), slice
 S3 (issue #62) the original glyphs, the palette and the tooltips
-([what S3 delivered](#what-s3-delivered)), and slice S4 (issue #64) the menu and the Keyboard
-shortcuts dialog ([what S4 delivered](#what-s4-delivered)); slices S5 to S13 are not
-implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
-(Editor Experience): what each slice contains, what must land before it, the tests it writes first,
-how it is validated and which documents it updates. The decisions themselves, the tests to migrate
+([what S3 delivered](#what-s3-delivered)), slice S4 (issue #64) the menu and the Keyboard
+shortcuts dialog ([what S4 delivered](#what-s4-delivered)), and slice S5 (issue #66) the Elements
+drawer's count, rows and phone sheet ([what S5 delivered](#what-s5-delivered)); slices S6 to S13
+are not implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone
+v0.2.0 (Editor Experience): what each slice contains, what must land before it, the tests it writes
+first, how it is validated and which documents it updates. The decisions themselves, the tests to migrate
 and the visual-regression
 matrix are in the ADR; where this plan and the ADR differ, the ADR governs.
 
@@ -162,6 +163,7 @@ builds on; the handoff adds only that S7 may land before S2.
   closed drawer removes the list's cost from a pan step: I1 pans with the drawer closed and is
   compared with I1 on `main`, and I2 pans with the drawer open (the ADR's row for
   `perf/panning.spec.ts`).
+- **Delivered** by issue #66 ([what S5 delivered](#what-s5-delivered)).
 
 ### S6: the selection panel, the phone selection bar and the Details sheet
 
@@ -851,3 +853,119 @@ Issue #64 delivered slice S4.
   focus emulation sends no window blur. The style sheet is unchanged, and the initial JavaScript is
   114,703 bytes gzip at `549efa7`, 91 bytes more than at `d2f316d`.
 - S5 to S13 are not implemented.
+
+## What S5 delivered
+
+Issue #66 delivered slice S5.
+
+- `apps/web/src/shell/ElementsToggle.tsx`: the Elements toggle shows S3's `elements` glyph, its word
+  and the count of the drawn elements in `numeric-sm`, Inter's tabular figures, on the muted
+  surface, 36 px high on desktops and 32 px at compact widths. The glyph and the count are hidden
+  from assistive technology, so that the name stays exactly "Elements", and nothing in or around
+  the toggle is a live region, so that a change, which the polite region already says, is never
+  said again by the count. The count reads the view's elements through a subscription that renders
+  again only when their number changes. One choice that this plan did not foresee: the toggle
+  keeps its word at compact widths, which the [responsive rules](#responsive-rules) would hide,
+  since a toggle of a glyph and a number alone would need a tooltip to name it, and S8's phone top
+  bar recomposes that island.
+- `apps/web/src/shell/ElementsDrawer.tsx`: the drawer, still closed at every load and stored
+  nowhere (D4), is 300 px wide on desktops and 280 px at compact widths, in `responsive.css`.
+  While it is closed it mounts no list, and its own element stays, empty and hidden, for the
+  toggle's `aria-controls`. While it is open, a Close button, a glyph button named and tipped
+  "Close Elements", sits beside the list's heading, and the list's keys are folded under a Keys
+  summary, so that decision 14's stops follow Elements: Close, the summary and the list.
+  `shell/drawer-focus.ts` moves the focus as the drawer opens, to the list box, and as it closes,
+  to the toggle, whichever control did it: the toggle, the menu's Show elements, which now closes
+  the menu without giving the focus back to its button, or Close; the shell's state gains a
+  `close-drawer` action. A probe of Chromium's own accessibility tree found that the folded keys no
+  longer described the list box, since Chromium describes nothing by what a closed `details`
+  element holds; the description is now a visually hidden copy of P0's sentence outside the fold,
+  as the zoom buttons' descriptions are, and an end-to-end test reads Chromium's tree through CDP.
+  P0's focus ring now covers a `summary` too.
+- `apps/web/src/a11y/ElementList.tsx`: the options are a memoised component whose props are the
+  view's elements and selection, the active position and the way to choose, which `useActive`
+  keeps stable while the elements and the selection keep their identity, as a camera change keeps
+  them, so that a pan step renders and names no option again. Each row shows its kind's glyph, the
+  drawing tool's, hidden from assistive technology, then a label, the kind's name or a text's
+  words in quotation marks, cut as the name cuts them, then its figures in JetBrains Mono
+  (`geometry`), as "100 × 100 · 350, 250", with a turn such as "45°" when there is one, from
+  `elementRow` in `a11y/element-names.ts`, which shares the name's rounding and cut. The option
+  keeps P0's name through `aria-label`, so that a screen reader says P0's words and never the
+  row's shorter text, and the row's words and figures are each words of that name (WCAG 2.5.3). A
+  row is memoised on its element, so that moving the active option or the selection builds no row
+  again. A selected row keeps P0's colours, which S10 coordinates, its figures taking its text
+  colour; the kinds that P0 does not draw, which the view never lists, would show the list's glyph.
+- The phone's sheet: on a phone in portrait, under 600 px wide and at least 500 px high, the open
+  drawer is a sheet along the window's bottom, its top corners rounded, on the sheets' layer and
+  elevation, at most 62 % of the window's height, with its list scrolling inside it.
+  `shell/sheet.ts` follows the query through `matchMedia`, and `responsive.css` holds the same one,
+  which a tooling test keeps equal; a phone in landscape keeps the 280 px side drawer. While the
+  sheet is open, the tool bar, which S8 makes the phone's dock, and the bottom-left group are
+  `inert`, as this plan asks, and so is the bottom-right group, which the sheet covers too until S8
+  recomposes phones. Their controls sit in a box that adds nothing to the island's layout and takes
+  the attribute, so that a tap on them reaches their island, which takes it, rather than the canvas
+  that an inert island would let it reach. Escape inside the sheet closes it and goes no further,
+  so that the list keeps the selection, as the Escape that closes a tooltip does, and the focus
+  returns to the toggle; on desktops and in landscape Escape in the list still reaches the editor.
+  The sheet stretches between its insets with `justify-self`, since Chromium aligns a fixed grid
+  item by it. The tool bar stays at the top until S8 and shows while inert.
+- Tests: `ElementsToggle.test.tsx` (4), `ElementsDrawer.test.tsx` (6, among them the mounting, the
+  options' and rows' memoisation counted through spied names, the focus moves, the folded keys and
+  nothing written to storage) and `ElementsSheet.test.tsx` (3); tests of `elementRow` in
+  `element-names.test.ts` and of the rows in `ElementList.test.tsx`; a tooling test of the sheet's
+  query; end to end, `drawer.spec.ts` (the count's face and figures, the 300 and 280 px drawer and
+  its focus moves, the folded keys in Chromium's tree, the rows' glyphs, labels and faces, the
+  mounting and the storage after a reload) and `elements-sheet.spec.ts` (4: the sheet's place, cap
+  and scrolling, the inert islands and Escape, Close and the toggle, and the landscape drawer).
+  ADR 0012's rows whose slice names S5 are migrated: `unit/App.test.tsx` lines 58 to 69 and 71 to
+  91, now `EditorShell.test.tsx`, which finds no list box in the page while the drawer is closed
+  and Close, the summary and the list after Elements while it is open; `unit/TextEditor.test.tsx`
+  lines 121 to 137, whose session ends as the drawer's opening focuses the list box;
+  `e2e/focus.spec.ts` lines 12 to 37, which walks back from the list through the summary and Close;
+  `unit/ElementList.test.tsx` lines 31 to 38, `e2e/focus.spec.ts` lines 59 and 117,
+  `e2e/keyboard.spec.ts` lines 20 to 23 and 52 to 59 and `e2e/targets-phone.spec.ts` lines 34 to
+  37 and 59, which read the options' accessible names, through `expectOptionNames` and `nameOf` in
+  `e2e/a11y.ts` end to end; `e2e/a11y.ts` line 13 and its users, which open the drawer first, as S2
+  made them, and find the list box focused once it opens; and `perf/panning.spec.ts` with I1's
+  label and reference in `scripts/lib/perf-budgets.ts`, below. Decision 16 migrated seven more
+  tests that assumed S2's to S4's behaviour: `chrome-type.spec.ts`'s faces of the toggle, now its
+  word in Inter Medium beside its count in Inter; `MainMenu.test.tsx`'s and `menu.spec.ts`'s Show
+  elements, which now focuses the list box and then the toggle, where they expected the menu
+  button; `contrast-motion.spec.ts`'s check that no visible text names a tool, read before the
+  drawer opens since its rows name kinds; `drawer.spec.ts`'s keys test, which read the options'
+  text; `shell-layout.spec.ts`'s test at 390 × 844, where the sheet may meet only the islands whose
+  controls are inert; and `ElementList.test.tsx`'s large drawing, given 20 s since its rows' glyphs
+  and spans cost jsdom about twice P0's time. No test was deleted.
+- Cost: S5's new and changed modules, `ElementsToggle`, `ElementsDrawer`, `ElementList`,
+  `element-names`, `drawer-focus` and `sheet`, bundled and minified together with React, the engine
+  and the modules of earlier slices left out, are 6,738 bytes, 2,962 bytes gzip, against 4,221 and
+  2,011 bytes for the four of them that `main` has, 951 bytes gzip more. The web app's initial
+  JavaScript is 115,604 bytes gzip at `7de6db0` against `main`'s 114,703 at `731e7b0`, 901 bytes
+  more, within B13's 200 KB; B11 (30.3 KB) and B12 (2.5 KB) measure packages that S5 does not
+  touch, and the style sheet grows from 3,525 to 3,769 bytes gzip, measured with the bundle-size
+  guardrail's `gzipSize`.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load
+  average of 3 to 5 from other work, where B1 and B2 miss with unchanged code: `npm run build`,
+  `perf:browser` and `perf:report` on the head (`7de6db0`) and on `main` (`731e7b0`) in a worktree,
+  in the order head, main, main, head. B1 was 67.6 and 187.5 ms against 90.9 and 152.3 ms on
+  `main`, B2 21.5 and 20.3 ms against 35.1 and 28.7 ms, B3 0.32 and 0.10 ms against 0.20 and 0.10
+  ms, B4 one frame and B9 no long task in every run, and B10 2.11 and 1.64 s against 1.57 and 1.60
+  s, over its 1.5 s in all four runs on this machine. I1's 95th percentile was 173.6 and 197.7 ms
+  against 343.0 and 256.8 ms and its median 65.1 and 61.5 ms against 69.9 and 77.0 ms; I2's 95th
+  percentile was 266.1 and 454.1 ms against 260.5 and 190.3 ms and its median 106.1 and 103.1 ms
+  against 90.2 and 71.2 ms. `perf:report` exits 1 in this sequence only because B5 to B8 and B11 to
+  B13 are not measured there. Since I2 read higher, `panning.spec.ts` alone ran four times on each,
+  alternating, in copies: I1's medians were 58.8 to 105.7 ms against 79.4 to 124.4 ms, so the
+  closed drawer's pan step is level with `main`'s or cheaper, and I2's 115.5 to 145.1 ms against
+  74.3 to 123.6 ms. A probe of I2's loop, reading Chromium's metrics at each step, found the
+  task time with the drawer open at 137.5 to 180.6 ms over seven runs on the head (median 154.9)
+  against 81.4 to 135.4 ms over six on `main` (101.2), while the script time was 18.7 to 23.6 ms
+  against 16.4 to 23.5 ms, as the memoised options predict, and layout under 1 ms and style
+  recalculation none in both. The added time is therefore outside script, style and layout. In one
+  round, a variant without the rows' glyphs read 137.6 ms against the head's 180.6 and `main`'s
+  135.4, and one with P0's text rows 147.5; a drawer with `will-change: transform` read 129.1,
+  131.8 and 174.1 ms, paint containment on the list 161.4 to 175.1 ms, 20 px glyphs 152.7 and 171.0
+  ms and rows with `content-visibility: auto` 174.9 and 191.7 ms. Single runs here vary by 40 ms,
+  so no cause is established and none of these was adopted; I2 has no budget, and a pan step with
+  the drawer open costing more than on `main` is left to a follow-up. B1's misses remain #49's.
+- S6 to S13 are not implemented.
