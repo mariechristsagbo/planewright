@@ -241,3 +241,14 @@ release has been published yet.
   that closes a tip does nothing else, so a second one cancels. Glyphs and their controls' borders
   measure 3:1 or more against their surfaces at desktop and compact widths, where the corner keys
   keep clear of the glyphs. S4 to S13 are not implemented.
+- The v0.2 menu and Keyboard shortcuts dialog (slice S4, issue #64, ADR 0012 decisions 2, 10 and
+  14): the identity island starts with a menu button, the first tab stop, which opens a menu of
+  Select all, Zoom to fit and Reset zoom, run through the command registry with their keys shown in
+  JetBrains Mono and hidden from screen readers, Show elements, a checkbox item that follows the
+  drawer, Keyboard shortcuts, About this build and Source on GitHub. It opens on a press, Enter,
+  Space or ArrowDown with the focus on its first item; the arrow keys, Home and End move; Enter runs
+  an item; Escape closes it and returns the focus to the button; and Tab closes it and goes on. A
+  Keyboard shortcuts button at the bottom right, the last tab stop, and the menu open a dialog that
+  lists every command of the registry with its keys, in About this build's modal dialog, and a
+  dialog returns the focus to the control that opened it. Shortcut texts write Escape, Enter,
+  Delete, Backspace and the arrows by name. S5 to S13 are not implemented.

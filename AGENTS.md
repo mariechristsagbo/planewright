@@ -22,9 +22,12 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   ellipses, diamonds, lines, freehand strokes and texts can be drawn, then selected, moved, resized,
   rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo,
   also from the keyboard alone, through a list of the elements in a drawer and a live region that
-  announces each change; a Pre-release tag opens About this build, and the drawing is saved in the
-  browser's IndexedDB storage and restored on reload. Text formatting, styles, arrows, notes, files,
-  exporting and collaboration features do **not** exist yet.
+  announces each change; a Pre-release tag opens About this build, a menu at the top left runs
+  Select all and the zoom commands, shows the elements and opens About this build and a Keyboard
+  shortcuts dialog that lists every command's keys, which a button at the bottom right opens too,
+  and the drawing is saved in the browser's IndexedDB storage and restored on reload. Text
+  formatting, styles, arrows, notes, files, exporting and collaboration features do **not** exist
+  yet.
 - **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome decisions
   in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the
   [v0.2 plan](docs/architecture/editor-experience.md). Slice S1 (issue #53) added the chrome's
@@ -36,8 +39,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   chrome's 35 original glyphs and turned the tool bar into the palette: the tools, Undo, Redo and
   the zoom buttons but Reset zoom show glyphs with their names, keys and descriptions unchanged, the
   tools with their first key in a corner and tool lock with a padlock, the identity island shows the
-  mark, and those controls and Reset zoom have tooltips. S4 to S13 are not implemented yet. Work on
-  a slice follows both.
+  mark, and those controls and Reset zoom have tooltips. Slice S4 (issue #64) added the identity
+  island's menu, whose button is the first tab stop, with About this build among its items, and the
+  Keyboard shortcuts dialog with its button, the last tab stop. S5 to S13 are not implemented yet.
+  Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -93,16 +98,18 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the editor's shell in `shell/`
   (`EditorShell`, its state, the identity island with the mark and the Pre-release tag, the Elements
-  toggle and drawer and the empty-canvas note, the 35 original glyphs in `shell/glyphs.ts` drawn by
-  `Icon` in `shell/icons.tsx`, the tooltip and its delegated listeners in `shell/tooltip/`, and the
-  modal dialog and About this build in `shell/dialogs/`), the canvas host, input adapter and editor
-  provider in `editor/`, the text area in `editor/text/`, the element list, the live region with its
+  toggle and drawer, the empty-canvas note and the Keyboard shortcuts button, the menu's button, the
+  menu and its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon`
+  in `shell/icons.tsx`, the tooltip and its delegated listeners in `shell/tooltip/`, and the modal
+  dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host, input
+  adapter and editor provider in `editor/`, the text area in `editor/text/`, the element list, the
+  live region with its
   messages and the focus's return in `a11y/`, the tool bar shown as the palette, Undo and Redo, the
   zoom controls, the view readout, the save status and the storage notices in `ui/`, and the browser
   ports, text measurer, font loading, Mod key per platform, the IndexedDB record backend, storage
   start-up, page events and the preferences entry in `platform/`, and the style sheets in `styles/`:
   the design tokens, the fonts, the base, the controls', canvas's, list's and saving's rules, the
-  shell's layout, islands and dialogs, the glyph buttons' and the tooltip's rules, and
+  shell's layout, islands and dialogs, the glyph buttons', the menu's and the tooltip's rules, and
   `responsive.css`, the only one with media queries, which `main.tsx` adds as a style element of its
   own so that a breakpoint never makes the fonts load again. Unit tests in `tests/unit`, Playwright
   tests in `tests/e2e`, static files in `public/`, the bundled fonts with their licences in
