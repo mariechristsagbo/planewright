@@ -110,3 +110,13 @@
     width: min(300px, 100%);
   }
 }
+
+/*
+ * A coarse pointer, such as a finger on a tablet: the selection panel's actions are at least
+ * 44 px high, as wide as the panel (the v0.2 plan's S6; S8 raises the other targets).
+ */
+@media (pointer: coarse) {
+  .selection-action {
+    min-height: var(--pw-spacing-control-touch);
+  }
+}

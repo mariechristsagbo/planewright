@@ -1,5 +1,11 @@
 import { createEditor } from '@planewright/engine';
-import type { Editor, EditorPorts, RenderFrame, Renderer } from '@planewright/engine';
+import type {
+  Editor,
+  EditorPorts,
+  RenderFrame,
+  Renderer,
+  StoredDocument,
+} from '@planewright/engine';
 import type { CanvasSurface } from '@planewright/render-canvas';
 import { act } from '@testing-library/react';
 import type { ReactNode } from 'react';
@@ -25,7 +31,11 @@ export interface SurfaceHarness {
   readonly wrap: (children: ReactNode) => ReactNode;
 }
 
-export function surfaceHarness(platform: Platform = 'other'): SurfaceHarness {
+/** A harness over an empty drawing, or over a stored one with its session. */
+export function surfaceHarness(
+  platform: Platform = 'other',
+  stored?: StoredDocument,
+): SurfaceHarness {
   const frames: ((time: number) => void)[] = [];
   let id = 0;
   const ports: EditorPorts = {
@@ -45,7 +55,7 @@ export function surfaceHarness(platform: Platform = 'other'): SurfaceHarness {
       measure: (text, font) => ({ width: (text.length * font.size) / 2, ascent: 16, descent: 4 }),
     },
   };
-  const editor = createEditor(ports);
+  const editor = createEditor(ports, stored);
   const made: SurfaceHarness['made'] = [];
   const surface: EditorSurface = {
     editor,

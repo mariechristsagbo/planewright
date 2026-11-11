@@ -53,18 +53,19 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   page,
 }) => {
   await openPage(page);
+  // The tools, Undo, Redo and the zoom buttons but Reset zoom show glyphs rather than words (S3),
+  // whose 3:1 the next test measures; this is read before anything is drawn, since the open
+  // drawer's rows (S5) and the selection panel's heading (S6) name the elements' kinds in words.
+  const atRest = (await textContrasts(page)).map(({ text }) => text);
+  expect(atRest.filter((text) => WORDS_NOW_GLYPHS.includes(text))).toEqual([]);
   await canvas(page).focus();
   for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
   await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
-  // The tools, Undo, Redo and the zoom buttons but Reset zoom show glyphs rather than words (S3),
-  // whose 3:1 the next test measures; this is read before the drawer opens, since its rows name
-  // the elements' kinds in words (S5).
-  const atRest = (await textContrasts(page)).map(({ text }) => text);
-  expect(atRest.filter((text) => WORDS_NOW_GLYPHS.includes(text))).toEqual([]);
   await expect((await openElements(page)).getByRole('option')).toHaveCount(2);
   const contrasts = await textContrasts(page);
-  // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5), and
-  // the open drawer adds its summary and its rows' labels and figures.
+  // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5), the
+  // open drawer adds its summary and its rows' labels and figures, and the selection panel its
+  // heading, terms, values, actions and footnote (S6).
   const texts = contrasts.map(({ text }) => text);
   expect(texts).toEqual(
     expect.arrayContaining([
@@ -75,9 +76,18 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
       'Keys',
       'Ellipse',
       'Rectangle',
+      'Angle',
+      'Duplicate',
+      'Delete',
+      'Style controls are not in this build.',
     ]),
   );
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+  // Delete's word in the error tone and the footnote in the muted text, on the surface (S6).
+  const ratioOf = (text: string) => contrasts.find((each) => each.text === text)?.ratio;
+  expect([ratioOf('Delete'), ratioOf('Style controls are not in this build.')]).toEqual([
+    6.52, 5.5,
+  ]);
 });
 
 test('A4 REQ-Y06 the open menu, its keys on a highlighted item, and Keyboard shortcuts keep every text at 4.5:1', async ({
@@ -123,7 +133,8 @@ test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whol
         await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
         const glyphs = await glyphContrasts(page);
         // The palette's tools and tool lock, the chosen one pressed, Undo enabled and Redo not,
-        // the zoom buttons, Keyboard shortcuts, the menu button and the mark (ADR 0012, decision 3).
+        // the zoom buttons, Keyboard shortcuts, the menu button and the mark (ADR 0012, decision 3),
+        // and the selection panel's heading, Duplicate and Delete, in the error tone (S6).
         expect(glyphs.map(({ glyph }) => glyph)).toEqual(
           expect.arrayContaining([
             ...PALETTE,
@@ -135,8 +146,11 @@ test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whol
             'keyboard',
             'menu',
             'mark',
+            'duplicate',
+            'delete',
           ]),
         );
+        expect(glyphs.filter(({ glyph }) => glyph === 'rectangle')).toHaveLength(2);
         expect(glyphs.find(({ control }) => control === 'Selection')).toBeDefined();
         const below = glyphs.filter(
           ({ computed, rendered, boundary }) =>

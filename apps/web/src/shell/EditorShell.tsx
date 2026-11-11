@@ -18,6 +18,7 @@ import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
 import { useDrawerFocus } from './drawer-focus.ts';
 import { useSheet } from './sheet.ts';
+import { SelectionPanel } from './selection/SelectionPanel.tsx';
 import { useShellState } from './shell-state.ts';
 import type { Openers, ShellDialog } from './shell-state.ts';
 import { Tooltip } from './tooltip/Tooltip.tsx';
@@ -25,11 +26,12 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // The editor's shell (ADR 0012, decision 13): the canvas fills the window, and the controls float
 // over it in islands at its edges, siblings of the canvas host and never inside it, so that no
 // press on them reaches the canvas (REQ-C11). The document order is the tab order of decision
-// 14: the menu, Pre-release, the tool bar's one stop, the canvas, the storage notices' buttons,
-// Elements and, while its drawer is open, the drawer's Close, its keys and the list, then Undo,
-// Redo, the zoom controls and Keyboard shortcuts. The drawer's opening and closing move the focus,
-// to its list box and back to the toggle. On a phone in portrait the open drawer is a sheet, and
-// the palette and the bottom islands are inert while it is.
+// 14: the menu, Pre-release, the tool bar's one stop, the canvas, the selection panel's actions
+// while something is selected, the storage notices' buttons, Elements and, while its drawer is
+// open, the drawer's Close, its keys and the list, then Undo, Redo, the zoom controls and Keyboard
+// shortcuts. The drawer's opening and closing move the focus, to its list box and back to the
+// toggle. On a phone in portrait the open drawer is a sheet, and the palette and the bottom islands
+// are inert while it is.
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -128,6 +130,7 @@ function Shell() {
       </div>
       <CanvasHost />
       <EmptyCanvasNote />
+      <SelectionPanel sheet={sheet} />
       <StorageNotices />
       <div className="island top-right-island" data-island="top-right">
         <ElementsToggle ref={toggle} open={drawer} onToggle={toggleDrawer} />

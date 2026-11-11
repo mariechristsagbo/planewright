@@ -156,6 +156,24 @@ describe('the tooltips', () => {
     expect(tip()).toBeNull();
   });
 
+  it('D2 A4 open the selection panel’s Duplicate and Delete tips with their keys from the registry, and Edit text’s with none', () => {
+    const harness = surfaceHarness();
+    harness.editor.resize({ width: 800, height: 600, pixelRatio: 1 });
+    render(<EditorShell surface={harness.surface} />);
+    act(() => {
+      harness.editor.run('tool.text');
+      harness.editor.run('canvas.enter');
+      harness.editor.editText({ type: 'value', text: 'Plan' });
+      harness.editor.editText({ type: 'commit' });
+    });
+    focus(button('Duplicate'));
+    expect(said()).toEqual({ name: 'Duplicate', keys: ['Ctrl+D'] });
+    focus(button('Delete'));
+    expect(said()).toEqual({ name: 'Delete', keys: ['Delete', 'Backspace'] });
+    focus(button('Edit text'));
+    expect(said()).toEqual({ name: 'Edit text', keys: [] });
+  });
+
   it('D4 A6 stop the Escape that closes a showing tip there, so that only the next one reaches the editor', () => {
     mount();
     const rectangle = button('Rectangle');

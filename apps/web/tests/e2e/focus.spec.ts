@@ -94,10 +94,21 @@ test('E2 D5 C3 REQ-Y02 Escape in the text area gives the focus back to the canva
 
   await page.keyboard.press('Enter');
   await expect(area).toBeFocused();
-  // No selection panel exists before S6, so the next stop after the canvas is Elements.
+  // The selection panel is out of the page while the text is edited (S6), so the next stop after
+  // the text area is Elements; the session ends, and the panel's actions come back before it.
   await page.keyboard.press('Tab');
   await expect(elementsToggle(page)).toBeFocused();
   await expect(area).toHaveCount(0);
+  const panel = page.locator('[data-island="selection"]');
+  for (const stop of [
+    panel.getByRole('button', { name: 'Edit text' }),
+    panel.getByRole('button', { name: 'Delete' }),
+    panel.getByRole('button', { name: 'Duplicate' }),
+    canvas(page),
+  ]) {
+    await page.keyboard.press('Shift+Tab');
+    await expect(stop).toBeFocused();
+  }
   await expectOptionNames(await openElements(page), [/^Text “Hi”, /u]);
 });
 
@@ -125,12 +136,16 @@ test('A5 REQ-Y02 while storage needs attention, the notices’ buttons come betw
   await expect(load).toBeVisible();
   await canvas(page).focus();
   const keep = notices.getByRole('button', { name: 'Keep this version' });
-  for (const stop of [load, keep, elementsToggle(page), button(page, 'Undo')]) {
+  // The rectangle stays selected, so the selection panel's actions come first (S6).
+  const panel = page.locator('[data-island="selection"]');
+  const duplicate = panel.getByRole('button', { name: 'Duplicate' });
+  const remove = panel.getByRole('button', { name: 'Delete' });
+  for (const stop of [duplicate, remove, load, keep, elementsToggle(page), button(page, 'Undo')]) {
     await page.keyboard.press('Tab');
     await expect(stop).toBeFocused();
     await expectIndicator(page);
   }
-  for (const stop of [elementsToggle(page), keep, load, canvas(page)]) {
+  for (const stop of [elementsToggle(page), keep, load, remove, duplicate, canvas(page)]) {
     await page.keyboard.press('Shift+Tab');
     await expect(stop).toBeFocused();
   }
