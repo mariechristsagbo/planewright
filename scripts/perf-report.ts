@@ -91,7 +91,7 @@ function machineOf(run: ReturnType<typeof runOf>, measurements: readonly Measure
 
 const NOTES = [
   'Each value is the statistic its budget names over the samples kept after warm-up: the 95th percentile, interpolated linearly between the closest ranks, the largest sample, or the one value of a bundle size, in KB of 1,000 bytes.',
-  'The element list renders at most 101 options, the 50 on each side of the active one: a screen reader reaches only those in the page, Up, Down, Home and End move the window, and every view change, a pan included, renders them again (I1, I2, I3).',
+  'The element list renders at most 101 options, the 50 on each side of the active one: a screen reader reaches only those in the page, and Up, Down, Home and End move the window. Since S5 the closed Elements drawer mounts no list (I1), and the open one renders its options again only when the elements, the selection or the active option change, never at a pan step (I2); I3 times the names that such a change makes again.',
   "I4 to I6 each time the first whole-scene marquee query after an untimed change or load of the benchmarks' 10,000 elements, whose ordered elements are read first, as the editor's view reads them; B6 times queries of an unchanged scene whose rows its check has made. No budget covers I4 to I6.",
   'B14, the heap of 10,000 elements and a full history, is measured by hand with a heap snapshot before each release.',
 ];

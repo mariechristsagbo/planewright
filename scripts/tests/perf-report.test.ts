@@ -90,7 +90,7 @@ describe('reportMarkdown', () => {
       '| B14 | JavaScript heap, 10,000 elements and a full history | ≤ 150 MB | by hand |',
     );
     expect(markdown).toContain(
-      '| I1 | Main-thread time of a pan step, 5,000 elements, 101 options listed | 5.95 ms | 2 |',
+      '| I1 | Main-thread time of a pan step, 5,000 elements, the Elements drawer closed | 5.95 ms | 2 |',
     );
     expect(markdown).toContain('- Processor: Test CPU');
     expect(markdown).toContain('- The element list renders at most 101 options.');
