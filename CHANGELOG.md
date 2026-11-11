@@ -267,3 +267,16 @@ release has been published yet.
   notice, whose buttons it never covers, at most 62 % of the height, which makes the tool bar and
   the bottom islands inert and closes on Escape with the focus on the toggle. The I1 and I2
   measurements now pan with the drawer closed and open. S6 to S13 are not implemented.
+- The v0.2 selection panel, phone selection bar and Details sheet (slice S6, issue #69, ADR 0012
+  decisions 1, 2, 13 and 14): while something drawn is selected and no text is edited, a panel
+  232 px wide near the upper left, at 16 / 72 on desktops, shows the kind's glyph and name or the
+  count, the position, size and turn read-only in JetBrains Mono, with a line's length, a freehand
+  stroke's points or a text's lines, and a footnote that style controls are not in this build. Its
+  Duplicate and Delete, named, described and tipped from the registry, and Edit text, shown only
+  where Enter on the canvas would edit the lone selected text, run the existing commands, which the
+  live region says as their keys do; Delete leaves the focus on the canvas. The figures come from a
+  pure geometry module whose rounding the element list's names and rows now share. On a phone in
+  portrait a bar under the tool bar, above the storage notices, takes the panel's place, with
+  44 px targets and Details, which opens a Details sheet along the bottom; it and the Elements sheet
+  are never open together, and it closes when the selection empties, a text is edited or the window
+  turns. Neither is stored, and a pan or zoom step renders neither. S7 to S13 are not implemented.

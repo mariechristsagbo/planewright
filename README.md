@@ -9,8 +9,10 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > which can be selected, moved, resized, rotated,
 > duplicated, deleted and nudged, with Undo and Redo, and texts edited again, also from the keyboard
 > alone through a list of the elements in a drawer, which an Elements button showing their count
-> opens and which is a sheet on phones, with each change announced to screen readers;
-> the drawing is saved in the browser and restored on reload. A Pre-release tag opens About this
+> opens and which is a sheet on phones, with each change announced to screen readers; while
+> something is selected, a panel, or a bar on phones, shows its position and size read-only and
+> offers Duplicate, Delete and, for a text, Edit text; the drawing is saved in the browser and
+> restored on reload. A Pre-release tag opens About this
 > build, which says what the build contains and what it does not, and a menu at the top left and a
 > button at the bottom right open a list of every command's keyboard shortcuts. There is no text
 > formatting, no style control, no file opening, saving or exporting and no collaboration. This
