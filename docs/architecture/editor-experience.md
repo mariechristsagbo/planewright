@@ -3,12 +3,14 @@
 **Status: slice S0 (issue #50) wrote this plan and [ADR 0012](../adr/0012-v02-editor-chrome.md),
 slice S1 (issue #53) added the chrome's tokens, base styles and typeface
 ([what S1 delivered](#what-s1-delivered)), slice S2 (issue #55) the full-bleed shell with its
-islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), and
-slice S3 (issue #62) the original glyphs, the palette and the tooltips
-([what S3 delivered](#what-s3-delivered)); slices S4 to S13 are not implemented.** This plan turns
-ADR 0012's decisions into thirteen issues for milestone v0.2.0 (Editor Experience): what each slice
-contains, what must land before it, the tests it writes first, how it is validated and which
-documents it updates. The decisions themselves, the tests to migrate and the visual-regression
+islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), slice
+S3 (issue #62) the original glyphs, the palette and the tooltips
+([what S3 delivered](#what-s3-delivered)), and slice S4 (issue #64) the menu and the Keyboard
+shortcuts dialog ([what S4 delivered](#what-s4-delivered)); slices S5 to S13 are not
+implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
+(Editor Experience): what each slice contains, what must land before it, the tests it writes first,
+how it is validated and which documents it updates. The decisions themselves, the tests to migrate
+and the visual-regression
 matrix are in the ADR; where this plan and the ADR differ, the ADR governs.
 
 The approved design package that both derive from stays outside the repository. Its values that
@@ -140,6 +142,7 @@ builds on; the handoff adds only that S7 may land before S2.
   command with its shortcut text.
 - **Migrations.** The ADR's rows marked S4.
 - **Documents.** `engine/quality.md`'s note that P0 has no menu or dialog.
+- **Delivered** by issue #64 ([what S4 delivered](#what-s4-delivered)).
 
 ### S5: the Elements drawer and the phone sheet
 
@@ -732,3 +735,101 @@ Issue #62 delivered slice S3.
   I1 93.2 and 147.9 ms against 182.0 and 181.7 ms and of I2 58.7 and 74.2 ms against 219.5 and
   76.0 ms, differences within the machine's spread. B1's misses remain follow-up #49's.
 - S4 to S13 are not implemented.
+
+## What S4 delivered
+
+Issue #64 delivered slice S4.
+
+- `apps/web/src/shell/menu/MenuButton.tsx`: the identity island now starts with a glyph button
+  showing S3's `menu` glyph, before the mark, the wordmark and the Pre-release tag, which keeps its
+  place and behaviour. It is named "Planewright menu", the design's name, which its tooltip
+  repeats, has `aria-haspopup="menu"` and `aria-expanded`, and `aria-controls` while its menu is
+  open, and it is the first tab stop of ADR 0012's decision 14. A press, Enter, Space or ArrowDown
+  opens the menu with the focus on its first item, and a second press closes it; since a mouse
+  press takes the focus out of the open menu, which closes it, before the click, the click
+  remembers whether the menu was open when the press began.
+- `apps/web/src/shell/menu/MainMenu.tsx`, with its items in `menu-items.ts`: a `menu` named by its
+  button, holding Select all, Zoom to fit and Reset zoom, whose labels and keys come from the
+  registry and which run `selection.select-all`, `view.zoom-to-fit` and `view.zoom-reset` through
+  `editor.run`; Show elements, a `menuitemcheckbox` whose `aria-checked` is the drawer's state and
+  which opens and closes the drawer as the Elements toggle does, with a check glyph while it is
+  open; Keyboard shortcuts and About this build, which open the dialogs; and Source on GitHub, a
+  link to the repository, whose address `foundation.ts` now holds for About and the menu. Each item
+  shows one of S3's glyphs, hairlines with the `separator` role split the three groups, and a
+  command that the registry lacked would be left out, not invented. The keys show in JetBrains Mono,
+  hidden from assistive technology, since the name and `aria-keyshortcuts` carry them; the check is
+  hidden too. ArrowDown and ArrowUp move, wrapping at the ends, and Home and End go to them; Enter
+  or a press runs an item, closes the menu and returns the focus to the button; Escape closes it
+  and returns the focus; the focus leaving it, by Tab or a press elsewhere, closes it where the
+  focus went, so that Tab goes on to Pre-release; and a press inside it keeps the focus on its
+  items. One choice that the plan did not foresee: the menu closes when the focus leaves it rather
+  than on Tab's key press, since closing it then would remove the focused item before the browser
+  moved the focus. `styles/menu.css` puts it under the island from its left edge, 264 px wide or the
+  window less its anchors, scrolling inside itself in a window too short for it, such as 568 × 320,
+  with its items 36 px high, the surface's hover colour behind the item that the pointer or the
+  keyboard is on, and P0's focus ring inside its padding; while it is open the island takes the
+  menus' layer, through a class that it sets rather than a `:has()` rule (see the performance
+  below), so that on a phone, where it covers the tool bar, presses reach its items. It is a
+  popover at every width: the phone's menu sheet is S8's.
+- `apps/web/src/shell/ShortcutsButton.tsx` and `shell/dialogs/ShortcutsDialog.tsx`: a Keyboard
+  shortcuts button with S3's `keyboard` glyph and a tooltip ends the bottom-right island, the last
+  tab stop, and opens, as the menu does, a dialog that lists every command of the registry, 28 at
+  this slice, with its label and its keys as `shortcutText()` writes them, each chord in a key chip
+  in JetBrains Mono. The commands are grouped in five tables, Tools, History, Selection, View and
+  Canvas, by the area that their identifiers start with, in registry order; the type asks for a
+  heading for every area of `CommandId`, so that no command can fall outside them. A sentence says
+  that the keys work while the drawing canvas has the focus. It shares About's `ModalDialog`: the
+  focus on Close, Tab wrapping, and Escape, Close or the scrim closing it. The shell's state now
+  remembers which control opened a dialog, the menu button, the Pre-release tag or this button, and
+  gives the focus back to it, so that a dialog opened from the menu returns it to the menu button.
+  One change that the plan did not foresee: `ui/shortcuts.ts` wrote every produced key upper case,
+  so the registry's Escape, Enter, Delete, Backspace and arrow keys would have read ESCAPE or
+  Shift+ARROWLEFT; it now writes them for people as Esc, Enter, Delete, Backspace and Left arrow,
+  and for `aria-keyshortcuts` as their key values, such as Escape and ArrowLeft. No control showed
+  such a key before.
+- About this build opens from the Pre-release tag and from the menu, one `AboutDialog` with the
+  same content, which a unit test compares from both.
+- Tests: `MainMenu.test.tsx` (11 tests), `ShortcutsDialog.test.tsx` (4) and a case in
+  `shortcuts.test.ts`; end to end, `menu.spec.ts` (11: the four ways to open it, the arrows, Home
+  and End, Escape, Tab, presses outside and inside, the commands, Show elements, the keys' face and
+  hiding, the dialogs from the menu with the focus kept inside and returned, the menu over the tool
+  bar at 390 × 844 and inside a 568 × 320 window), `shortcuts.spec.ts` (4) and a contrast test of
+  the menu and the dialog. ADR 0012's rows whose slice names S4 are migrated for S4's part:
+  `e2e/foundation.spec.ts` lines 24 to 48 and `e2e/keyboard.spec.ts` lines 29 to 30, where the
+  first Tab lands on the menu button and the second on Pre-release, then Hand;
+  `e2e/focus.spec.ts` lines 12 to 37, with the menu first, Keyboard shortcuts last and the link in
+  the menu and About; and `unit/App.test.tsx` lines 71 to 91, now `EditorShell.test.tsx`, likewise.
+  The keyboard row's lines 63 to 64 need nothing from S4, since Tab from the canvas still lands on
+  Elements until S6. Decision 16 migrated the tests that assumed S2's or S3's identity island and
+  first stops: `EditorShell.test.tsx`'s identity island test (its buttons and its first glyph),
+  `Tooltip.test.tsx`'s list of tipped controls and its reading of a control without a description,
+  three tests of `tooltip.spec.ts` and one of `palette.spec.ts` that counted Tabs from the top, and
+  `contrast-motion.spec.ts` measures the two new glyphs at 3:1. No test was deleted.
+- Contrast: every text of the open menu and of the dialog is 4.5:1 or more, the nearest the
+  highlighted item's keys, `on-surface-muted` on `surface-hover`, 4.71:1 in the
+  [table](#contrast-pairs); the new glyphs pass the 3:1 test of S3.
+- Cost: S4's new modules alone, bundled and minified with what they share with earlier slices left
+  out, are 5,140 bytes, 2,150 bytes gzip. The web app's initial JavaScript is 114,612 bytes gzip at
+  `01882eb` (114,596 at `dc7a507`) against `main`'s 112,960 at `db8b3e7`, 1,652 bytes more, within
+  B13's 200 KB; B11 (30,292) and B12 (2,524) are unchanged, and the style sheet grows from 3,267 to
+  3,552 bytes gzip.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load
+  average of 3 to 5 from other work, where B1 and B2 miss with unchanged code: `npm run build`,
+  `perf:browser` and `perf:report` on the head and on `main` (`db8b3e7`) in a worktree, in
+  alternating order. At `dc7a507`, four runs each gave B1 27.7, 47.7, 53.2 and 34.9 ms against
+  24.1, 34.5, 27.3 and 62.3 ms on `main`, B2 10.8, 25.0, 15.6 and 7.7 ms against 9.6, 12.9, 11.0
+  and 14.1 ms, B3 0.10 to 0.35 ms against 0.20 to 0.53 ms, B4 one frame and B9 no long task in
+  every run but one of `main`'s, which saw one, and B10 0.51, 0.65, 0.55 and 0.71 s against 0.39,
+  0.39, 0.43 and 0.67 s; the third head run overlapped a tooling test run. Since B10 read higher on
+  the head, it was run alone, 12 loads a run, alternating builds: the pooled median was 0.360 s
+  against 0.321 s over 14 runs each, and, head against head over 8 runs each, 0.347 s with the
+  menu's `:has()` rule against 0.303 s without it. The rule's cost is inferred from those medians,
+  not traced, and the island now raises itself with a class (`01882eb`). At `01882eb`, B10 alone
+  gave 0.384 s against 0.359 s over 8 runs each, under a higher load, and two full runs each gave
+  B1 37.3 and 34.2 ms against 34.8 and 29.9 ms, B2 14.9 and 13.5 ms against 23.3 and 15.7 ms, B3
+  0.20 ms against 0.20 and 0.23 ms, B4 one frame and B9 no long task in every run, B10 0.82 and
+  1.11 s against 1.21 and 0.33 s, all within its 1.5 s, and the 95th percentiles of I1 103.9 and
+  94.8 ms against 126.8 and 77.0 ms and of I2 101.8 and 71.6 ms against 137.1 and 71.1 ms,
+  differences within the machine's spread. `perf:report` exits 1 in this sequence only because B5
+  to B8 and B11 to B13 are not measured there. B1's misses remain follow-up #49's.
+- S5 to S13 are not implemented.
