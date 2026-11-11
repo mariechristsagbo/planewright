@@ -244,6 +244,42 @@ describe('the tooltips', () => {
     expect(said()?.name).toBe('Line');
   });
 
+  it('D4 never show the menu button’s tip over its open menu when the mouse comes back to rest on it', () => {
+    mount();
+    const menu = button('Planewright menu');
+    fireEvent.pointerDown(menu, { pointerType: 'mouse' });
+    fireEvent.click(menu);
+    expect(menu).toHaveAttribute('aria-expanded', 'true');
+    fireEvent.pointerOut(menu, { pointerType: 'mouse', relatedTarget: document.body });
+    fireEvent.pointerOver(menu, { pointerType: 'mouse' });
+    wait(1000);
+    expect(tip()).toBeNull();
+    // Escape gives the focus back to the closed button, whose tip shows as on any keyboard focus.
+    fireEvent.keyDown(screen.getByRole('menu'), { key: 'Escape', code: 'Escape' });
+    expect(menu).toHaveAttribute('aria-expanded', 'false');
+    expect(said()?.name).toBe('Planewright menu');
+  });
+
+  it('D4 close the menu button’s tip as the keyboard opens its menu, and open none that was waiting', () => {
+    mount();
+    const menu = button('Planewright menu');
+    focus(menu);
+    expect(said()?.name).toBe('Planewright menu');
+    fireEvent.keyDown(menu, { key: 'ArrowDown', code: 'ArrowDown' });
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    expect(tip()).toBeNull();
+    fireEvent.keyDown(screen.getByRole('menu'), { key: 'Escape', code: 'Escape' });
+    fireEvent.keyDown(menu, { key: 'Escape', code: 'Escape' });
+    expect(tip()).toBeNull();
+    // The mouse begins to rest on the closed button, and the keyboard opens its menu meanwhile.
+    fireEvent.pointerOver(menu, { pointerType: 'mouse' });
+    wait(300);
+    fireEvent.keyDown(menu, { key: 'ArrowDown', code: 'ArrowDown' });
+    expect(menu).toHaveAttribute('aria-expanded', 'true');
+    wait(1000);
+    expect(tip()).toBeNull();
+  });
+
   it('D4 A6 are descriptions that repeat each control’s name and keys, never its name or the only place of either', () => {
     mount();
     const opened: string[] = [];

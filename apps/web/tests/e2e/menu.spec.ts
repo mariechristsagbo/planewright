@@ -119,6 +119,32 @@ test('A2 a press inside the menu, on the hairline between its groups, keeps it o
   await expect(item(page, 'Select all')).toBeFocused();
 });
 
+test('A2 the mouse resting on the button of the open menu opens no tip, so a press on Select all under the button runs it', async ({
+  page,
+}) => {
+  await openPage(page);
+  await canvas(page).focus();
+  for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
+  await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
+  const box = await menuButton(page).boundingBox();
+  const middle = await canvas(page).boundingBox();
+  if (box === null || middle === null) throw new Error('The menu button is not laid out.');
+  const [x, y] = [box.x + box.width / 2, box.y + box.height / 2];
+  await page.mouse.click(x, y);
+  await expect(item(page, 'Select all')).toBeFocused();
+  // Off the button and back, then a rest twice the tip's delay, timed in the page.
+  await page.mouse.move(middle.x + middle.width / 2, middle.y + middle.height / 2);
+  await page.mouse.move(x, y);
+  await page.evaluate('new Promise((resolve) => setTimeout(resolve, 1000))');
+  // The press lands at the top of Select all, under the button, where the button's tip would be.
+  const first = await item(page, 'Select all').boundingBox();
+  if (first === null) throw new Error('Select all is not laid out.');
+  await page.mouse.click(x, first.y + 4);
+  await expect(polite(page)).toHaveText('2 elements selected.');
+  await expect(menuOf(page)).toHaveCount(0);
+  await expect(menuButton(page)).toBeFocused();
+});
+
 test('A3 Enter runs Select all, Zoom to fit and Reset zoom through the registry, closes the menu and gives the focus back to the button', async ({
   page,
 }) => {
