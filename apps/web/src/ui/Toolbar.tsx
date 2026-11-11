@@ -108,7 +108,7 @@ interface ButtonProps {
 /**
  * One palette button (ADR 0012, decision 3): the command's glyph, named by its label, and its first
  * key in the corner, hidden from assistive technology, since aria-keyshortcuts and the description
- * that follows the button carry every key.
+ * that follows the button carry every key, as its tooltip repeats them with the label.
  */
 function PaletteButton({ item, platform, tabStop, onRef, onFocus, onPress }: ButtonProps) {
   const { command, pressed, note, glyph } = item;
@@ -123,6 +123,8 @@ function PaletteButton({ item, platform, tabStop, onRef, onFocus, onPress }: But
         aria-pressed={pressed}
         aria-keyshortcuts={ariaKeyShortcuts(command.shortcuts, platform)}
         aria-describedby={`${command.id}-description`}
+        data-chrome-tip={command.label}
+        data-chrome-keys={shortcutText(command.shortcuts, platform)}
         onClick={onPress}
         onFocus={onFocus}
       >

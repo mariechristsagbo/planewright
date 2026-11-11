@@ -1,0 +1,171 @@
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import { EditorShell } from '../../src/shell/EditorShell.tsx';
+import { surfaceHarness } from '../support/surface.tsx';
+
+// The chrome's tooltips (ADR 0012 and the v0.2 plan's S3): delegated listeners on the shell's root
+// open a control's tip after 500 ms of hover, at once on keyboard focus and never on touch; Escape,
+// a press and leaving the control close it. The tip repeats the control's name and keys, which its
+// name, aria-keyshortcuts and description already give, so it is never the only place of either,
+// and the control keeps its own name and description.
+
+const mount = () => render(<EditorShell surface={surfaceHarness().surface} />);
+const tip = (): HTMLElement | null => screen.queryByRole('tooltip');
+const button = (name: string | RegExp): HTMLElement => screen.getByRole('button', { name });
+
+/** What the open tip says: the control's name, then its keys. */
+function said(): { name: string; keys: string[] } | null {
+  const shown = tip();
+  if (shown === null) return null;
+  const keys = within(shown)
+    .queryAllByText(/./u, { selector: 'kbd' })
+    .map((key) => key.textContent);
+  return { name: shown.querySelector('.chrome-tip-name')?.textContent ?? '', keys };
+}
+
+const wait = (ms: number): void => {
+  act(() => {
+    vi.advanceTimersByTime(ms);
+  });
+};
+
+const focus = (element: HTMLElement): void => {
+  act(() => {
+    element.focus();
+  });
+};
+
+/** The controls that show a glyph, or Reset zoom's zoom, in place of their name. */
+const TIPPED = [
+  'Hand',
+  'Selection',
+  'Rectangle',
+  'Ellipse',
+  'Diamond',
+  'Line',
+  'Freehand',
+  'Text',
+  'Tool lock',
+  'Undo',
+  'Redo',
+  'Zoom out',
+  'Reset zoom, 100%',
+  'Zoom in',
+  'Zoom to fit',
+];
+
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
+describe('the tooltips', () => {
+  it('D4 delegate to one listener on the shell’s root for each pointer and focus event, and one on its document for the keys', () => {
+    const listen = vi.spyOn(EventTarget.prototype, 'addEventListener');
+    mount();
+    const main = screen.getByRole('main');
+    const calls = listen.mock.calls.map(([type], index) => [type, listen.mock.contexts[index]]);
+    listen.mockRestore();
+    for (const type of ['pointerover', 'pointerout', 'pointerdown', 'focusin', 'focusout']) {
+      expect(calls.filter(([each, at]) => each === type && at === main)).toHaveLength(1);
+    }
+    expect(calls.filter(([each, at]) => each === 'keydown' && at === document)).toHaveLength(1);
+    const buttons = new Set<unknown>(screen.getAllByRole('button'));
+    expect(calls.filter(([, at]) => buttons.has(at))).toEqual([]);
+  });
+
+  it('D4 A6 open after 500 ms of mouse hover and close when the pointer leaves the control', () => {
+    mount();
+    const rectangle = button('Rectangle');
+    fireEvent.pointerOver(rectangle, { pointerType: 'mouse' });
+    wait(499);
+    expect(tip()).toBeNull();
+    wait(1);
+    expect(said()).toEqual({ name: 'Rectangle', keys: ['R', '2'] });
+    fireEvent.pointerOut(rectangle, {
+      pointerType: 'mouse',
+      relatedTarget: rectangle.querySelector('svg'),
+    });
+    expect(said()).toEqual({ name: 'Rectangle', keys: ['R', '2'] });
+    fireEvent.pointerOut(rectangle, { pointerType: 'mouse', relatedTarget: document.body });
+    expect(tip()).toBeNull();
+    const ellipse = button('Ellipse');
+    fireEvent.pointerOver(ellipse, { pointerType: 'mouse' });
+    wait(300);
+    fireEvent.pointerOut(ellipse, { pointerType: 'mouse', relatedTarget: document.body });
+    wait(500);
+    expect(tip()).toBeNull();
+  });
+
+  it('D4 A6 open at once on keyboard focus, follow the arrow keys, and close on Escape with the focus kept', () => {
+    mount();
+    const hand = button('Hand');
+    focus(hand);
+    expect(said()).toEqual({ name: 'Hand', keys: ['H'] });
+    fireEvent.keyDown(hand, { key: 'ArrowRight', code: 'ArrowRight' });
+    expect(button('Selection')).toHaveFocus();
+    expect(said()).toEqual({ name: 'Selection', keys: ['V', '1'] });
+    fireEvent.keyDown(button('Selection'), { key: 'Escape', code: 'Escape' });
+    expect(tip()).toBeNull();
+    expect(button('Selection')).toHaveFocus();
+    focus(button('Undo'));
+    expect(said()).toEqual({ name: 'Undo', keys: ['Ctrl+Z'] });
+    act(() => {
+      button('Undo').blur();
+    });
+    expect(tip()).toBeNull();
+  });
+
+  it('D4 A6 never open on touch, from a touch hover or from the focus that a tap gives', () => {
+    mount();
+    const rectangle = button('Rectangle');
+    fireEvent.pointerOver(rectangle, { pointerType: 'touch' });
+    wait(1000);
+    expect(tip()).toBeNull();
+    fireEvent.pointerDown(rectangle, { pointerType: 'touch' });
+    focus(rectangle);
+    wait(1000);
+    expect(tip()).toBeNull();
+  });
+
+  it('D4 close on a press, which also keeps a hovered tip closed until the pointer leaves', () => {
+    mount();
+    const line = button('Line');
+    fireEvent.pointerOver(line, { pointerType: 'mouse' });
+    wait(500);
+    expect(said()?.name).toBe('Line');
+    fireEvent.pointerDown(line, { pointerType: 'mouse' });
+    focus(line);
+    expect(tip()).toBeNull();
+    fireEvent.pointerOver(line.querySelector('svg') ?? line, { pointerType: 'mouse' });
+    wait(1000);
+    expect(tip()).toBeNull();
+    fireEvent.pointerOut(line, { pointerType: 'mouse', relatedTarget: document.body });
+    fireEvent.pointerOver(line, { pointerType: 'mouse' });
+    wait(500);
+    expect(said()?.name).toBe('Line');
+  });
+
+  it('D4 A6 are descriptions that repeat each control’s name and keys, never its name or the only place of either', () => {
+    mount();
+    const opened: string[] = [];
+    for (const control of screen.getAllByRole('button')) {
+      focus(control);
+      const shown = said();
+      if (shown === null) continue;
+      const name = control.getAttribute('aria-label') ?? '';
+      opened.push(name);
+      expect(name.startsWith(shown.name)).toBe(true);
+      expect(control).toHaveAccessibleName(name);
+      const description = document.getElementById(control.getAttribute('aria-describedby') ?? '');
+      for (const key of shown.keys) expect(description?.textContent).toContain(key);
+      expect(control.getAttribute('aria-describedby')).not.toContain(tip()?.id ?? 'no tip');
+    }
+    expect(opened).toEqual(TIPPED);
+    expect(button('Hand')).toHaveAccessibleDescription('Shortcut H. Drag to pan the canvas.');
+  });
+});
