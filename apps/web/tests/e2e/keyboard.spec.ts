@@ -1,7 +1,15 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { button, elementList, elementsToggle, openPage, polite } from './a11y.ts';
+import {
+  button,
+  elementList,
+  elementsToggle,
+  expectOptionNames,
+  nameOf,
+  openPage,
+  polite,
+} from './a11y.ts';
 import { expectInk, toolButton } from './drawing.ts';
 import { canvas, canvasBox } from './support.ts';
 
@@ -16,9 +24,9 @@ async function step(page: Page, keys: readonly string[], said: string | RegExp):
   await expect(polite(page)).toHaveText(said);
 }
 
-/** The x and y of an option's name, "…, at x, y". */
+/** The x and y of an option's accessible name, "…, at x, y", which keeps P0's words. */
 async function placeOf(option: Locator): Promise<number[]> {
-  const name = (await option.textContent()) ?? '';
+  const name = await nameOf(option);
   return (/, at (-?[\d.]+), (-?[\d.]+)$/u.exec(name) ?? []).slice(1).map(Number);
 }
 
@@ -59,7 +67,7 @@ test('E1 A1 A2 A3 A4 A5 A6 REQ-Y04 REQ-Y05 every P0 kind made, selected, nudged 
   const list = elementList(page);
   await expect(list).toBeFocused();
   const options = list.getByRole('option');
-  await expect(options).toHaveText([
+  await expectOptionNames(list, [
     /^Text “Plan”, [\d.]+ by 25, at /u,
     /^Freehand stroke, 0 by 0, at /u,
     /^Line, 100 by 0, at /u,

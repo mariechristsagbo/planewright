@@ -5,6 +5,7 @@ import {
   elementList,
   elementsToggle,
   expectIndicator,
+  expectOptionNames,
   openElements,
   openPage,
   polite,
@@ -97,7 +98,7 @@ test('E2 D5 C3 REQ-Y02 Escape in the text area gives the focus back to the canva
   await page.keyboard.press('Tab');
   await expect(elementsToggle(page)).toBeFocused();
   await expect(area).toHaveCount(0);
-  await expect((await openElements(page)).getByRole('option')).toHaveText([/^Text “Hi”, /u]);
+  await expectOptionNames(await openElements(page), [/^Text “Hi”, /u]);
 });
 
 test('A5 REQ-Y02 while storage needs attention, the notices’ buttons come between the canvas and Elements', async ({
@@ -190,5 +191,5 @@ test('E2 C1 REQ-Y02 answering a second tab’s stale notice leaves the focus on 
   await second.keyboard.press('Enter');
   await expect(canvas(second)).toBeFocused();
   await expectSaved(second);
-  await expect((await openElements(second)).getByRole('option')).toHaveText([/^Rectangle, /u]);
+  await expectOptionNames(await openElements(second), [/^Rectangle, /u]);
 });

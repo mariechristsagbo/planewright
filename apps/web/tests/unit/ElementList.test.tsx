@@ -18,6 +18,17 @@ function draw(editor: Editor, tools: readonly ('rectangle' | 'ellipse' | 'line')
   editor.select([]);
 }
 
+/**
+ * An option's accessible name, which keeps P0's words while the row shows a glyph, a label and
+ * figures (ADR 0012's row for this file's lines 31 to 38): its label, checked to be what an
+ * accessibility tree computes, so that the name never falls back to the row's text.
+ */
+function nameOf(option: Element): string {
+  const name = option.getAttribute('aria-label') ?? '';
+  expect(option).toHaveAccessibleName(name);
+  return name;
+}
+
 function mount(tools: readonly ('rectangle' | 'ellipse' | 'line')[] = []) {
   const harness = surfaceHarness();
   draw(harness.editor, tools);
@@ -28,13 +39,10 @@ function mount(tools: readonly ('rectangle' | 'ellipse' | 'line')[] = []) {
       fireEvent.keyDown(list, { key, code: key, ...init });
     });
   };
-  const names = () =>
-    within(list)
-      .queryAllByRole('option')
-      .map((option) => option.textContent);
+  const names = () => within(list).queryAllByRole('option').map(nameOf);
   const active = () => {
-    const id = list.getAttribute('aria-activedescendant');
-    return id === null ? null : document.getElementById(id)?.textContent;
+    const option = document.getElementById(list.getAttribute('aria-activedescendant') ?? '');
+    return option === null ? null : nameOf(option);
   };
   const xs = () => harness.editor.view.elements.map(({ x }) => x);
   return { ...harness, list, press, names, active, xs };
@@ -176,5 +184,27 @@ describe('the element list', () => {
     expect([positions()[0], positions().at(-1)]).toEqual([26, 126]);
     expect(within(list).getAllByRole('option')[0]).toHaveAttribute('aria-setsize', '150');
     expect(active()).toMatch(/^Rectangle/u);
+  });
+
+  it('D4 A6 shows in each row its kind’s glyph, a label and its figures, while P0’s name, not that text, names the option', () => {
+    const { list } = mount(['rectangle', 'ellipse', 'line']);
+    const options = within(list).getAllByRole('option');
+    const rows = options.map((option) => [
+      option.querySelector('svg[data-glyph]')?.getAttribute('data-glyph'),
+      option.querySelector('svg[data-glyph]')?.getAttribute('aria-hidden'),
+      option.querySelector('.element-row-label')?.textContent,
+      option.querySelector('.element-row-meta')?.textContent,
+    ]);
+    expect(rows).toEqual([
+      ['line', 'true', 'Line', '100 × 0 · 350, 300'],
+      ['ellipse', 'true', 'Ellipse', '100 × 100 · 350, 250'],
+      ['rectangle', 'true', 'Rectangle', '100 × 100 · 350, 250'],
+    ]);
+    const [, , rectangle] = options;
+    expect(rectangle).toHaveTextContent(/^Rectangle100 × 100 · 350, 250$/u);
+    expect(rectangle).toHaveAccessibleName('Rectangle, 100 by 100, at 350, 250');
+    expect(within(list).getByRole('option', { name: 'Ellipse, 100 by 100, at 350, 250' })).toBe(
+      options[1],
+    );
   });
 });

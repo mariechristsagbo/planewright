@@ -56,14 +56,27 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   await canvas(page).focus();
   for (const key of ['r', 'Enter', 'o', 'Enter']) await page.keyboard.press(key);
   await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
+  // The tools, Undo, Redo and the zoom buttons but Reset zoom show glyphs rather than words (S3),
+  // whose 3:1 the next test measures; this is read before the drawer opens, since its rows name
+  // the elements' kinds in words (S5).
+  const atRest = (await textContrasts(page)).map(({ text }) => text);
+  expect(atRest.filter((text) => WORDS_NOW_GLYPHS.includes(text))).toEqual([]);
   await expect((await openElements(page)).getByRole('option')).toHaveCount(2);
   const contrasts = await textContrasts(page);
   // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5), and
-  // the tools, Undo, Redo and the zoom buttons but Reset zoom show glyphs rather than words (S3),
-  // whose 3:1 the next test measures.
+  // the open drawer adds its summary and its rows' labels and figures.
   const texts = contrasts.map(({ text }) => text);
-  expect(texts).toEqual(expect.arrayContaining(['Pre-release', 'Elements', '100%']));
-  expect(texts.filter((text) => WORDS_NOW_GLYPHS.includes(text))).toEqual([]);
+  expect(texts).toEqual(
+    expect.arrayContaining([
+      'Pre-release',
+      'Elements',
+      '2',
+      '100%',
+      'Keys',
+      'Ellipse',
+      'Rectangle',
+    ]),
+  );
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
 });
 

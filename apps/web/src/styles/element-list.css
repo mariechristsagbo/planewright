@@ -41,3 +41,36 @@
   outline: 2px solid #111827;
   outline-offset: -2px;
 }
+
+/*
+ * A row (ADR 0012, decisions 3 and 8; the v0.2 plan's S5): its kind's glyph, its label in the
+ * chrome's face and its figures in JetBrains Mono, each cut short rather than wrapped. A selected
+ * row keeps P0's colours, which S10 coordinates, and its figures take its text colour.
+ */
+.element-option {
+  display: grid;
+  grid-template-columns: auto minmax(3em, 1fr) minmax(0, max-content);
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+}
+
+.element-option > svg {
+  display: block;
+}
+
+.element-row-label,
+.element-row-meta {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.element-row-meta {
+  color: var(--pw-color-on-surface-variant);
+  font: var(--pw-type-geometry);
+  letter-spacing: var(--pw-type-geometry-tracking);
+}
+
+.element-option[aria-selected='true'] .element-row-meta {
+  color: inherit;
+}
