@@ -11,10 +11,13 @@ const DELAY_MS = 500;
 export const tipControlOf = (node: EventTarget | null): HTMLElement | null =>
   node instanceof Element ? node.closest<HTMLElement>('[data-chrome-tip]') : null;
 
-/** How long the pointer rests on a control before its tip opens, from tokens.css. */
+/**
+ * How long the pointer rests on a control before its tip opens, from tokens.css, in milliseconds or
+ * seconds, as the built style sheet may write it, such as ".5s".
+ */
 export function hoverDelay(root: HTMLElement): number {
   const value = getComputedStyle(root).getPropertyValue('--pw-delay-tooltip').trim();
-  const match = /^(\d+(?:\.\d+)?)(ms|s)$/u.exec(value);
+  const match = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)$/u.exec(value);
   if (match === null) return DELAY_MS;
   return Number(match[1]) * (match[2] === 's' ? 1000 : 1);
 }
