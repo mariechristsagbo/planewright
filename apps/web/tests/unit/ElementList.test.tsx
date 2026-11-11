@@ -29,6 +29,9 @@ function nameOf(option: Element): string {
   return name;
 }
 
+/** The time that the large drawing's test may take, its 150 options' rows built in jsdom. */
+const LARGE_MS = 20_000;
+
 function mount(tools: readonly ('rectangle' | 'ellipse' | 'line')[] = []) {
   const harness = surfaceHarness();
   draw(harness.editor, tools);
@@ -170,21 +173,29 @@ describe('the element list', () => {
     expect(editor.view.selection).toEqual([ellipse]);
   });
 
-  it('REQ-Y05 renders only the options near the active one of a large drawing', () => {
-    const { list, press, active } = mount(Array.from({ length: 150 }, () => 'rectangle' as const));
-    const positions = () =>
-      within(list)
-        .getAllByRole('option')
-        .map((option) => Number(option.getAttribute('aria-posinset')));
-    expect([positions().length, positions()[0], positions().at(-1)]).toEqual([101, 1, 101]);
-    press('End');
-    expect([positions().length, positions()[0], positions().at(-1)]).toEqual([101, 50, 150]);
-    press('Home');
-    for (let step = 0; step < 75; step += 1) press('ArrowDown');
-    expect([positions()[0], positions().at(-1)]).toEqual([26, 126]);
-    expect(within(list).getAllByRole('option')[0]).toHaveAttribute('aria-setsize', '150');
-    expect(active()).toMatch(/^Rectangle/u);
-  });
+  // Since S5 each row holds a glyph and two spans, which jsdom builds and the role queries walk:
+  // this test took 3.9 to 7.2 s against 2.1 to 4.5 s at 731e7b0 on a loaded six-core machine.
+  it(
+    'REQ-Y05 renders only the options near the active one of a large drawing',
+    { timeout: LARGE_MS },
+    () => {
+      const { list, press, active } = mount(
+        Array.from({ length: 150 }, () => 'rectangle' as const),
+      );
+      const positions = () =>
+        within(list)
+          .getAllByRole('option')
+          .map((option) => Number(option.getAttribute('aria-posinset')));
+      expect([positions().length, positions()[0], positions().at(-1)]).toEqual([101, 1, 101]);
+      press('End');
+      expect([positions().length, positions()[0], positions().at(-1)]).toEqual([101, 50, 150]);
+      press('Home');
+      for (let step = 0; step < 75; step += 1) press('ArrowDown');
+      expect([positions()[0], positions().at(-1)]).toEqual([26, 126]);
+      expect(within(list).getAllByRole('option')[0]).toHaveAttribute('aria-setsize', '150');
+      expect(active()).toMatch(/^Rectangle/u);
+    },
+  );
 
   it('D4 A6 shows in each row its kind’s glyph, a label and its figures, while P0’s name, not that text, names the option', () => {
     const { list } = mount(['rectangle', 'ellipse', 'line']);
