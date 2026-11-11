@@ -99,9 +99,11 @@ the engine, and the element list, the live region, the zoom controls and focus m
   first tab stop: its button, with `aria-haspopup`, `aria-expanded` and, while it is open,
   `aria-controls`, opens it on a press, Enter, Space or ArrowDown with the focus on its first item;
   the arrow keys, wrapping, Home and End move; Enter or a press runs an item, closes the menu and
-  returns the focus to the button; Escape closes it and returns the focus; and the focus leaving
-  it, by Tab or a press elsewhere, closes it where the focus went. Its items are `menuitem`s and
-  one `menuitemcheckbox`, Show elements, whose `aria-checked` is the drawer's state; their keys,
+  returns the focus to the button; Escape closes it and returns the focus; the focus leaving it, by
+  Tab or a press elsewhere, closes it where the focus went; and the window losing the focus to
+  another window closes it with the focus on the button, where it is when the window comes back,
+  rather than on the page's body (the S4 review's m2). Its items are `menuitem`s and one
+  `menuitemcheckbox`, Show elements, whose `aria-checked` is the drawer's state; their keys,
   shown in JetBrains Mono, are hidden from assistive technology, since each name and
   `aria-keyshortcuts` carry them. S4 also added the Keyboard shortcuts dialog, the same modal dialog
   as About, which the menu and a button at the bottom right, the last tab stop, open. A dialog
