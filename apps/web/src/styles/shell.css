@@ -4,11 +4,12 @@
  * the grid's areas at the window's edges. The top row's side tracks are as wide as their islands,
  * and the tool bar wraps within the middle one rather than crossing them; the notices and the
  * drawer lie under the top-right island, the notices first, and share the height that the top and
- * bottom rows leave, each scrolling within its share; the bottom row holds history and zoom at the
- * left and the view readout at the right, at the window's bottom. The shell clips its content
- * rather than scrolling it, so that the focus never scrolls it and the canvas stays under the
- * whole window. The anchors and areas that change with the viewport are in responsive.css, the only
- * style sheet with media queries.
+ * bottom rows leave, each scrolling within its share; the room row takes what is left, so that a
+ * surface spanning it from the notices' row reaches no lower than the bottom islands' top; the
+ * bottom row holds history and zoom at the left and the view readout at the right, at the window's
+ * bottom. The shell clips its content rather than scrolling it, so that the focus never scrolls it
+ * and the canvas stays under the whole window. The anchors and areas that change with the viewport
+ * are in responsive.css, the only style sheet with media queries.
  */
 :where(html, body) {
   height: 100%;
@@ -23,8 +24,9 @@
     'identity tools top-right'
     'notices notices notices'
     'drawer drawer drawer'
+    'room room room'
     'bottom bottom bottom';
-  grid-template-rows: auto minmax(0, max-content) minmax(0, max-content) 1fr;
+  grid-template-rows: auto minmax(0, max-content) minmax(0, max-content) 1fr auto;
   grid-template-columns: max-content minmax(0, 1fr) max-content;
   gap: var(--pw-spacing-sm);
   align-items: start;
@@ -73,12 +75,17 @@
   display: none;
 }
 
-/* The bottom row: its own box lets presses through to the canvas, its islands do not. */
+/*
+ * The bottom row: its own box lets presses through to the canvas, its islands do not. It reaches
+ * one gap above its row, over the gap that the room row adds, so that the rows above it share the
+ * height that they shared before the room row, and its islands' top is the room row's end.
+ */
 .shell-bottom {
   display: flex;
   flex-wrap: wrap-reverse;
   grid-area: bottom;
   align-self: end;
+  margin-top: calc(-1 * var(--pw-spacing-sm));
   gap: var(--pw-spacing-sm);
   align-items: end;
   justify-content: space-between;
