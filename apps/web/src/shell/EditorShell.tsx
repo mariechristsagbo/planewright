@@ -22,12 +22,15 @@ import { useShellState } from './shell-state.ts';
 // the list while its drawer is open, then Undo, Redo and the zoom controls. Where each island sits
 // is the style sheets' (styles/shell.css).
 
-/** The shell's root, where S7 puts data-save-state, and the islands in their tab order. */
+/**
+ * The shell's root, the page's main landmark, where S7 puts data-save-state, and the islands in
+ * their tab order.
+ */
 function Shell() {
   const { drawer, dialog, toggleDrawer, openAbout, closeDialog } = useShellState();
   const tag = useRef<HTMLButtonElement>(null);
   return (
-    <div className="editor-shell">
+    <main className="editor-shell">
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland tag={tag} onAbout={openAbout} />
       <div className="island tools-island" data-island="tools">
@@ -58,7 +61,7 @@ function Shell() {
           }}
         />
       ) : null}
-    </div>
+    </main>
   );
 }
 
