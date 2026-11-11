@@ -14,7 +14,8 @@ and autosave scheduler, with loading and saving in the editor, with ENG-13 (issu
 announcer port, the view's elements and creation with Enter with ENG-14 (issue #31). The web app
 shows a pre-release editor surface on them: a canvas that fills the window and pans and zooms, with
 the controls floating over it since v0.2's slice S2 (issue #55), most of them shown as original
-glyphs with tooltips since slice S3 (issue #62), on which shapes, lines, freehand
+glyphs with tooltips since slice S3 (issue #62), with a menu and a Keyboard shortcuts dialog since
+slice S4 (issue #64), on which shapes, lines, freehand
 strokes and texts can be drawn, selected, transformed and undone, and texts edited again, also from
 the keyboard alone through a list of its elements in a drawer, with each change said in a live
 region, and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue

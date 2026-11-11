@@ -33,23 +33,26 @@ own text in the chrome's family, `Planewright UI` (Inter at 400 and 500), over t
 Since slice S2 (issue #55) these sit in the editor's shell, `EditorShell`: the canvas fills the
 window and the page never scrolls, and the controls float over it in islands, siblings of the canvas
 host, so that no press on them reaches the canvas. The identity island at the top left holds the
-mark, the wordmark and a Pre-release tag, the tool bar sits at the top centre, the top-right island
-holds an Elements toggle that opens the element list in a drawer, closed at every load, with the
-storage notices under it, history and zoom sit at the bottom left, with the zoom shown on the Reset
-zoom button, and the view readout and the save status at the bottom right. Since slice S3, issue
-#62, the tool bar is a palette whose buttons show the tools' original glyphs, with their first keys
-in a corner and tool lock's padlock, Undo, Redo, Zoom out, Zoom in and Zoom to fit show glyphs too,
-all with their names, keys and descriptions unchanged, and those controls and Reset zoom show
-tooltips of their names and keys.
-Its IndexedDB record backend (database `planewright`) stores what the engine's autosave saves, so
-the drawing, its camera and its selection are kept in the browser, and at start-up the page opens
-the most recently updated document again; it also saves at once when the page is hidden or left,
-and reads its preferences entry from `localStorage` at start-up. The Pre-release tag opens About
-this build, a dialog that says that shapes, lines, freehand strokes and texts can be drawn,
-selected, transformed and undone and that the drawing is saved in this browser, and lists the
-capabilities that are not implemented, text formatting, styles, files and collaboration among them;
-an empty canvas repeats its pre-release sentence. It imports the protocol version to prove that
-workspace linking works.
+menu button, the mark, the wordmark and a Pre-release tag, the tool bar sits at the top centre, the
+top-right island holds an Elements toggle that opens the element list in a drawer, closed at every
+load, with the storage notices under it, history and zoom sit at the bottom left, with the zoom
+shown on the Reset zoom button, and the view readout and the save status at the bottom right. Since
+slice S3, issue #62, the tool bar is a palette whose buttons show the tools' original glyphs, with
+their first keys in a corner and tool lock's padlock, Undo, Redo, Zoom out, Zoom in and Zoom to fit
+show glyphs too, all with their names, keys and descriptions unchanged, and those controls and Reset
+zoom show tooltips of their names and keys. Since slice S4, issue #64, the menu button, the first
+tab stop, opens a menu of Select all, Zoom to fit and Reset zoom, which run the registry's commands,
+Show elements, which opens and closes the drawer, Keyboard shortcuts, About this build and Source on
+GitHub, and a Keyboard shortcuts button after the view readout, the last tab stop, opens the same
+dialog, which lists every command of the registry with its keys. Its IndexedDB record backend
+(database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
+selection are kept in the browser, and at start-up the page opens the most recently updated document
+again; it also saves at once when the page is hidden or left, and reads its preferences entry from
+`localStorage` at start-up. The Pre-release tag opens About this build, a dialog that says that
+shapes, lines, freehand strokes and texts can be drawn, selected, transformed and undone and that
+the drawing is saved in this browser, and lists the capabilities that are not implemented, text
+formatting, styles, files and collaboration among them; an empty canvas repeats its pre-release
+sentence. It imports the protocol version to prove that workspace linking works.
 
 ### apps/collab
 
@@ -142,7 +145,8 @@ The editor chrome of milestone v0.2.0 (Editor Experience) is decided in
 the chrome's design tokens, base styles and typeface, with no layout rule change, though P0's text
 rewrapped in the new face, issue #55 (slice S2) replaced P0's page with the full-bleed shell
 described above, and issue #62 (slice S3) drew the chrome's 35 original glyphs, turned the tool bar
-into the palette and added tooltips; S4 to S13 are not implemented yet.
+into the palette and added tooltips, and issue #64 (slice S4) added the menu and the Keyboard
+shortcuts dialog; S5 to S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 
