@@ -34,8 +34,10 @@ export function IdentityIsland({ shell, menuButton, tag }: IdentityIslandProps) 
         editor.run(action.id);
         break;
       case 'drawer':
+        // The drawer's opening or closing takes the focus, to its list box or to the toggle.
         shell.toggleDrawer();
-        break;
+        close(false);
+        return;
       case 'dialog':
         shell.openDialog(action.dialog, 'menu');
         return;

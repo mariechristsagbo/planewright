@@ -17,7 +17,7 @@ import { canvas } from './support.ts';
 // stops in the specified order, each with a visible indicator, and the focus never left on the
 // page when a control or the text area goes away (REQ-Y02).
 
-test('E2 A7 A8 REQ-Y02 Tab visits the menu, Pre-release, the tool bar, the canvas, Elements, the history and zoom controls and Keyboard shortcuts, each with a visible indicator', async ({
+test('E2 A7 A8 REQ-Y02 Tab visits the menu, Pre-release, the tool bar, the canvas, Elements, the open drawer’s Close, keys and list, the history and zoom controls and Keyboard shortcuts, each with a visible indicator', async ({
   page,
 }) => {
   await openPage(page);
@@ -47,22 +47,33 @@ test('E2 A7 A8 REQ-Y02 Tab visits the menu, Pre-release, the tool bar, the canva
     await page.keyboard.press('Shift+Tab');
     await expect(stop).toBeFocused();
   }
-  // The list box is a stop after Elements only while the drawer is open.
+  // While the drawer is open, its Close, its keys' summary and the list box follow Elements, and
+  // opening it puts the focus on the list box (ADR 0012, decision 14; the v0.2 plan's S5).
   for (const stop of stops.slice(1, 5)) {
     await page.keyboard.press('Tab');
     await expect(stop).toBeFocused();
   }
   await page.keyboard.press('Enter');
   await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
-  for (const stop of [elementList(page), button(page, 'Undo')]) {
-    await page.keyboard.press('Tab');
+  await expect(elementList(page)).toBeFocused();
+  await expectIndicator(page);
+  await page.keyboard.press('Tab');
+  await expect(button(page, 'Undo')).toBeFocused();
+  for (const stop of [
+    elementList(page),
+    page.locator('#element-list-drawer summary'),
+    button(page, 'Close Elements'),
+    elementsToggle(page),
+  ]) {
+    await page.keyboard.press('Shift+Tab');
     await expect(stop).toBeFocused();
     await expectIndicator(page);
   }
-  await page.keyboard.press('Shift+Tab');
-  await expect(elementList(page)).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Enter');
+  await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'false');
   await expect(elementsToggle(page)).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(button(page, 'Undo')).toBeFocused();
 });
 
 test('E2 D5 C3 REQ-Y02 Escape in the text area gives the focus back to the canvas, and Tab ends the session', async ({

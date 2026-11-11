@@ -30,9 +30,9 @@ function openElements(): HTMLElement {
 
 /** The shell's tab stops, in document order, leaving out what is hidden. */
 const tabStops = (): HTMLElement[] =>
-  [...document.querySelectorAll<HTMLElement>('button, a[href], textarea, [tabindex]')].filter(
-    (element) => element.tabIndex >= 0 && element.closest('[hidden]') === null,
-  );
+  [
+    ...document.querySelectorAll<HTMLElement>('button, a[href], textarea, summary, [tabindex]'),
+  ].filter((element) => element.tabIndex >= 0 && element.closest('[hidden]') === null);
 
 /** The island that holds an element, by its name. */
 const islandOf = (element: Element): string | undefined =>
@@ -102,7 +102,7 @@ describe('EditorShell', () => {
     }
   });
 
-  it('AC REQ-Y02 puts the tab stops in the specified order: the menu, Pre-release, tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls, Keyboard shortcuts', () => {
+  it('AC REQ-Y02 puts the tab stops in the specified order: the menu, Pre-release, tool bar, canvas, Elements and, while the drawer is open, its Close, its keys and the element list, history controls, zoom controls, Keyboard shortcuts', () => {
     mount();
     const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
     const elements = screen.getByRole('button', { name: /^Elements/u });
@@ -121,12 +121,20 @@ describe('EditorShell', () => {
     ];
     expect(tabStops()).toEqual([...before, ...after]);
     const list = openElements();
-    expect(tabStops()).toEqual([...before, list, ...after]);
-    expect([...before, list].map((stop) => stop?.getAttribute('tabindex') ?? null)).toEqual([
+    // The drawer's Close and its keys' summary come before the list (ADR 0012, decision 14).
+    const drawer = [
+      screen.getByRole('button', { name: 'Close Elements' }),
+      document.querySelector('#element-list-drawer summary'),
+      list,
+    ];
+    expect(tabStops()).toEqual([...before, ...drawer, ...after]);
+    expect([...before, ...drawer].map((stop) => stop?.getAttribute('tabindex') ?? null)).toEqual([
       null,
       null,
       '0',
       '0',
+      null,
+      null,
       null,
       '0',
     ]);

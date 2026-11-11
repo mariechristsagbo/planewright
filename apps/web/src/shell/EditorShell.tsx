@@ -15,6 +15,7 @@ import { IdentityIsland } from './IdentityIsland.tsx';
 import { ShortcutsButton } from './ShortcutsButton.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
+import { useDrawerFocus } from './drawer-focus.ts';
 import { useShellState } from './shell-state.ts';
 import type { Openers, ShellDialog } from './shell-state.ts';
 import { Tooltip } from './tooltip/Tooltip.tsx';
@@ -23,8 +24,9 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // over it in islands at its edges, siblings of the canvas host and never inside it, so that no
 // press on them reaches the canvas (REQ-C11). The document order is the tab order of decision
 // 14: the menu, Pre-release, the tool bar's one stop, the canvas, the storage notices' buttons,
-// Elements and the list while its drawer is open, then Undo, Redo, the zoom controls and Keyboard
-// shortcuts.
+// Elements and, while its drawer is open, the drawer's Close, its keys and the list, then Undo,
+// Redo, the zoom controls and Keyboard shortcuts. The drawer's opening and closing move the focus,
+// to its list box and back to the toggle.
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -53,13 +55,14 @@ function OpenDialog({
  */
 function Shell() {
   const shell = useShellState();
-  const { drawer, dialog, opener, toggleDrawer, openDialog, closeDialog } = shell;
+  const { drawer, dialog, opener, toggleDrawer, closeDrawer, openDialog, closeDialog } = shell;
   const menu = useRef<HTMLButtonElement>(null);
   const tag = useRef<HTMLButtonElement>(null);
   const keys = useRef<HTMLButtonElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const openers: Openers = { menu, tag, keys };
   const root = useRef<HTMLElement>(null);
+  useDrawerFocus(drawer, toggle);
   return (
     <main ref={root} className="editor-shell">
       <h1 className="visually-hidden">Planewright</h1>
@@ -73,7 +76,7 @@ function Shell() {
       <div className="island top-right-island" data-island="top-right">
         <ElementsToggle ref={toggle} open={drawer} onToggle={toggleDrawer} />
       </div>
-      <ElementsDrawer open={drawer} />
+      <ElementsDrawer open={drawer} onClose={closeDrawer} />
       <div className="shell-bottom">
         <div className="island bottom-left-island" data-island="bottom-left">
           <HistoryControls />

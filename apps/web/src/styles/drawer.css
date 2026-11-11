@@ -30,3 +30,41 @@
   letter-spacing: var(--pw-type-numeric-sm-tracking);
   text-align: center;
 }
+
+/*
+ * The open drawer: the list's heading with Close beside it, then the keys, folded under their
+ * summary. Its frame, surface and padding are islands.css's and its place shell.css's.
+ */
+.element-list-top {
+  display: flex;
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.element-list-drawer .drawer-close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--pw-spacing-control-compact);
+  height: var(--pw-spacing-control-compact);
+  padding: 0;
+}
+
+.drawer-close > svg {
+  display: block;
+}
+
+.element-list-guide > summary {
+  width: max-content;
+  min-height: 1.5rem;
+  color: var(--pw-color-on-surface-variant);
+  font: var(--pw-type-label-md);
+  letter-spacing: var(--pw-type-label-md-tracking);
+  cursor: default;
+}
+
+.element-list-guide > .element-list-help {
+  margin-top: var(--pw-spacing-xs);
+}

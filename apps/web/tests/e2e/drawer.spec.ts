@@ -1,7 +1,15 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { elementList, elementsToggle, openElements, openPage, polite } from './a11y.ts';
+import {
+  button,
+  elementList,
+  elementsToggle,
+  expectIndicator,
+  openElements,
+  openPage,
+  polite,
+} from './a11y.ts';
 import { canvas } from './support.ts';
 
 // The Elements drawer (ADR 0012, D4 and decisions 13 and 14, issues #55 and #66): the Elements
@@ -12,7 +20,81 @@ import { canvas } from './support.ts';
 /** How many list boxes and options the page holds, hidden or not. */
 const mountedList = (page: Page): Locator => page.locator('[role="listbox"], [role="option"]');
 
-test('A9 D4 the Elements toggle opens and closes the drawer, which is closed after every reload', async ({
+/** The drawer's element, which the toggle controls. */
+const drawer = (page: Page): Locator => page.locator('#element-list-drawer');
+
+/** What the page keeps in its storage entries, which must never hold the drawer's state (D4). */
+const STORED = `(() => ({
+  local: Object.fromEntries(Object.entries(localStorage)),
+  session: Object.fromEntries(Object.entries(sessionStorage)),
+}))()`;
+
+/** Chromium's own accessible name and description of each node of a role, from its tree. */
+async function chromiumNodes(page: Page, role: string) {
+  const session = await page.context().newCDPSession(page);
+  const { nodes } = (await session.send('Accessibility.getFullAXTree')) as {
+    nodes: {
+      role?: { value?: string };
+      name?: { value?: string };
+      description?: { value?: string };
+    }[];
+  };
+  await session.detach();
+  return nodes
+    .filter((node) => node.role?.value === role)
+    .map((node) => ({ name: node.name?.value, description: node.description?.value }));
+}
+
+const KEYS =
+  'Up and Down move through the elements; Space adds one to the selection or takes it out, Enter selects it alone, Delete deletes the selection, and Alt+arrow keys nudge it, by 10 with Shift.';
+
+test('D2 A7 the keys, folded under their summary, still describe the list box in Chromium’s own tree', async ({
+  page,
+}) => {
+  await openPage(page);
+  const list = await openElements(page);
+  const summary = page.locator('#element-list-drawer summary');
+  const shown = page.locator('#element-list-drawer details').getByText(KEYS);
+  await expect(summary).toHaveText('Keys');
+  await expect(shown).toBeHidden();
+  const described = { name: 'Elements', description: `Nothing is drawn yet. ${KEYS}` };
+  expect(await chromiumNodes(page, 'listbox')).toEqual([described]);
+  await summary.click();
+  await expect(shown).toBeVisible();
+  expect(await chromiumNodes(page, 'listbox')).toEqual([described]);
+  await expect(list).toHaveAccessibleDescription(described.description);
+});
+
+for (const [width, height, drawerWidth] of [
+  [1280, 720, 300],
+  [1024, 768, 280],
+] as const) {
+  test.describe(`at ${String(width)} × ${String(height)}`, () => {
+    test.use({ viewport: { width, height } });
+
+    test(`D2 A3 the toggle opens a ${String(drawerWidth)} px drawer with the focus on its list box, and closing it, by the toggle or Close, focuses the toggle`, async ({
+      page,
+    }) => {
+      await openPage(page);
+      const toggle = elementsToggle(page);
+      await toggle.focus();
+      await page.keyboard.press('Enter');
+      await expect(elementList(page)).toBeFocused();
+      await expectIndicator(page);
+      expect((await drawer(page).boundingBox())?.width).toBe(drawerWidth);
+      await button(page, 'Close Elements').click();
+      await expect(toggle).toHaveAttribute('aria-expanded', 'false');
+      await expect(toggle).toBeFocused();
+      await toggle.click();
+      await expect(elementList(page)).toBeFocused();
+      await toggle.click();
+      await expect(toggle).toBeFocused();
+      await expect(mountedList(page)).toHaveCount(0);
+    });
+  });
+}
+
+test('A9 D4 A4 the Elements toggle opens and closes the drawer, which is closed after every reload and stored nowhere', async ({
   page,
 }) => {
   await openPage(page);
@@ -30,6 +112,11 @@ test('A9 D4 the Elements toggle opens and closes the drawer, which is closed aft
   await expect(mountedList(page)).toHaveCount(0);
   await toggle.click();
   await expect(elementList(page)).toBeVisible();
+  // The preferences entry, if the page writes one, holds the theme alone (ADR 0012, D4).
+  const stored = await page.evaluate<{ local: object; session: object }>(STORED);
+  expect(stored.session).toEqual({});
+  expect(Object.keys(stored.local).filter((key) => key !== 'planewright:preferences')).toEqual([]);
+  expect(JSON.stringify(stored)).not.toMatch(/drawer|element-list|open|expanded/iu);
   await page.reload();
   await expect(canvas(page)).toBeVisible();
   await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'false');

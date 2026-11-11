@@ -186,7 +186,9 @@ test('A3 Show elements opens and closes the drawer, checked while it is open', a
   await page.keyboard.press('Enter');
   await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
   await expect(elementList(page)).toBeVisible();
-  await expect(menuButton(page)).toBeFocused();
+  // The drawer's opening takes the focus to its list box, and its closing to the toggle (S5).
+  await expect(elementList(page)).toBeFocused();
+  await menuButton(page).focus();
   await page.keyboard.press('ArrowDown');
   for (const key of ['ArrowDown', 'ArrowDown', 'ArrowDown']) await page.keyboard.press(key);
   await expect(show).toBeFocused();
@@ -194,6 +196,7 @@ test('A3 Show elements opens and closes the drawer, checked while it is open', a
   await page.keyboard.press('Enter');
   await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'false');
   await expect(elementList(page)).toBeHidden();
+  await expect(elementsToggle(page)).toBeFocused();
 });
 
 test('A4 each shortcut shows in JetBrains Mono, hidden from assistive technology, while the name and aria-keyshortcuts carry it', async ({

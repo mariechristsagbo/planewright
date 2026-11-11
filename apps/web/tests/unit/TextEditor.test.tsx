@@ -125,15 +125,12 @@ describe('the text area', () => {
       fireEvent.blur(area, { relatedTarget: null });
     });
     expect(editor.view.text?.element.content.text).toBe('Hi');
-    // The list is in the Elements drawer, closed at first (ADR 0012, decision 16).
+    // The list is in the Elements drawer, closed at first (ADR 0012, decision 16), whose opening
+    // moves the focus to the list box since S5, as a press on the list would.
     act(() => {
       fireEvent.click(screen.getByRole('button', { name: /^Elements/u }));
     });
-    expect(editor.view.text?.element.content.text).toBe('Hi');
     const list = screen.getByRole('listbox', { name: 'Elements' });
-    act(() => {
-      list.focus();
-    });
     expect([editor.view.text, editor.view.elements.map(({ kind }) => kind)]).toEqual([
       null,
       ['text'],

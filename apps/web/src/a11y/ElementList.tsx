@@ -1,6 +1,6 @@
 import type { Element, ElementId } from '@planewright/engine';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
-import type { KeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import { sendKeyDown } from '../editor/attach-input.ts';
 import { keyInput } from '../editor/input-adapter.ts';
@@ -109,7 +109,42 @@ const Options = memo(function Options({ elements, selection, position, choose }:
   });
 });
 
-export function ElementList() {
+/** What the list's keys do, which describes the list box. */
+const KEYS =
+  'Up and Down move through the elements; Space adds one to the selection or takes it out, Enter selects it alone, Delete deletes the selection, and Alt+arrow keys nudge it, by 10 with Shift.';
+
+/**
+ * The list's heading, with what its surface puts beside it, such as the drawer's Close, then the
+ * note that nothing is drawn and the keys, folded under a summary. The keys that describe the list
+ * box are a visually hidden copy outside the fold, since Chromium describes nothing by an element
+ * inside a closed details element.
+ */
+function ListHead({ empty, action }: { readonly empty: boolean; readonly action: ReactNode }) {
+  return (
+    <>
+      <div className="element-list-top">
+        <h2 id="element-list-heading" className="element-list-heading">
+          Elements
+        </h2>
+        {action}
+      </div>
+      {empty ? (
+        <p id="element-list-empty" className="element-list-help">
+          Nothing is drawn yet.
+        </p>
+      ) : null}
+      <p id="element-list-help" className="visually-hidden">
+        {KEYS}
+      </p>
+      <details className="element-list-guide">
+        <summary>Keys</summary>
+        <p className="element-list-help">{KEYS}</p>
+      </details>
+    </>
+  );
+}
+
+export function ElementList({ action = null }: { readonly action?: ReactNode }) {
   const { editor, platform } = useSurface();
   const { elements, selection } = useEditorView();
   const list = useRef<HTMLUListElement>(null);
@@ -139,19 +174,7 @@ export function ElementList() {
 
   return (
     <section className="element-list-area" aria-labelledby="element-list-heading">
-      <h2 id="element-list-heading" className="element-list-heading">
-        Elements
-      </h2>
-      {empty ? (
-        <p id="element-list-empty" className="element-list-help">
-          Nothing is drawn yet.
-        </p>
-      ) : null}
-      <p id="element-list-help" className="element-list-help">
-        Up and Down move through the elements; Space adds one to the selection or takes it out,
-        Enter selects it alone, Delete deletes the selection, and Alt+arrow keys nudge it, by 10
-        with Shift.
-      </p>
+      <ListHead empty={empty} action={action} />
       <ul
         ref={list}
         role="listbox"

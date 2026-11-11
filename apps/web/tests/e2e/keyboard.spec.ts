@@ -51,12 +51,13 @@ test('E1 A1 A2 A3 A4 A5 A6 REQ-Y04 REQ-Y05 every P0 kind made, selected, nudged 
   await step(page, ['Escape'], 'Text created. 1 element selected.');
   await expect(canvas(page)).toBeFocused();
 
-  // From the canvas, Tab reaches Elements, whose drawer opens to reach the list.
+  // From the canvas, Tab reaches Elements, whose drawer opens with the focus on the list (S5).
   await page.keyboard.press('Tab');
   await expect(elementsToggle(page)).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
   const list = elementList(page);
+  await expect(list).toBeFocused();
   const options = list.getByRole('option');
   await expect(options).toHaveText([
     /^Text “Plan”, [\d.]+ by 25, at /u,
@@ -69,8 +70,6 @@ test('E1 A1 A2 A3 A4 A5 A6 REQ-Y04 REQ-Y05 every P0 kind made, selected, nudged 
   const { width, height } = await canvasBox(page);
   await expectInk(page, [[width / 2 - 30, height / 2]]);
 
-  await page.keyboard.press('Tab');
-  await expect(list).toBeFocused();
   const rectangle = options.last();
   const ellipse = options.nth(4);
   const [x = 0, y = 0] = await placeOf(rectangle);
