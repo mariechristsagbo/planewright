@@ -280,3 +280,14 @@ release has been published yet.
   44 px targets and Details, which opens a Details sheet along the bottom; it and the Elements sheet
   are never open together, and it closes when the selection empties, a text is edited or the window
   turns. Neither is stored, and a pan or zoom step renders neither. S7 to S13 are not implemented.
+- The v0.2 saving visibility (slice S7, issue #71, ADR 0012 decisions 12 and 14, D7): nothing
+  shows or is said about saving while it works, so P0's "Saved in this browser" and "Saving…" go.
+  While a save failed, another tab's newer save refused it or storage is unavailable, a "Not saved"
+  chip joins the top-right island before Elements, in the error tone with a triangle for a failed
+  save and the warning tone for the others, the two tabs for a stale save, and on phones as its
+  glyph alone, its name kept. The storage notices keep P0's words, in their tones, and gain Hide,
+  which folds them into the chip, a button that reopens them; a new failure, a failure for another
+  reason or a stale save shows them again, a hidden unreadable-data notice leaves a "Storage
+  notice" button, and the notices show at every load. When a failed save succeeds again, the page
+  says "The drawing is saved again." once in the polite live region. The shell's root carries
+  `data-save-state` for the tests, and B9 now ends each save at it. S8 to S13 are not implemented.

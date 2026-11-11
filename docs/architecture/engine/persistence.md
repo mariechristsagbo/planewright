@@ -267,15 +267,19 @@ above leave open:
   clock's time, since the `Clock` port's time does not compare across tabs, and writes element
   records in batches of 500, each started once the batch before has landed. Its failures are
   `quota` for a full storage and `failed` otherwise, and `unavailable` when the database cannot be
-  opened. The page saves at once on `visibilitychange` to hidden and on `pagehide`. Beside the view
-  readout it says "Saved in this browser", "Saving…" or "Not saved"; notices that never move the
-  canvas, below it in P0 and over it under the top-right island since v0.2's slice S2, report a
-  failed save, a stale one with "Load the newer version" and "Keep this version", and invalid or
-  unavailable storage at start-up. For v0.2,
-  [ADR 0012](../../adr/0012-v02-editor-chrome.md) decides (D7) that a working save shows nothing,
-  neither "Saved in this browser" nor "Saving…", and that only the "Not saved" chip and these
-  notices appear, while storage needs attention; until its slice S7 lands, the page says what is
-  described here.
+  opened. The page saves at once on `visibilitychange` to hidden and on `pagehide`. P0 said
+  "Saved in this browser", "Saving…" or "Not saved" beside the view readout. Since v0.2's slice S7
+  (issue #71), as [ADR 0012](../../adr/0012-v02-editor-chrome.md) decides (D7), a working save
+  shows nothing and says nothing. While storage needs attention a "Not saved" chip joins the
+  top-right island before Elements, in the error tone for a failed save and the warning tone for a
+  stale one or no storage, and notices that never move the canvas, over it under that island,
+  report a failed save, a stale one with "Load the newer version" and "Keep this version", and
+  invalid or unavailable storage at start-up, in P0's words. Hide folds the notices into the chip,
+  which becomes a button that reopens them; a new failure, a failure for another reason or a stale
+  save shows them again, and a hidden unreadable-data notice alone leaves a "Storage notice" button.
+  Whether they are hidden is the shell's own state and never stored. When a failed save succeeds
+  again, the web app says "The drawing is saved again." once in the polite live region. The shell's
+  root carries `data-save-state`, the status's type or `none`, for the tests alone.
 - **Preferences.** The entry is `planewright:preferences`, read and checked before anything is
   drawn, and written whole. P0 draws the light theme only and has no view toggle, so the entry
   holds the theme alone, nothing in P0 changes it, and any other stored value gives the light

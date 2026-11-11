@@ -12,7 +12,8 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > opens and which is a sheet on phones, with each change announced to screen readers; while
 > something is selected, a panel, or a bar on phones, shows its position and size read-only and
 > offers Duplicate, Delete and, for a text, Edit text; the drawing is saved in the browser and
-> restored on reload. A Pre-release tag opens About this
+> restored on reload, with nothing shown while saving works and a "Not saved" chip with a notice
+> when it does not. A Pre-release tag opens About this
 > build, which says what the build contains and what it does not, and a menu at the top left and a
 > button at the bottom right open a list of every command's keyboard shortcuts. There is no text
 > formatting, no style control, no file opening, saving or exporting and no collaboration. This
