@@ -1,3 +1,4 @@
+import type { KeyChord } from '@planewright/engine';
 import { describe, expect, it } from 'vitest';
 
 import { ariaKeyShortcuts, shortcutText } from '../../src/ui/shortcuts.ts';
@@ -32,5 +33,24 @@ describe('shortcuts', () => {
       ),
     ).toBe('Option+H or 1');
     expect(shortcutText([{ key: 'h', alt: true }], 'other')).toBe('Alt+H');
+  });
+
+  it('name the named keys: aria-keyshortcuts by their key values, people by their words', () => {
+    const chords: readonly KeyChord[] = [
+      { key: 'escape' },
+      { key: 'enter' },
+      { key: 'delete' },
+      { key: 'backspace' },
+      { key: 'arrowleft', shift: true },
+      { key: 'arrowright' },
+      { key: 'arrowup' },
+      { key: 'arrowdown', alt: true },
+    ];
+    expect(ariaKeyShortcuts(chords, 'other')).toBe(
+      'Escape Enter Delete Backspace Shift+ArrowLeft ArrowRight ArrowUp Alt+ArrowDown',
+    );
+    expect(shortcutText(chords, 'apple')).toBe(
+      'Esc or Enter or Delete or Backspace or Shift+Left arrow or Right arrow or Up arrow or Option+Down arrow',
+    );
   });
 });
