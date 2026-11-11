@@ -7,9 +7,9 @@
  * declares the fonts, therefore holds no media query.
  */
 /*
- * Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices and 32 px glyph
- * buttons and Elements toggle, the glyph buttons' corner keys against their inner edge to keep
- * clear of their glyphs.
+ * Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices, a 280 px
+ * drawer and 32 px glyph buttons and Elements toggle, the glyph buttons' corner keys against their
+ * inner edge to keep clear of their glyphs.
  */
 @media (max-width: 1199px) {
   .editor-shell {
@@ -31,6 +31,10 @@
 
   .editor-shell > .notices {
     width: min(320px, 100%);
+  }
+
+  .element-list-drawer {
+    width: min(280px, 100%);
   }
 
   .wordmark {

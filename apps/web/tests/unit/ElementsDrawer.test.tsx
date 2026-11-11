@@ -1,6 +1,6 @@
 import type { Editor } from '@planewright/engine';
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
 import { elementName } from '../../src/a11y/element-names.ts';
 import { EditorShell } from '../../src/shell/EditorShell.tsx';
@@ -104,5 +104,72 @@ describe('the Elements drawer', () => {
       editor.run('canvas.enter');
     });
     expect(names()).toBe(4);
+  });
+
+  it('D2 A3 puts the focus on the list box when it opens and on the toggle when it closes, by the toggle, its Close or the menu', () => {
+    const { toggle, click } = mount();
+    const list = () => screen.getByRole('listbox', { name: 'Elements' });
+    click(toggle);
+    expect(list()).toHaveFocus();
+    click(toggle);
+    expect(toggle).toHaveFocus();
+    click(toggle);
+    click(screen.getByRole('button', { name: 'Close Elements' }));
+    expect([toggle.getAttribute('aria-expanded'), document.activeElement]).toEqual([
+      'false',
+      toggle,
+    ]);
+    const menu = screen.getByRole('button', { name: 'Planewright menu' });
+    const show = () => {
+      click(menu);
+      click(screen.getByRole('menuitemcheckbox', { name: 'Show elements' }));
+    };
+    show();
+    expect(list()).toHaveFocus();
+    show();
+    expect([toggle.getAttribute('aria-expanded'), document.activeElement]).toEqual([
+      'false',
+      toggle,
+    ]);
+  });
+
+  it('D2 A3 shows its keys folded under a summary, which still describe the list box, and its Close before them', () => {
+    const { toggle, click } = mount();
+    click(toggle);
+    const drawer = document.getElementById(toggle.getAttribute('aria-controls') ?? 'none');
+    if (drawer === null) throw new Error('No drawer.');
+    const keys = drawer.querySelector('details');
+    expect(keys?.querySelector('summary')).toHaveTextContent(/^Keys$/u);
+    expect(keys).not.toHaveAttribute('open');
+    // Chromium describes nothing by what a closed details element holds, so the list box is
+    // described by a visually hidden copy of the keys outside it (drawer.spec.ts reads Chromium's).
+    const help = screen.getByText(/^Up and Down move/u, { selector: '#element-list-help' });
+    expect(help).toHaveClass('visually-hidden');
+    expect(help.closest('details')).toBeNull();
+    expect(keys?.querySelector('p')).toHaveTextContent(help.textContent);
+    expect(screen.getByRole('listbox', { name: 'Elements' })).toHaveAccessibleDescription(
+      help.textContent,
+    );
+    const stops = [...drawer.querySelectorAll('button, summary, [tabindex="0"]')];
+    const named = (stop: Element) =>
+      stop.getAttribute('aria-label') ?? stop.getAttribute('role') ?? stop.textContent;
+    expect(stops.map(named)).toEqual(['Close Elements', 'Keys', 'listbox']);
+  });
+
+  it('D4 A4 is closed at every mount, and opening or closing it writes nothing to storage', () => {
+    const written = vi.spyOn(Storage.prototype, 'setItem');
+    onTestFinished(() => {
+      written.mockRestore();
+    });
+    const first = mount();
+    first.click(first.toggle);
+    first.click(first.toggle);
+    first.click(first.toggle);
+    expect(first.toggle).toHaveAttribute('aria-expanded', 'true');
+    cleanup();
+    const second = mount();
+    expect(second.toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(document.querySelector('[role="listbox"]')).toBeNull();
+    expect([written.mock.calls, localStorage.length, sessionStorage.length]).toEqual([[], 0, 0]);
   });
 });

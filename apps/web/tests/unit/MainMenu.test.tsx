@@ -225,11 +225,16 @@ describe('the identity island’s menu', () => {
     expect(check()).toBeUndefined();
     click(item(screen.getByRole('menu'), 'Show elements'));
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByRole('listbox', { name: 'Elements' })).toBeInTheDocument();
-    expect(button).toHaveFocus();
+    // The opened drawer takes the focus to its list box, from the menu as from the toggle (S5).
+    expect(screen.getByRole('listbox', { name: 'Elements' })).toHaveFocus();
     expect(item(openMenu(button), 'Show elements')).toHaveAttribute('aria-checked', 'true');
     // A check shows the state to the eye; it is hidden, so the name stays "Show elements".
     expect(check()).toBe('true');
+    click(item(screen.getByRole('menu'), 'Show elements'));
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    expect(toggle).toHaveFocus();
+    click(toggle);
+    expect(item(openMenu(button), 'Show elements')).toHaveAttribute('aria-checked', 'true');
     press(screen.getByRole('menu'), 'Escape');
     click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'false');

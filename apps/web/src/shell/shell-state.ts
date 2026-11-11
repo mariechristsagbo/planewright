@@ -24,6 +24,7 @@ export type ShellAction =
   | { readonly type: 'open-menu' }
   | { readonly type: 'close-menu' }
   | { readonly type: 'toggle-drawer' }
+  | { readonly type: 'close-drawer' }
   | {
       readonly type: 'open-dialog';
       readonly dialog: Exclude<ShellDialog, null>;
@@ -46,6 +47,8 @@ export function shellReducer(state: ShellState, action: ShellAction): ShellState
       return { ...state, menu: false };
     case 'toggle-drawer':
       return { ...state, drawer: !state.drawer };
+    case 'close-drawer':
+      return { ...state, drawer: false };
     case 'open-dialog':
       // A dialog opened from the menu takes the focus, so the menu closes with it.
       return { ...state, menu: false, dialog: action.dialog, opener: action.opener };
@@ -67,6 +70,9 @@ export function useShellState() {
     },
     toggleDrawer: () => {
       dispatch({ type: 'toggle-drawer' });
+    },
+    closeDrawer: () => {
+      dispatch({ type: 'close-drawer' });
     },
     openDialog: (dialog: Exclude<ShellDialog, null>, opener: DialogOpener) => {
       dispatch({ type: 'open-dialog', dialog, opener });

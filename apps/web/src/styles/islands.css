@@ -47,8 +47,9 @@
 }
 
 /*
- * The Elements drawer around P0's list; S5 gives it its own styling. Its padding is on the list's
- * area inside it, so that in a short window the drawer can shrink to its border.
+ * The Elements drawer around P0's list, the second elevation over the canvas; drawer.css sets its
+ * head and keys, and responsive.css its compact width and the phone's sheet. Its padding is on the
+ * list's area inside it, so that in a short window the drawer can shrink to its border.
  */
 .element-list-drawer {
   overflow-y: auto;
