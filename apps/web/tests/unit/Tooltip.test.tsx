@@ -102,6 +102,39 @@ describe('the tooltips', () => {
     expect(tip()).toBeNull();
   });
 
+  it('D4 A6 stay open while the pointer is over the control or its tip, and close when it leaves both', () => {
+    mount();
+    const rectangle = button('Rectangle');
+    const shown = document.getElementById('chrome-tip');
+    if (shown === null) throw new Error('No tip in the shell.');
+    const move = (from: Element, to: Element): void => {
+      fireEvent.pointerOut(from, { pointerType: 'mouse', relatedTarget: to });
+      fireEvent.pointerOver(to, { pointerType: 'mouse', relatedTarget: from });
+    };
+    fireEvent.pointerOver(rectangle, { pointerType: 'mouse' });
+    wait(500);
+    move(rectangle, shown);
+    const key = shown.querySelector('kbd') ?? shown;
+    move(shown, key);
+    wait(1000);
+    expect(said()).toEqual({ name: 'Rectangle', keys: ['R', '2'] });
+    move(key, rectangle);
+    move(rectangle, shown);
+    expect(said()?.name).toBe('Rectangle');
+    // The tip is out of the tab order, and a press on it closes it.
+    expect(shown.querySelectorAll('[tabindex], a, button, input, textarea')).toHaveLength(0);
+    expect(shown).not.toHaveAttribute('tabindex');
+    fireEvent.pointerDown(shown, { pointerType: 'mouse' });
+    expect(tip()).toBeNull();
+    move(shown, rectangle);
+    move(rectangle, document.body);
+    fireEvent.pointerOver(rectangle, { pointerType: 'mouse' });
+    wait(500);
+    move(rectangle, shown);
+    move(shown, document.body);
+    expect(tip()).toBeNull();
+  });
+
   it('D4 A6 open at once on keyboard focus, follow the arrow keys, and close on Escape with the focus kept', () => {
     mount();
     const hand = button('Hand');
