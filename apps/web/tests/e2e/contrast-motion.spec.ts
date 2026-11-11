@@ -1,11 +1,26 @@
 import { expect, test } from '@playwright/test';
 
 import { button, contrast, openElements, openPage, polite, textContrasts } from './a11y.ts';
+import { glyphContrasts } from './glyphs.ts';
 import { canvas, readout } from './support.ts';
+
+/** The palette's glyphs, which carry no word (ADR 0012, decision 3). */
+const PALETTE = [
+  'hand',
+  'selection',
+  'rectangle',
+  'ellipse',
+  'diamond',
+  'line',
+  'freehand',
+  'text',
+  'lock-open',
+];
 
 // Colour and motion on a desktop (ENG-14, docs/architecture/engine/quality.md#accessibility,
 // REQ-Y06): every interface text meets 4.5:1 against what is behind it in the light theme, the
-// only P0 theme, and with reduced motion requested a zoom shows its new view at once.
+// only P0 theme, every glyph and the boundary of the control that shows it 3:1 (ADR 0012,
+// decision 3), and with reduced motion requested a zoom shows its new view at once.
 
 test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light theme', async ({
   page,
@@ -17,11 +32,33 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   await expect((await openElements(page)).getByRole('option')).toHaveCount(2);
   const contrasts = await textContrasts(page);
   // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5), and
-  // the tools show glyphs rather than words (S3).
+  // the tools show glyphs rather than words (S3), whose 3:1 the next test measures.
   const texts = contrasts.map(({ text }) => text);
   expect(texts).toEqual(expect.arrayContaining(['Undo', 'Zoom in', 'Elements']));
   expect(texts).not.toContain('Rectangle');
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+});
+
+test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whole pixels', () => {
+  test.use({ deviceScaleFactor: 2 });
+
+  test('A5 every glyph and its control’s boundary meets 3:1 against its surface, computed and rendered', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await canvas(page).focus();
+    for (const key of ['r', 'Enter']) await page.keyboard.press(key);
+    await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
+    const glyphs = await glyphContrasts(page);
+    // The palette's tools and tool lock, the chosen one pressed (ADR 0012, decision 3).
+    expect(glyphs.map(({ glyph }) => glyph)).toEqual(expect.arrayContaining(PALETTE));
+    expect(glyphs.find(({ control }) => control === 'Selection')).toBeDefined();
+    const below = glyphs.filter(
+      ({ computed, rendered, boundary }) =>
+        computed < 3 || rendered < 3 || (boundary !== null && boundary < 3),
+    );
+    expect(below).toEqual([]);
+  });
 });
 
 test.describe('with the operating system asking for a dark scheme', () => {
