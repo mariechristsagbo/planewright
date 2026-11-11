@@ -58,17 +58,25 @@ const outside = (boxes: readonly Box[], { width, height }: Viewport): string[] =
     )
     .map(({ name }) => name);
 
+/** The islands whose controls are inert, which the phone's sheet covers (the v0.2 plan's S5). */
+const INERT = `[...document.querySelectorAll('[inert]')].map((element) => element.closest('[data-island]').dataset.island)`;
+
 /**
  * Every island, and the notices and the drawer while they show, inside the viewport and apart, with
  * history and zoom at the window's bottom, no more than the largest anchor, 16 px, above its edge.
+ * On a phone in portrait the open drawer is a sheet over the bottom islands, which may meet it only
+ * while their controls are inert (S5).
  */
 async function expectPlaced(page: Page, viewport: Viewport, count: number): Promise<void> {
   const boxes = await islands(page);
   expect(boxes).toHaveLength(count);
-  expect({ outside: outside(boxes, viewport), intersecting: intersecting(boxes) }).toEqual({
-    outside: [],
-    intersecting: [],
-  });
+  const inert = await page.evaluate<string[]>(INERT);
+  const covered = (pair: string): boolean =>
+    pair.startsWith('element-list-drawer × ') && inert.includes(pair.split(' × ')[1] ?? '');
+  expect({
+    outside: outside(boxes, viewport),
+    intersecting: intersecting(boxes).filter((pair) => !covered(pair)),
+  }).toEqual({ outside: [], intersecting: [] });
   const history = boxes.find(({ name }) => name === 'bottom-left');
   expect(viewport.height - (history?.y ?? 0) - (history?.height ?? 0)).toBeLessThanOrEqual(16);
 }
@@ -128,6 +136,16 @@ for (const viewport of [
       await expect(storageNotices(page)).toBeVisible();
       await openElements(page);
       await expectPlaced(page, viewport, 7);
+      // The phone's sheet covers the bottom islands, whose controls it makes inert (S5).
+      const met = intersecting(await islands(page));
+      expect([met, await page.evaluate<string[]>(INERT)]).toEqual(
+        viewport.width < 600
+          ? [
+              ['element-list-drawer × bottom-left', 'element-list-drawer × bottom-right'],
+              ['tools', 'bottom-left', 'bottom-right'],
+            ]
+          : [[], []],
+      );
     });
   });
 }

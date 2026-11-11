@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import type { ReactNode, Ref } from 'react';
 
 import { CanvasHost } from '../editor/CanvasHost.tsx';
 import { EditorProvider } from '../editor/EditorProvider.tsx';
@@ -16,6 +17,7 @@ import { ShortcutsButton } from './ShortcutsButton.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
 import { useDrawerFocus } from './drawer-focus.ts';
+import { useSheet } from './sheet.ts';
 import { useShellState } from './shell-state.ts';
 import type { Openers, ShellDialog } from './shell-state.ts';
 import { Tooltip } from './tooltip/Tooltip.tsx';
@@ -26,7 +28,8 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // 14: the menu, Pre-release, the tool bar's one stop, the canvas, the storage notices' buttons,
 // Elements and, while its drawer is open, the drawer's Close, its keys and the list, then Undo,
 // Redo, the zoom controls and Keyboard shortcuts. The drawer's opening and closing move the focus,
-// to its list box and back to the toggle.
+// to its list box and back to the toggle. On a phone in portrait the open drawer is a sheet, and
+// the palette and the bottom islands are inert while it is.
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -49,6 +52,54 @@ function OpenDialog({
 }
 
 /**
+ * An island's controls, inert while the phone's sheet covers them (the v0.2 plan's S5): out of the
+ * tab order and the accessibility tree, and a press on them reaches their island, which takes it,
+ * never the canvas. The box adds nothing to the island's layout.
+ */
+function IslandControls({
+  covered,
+  children,
+}: {
+  readonly covered: boolean;
+  readonly children: ReactNode;
+}) {
+  return (
+    <div className="island-controls" inert={covered}>
+      {children}
+    </div>
+  );
+}
+
+/** History and zoom at the bottom left, and the view and Keyboard shortcuts at the bottom right. */
+function BottomIslands({
+  covered,
+  keys,
+  onShortcuts,
+}: {
+  readonly covered: boolean;
+  readonly keys: Ref<HTMLButtonElement>;
+  readonly onShortcuts: () => void;
+}) {
+  return (
+    <div className="shell-bottom">
+      <div className="island bottom-left-island" data-island="bottom-left">
+        <IslandControls covered={covered}>
+          <HistoryControls />
+          <ZoomControls />
+        </IslandControls>
+      </div>
+      <div className="island bottom-right-island" data-island="bottom-right">
+        <IslandControls covered={covered}>
+          <ViewReadout />
+          <SaveStatus />
+          <ShortcutsButton ref={keys} onOpen={onShortcuts} />
+        </IslandControls>
+      </div>
+    </div>
+  );
+}
+
+/**
  * The shell's root, the page's main landmark, where S7 puts data-save-state, the islands in their
  * tab order, the open dialog, which gives the focus back to the control that opened it, and the
  * one tooltip, which follows the root's events.
@@ -63,12 +114,17 @@ function Shell() {
   const openers: Openers = { menu, tag, keys };
   const root = useRef<HTMLElement>(null);
   useDrawerFocus(drawer, toggle);
+  const sheet = useSheet();
+  // The phone's sheet covers the bottom islands and stands where S8 puts the palette as a dock.
+  const covered = drawer && sheet;
   return (
     <main ref={root} className="editor-shell">
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland shell={shell} menuButton={menu} tag={tag} />
       <div className="island tools-island" data-island="tools">
-        <Toolbar />
+        <IslandControls covered={covered}>
+          <Toolbar />
+        </IslandControls>
       </div>
       <CanvasHost />
       <EmptyCanvasNote />
@@ -76,23 +132,14 @@ function Shell() {
       <div className="island top-right-island" data-island="top-right">
         <ElementsToggle ref={toggle} open={drawer} onToggle={toggleDrawer} />
       </div>
-      <ElementsDrawer open={drawer} onClose={closeDrawer} />
-      <div className="shell-bottom">
-        <div className="island bottom-left-island" data-island="bottom-left">
-          <HistoryControls />
-          <ZoomControls />
-        </div>
-        <div className="island bottom-right-island" data-island="bottom-right">
-          <ViewReadout />
-          <SaveStatus />
-          <ShortcutsButton
-            ref={keys}
-            onOpen={() => {
-              openDialog('shortcuts', 'keys');
-            }}
-          />
-        </div>
-      </div>
+      <ElementsDrawer open={drawer} sheet={sheet} onClose={closeDrawer} />
+      <BottomIslands
+        covered={covered}
+        keys={keys}
+        onShortcuts={() => {
+          openDialog('shortcuts', 'keys');
+        }}
+      />
       <OpenDialog
         dialog={dialog}
         onClose={() => {
