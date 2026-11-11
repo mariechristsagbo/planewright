@@ -31,9 +31,12 @@ tool's default-size element at the centre of the viewport, so no element kind ne
 (REQ-C04, REQ-Y05).
 
 **Order of tab stops.** The menu button, Pre-release, the tool bar, the canvas, the storage notices'
-buttons while storage needs attention, Elements and the element list while its drawer is open,
-history controls, zoom controls and Keyboard shortcuts (ADR 0012, decision 14, as far as slices S2
-to S4's controls go). P0's order was the tool bar, the canvas, the element list, history and zoom.
+buttons while storage needs attention, Elements and, while its drawer is open, the drawer's Close,
+its keys' summary and the element list, history controls, zoom controls and Keyboard shortcuts
+(ADR 0012, decision 14, as far as slices S2 to S5's controls go; the selection panel's actions are
+S6's). On a phone in portrait the open drawer's sheet makes the tool bar and the bottom islands
+inert, so that they leave the order while it is open. P0's order was the tool bar, the canvas, the
+element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
@@ -67,10 +70,16 @@ the engine, and the element list, the live region, the zoom controls and focus m
   last committed: while a gesture or a text session holds the history's transaction it keeps the
   list from before, so that the list never shows a preview and a drag publishes no view. The list
   box sat under the canvas and its instructions, so that the canvas kept its size; since slice S2 it
-  is in the Elements drawer, closed at every load, which keeps it mounted but hidden while closed,
-  until S5 unmounts it. It names each
+  is in the Elements drawer, closed at every load, which since S5 mounts the list only while it is
+  open. It names each
   element "Kind, width by height, at x, y" from its unrotated box in scene units to one decimal, a
-  text by its first 40 characters on one line, with ", turned N degrees" for a turn. It keeps the
+  text by its first 40 characters on one line, with ", turned N degrees" for a turn. Since S5 each
+  row shows its kind's glyph, a label, the kind or a text's words in quotation marks, and its
+  figures in JetBrains Mono, as "120 × 100 · 300, 180", while the option keeps that name as its accessible
+  name, through `aria-label`, so that a screen reader says P0's words and never the row's shorter
+  text; the row's words and figures are each words of the name. The open list's options are
+  memoised on the elements, the selection and the active position, which a camera change keeps, so
+  that a pan step renders none of them again, and each row on its element. It keeps the
   focus and points at its active option with `aria-activedescendant`, so that a deletion never moves
   the focus: the next option becomes active. Home and End go to the ends; the list's own keys ignore
   Shift; Left and Right without Alt do nothing; Alt+arrow keys reach the editor as the canvas's
@@ -108,6 +117,18 @@ the engine, and the element list, the live region, the zoom controls and focus m
   `aria-keyshortcuts` carry them. S4 also added the Keyboard shortcuts dialog, the same modal dialog
   as About, which the menu and a button at the bottom right, the last tab stop, open. A dialog
   returns the focus to the control that opened it, the menu button for one opened from the menu.
+  Slice S5 gave the Elements drawer its focus: its opening, by the toggle or the menu's Show
+  elements, puts the focus on the list box, and its closing, by the toggle, Show elements, its
+  Close or, on a phone, Escape, on the toggle, so that the focus never stays on a control that went
+  with it. The toggle's count of the elements is hidden from assistive technology, so that its name
+  stays "Elements" and a change is said once, by the live region. The list's keys are folded under
+  a Keys summary, which P0's focus ring now covers, while a visually hidden copy outside the fold
+  keeps describing the list box, since Chromium describes nothing by what a closed details element
+  holds. On a phone in portrait, under 600 px wide and at least 500 px high, the open drawer is a
+  sheet along the window's bottom, at most 62 % of its height, whose list scrolls inside it; while
+  it is open the tool bar, which S8 makes the phone's dock, and the bottom islands are `inert`,
+  their controls in a box that keeps a press on them from reaching the canvas, and Escape in the
+  sheet closes it and goes no further, so that the selection stays.
 - **Targets, colour and motion.** Controls are at least 24 px, the page's link, in About this build
   since S2, is a 24 px inline block, the menu's items, its link among them, are 36 px high since S4,
   and touch handle hit squares stay 24 px. Measured in Chromium, the shortcut hint in a pressed tool
@@ -294,8 +315,11 @@ what the rules above leave open:
   is 15.5 ms at the median in CI. I3, the naming of those 101 texts in Vitest, fell from 129 ms to
   0.41 ms at the median, so names are not cached. The list still renders only the options around its
   active one: a screen reader reaches only those in the page, and Up, Down, Home and End move the
-  window. Since slice S2, I1 pans with the Elements drawer closed, the list mounted but hidden, and
-  I2 opens the drawer through its toggle before it pans (ADR 0012's test migrations).
+  window. Since slice S2, I1 pans with the Elements drawer closed and I2 opens the drawer through
+  its toggle before it pans (ADR 0012's test migrations). Since S5 the closed drawer mounts no list, so
+  that I1 measures a pan step without it, and the open list's options are memoised, so that I2's pan
+  steps render and name none of them again; I3 times the names that a change of the elements, the
+  selection or the active option makes again.
 - **The heap (B14).** By hand before each release: open the production build in Chromium with a
   stored drawing of 10,000 elements all selected, which the browser tests' `storeScene` can store,
   nudge them with the arrow keys until the history holds its 50 MB of change data, collect garbage
