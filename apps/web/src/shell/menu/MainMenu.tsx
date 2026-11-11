@@ -11,8 +11,9 @@ import type { MenuAction, MenuItem } from './menu-items.ts';
 // The identity island's menu (ADR 0012, decisions 2 and 14; REQ-Y03): a menu of menuitem items
 // and one menuitemcheckbox, named by its button. It opens with the focus on its first item; the
 // arrow keys, wrapping at the ends, Home and End move; Enter or a press runs an item; Escape
-// closes it and gives the focus back to the button; and the focus leaving it, as Tab or a press
-// elsewhere takes it, closes it where the focus went.
+// closes it and gives the focus back to the button; the focus leaving it, as Tab or a press
+// elsewhere takes it, closes it where the focus went; and the window losing the focus to another
+// window closes it with the focus on the button, where it is when the window comes back.
 
 /** The keys that move the focus through the items, as steps or ends. */
 const MOVES: Readonly<Partial<Record<string, number | 'first' | 'last'>>> = {
@@ -96,6 +97,23 @@ interface MainMenuProps {
   readonly onClose: (returnFocus: boolean) => void;
 }
 
+/**
+ * Closes the menu on the window's own blur, giving the focus to the button, since the item that
+ * holds it goes with the menu. That blur comes after the item's focusout, which the menu leaves to
+ * it: a focusout to no element while the document has lost the focus.
+ */
+function useWindowBlur(onClose: MainMenuProps['onClose']): void {
+  useEffect(() => {
+    const blur = (): void => {
+      onClose(true);
+    };
+    window.addEventListener('blur', blur);
+    return () => {
+      window.removeEventListener('blur', blur);
+    };
+  }, [onClose]);
+}
+
 /** The open menu, under its button; a press inside it keeps the focus on its items. */
 export function MainMenu({ drawer, onRun, onClose }: MainMenuProps) {
   const { editor, platform } = useSurface();
@@ -103,6 +121,7 @@ export function MainMenu({ drawer, onRun, onClose }: MainMenuProps) {
   useEffect(() => {
     menu.current?.querySelector<HTMLElement>(ITEMS)?.focus();
   }, []);
+  useWindowBlur(onClose);
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
     const step = MOVES[event.key];
     if (event.key !== 'Escape' && step === undefined) return;
@@ -118,8 +137,10 @@ export function MainMenu({ drawer, onRun, onClose }: MainMenuProps) {
       aria-labelledby={MENU_BUTTON_ID}
       className="chrome-menu"
       onKeyDown={onKeyDown}
-      onBlur={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) onClose(false);
+      onBlur={({ currentTarget, relatedTarget }) => {
+        if (currentTarget.contains(relatedTarget)) return;
+        if (relatedTarget === null && !currentTarget.ownerDocument.hasFocus()) return;
+        onClose(false);
       }}
       onMouseDown={(event) => {
         event.preventDefault();
