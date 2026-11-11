@@ -210,3 +210,17 @@ release has been published yet.
   Canvas text, its fonts and its measurement are unchanged, and a chrome face that finishes loading
   no longer has every text measured again. No layout rule changed; the new face only wraps P0's text
   differently, so that at 390 px wide the canvas starts 24 px higher.
+- The v0.2 full-bleed shell (slice S2, issue #55, ADR 0012 decisions 10 and 13): `EditorShell`
+  replaces P0's page. The canvas fills the window and the page never scrolls; the controls float
+  over the canvas in islands at its edges, never inside it, so no press on them reaches it: the
+  wordmark and a Pre-release tag at the top left, the tool bar at the top centre, an Elements
+  toggle at the top right with the storage notices under it, history and zoom at the bottom left,
+  and the view readout with the save status at the bottom right. The Reset zoom button shows the
+  zoom and is named "Reset zoom, 100%". The element list is in a drawer that the toggle opens,
+  closed at every load. The Pre-release tag opens About this build, a modal dialog that holds what
+  P0's pre-release pill, notes and footer said, and an empty canvas repeats the pre-release
+  sentence. The tab order is Pre-release, the tool bar, the canvas, the notices' buttons while
+  storage needs attention, Elements and the list while the drawer is open, then Undo, Redo and the
+  zoom controls. The layout's media queries are in a style sheet of their own, so that a resize
+  across a breakpoint does not make the fonts load again and every text be measured again. The
+  tool bar keeps its words until S3 and wraps at narrower widths; S3 to S13 are not implemented.
