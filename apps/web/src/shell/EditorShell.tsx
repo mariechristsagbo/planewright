@@ -4,9 +4,11 @@ import type { ReactNode, Ref } from 'react';
 import { useSaveRecovery } from '../a11y/save-recovery.ts';
 import { CanvasHost } from '../editor/CanvasHost.tsx';
 import { EditorProvider } from '../editor/EditorProvider.tsx';
+import { useViewValue } from '../editor/surface.ts';
 import type { EditorSurface } from '../editor/surface.ts';
 import { HistoryControls } from '../ui/HistoryControls.tsx';
 import { SaveStatus, StorageNotices } from '../ui/Saving.tsx';
+import { saveStateOf } from '../ui/save-problem.ts';
 import { Toolbar } from '../ui/Toolbar.tsx';
 import { ViewReadout } from '../ui/ViewReadout.tsx';
 import { ZoomControls } from '../ui/ZoomControls.tsx';
@@ -104,9 +106,29 @@ function BottomIslands({
 }
 
 /**
- * The shell's root, the page's main landmark, where S7 puts data-save-state, the islands in their
- * tab order, the open dialog, which gives the focus back to the control that opened it, and the
- * one tooltip, which follows the root's events. It says once when a failed save succeeds again.
+ * The shell's root, the page's main landmark, with the save state for the tests (ADR 0012, decision
+ * 12): it reads view.save alone, which keeps its identity across camera changes, so a pan step
+ * renders it not at all, and a new status renders it without the islands it is given.
+ */
+function ShellRoot({
+  root,
+  children,
+}: {
+  readonly root: Ref<HTMLElement>;
+  readonly children: ReactNode;
+}) {
+  const save = useViewValue((view) => view.save);
+  return (
+    <main ref={root} className="editor-shell" data-save-state={saveStateOf(save)}>
+      {children}
+    </main>
+  );
+}
+
+/**
+ * The shell: its root, the islands in their tab order, the open dialog, which gives the focus back
+ * to the control that opened it, and the one tooltip, which follows the root's events. It says once
+ * when a failed save succeeds again.
  */
 function Shell() {
   const shell = useShellState();
@@ -131,7 +153,7 @@ function Shell() {
     onCloseDetails: shell.closeDetails,
   };
   return (
-    <main ref={root} className="editor-shell">
+    <ShellRoot root={root}>
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland shell={shell} menuButton={menu} tag={tag} />
       <div className="island tools-island" data-island="tools">
@@ -162,7 +184,7 @@ function Shell() {
         }}
       />
       <Tooltip root={root} />
-    </main>
+    </ShellRoot>
   );
 }
 

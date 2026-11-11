@@ -51,7 +51,11 @@ export async function putDocumentRecord(
   })()`);
 }
 
+/** The problem chip, which shows only while storage needs attention (ADR 0012, decision 12). */
 export const saveStatus = (page: Page): Locator => page.locator('#save-status');
+
+/** The shell's root, whose data-save-state follows view.save, for the tests alone (decision 16). */
+export const saveState = (page: Page): Locator => page.locator('[data-save-state]');
 
 /** The storage notices under the top-right island, which are no alerts (REQ-Y04). */
 export const storageNotices = (page: Page): Locator =>
@@ -60,9 +64,9 @@ export const storageNotices = (page: Page): Locator =>
 /** The assertive live region, which says failed and stale saves and start-up notices (REQ-Y04). */
 export const urgentAnnouncement = (page: Page): Locator => page.locator('#live-assertive');
 
-/** Waits until the page says the drawing is saved in this browser. */
+/** Waits until the drawing is saved in this browser, as the shell root's save state says. */
 export const expectSaved = (page: Page): Promise<void> =>
-  expect(saveStatus(page)).toHaveText('Saved in this browser');
+  expect(saveState(page)).toHaveAttribute('data-save-state', 'saved');
 
 /**
  * Shows the stale notice on an open page: it saves a rectangle, a second page of its context saves
