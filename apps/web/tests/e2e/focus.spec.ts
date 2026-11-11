@@ -17,11 +17,12 @@ import { canvas } from './support.ts';
 // stops in the specified order, each with a visible indicator, and the focus never left on the
 // page when a control or the text area goes away (REQ-Y02).
 
-test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, Elements, the history and zoom controls and Keyboard shortcuts, each with a visible indicator', async ({
+test('E2 A7 A8 REQ-Y02 Tab visits the menu, Pre-release, the tool bar, the canvas, Elements, the history and zoom controls and Keyboard shortcuts, each with a visible indicator', async ({
   page,
 }) => {
   await openPage(page);
   const stops = [
+    button(page, 'Planewright menu'),
     button(page, 'Pre-release'),
     toolButton(page, 'Hand'),
     canvas(page),
@@ -39,14 +40,15 @@ test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, Element
     await expect(stop).toBeFocused();
     await expectIndicator(page);
   }
-  // "Source on GitHub" is in About this build now, so Keyboard shortcuts is the last stop.
+  // "Source on GitHub" is in the menu and About this build now, so Keyboard shortcuts is the last
+  // stop.
   await expect(page.getByRole('link', { name: 'Source on GitHub' })).toHaveCount(0);
   for (const stop of stops.slice(0, -1).reverse()) {
     await page.keyboard.press('Shift+Tab');
     await expect(stop).toBeFocused();
   }
   // The list box is a stop after Elements only while the drawer is open.
-  for (const stop of stops.slice(1, 4)) {
+  for (const stop of stops.slice(1, 5)) {
     await page.keyboard.press('Tab');
     await expect(stop).toBeFocused();
   }

@@ -1,3 +1,6 @@
+/** The repository's page, which About this build and the menu link to. */
+export const REPOSITORY_URL = 'https://github.com/mariechristsagbo/planewright';
+
 export interface FoundationItem {
   readonly name: string;
   readonly detail: string;

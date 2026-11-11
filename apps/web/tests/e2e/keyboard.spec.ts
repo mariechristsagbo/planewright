@@ -27,6 +27,8 @@ test('E1 A1 A2 A3 A4 A5 A6 REQ-Y04 REQ-Y05 every P0 kind made, selected, nudged 
 }) => {
   await openPage(page);
   await page.keyboard.press('Tab');
+  await expect(button(page, 'Planewright menu')).toBeFocused();
+  await page.keyboard.press('Tab');
   await expect(button(page, 'Pre-release')).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(toolButton(page, 'Hand')).toBeFocused();

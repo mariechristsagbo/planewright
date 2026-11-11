@@ -39,6 +39,7 @@ const focus = (element: HTMLElement): void => {
 
 /** The controls that show a glyph, or Reset zoom's zoom, in place of their name. */
 const TIPPED = [
+  'Planewright menu',
   'Hand',
   'Selection',
   'Rectangle',
