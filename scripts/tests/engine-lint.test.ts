@@ -166,15 +166,15 @@ describe('the engine test boundary in ESLint', () => {
 });
 
 describe('the boundary outside the engine', () => {
-  it.each(['apps/web/src/App.tsx', 'apps/collab/src/server.ts', 'packages/protocol/src/index.ts'])(
-    'does not apply to %s',
-    async (path) => {
-      const rules = await boundaryRulesFor(path);
-      // Only typescript-eslint's shared directive rule, whose options allow libraries and types.
-      expect(Object.keys(rules)).toEqual([TRIPLE_SLASH]);
-      const code =
-        '/// <reference lib="dom" />\n/// <reference types="node" />\ndeclare const a: 1;';
-      expect(lint(code, rules)).toEqual([]);
-    },
-  );
+  it.each([
+    'apps/web/src/shell/EditorShell.tsx',
+    'apps/collab/src/server.ts',
+    'packages/protocol/src/index.ts',
+  ])('does not apply to %s', async (path) => {
+    const rules = await boundaryRulesFor(path);
+    // Only typescript-eslint's shared directive rule, whose options allow libraries and types.
+    expect(Object.keys(rules)).toEqual([TRIPLE_SLASH]);
+    const code = '/// <reference lib="dom" />\n/// <reference types="node" />\ndeclare const a: 1;';
+    expect(lint(code, rules)).toEqual([]);
+  });
 });
