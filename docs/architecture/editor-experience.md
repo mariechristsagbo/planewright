@@ -811,8 +811,10 @@ Issue #64 delivered slice S4.
 - Cost: S4's new modules alone, bundled and minified with what they share with earlier slices left
   out, are 5,140 bytes, 2,150 bytes gzip. The web app's initial JavaScript is 114,612 bytes gzip at
   `01882eb` (114,596 at `dc7a507`) against `main`'s 112,960 at `db8b3e7`, 1,652 bytes more, within
-  B13's 200 KB; B11 (30,292) and B12 (2,524) are unchanged, and the style sheet grows from 3,267 to
-  3,552 bytes gzip.
+  B13's 200 KB; B11 (30,292) and B12 (2,524) are unchanged, and the style sheet grows from 3,237 to
+  3,525 bytes gzip, measured with the bundle-size guardrail's `gzipSize`, at level 9 with no file
+  name (the 3,267 and 3,552 first written here are the `gzip` command's, whose own compressor and
+  the file name that it stores both add bytes).
 - Performance, on the developer machine, a 6-core virtual machine without a GPU under a load
   average of 3 to 5 from other work, where B1 and B2 miss with unchanged code: `npm run build`,
   `perf:browser` and `perf:report` on the head and on `main` (`db8b3e7`) in a worktree, in
