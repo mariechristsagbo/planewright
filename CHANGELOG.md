@@ -254,3 +254,16 @@ release has been published yet.
   build's modal dialog, and a dialog returns the focus to the control that opened it. Shortcut
   texts write Escape, Enter, Delete, Backspace and the arrows by name. S5 to S13 are not
   implemented.
+- The v0.2 Elements drawer and phone sheet (slice S5, issue #66, ADR 0012 decisions 9 and 14): the
+  Elements toggle shows its glyph and the count of the drawn elements in tabular figures, hidden
+  from screen readers so that its name stays "Elements" and a change is announced once, by the
+  live region. The drawer, still closed at every load and stored nowhere, is 300 px wide and 280 px
+  at compact widths; its opening, by the toggle or the menu's Show elements, puts the focus on the
+  list box, and its closing, by them or by its new Close button, on the toggle. The list's keys are
+  folded under a Keys summary and still describe the list box. The list is mounted only while the
+  drawer is open, and its options are memoised, so that a pan step renders none of them. Each row
+  shows its kind's glyph, a label and its size and place in JetBrains Mono, while the option keeps
+  P0's name. On a phone in portrait the drawer is a sheet along the bottom, at most 62 % of the
+  height, which makes the tool bar and the bottom islands inert and closes on Escape with the focus
+  on the toggle. The I1 and I2 measurements now pan with the drawer closed and open. S6 to S13 are
+  not implemented.

@@ -21,7 +21,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   floating over it in islands, most of them as original glyphs with tooltips, on which rectangles,
   ellipses, diamonds, lines, freehand strokes and texts can be drawn, then selected, moved, resized,
   rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo,
-  also from the keyboard alone, through a list of the elements in a drawer and a live region that
+  also from the keyboard alone, through a list of the elements in a drawer, which an Elements
+  button showing their count opens and which is a sheet on phones, and a live region that
   announces each change; a Pre-release tag opens About this build, a menu at the top left runs
   Select all and the zoom commands, shows the elements and opens About this build and a Keyboard
   shortcuts dialog that lists every command's keys, which a button at the bottom right opens too,
@@ -41,7 +42,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   tools with their first key in a corner and tool lock with a padlock, the identity island shows the
   mark, and those controls and Reset zoom have tooltips. Slice S4 (issue #64) added the identity
   island's menu, whose button is the first tab stop, with About this build among its items, and the
-  Keyboard shortcuts dialog with its button, the last tab stop. S5 to S13 are not implemented yet.
+  Keyboard shortcuts dialog with its button, the last tab stop. Slice S5 (issue #66) gave the
+  Elements toggle the count of the elements, hidden from screen readers, and the drawer its 300 px
+  and compact 280 px widths, its Close and folded keys, its focus moves to the list box and back to
+  the toggle, its rows of a kind glyph, a label and mono figures under P0's names, the list mounted
+  only while it is open with its options memoised, and on phones a sheet of at most 62 % of the
+  height that makes the tool bar and the bottom islands inert and closes on Escape. S6 to S13 are
+  not implemented yet.
   Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
@@ -98,7 +105,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the editor's shell in `shell/`
   (`EditorShell`, its state, the identity island with the mark and the Pre-release tag, the Elements
-  toggle and drawer, the empty-canvas note and the Keyboard shortcuts button, the menu's button, the
+  toggle with its count and the drawer with its focus moves and the phone's sheet query, the
+  empty-canvas note and the Keyboard shortcuts button, the menu's button, the
   menu and its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon`
   in `shell/icons.tsx`, the tooltip and its delegated listeners in `shell/tooltip/`, and the modal
   dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host, input
@@ -109,7 +117,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   ports, text measurer, font loading, Mod key per platform, the IndexedDB record backend, storage
   start-up, page events and the preferences entry in `platform/`, and the style sheets in `styles/`:
   the design tokens, the fonts, the base, the controls', canvas's, list's and saving's rules, the
-  shell's layout, islands and dialogs, the glyph buttons', the menu's and the tooltip's rules, and
+  shell's layout, islands and dialogs, the glyph buttons', the Elements toggle's and drawer's, the
+  menu's and the tooltip's rules, and
   `responsive.css`, the only one with media queries, which `main.tsx` adds as a style element of its
   own so that a breakpoint never makes the fonts load again. Unit tests in `tests/unit`, Playwright
   tests in `tests/e2e`, static files in `public/`, the bundled fonts with their licences in
