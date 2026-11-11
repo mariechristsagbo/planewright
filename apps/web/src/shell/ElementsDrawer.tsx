@@ -1,7 +1,7 @@
 import { ElementList } from '../a11y/ElementList.tsx';
 
 /** The drawer's identifier, which the Elements toggle controls. */
-export const DRAWER_ID = 'elements-drawer';
+export const DRAWER_ID = 'element-list-drawer';
 
 /**
  * The Elements drawer around P0's element list, whose behaviour, names, roles and keys stay as
@@ -12,7 +12,7 @@ export const DRAWER_ID = 'elements-drawer';
  */
 export function ElementsDrawer({ open }: { readonly open: boolean }) {
   return (
-    <div id={DRAWER_ID} className="elements-drawer" hidden={!open}>
+    <div id={DRAWER_ID} className="element-list-drawer" hidden={!open}>
       <ElementList />
     </div>
   );

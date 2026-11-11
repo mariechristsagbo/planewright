@@ -20,7 +20,7 @@ interface Box {
 }
 
 /** Each island's box, and the notices' and the open drawer's while they show. */
-const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"], #elements-drawer:not([hidden])')]
+const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"], #element-list-drawer:not([hidden])')]
   .map((element) => {
     const { x, y, width, height } = element.getBoundingClientRect();
     return { name: element.dataset.island ?? (element.id || element.getAttribute('aria-label')), x, y, width, height };

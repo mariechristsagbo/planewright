@@ -44,7 +44,7 @@ function FoundationContents() {
 /** The pre-release sentence, what is not implemented, what the build contains, and its notes. */
 export function AboutDialog({ onClose }: { readonly onClose: () => void }) {
   return (
-    <ModalDialog id="about" title="About this build" onClose={onClose}>
+    <ModalDialog id="about-this-build" title="About this build" onClose={onClose}>
       <p>{BUILD_STATUS}</p>
       <NotYetImplemented />
       <FoundationContents />

@@ -53,7 +53,7 @@
   width: min(340px, 100%);
 }
 
-.elements-drawer {
+.element-list-drawer {
   position: relative;
   z-index: var(--pw-layer-panel);
   grid-area: drawer;
@@ -64,7 +64,7 @@
   max-height: 100%;
 }
 
-.elements-drawer[hidden] {
+.element-list-drawer[hidden] {
   display: none;
 }
 

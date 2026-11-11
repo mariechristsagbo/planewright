@@ -585,7 +585,7 @@ Issue #55 delivered slice S2.
   scene-pixels spec has a direct test of the font-load filter, which failed with `watchPage`
   measuring on every `loadingdone`; and no S2 class rule sets a control's colour, border or
   outline, so P0's pressed, disabled and focus rules in `base.css` still apply.
-- Tests: new end-to-end specs for About (`about.spec.ts`), the drawer (`elements-drawer.spec.ts`),
+- Tests: new end-to-end specs for About (`about.spec.ts`), the drawer (`drawer.spec.ts`),
   the shell's layout (`shell-layout.spec.ts`: the host's box, no scroll, islands that do not
   intersect at 1280 × 720 and 390 × 844, at rest and with the drawer open under a storage notice,
   and presses on islands that create nothing) and the empty canvas (`empty-canvas.spec.ts`), and
