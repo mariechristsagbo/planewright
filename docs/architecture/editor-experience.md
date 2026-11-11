@@ -6,9 +6,11 @@ slice S1 (issue #53) added the chrome's tokens, base styles and typeface
 islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), slice
 S3 (issue #62) the original glyphs, the palette and the tooltips
 ([what S3 delivered](#what-s3-delivered)), slice S4 (issue #64) the menu and the Keyboard
-shortcuts dialog ([what S4 delivered](#what-s4-delivered)), and slice S5 (issue #66) the Elements
-drawer's count, rows and phone sheet ([what S5 delivered](#what-s5-delivered)); slices S6 to S13
-are not implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone
+shortcuts dialog ([what S4 delivered](#what-s4-delivered)), slice S5 (issue #66) the Elements
+drawer's count, rows and phone sheet ([what S5 delivered](#what-s5-delivered)), and slice S6
+(issue #69) the selection panel, the phone selection bar and the Details sheet
+([what S6 delivered](#what-s6-delivered)); slices S7 to S13 are not implemented.** This plan
+turns ADR 0012's decisions into thirteen issues for milestone
 v0.2.0 (Editor Experience): what each slice contains, what must land before it, the tests it writes
 first, how it is validated and which documents it updates. The decisions themselves, the tests to migrate
 and the visual-regression
@@ -183,6 +185,7 @@ builds on; the handoff adds only that S7 may land before S2.
   properties over random elements in the style of `packages/engine/tests/support/property.ts`.
   End-to-end: the Duplicate and Delete buttons run their commands, and Edit text opens the text
   area.
+- **Delivered** by issue #69 ([what S6 delivered](#what-s6-delivered)).
 
 ### S7: saving visibility (D7)
 
@@ -988,3 +991,120 @@ Issue #66 delivered slice S5.
   initial bundle is 115,625 bytes gzip at `bc22567`, 21 bytes more than at `df3c98b`; the style
   sheet is unchanged.
 - S6 to S13 are not implemented.
+
+## What S6 delivered
+
+Issue #69 delivered slice S6.
+
+- `apps/web/src/shell/selection/geometry.ts`: the selection's figures as a pure module, with no
+  React, DOM, editor, storage or timer, which imports only the engine's types and `localBox` and the
+  rounding of `a11y/rounding.ts`, the module that the element list's names and rows now share, so
+  that the three never disagree. For one element it gives the kind, the unrotated local box, the
+  same figures as the element's list name and row, the turn normalised to degrees from 0 to 360, a
+  turn that rounds to 360 read as 0, and the kind's figure: a line's length, the sum of its
+  segments, a freehand stroke's points, 1 for a dot, or a text's lines, those its line breaks make,
+  since P0 texts do not wrap. For several it gives their count and the union of each one's
+  `rotatedBounds`, the axis-aligned box of its local box's corners turned about the box's centre,
+  with no stroke width, which the canvas's selection frame adds and the panel does not. Identifiers
+  that the view does not list are skipped. `figuresOf` writes X, Y, W and H, with Width and Height
+  for assistive technology, the angle with a degree sign, and the length to one decimal. The kinds'
+  glyph map moved from `a11y/ElementList.tsx` to `shell/kind-glyphs.ts`, shared by the list's rows
+  and the selection's heading.
+- `shell/selection/SelectionPanel.tsx`: the panel, 232 px wide, mounted only while something drawn
+  is selected and no text is edited, and out of the page otherwise, so that with no selection it has
+  no tab stop and no cost. It is a group named by its heading, the kind's glyph and name or the
+  multiple glyph and "N elements", neither a landmark nor a live region; its figures are static text
+  in a description list, the values in JetBrains Mono and the terms in Inter Medium; Duplicate and
+  Delete take their names, keys, descriptions and tooltips from the registry and run
+  `selection.duplicate` and `selection.delete` through `editor.run`, Delete in the error tone; Edit
+  text runs `canvas.enter` and shows only when the Selection tool is active and one element, a text,
+  is selected, which is when `canvas.enter` edits it; and the footnote says "Style controls are not
+  in this build.". Each action shows its glyph and its word, which names it, 32 px high and 44 px
+  under a coarse pointer. `use-selected.ts` subscribes to the view's elements, selection and tool
+  and to whether a text is edited, values that keep their identity across camera changes, and
+  memoises the geometry, so that a pan or zoom step renders the panel, the bar and the sheet not at
+  all, which a Profiler's count shows. When a surface goes with the focus inside it, as after
+  Delete, the canvas takes the focus before the surface leaves the page.
+- Where the panel sits: `styles/selection.css`, imported from `main.tsx` with no media query, places
+  it from the notices' row to a new room row of the shell's grid, a fraction of the height between
+  the drawer's row and the bottom row, so that it adds nothing to the rows' sizes, lies beside the
+  notices and the drawer, and is no taller than the room above the bottom islands, scrolling inside
+  itself. The bottom row's box reaches one gap above its row, so that the notices, the drawer and
+  S5's sheet keep exactly their places: a probe of every box under the shell's main element in 70
+  states with no selection, at 14 viewports from 1440 × 900 to 568 × 200, found no difference from
+  `f57481d`. The panel starts 2 px under the grid's row, the shell's gap below the 46 px top row
+  ending at 70 px, so that it sits at the design's 16 / 72 on desktops; at compact widths it sits at
+  the 12 px anchor, 64 px down.
+- The phone's bar and sheet: under the sheet query that `shell/sheet.ts` follows,
+  `shell/selection/SelectionBar.tsx` shows a bar in the panel's place with the same heading and
+  actions under the same rules, then Details, each a 44 px glyph button whose word is visually
+  hidden and still names it, and `DetailsSheet.tsx` a region named "Details" along the window's
+  bottom, at most 62 % of its height, which repeats the heading and shows the figures, the footnote
+  and a Close Details glyph button. The shell's reducer holds the sheet's open state, closed at
+  every load and stored nowhere; opening it closes the Elements sheet and opening the Elements sheet
+  closes it, the one that opens taking the focus. Opening it puts the focus on Close Details; Close
+  or Escape closes it with the focus back on Details, the Escape going no further; it closes when
+  the selection empties, the focus going to the canvas, when a text session starts and when the
+  window leaves the query; and while it is open the tool bar and the bottom islands are inert, as
+  under the Elements sheet.
+- Choices that this plan or the issue did not foresee. The [responsive rules](#responsive-rules) put
+  the bar and the notices in one flex column; `responsive.css` instead puts the bar in the notices'
+  grid row and the notices in the next one, and starts both sheets at the room row, so that the bar
+  comes first and the notices after it and, with no bar, the grid is S5's. The bar shows its
+  actions' glyphs without their words, since four words and a heading would not fit a 360 px row.
+  The panel's terms use the `label-sm` role, Inter at 500, as the base styles set every term.
+  Windows under 500 px high keep the panel rather than the bar, as the ADR's 844 × 390 states read
+  "selection and drawer", scrolling in the room left; at 568 × 320 and 844 × 140 it lies apart from
+  every island and notice, but under about 556 px wide and 500 px high, where no test reaches, the
+  panel and the right-hand notices or drawer may not fit side by side. The issue said that tool lock
+  leaves a new element selected; a creation under tool lock selects nothing, as P0's tool lock
+  description says, so a lone text is selected with the Text tool active through Select all or the
+  element list, and the tests reach that state so. Edit text also needs one selected identifier, as
+  `canvas.enter` does, so a text selected with an arrow that the view does not list shows none. With
+  the keyboard, the Escape that follows Details' opening first closes Close Details' tooltip, as
+  S3's tooltips do.
+- Tests: `selection-geometry.test.ts` (9 examples) and `selection-geometry-properties.test.ts` (7
+  seeded properties, over `tests/support/property.ts`, a generator of the web app's own),
+  `SelectionPanel.test.tsx` (5), `SelectionPanel-actions.test.tsx` (5), `DetailsSheet.test.tsx` (6),
+  `SelectionBar.test.tsx` (2), `shell-state.test.ts` (3), a tab-order case in `EditorShell.test.tsx`
+  and a tooltip case in `Tooltip.test.tsx`, and the tooling test `selection-styles.test.ts` (3); end
+  to end, `selection-panel.spec.ts` (7 tests, 10 runs at 1440 × 900, 1280 × 720, 800 × 720 and
+  1024 × 768 with touch), `selection-panel-actions.spec.ts` (5), `selection-bar.spec.ts` (8 tests,
+  14 runs at 390 × 844, 375 × 667 and 360 × 560 with touch, and 844 × 390), `shell-layout.spec.ts`'s
+  cases with a selection at three wider viewports and with the Details sheet at 390 × 844, and
+  `contrast-motion.spec.ts`'s case of the bar's and sheet's texts and glyphs. ADR 0012's row for
+  `e2e/keyboard.spec.ts` lines 63 to 64, S6's part now at lines 62 to 64, is migrated: Tab from the
+  canvas reaches Duplicate, Delete and Edit text, then Elements. Decision 16 migrated
+  `focus.spec.ts`'s Escape test, where Tab from the text area still reaches Elements, since the
+  panel is out of the page during the session, as the ADR's row for its lines 56 to 57 says when no
+  panel shows, and which now walks back through Edit text, Delete and Duplicate to the canvas, and
+  its stale-notice tab loop, with Duplicate and Delete first; `shell-layout.spec.ts`'s counts under
+  the stale notice, one more with the panel, and its Tab loop at 667 × 375;
+  `creation-history.spec.ts`'s pair, probes and presses, moved 300 px right, clear of the panel; and
+  `contrast-motion.spec.ts`'s check that no visible text names a tool, read before anything is
+  drawn, its texts with the panel's, Delete at 6.52:1 and the footnote at 5.50:1, and its glyphs
+  with the panel's. The audit found `creation-phone.spec.ts` unaffected, its touches below the bar,
+  which ends 162 px down at 412 × 915, and `targets-phone.spec.ts`, the S5 sheet's tests,
+  `chrome-type.spec.ts` and the dark-scheme contrast test pass unchanged. No test was deleted.
+- Cost: S6's selection modules, bundled and minified with React, the engine and the earlier slices'
+  modules left out, are 7,539 bytes, 2,930 bytes gzip. The web app's initial JavaScript is
+  117,523 bytes gzip against `main`'s 115,625 at `f57481d`, 1,898 bytes more, within B13's 200 KB;
+  B11 (30,292) and B12 (2,524) are unchanged, and the style sheet grows from 3,769 to 4,220 bytes
+  gzip, measured with the bundle-size guardrail's `gzipSize`.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load average
+  of 3 to 5 from other work: `npm run build`, `perf:browser` and `perf:report` on the head
+  (`5ba20b7`, whose application code is `4174f98`'s) and on `main` (`f57481d`) in a scratch
+  worktree, in the order head, main, main, head. B1 was 56.6 and 30.7 ms against 59.3 and 29.5 ms on
+  `main` and B2 15.7 and 12.2 ms against 8.3 and 12.2 ms, both over their budgets on both, B1's
+  misses remaining #49's; B3 was 0.13 and 0.25 ms against 0.23 and 0.20 ms, B4 one frame and B9 no
+  long task in every run, B4's pan and B9's nudges running with a selection and so with the panel
+  mounted, and B10 0.51 and 0.50 s against 0.56 and 0.43 s. The 95th percentiles of I1 were 126.6
+  and 71.9 ms against 67.9 and 89.7 ms, its medians 41.5 and 39.7 ms against 37.3 and 41.8 ms, and
+  those of I2 93.3 and 126.7 ms against 121.2 and 99.8 ms, its medians 58.9 and 61.7 ms against 61.4
+  and 57.5 ms. Since I1's first head run read higher, `panning.spec.ts` alone ran three times on
+  each, alternating: I1's medians were 36.2, 42.1 and 44.6 ms against 41.5, 39.8 and 37.4 ms, and
+  I2's 59.3, 53.6 and 66.3 ms against 58.0, 61.6 and 58.6 ms, with one I2 95th percentile of
+  170.2 ms on the head among values of 95.9 to 111.1 ms, differences within the machine's spread;
+  the panning scene selects nothing, so no panel is mounted there. `perf:report` exits 1 in this
+  sequence only because B5 to B8 and B11 to B13 are not measured there.
+- S7 to S13 are not implemented.
