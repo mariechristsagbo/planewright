@@ -268,9 +268,10 @@ above leave open:
   records in batches of 500, each started once the batch before has landed. Its failures are
   `quota` for a full storage and `failed` otherwise, and `unavailable` when the database cannot be
   opened. The page saves at once on `visibilitychange` to hidden and on `pagehide`. Beside the view
-  readout it says "Saved in this browser", "Saving…" or "Not saved"; below the canvas, so that they
-  never move it, alerts report a failed save, a stale one with "Load the newer version" and "Keep
-  this version", and invalid or unavailable storage at start-up. For v0.2,
+  readout it says "Saved in this browser", "Saving…" or "Not saved"; notices that never move the
+  canvas, below it in P0 and over it under the top-right island since v0.2's slice S2, report a
+  failed save, a stale one with "Load the newer version" and "Keep this version", and invalid or
+  unavailable storage at start-up. For v0.2,
   [ADR 0012](../../adr/0012-v02-editor-chrome.md) decides (D7) that a working save shows nothing,
   neither "Saved in this browser" nor "Saving…", and that only the "Not saved" chip and these
   notices appear, while storage needs attention; until its slice S7 lands, the page says what is

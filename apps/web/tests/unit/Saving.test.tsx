@@ -29,7 +29,7 @@ function mount(save: Status | null, storageNotice: StorageNotice | null = null) 
 
 const status = () => document.getElementById('save-status')?.textContent;
 
-/** The notices below the canvas, which are no alerts. */
+/** The storage notices, which are no alerts. */
 function notices(): HTMLElement {
   expect(screen.queryByRole('alert')).toBeNull();
   return screen.getByRole('region', { name: 'Storage notices' });

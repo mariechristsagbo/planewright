@@ -3,7 +3,8 @@ import type { SaveFailure } from '@planewright/engine';
 import type { StorageNotice } from '../platform/storage.ts';
 
 // The words of the storage notices (docs/architecture/engine/persistence.md#autosave), which the
-// notices below the canvas show and the live region says (REQ-P05, REQ-P06, REQ-P07, REQ-Y04).
+// notices under the top-right island show and the live region says (REQ-P05, REQ-P06, REQ-P07,
+// REQ-Y04).
 
 const FAILURES: Readonly<Record<SaveFailure, string>> = {
   quota: 'the browser’s storage for this page is full',

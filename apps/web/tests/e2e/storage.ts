@@ -53,7 +53,7 @@ export async function putDocumentRecord(
 
 export const saveStatus = (page: Page): Locator => page.locator('#save-status');
 
-/** The notices below the canvas, which are no alerts (REQ-Y04). */
+/** The storage notices under the top-right island, which are no alerts (REQ-Y04). */
 export const storageNotices = (page: Page): Locator =>
   page.getByRole('region', { name: 'Storage notices' });
 
