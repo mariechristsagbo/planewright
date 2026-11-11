@@ -63,23 +63,23 @@
 /*
  * A phone in portrait, under 600 px wide and at least 500 px high: the open Elements drawer is a
  * sheet along the window's bottom, over the bottom islands, which the shell makes inert while it is
- * open, at most 62 % of the window's height, its list scrolling inside it (the v0.2 plan's S5). The
- * same query is SHEET_QUERY in shell/sheet.ts; a phone in landscape keeps the side drawer. Being a
- * grid item, it stretches between its insets only when told to, since Chromium aligns a fixed box
- * by its justify-self.
+ * open, its list scrolling inside it (the v0.2 plan's S5). It spans the grid's drawer and bottom
+ * rows, so that it lies below the storage notices and never covers their buttons, and its negative
+ * margins take it over the shell's padding to the window's edges. It is at most 62 % of the
+ * window's height, and no taller than the rows that the notices leave. The same query is
+ * SHEET_QUERY in shell/sheet.ts; a phone in landscape keeps the side drawer.
  */
 @media (max-width: 599px) and (min-height: 500px) {
   .element-list-drawer {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
     z-index: var(--pw-layer-sheet);
     display: flex;
     flex-direction: column;
+    grid-row-end: bottom;
+    align-self: end;
     justify-self: stretch;
     width: auto;
-    max-height: var(--pw-spacing-sheet-max-height);
+    max-height: min(var(--pw-spacing-sheet-max-height), 100% + var(--pw-spacing-sm));
+    margin: 0 calc(-1 * var(--pw-spacing-sm)) calc(-1 * var(--pw-spacing-sm));
     overflow: hidden;
     border-width: 1px 0 0;
     border-radius: var(--pw-rounded-lg) var(--pw-rounded-lg) 0 0;

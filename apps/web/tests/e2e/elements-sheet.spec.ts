@@ -3,6 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { button, elementList, elementsToggle, openElements, openPage, polite } from './a11y.ts';
 import { toolButton } from './drawing.ts';
+import { showStaleNotice, storageNotices } from './storage.ts';
 import { canvas } from './support.ts';
 
 // The Elements drawer on a phone in portrait (ADR 0012, decisions 2 and 14; the v0.2 plan's S5,
@@ -26,11 +27,40 @@ async function draw(page: Page, count: number): Promise<void> {
   await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
 }
 
+/** An element's box, which must be laid out. */
+async function boxOf(
+  element: Locator,
+): Promise<{ x: number; y: number; width: number; height: number }> {
+  const box = await element.boundingBox();
+  if (box === null) throw new Error('The element is not laid out.');
+  return box;
+}
+
 /** A tap at the middle of a control, with no wait for it to take presses, as a finger gives. */
 async function tapAt(page: Page, control: Locator): Promise<void> {
-  const box = await control.boundingBox();
-  if (box === null) throw new Error('The control is not laid out.');
+  const box = await boxOf(control);
   await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+}
+
+/** Whether the list box's options overflow it, so that it scrolls. */
+const SCROLLS =
+  "(() => { const list = document.querySelector('[role=listbox]'); return list.scrollHeight > list.clientHeight; })()";
+
+/** Whether the focused control is the topmost element at its centre, so that nothing covers it. */
+const TOPMOST = `(() => {
+  const focused = document.activeElement;
+  const { x, y, width, height } = focused.getBoundingClientRect();
+  return focused.contains(document.elementFromPoint(x + width / 2, y + height / 2));
+})()`;
+
+/** 41 rectangles, the stale notice of the last one's nudge, and the sheet open over its full list. */
+async function openUnderStaleNotice(page: Page): Promise<void> {
+  await openPage(page);
+  await draw(page, 40);
+  await showStaleNotice(page);
+  const list = await openElements(page);
+  await expect(list.getByRole('option')).toHaveCount(41);
+  expect(await page.evaluate<boolean>(SCROLLS)).toBe(true);
 }
 
 test('D5 A8 the open drawer is a sheet along the bottom, at most 62 % of the height, whose list scrolls inside it', async ({
@@ -47,12 +77,54 @@ test('D5 A8 the open drawer is a sheet along the bottom, at most 62 % of the hei
   expect([x, width, y + height]).toEqual([0, 390, HEIGHT]);
   expect(height).toBeLessThanOrEqual(0.62 * HEIGHT + 0.5);
   expect(height).toBeGreaterThan(0.6 * HEIGHT);
-  const scrolls = await page.evaluate<boolean>(
-    "(() => { const list = document.querySelector('[role=listbox]'); return list.scrollHeight > list.clientHeight; })()",
-  );
-  expect(scrolls).toBe(true);
+  expect(await page.evaluate<boolean>(SCROLLS)).toBe(true);
   await expect(button(page, 'Close Elements')).toBeInViewport({ ratio: 1 });
 });
+
+// The S5 review's M1: the sheet lies below the storage notices, never over them, and takes the
+// height that they leave, up to 62 %, so that a stale save's two answers stay in sight and
+// uncovered when Shift+Tab from Elements reaches them.
+for (const viewport of [
+  { width: 390, height: 844 },
+  { width: 375, height: 667 },
+  { width: 360, height: 560 },
+]) {
+  test.describe(`at ${String(viewport.width)} × ${String(viewport.height)}`, () => {
+    test.use({ viewport });
+
+    test('D5 M1 the sheet, its list full, lies along the bottom below the stale notice, in the height that the notice leaves', async ({
+      page,
+    }) => {
+      await openUnderStaleNotice(page);
+      const { width, height } = viewport;
+      const notices = await boxOf(storageNotices(page));
+      const sheet = await boxOf(page.locator('#element-list-drawer'));
+      const below = notices.y + notices.height;
+      expect({
+        apart: sheet.y >= below,
+        edges: [sheet.x, sheet.width, sheet.y + sheet.height],
+      }).toEqual({ apart: true, edges: [0, width, height] });
+      // Past the shell's 8 px gap under the notices, up to 62 % of the height.
+      expect(sheet.height).toBeCloseTo(Math.min(0.62 * height, height - below - 8), 0);
+      await expect(button(page, 'Close Elements')).toBeInViewport({ ratio: 1 });
+    });
+
+    test('D5 M1 Shift+Tab from Elements reaches the stale notice’s answers in sight, the sheet covering neither', async ({
+      page,
+    }) => {
+      await openUnderStaleNotice(page);
+      await elementsToggle(page).focus();
+      for (const name of ['Keep this version', 'Load the newer version']) {
+        await page.keyboard.press('Shift+Tab');
+        const answer = storageNotices(page).getByRole('button', { name });
+        await expect(answer).toBeFocused();
+        await expect(answer).toBeInViewport({ ratio: 1 });
+        expect(await page.evaluate<boolean>(TOPMOST), `${name} is topmost`).toBe(true);
+      }
+      await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
+    });
+  });
+}
 
 test('D5 A8 the sheet makes the dock and the bottom islands inert, and Escape closes it with the focus on the toggle', async ({
   page,
