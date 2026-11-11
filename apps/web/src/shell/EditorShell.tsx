@@ -14,23 +14,25 @@ import { EmptyCanvasNote } from './EmptyCanvasNote.tsx';
 import { IdentityIsland } from './IdentityIsland.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { useShellState } from './shell-state.ts';
+import { Tooltip } from './tooltip/Tooltip.tsx';
 
 // The editor's shell (ADR 0012, decision 13): the canvas fills the window, and the controls float
 // over it in islands at its edges, siblings of the canvas host and never inside it, so that no
 // press on them reaches the canvas (REQ-C11). The document order is the tab order of decision
 // 14: Pre-release, the tool bar's one stop, the canvas, the storage notices' buttons, Elements and
 // the list while its drawer is open, then Undo, Redo and the zoom controls. Where each island sits
-// is the style sheets' (styles/shell.css).
+// is the style sheets' (styles/shell.css). The controls' tooltips are delegated to the root.
 
 /**
- * The shell's root, the page's main landmark, where S7 puts data-save-state, and the islands in
- * their tab order.
+ * The shell's root, the page's main landmark, where S7 puts data-save-state, the islands in their
+ * tab order, and the one tooltip, which follows the root's events.
  */
 function Shell() {
   const { drawer, dialog, toggleDrawer, openAbout, closeDialog } = useShellState();
   const tag = useRef<HTMLButtonElement>(null);
+  const root = useRef<HTMLElement>(null);
   return (
-    <main className="editor-shell">
+    <main ref={root} className="editor-shell">
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland tag={tag} onAbout={openAbout} />
       <div className="island tools-island" data-island="tools">
@@ -61,6 +63,7 @@ function Shell() {
           }}
         />
       ) : null}
+      <Tooltip root={root} />
     </main>
   );
 }

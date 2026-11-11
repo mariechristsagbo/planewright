@@ -1,0 +1,36 @@
+/*
+ * The chrome's one tooltip (ADR 0012 and the v0.2 plan's S3): a graphite surface with white caption
+ * text and the control's keys in chips, 8 px from its control and above every island. Presses go
+ * through it, and it never animates.
+ */
+.chrome-tip {
+  position: fixed;
+  z-index: var(--pw-layer-tooltip);
+  display: flex;
+  gap: var(--pw-spacing-xs);
+  align-items: center;
+  box-sizing: border-box;
+  max-width: calc(100vw - 2 * var(--pw-spacing-sm));
+  padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+  border-radius: var(--pw-rounded-sm);
+  color: var(--pw-color-on-inverse-surface);
+  background: var(--pw-color-inverse-surface);
+  box-shadow: var(--pw-shadow-e3);
+  font: var(--pw-type-caption);
+  letter-spacing: var(--pw-type-caption-tracking);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.chrome-tip[hidden] {
+  display: none;
+}
+
+.chrome-tip kbd {
+  margin: 0;
+  padding: 0 var(--pw-spacing-xs);
+  border: 1px solid var(--pw-color-outline-strong);
+  border-radius: var(--pw-rounded-xs);
+  font: var(--pw-type-kbd);
+  letter-spacing: var(--pw-type-kbd-tracking);
+}

@@ -1,0 +1,119 @@
+// The chrome's tooltips' events (ADR 0012 and the v0.2 plan's S3), delegated rather than one
+// listener per control: the shell's root follows the pointer and the focus for every control that
+// names a tip, and its document follows the keys, so that Escape closes a tip wherever the focus
+// is. A tip opens after the hover delay, at once on keyboard focus and never on touch, and closes
+// on Escape, on a press and when the pointer or the focus leaves its control.
+
+/** The delay without the --pw-delay-tooltip token, as in a page without its style sheets. */
+const DELAY_MS = 500;
+
+/** The control whose tip an event's target is in: the element that names a tip. */
+export const tipControlOf = (node: EventTarget | null): HTMLElement | null =>
+  node instanceof Element ? node.closest<HTMLElement>('[data-chrome-tip]') : null;
+
+/** How long the pointer rests on a control before its tip opens, from tokens.css. */
+export function hoverDelay(root: HTMLElement): number {
+  const value = getComputedStyle(root).getPropertyValue('--pw-delay-tooltip').trim();
+  const match = /^(\d+(?:\.\d+)?)(ms|s)$/u.exec(value);
+  if (match === null) return DELAY_MS;
+  return Number(match[1]) * (match[2] === 's' ? 1000 : 1);
+}
+
+interface Tips {
+  /** The control whose tip shows. */
+  shown: HTMLElement | null;
+  /** The control the pointer rests on, before its tip opens. */
+  waiting: HTMLElement | null;
+  timer: ReturnType<typeof setTimeout> | undefined;
+  /** Whether the last input was a press, whose focus opens no tip. */
+  pressed: boolean;
+  /** A control whose tip a press or Escape closed, until the pointer leaves it. */
+  dismissed: HTMLElement | null;
+}
+
+/** The handlers of each event, over the tips' state, which give the control to show, or null. */
+function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => void) {
+  const tips: Tips = {
+    shown: null,
+    waiting: null,
+    timer: undefined,
+    pressed: false,
+    dismissed: null,
+  };
+  const stopWaiting = (): void => {
+    clearTimeout(tips.timer);
+    tips.timer = undefined;
+    tips.waiting = null;
+  };
+  const open = (control: HTMLElement | null): void => {
+    stopWaiting();
+    if (tips.shown === control) return;
+    tips.shown = control;
+    show(control);
+  };
+  const hover = (event: PointerEvent): void => {
+    const control = tipControlOf(event.target);
+    if (event.pointerType === 'touch' || control === null) return;
+    if ([tips.shown, tips.waiting, tips.dismissed].includes(control)) return;
+    stopWaiting();
+    tips.waiting = control;
+    tips.timer = setTimeout(() => {
+      open(control);
+    }, hoverDelay(root));
+  };
+  const leave = (event: PointerEvent): void => {
+    const control = tipControlOf(event.target);
+    const to = event.relatedTarget;
+    if (control === null || (to instanceof Node && control.contains(to))) return;
+    if (tips.dismissed === control) tips.dismissed = null;
+    if (tips.waiting === control) stopWaiting();
+    if (tips.shown === control) open(null);
+  };
+  const press = (event: PointerEvent): void => {
+    tips.pressed = true;
+    tips.dismissed = tipControlOf(event.target);
+    open(null);
+  };
+  const focus = (event: FocusEvent): void => {
+    const control = tipControlOf(event.target);
+    if (!tips.pressed && control !== null) open(control);
+  };
+  const blur = (event: FocusEvent): void => {
+    if (tipControlOf(event.target) === tips.shown) open(null);
+  };
+  const key = (event: KeyboardEvent): void => {
+    tips.pressed = false;
+    if (event.key !== 'Escape') return;
+    tips.dismissed = tips.shown ?? tips.waiting;
+    open(null);
+  };
+  return { hover, leave, press, focus, blur, key, stopWaiting };
+}
+
+/**
+ * Follows the events that open and close tips: one listener of each kind on the shell's root, and
+ * one for the keys on its document, ahead of the controls' own, so that a key that moves the focus
+ * counts before the focus moves. Gives a function that removes them.
+ */
+export function watchTooltips(
+  root: HTMLElement,
+  show: (control: HTMLElement | null) => void,
+): () => void {
+  const { hover, leave, press, focus, blur, key, stopWaiting } = handlersOf(root, show);
+  const document = root.ownerDocument;
+  root.addEventListener('pointerover', hover);
+  root.addEventListener('pointerout', leave);
+  root.addEventListener('pointerdown', press, true);
+  root.addEventListener('focusin', focus);
+  root.addEventListener('focusout', blur);
+  document.addEventListener('keydown', key, true);
+  return () => {
+    stopWaiting();
+    root.removeEventListener('pointerover', hover);
+    root.removeEventListener('pointerout', leave);
+    root.removeEventListener('pointerdown', press, true);
+    root.removeEventListener('focusin', focus);
+    root.removeEventListener('focusout', blur);
+    document.removeEventListener('keydown', key, true);
+  };
+}

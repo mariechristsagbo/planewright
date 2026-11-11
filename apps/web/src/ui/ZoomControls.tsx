@@ -4,7 +4,7 @@ import { Fragment, useCallback, useSyncExternalStore } from 'react';
 import { useSurface } from '../editor/surface.ts';
 import type { IconName } from '../shell/glyphs.ts';
 import { Icon } from '../shell/icons.tsx';
-import { ariaKeyShortcuts, shortcutSentence } from './shortcuts.ts';
+import { ariaKeyShortcuts, shortcutSentence, shortcutText } from './shortcuts.ts';
 
 /**
  * The zoom commands in the order the controls show them, what each does and the glyph it shows;
@@ -32,8 +32,8 @@ function useZoomPercent(): number {
  * (docs/architecture/engine/quality.md#accessibility). They read the command registry, and each
  * shows the first of its shortcuts, since the others are the same key on other layouts. Reset
  * zoom shows the zoom and says it in its name, such as "Reset zoom, 100%" (ADR 0012); the others
- * show their original glyphs and are named by the registry's labels. The camera never animates,
- * so each press shows its new view at once (REQ-Y06).
+ * show their original glyphs and are named by the registry's labels, which their tooltips repeat
+ * with the keys. The camera never animates, so each press shows its new view at once (REQ-Y06).
  */
 export function ZoomControls() {
   const { editor, platform } = useSurface();
@@ -52,6 +52,8 @@ export function ZoomControls() {
               aria-label={glyph === null ? `${command.label}, ${String(percent)}%` : command.label}
               aria-keyshortcuts={ariaKeyShortcuts(shortcuts, platform)}
               aria-describedby={`${id}-description`}
+              data-chrome-tip={command.label}
+              data-chrome-keys={shortcutText(shortcuts, platform)}
               onClick={() => {
                 editor.run(id);
               }}
