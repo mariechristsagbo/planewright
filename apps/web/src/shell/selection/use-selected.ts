@@ -1,22 +1,14 @@
-import type { EditorView } from '@planewright/engine';
-import { useCallback, useLayoutEffect, useMemo, useSyncExternalStore } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 import type { RefObject } from 'react';
 
 import { focusCanvas } from '../../a11y/focus.ts';
-import { useSurface } from '../../editor/surface.ts';
+import { useViewValue } from '../../editor/surface.ts';
 import { selectionGeometry } from './geometry.ts';
 import type { SelectionGeometry } from './geometry.ts';
 
 // What the selection's surfaces read of the editor's view (ADR 0012, decision 14; the v0.2 plan's
 // S6): only values that keep their identity across camera changes, so that a pan or zoom step,
 // which publishes a new view, renders none of them, never the whole view.
-
-/** One value of the view; the component renders again only when it changes. */
-function useViewValue<T>(read: (view: EditorView) => T): T {
-  const { editor } = useSurface();
-  const subscribe = useCallback((listener: () => void) => editor.subscribe(listener), [editor]);
-  return useSyncExternalStore(subscribe, () => read(editor.view));
-}
 
 /** What the panel, the bar and the Details sheet show of a selection. */
 export interface Selected {
