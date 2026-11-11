@@ -111,19 +111,19 @@ export interface PerfInfo {
 export const PERF_INFO: readonly PerfInfo[] = [
   {
     id: 'I1',
-    label: 'Main-thread time of a pan step, 5,000 elements, 101 options listed',
+    label: 'Main-thread time of a pan step, 5,000 elements, the Elements drawer closed',
     unit: 'ms',
     statistic: 'p95',
     source: 'browser',
-    reference: 'one frame at 60 Hz, 16.7 ms (REQ-F01); the element list renders again on each pan',
+    reference: 'one frame at 60 Hz, 16.7 ms (REQ-F01); the closed drawer mounts no element list',
   },
   {
     id: 'I2',
-    label: 'Main-thread time of a pan step, the 101 listed options 100,000-character texts',
+    label: 'Main-thread time of a pan step, the drawer open on 101 100,000-character texts',
     unit: 'ms',
     statistic: 'p95',
     source: 'browser',
-    reference: 'one frame at 60 Hz, 16.7 ms (REQ-F01); the names of long texts',
+    reference: 'one frame at 60 Hz, 16.7 ms (REQ-F01); the open list, memoised, names none again',
   },
   {
     id: 'I3',
@@ -131,7 +131,7 @@ export const PERF_INFO: readonly PerfInfo[] = [
     unit: 'ms',
     statistic: 'p95',
     source: 'bench',
-    reference: 'the part of a pan step that the element list spends on names',
+    reference: 'what the open element list spends on names when its options render again',
   },
   {
     id: 'I4',

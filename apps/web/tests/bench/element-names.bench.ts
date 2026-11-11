@@ -5,8 +5,9 @@ import { elementName } from '../../src/a11y/element-names.ts';
 
 // I3, a measurement that is no budget (docs/architecture/engine/quality.md#what-eng-15-decided;
 // the ENG-14 review's s4): naming the element list's 101 rendered options when each is a text of
-// 100,000 characters, as every view change, a pan included, names them again. Each sample names
-// all 101; the names are first checked to hold each text's first 40 characters.
+// 100,000 characters, as the open list names them again when the elements, the selection or the
+// active option change; since S5 a pan step names none. Each sample names all 101; the names are
+// first checked to hold each text's first 40 characters.
 
 const OPTIONS = 101;
 const LENGTH = 100_000;

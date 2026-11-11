@@ -18,10 +18,11 @@ import {
 // list's cost (I1, I2; the ENG-14 review's s4) on a seeded drawing of 5,000 elements spread over
 // ten times the view: the view is panned around a loop of wheel steps, each step's scene render
 // measured, and the main thread's busy time from each step to the animation frame after its
-// render read from Chromium. The element list renders its 101 options again on every pan: for I1
-// in the closed Elements drawer, which keeps it mounted but hidden until S5 unmounts it, and for
-// I2 in the drawer opened through its toggle, where they are texts of 100,000 characters each,
-// drawn far from the panned area (ADR 0012's row for this spec).
+// render read from Chromium. Since S5 the closed Elements drawer, as every load leaves it, mounts
+// no list, so I1 pans with none; I2 opens the drawer through its toggle and waits for its 101
+// options, texts of 100,000 characters each, drawn far from the panned area, which are memoised
+// on the elements, the selection and the active position, so that a pan step renders none of them
+// again (ADR 0012's row for this spec).
 
 const SCENE = { seed: 22, count: 5_000 };
 const WARM_UP = 10;
@@ -78,6 +79,11 @@ test('B2 I1 REQ-F01 the scene layer redrawn while panning 5,000 elements, a tent
   page,
 }) => {
   const session = await openSpread(page, false);
+  await expect(page.getByRole('button', { name: /^Elements/u })).toHaveAttribute(
+    'aria-expanded',
+    'false',
+  );
+  await expect(page.locator('[role="listbox"], [role="option"]')).toHaveCount(0);
   const busy = await panAround(page, session);
   const scene = (await measures(page)).filter(({ name }) => name === 'scene');
   const shares = scene.map(({ elements }) => elements / SCENE.count);
@@ -108,11 +114,12 @@ test('B2 I1 REQ-F01 the scene layer redrawn while panning 5,000 elements, a tent
   });
 });
 
-test('I2 the same pans with the 101 listed options texts of 100,000 characters', async ({
+test('I2 the same pans with the drawer open, its 101 options texts of 100,000 characters', async ({
   page,
 }) => {
   const session = await openSpread(page, true);
   await page.getByRole('button', { name: /^Elements/u }).click();
+  await expect(page.getByRole('listbox', { name: 'Elements' })).toBeFocused();
   await expect(page.getByRole('option')).toHaveCount(101);
   const busy = await panAround(page, session);
   writeMeasurement(page, {
