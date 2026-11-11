@@ -247,8 +247,10 @@ release has been published yet.
   JetBrains Mono and hidden from screen readers, Show elements, a checkbox item that follows the
   drawer, Keyboard shortcuts, About this build and Source on GitHub. It opens on a press, Enter,
   Space or ArrowDown with the focus on its first item; the arrow keys, Home and End move; Enter runs
-  an item; Escape closes it and returns the focus to the button; and Tab closes it and goes on. A
-  Keyboard shortcuts button at the bottom right, the last tab stop, and the menu open a dialog that
-  lists every command of the registry with its keys, in About this build's modal dialog, and a
-  dialog returns the focus to the control that opened it. Shortcut texts write Escape, Enter,
-  Delete, Backspace and the arrows by name. S5 to S13 are not implemented.
+  an item; Escape closes it and returns the focus to the button; Tab closes it and goes on;
+  switching to another window closes it with the focus on the button; and the button shows no
+  tooltip over the open menu. A Keyboard shortcuts button at the bottom right, the last tab stop,
+  and the menu open a dialog that lists every command of the registry with its keys, in About this
+  build's modal dialog, and a dialog returns the focus to the control that opened it. Shortcut
+  texts write Escape, Enter, Delete, Backspace and the arrows by name. S5 to S13 are not
+  implemented.

@@ -834,4 +834,20 @@ Issue #64 delivered slice S4.
   94.8 ms against 126.8 and 77.0 ms and of I2 101.8 and 71.6 ms against 137.1 and 71.1 ms,
   differences within the machine's spread. `perf:report` exits 1 in this sequence only because B5
   to B8 and B11 to B13 are not measured there. B1's misses remain follow-up #49's.
+- From the S4 review: the menu button's hover tip no longer covers its open menu (m1). The tip, on
+  the tooltip's layer above the raised island, lay over the top of Select all, so that a mouse that
+  came back to rest on the button showed it and a press there landed on the tip; now a hover rest
+  that ends while its control's popup is open, with `aria-expanded` true, opens no tip
+  (`tooltip/tooltip-events.ts`), and the closed button keeps its hover and focus tips. The window
+  losing the focus to another window closed the menu with the focus left on the page's body (m2);
+  the menu now leaves a focusout to no element, while the document has lost the focus, to the
+  window's own blur, which closes it with the focus on the button, where it is when the window
+  comes back, and a focusout to an element, or to none while the window keeps the focus, still
+  closes it where the focus went. Two tests in `Tooltip.test.tsx`, two in `MainMenu.test.tsx`, now
+  13, and one in `menu.spec.ts`, now 12, a press on the top of Select all after a rest on the
+  button, cover the fixes. The two tip tests, the end-to-end test and the window blur's test failed
+  against `d2f316d`, and the test of the focus going elsewhere passed there, since it pins what was
+  kept. The window blur was also checked in headed Chromium under Xvfb, since Playwright's headless
+  focus emulation sends no window blur. The style sheet is unchanged, and the initial JavaScript is
+  114,703 bytes gzip at `549efa7`, 91 bytes more than at `d2f316d`.
 - S5 to S13 are not implemented.
