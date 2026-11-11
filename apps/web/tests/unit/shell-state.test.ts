@@ -1,6 +1,7 @@
+import type { SaveStatus } from '@planewright/engine';
 import { describe, expect, it } from 'vitest';
 
-import { INITIAL_SHELL_STATE, shellReducer } from '../../src/shell/shell-state.ts';
+import { INITIAL_SHELL_STATE, reopensNotices, shellReducer } from '../../src/shell/shell-state.ts';
 import type { ShellAction, ShellState } from '../../src/shell/shell-state.ts';
 
 // The shell's own state (ADR 0012, decision 13; the v0.2 plan's S6, issue #69's D4): the Details
@@ -21,6 +22,7 @@ describe('the shell’s state', () => {
       details: false,
       dialog: null,
       opener: null,
+      noticesHidden: false,
     });
   });
 
@@ -62,4 +64,60 @@ describe('the shell’s state', () => {
       details: false,
     });
   });
+});
+
+describe('the hidden storage notices', () => {
+  it('D5 A6 show at every load, and Hide and the chip’s button fold and reopen them', () => {
+    expect(INITIAL_SHELL_STATE.noticesHidden).toBe(false);
+    expect(after('hide-notices').noticesHidden).toBe(true);
+    expect(after('hide-notices', 'hide-notices').noticesHidden).toBe(true);
+    expect(after('hide-notices', 'show-notices').noticesHidden).toBe(false);
+    expect(after('show-notices').noticesHidden).toBe(false);
+  });
+
+  it('D5 keeps the state itself when the flag does not change, so that the shell renders nothing', () => {
+    expect(shellReducer(INITIAL_SHELL_STATE, { type: 'show-notices' })).toBe(INITIAL_SHELL_STATE);
+    const hidden = after('hide-notices');
+    expect(shellReducer(hidden, { type: 'hide-notices' })).toBe(hidden);
+  });
+
+  it('D5 leaves the other surfaces as they are', () => {
+    const open = after('toggle-drawer', 'open-menu');
+    expect(shellReducer(open, { type: 'hide-notices' })).toEqual({ ...open, noticesHidden: true });
+    expect(after('hide-notices', 'toggle-drawer', 'close-menu').noticesHidden).toBe(true);
+  });
+});
+
+const SAVED: SaveStatus = { type: 'saved' };
+const PENDING: SaveStatus = { type: 'pending' };
+const STALE: SaveStatus = { type: 'stale' };
+const QUOTA: SaveStatus = { type: 'failed', reason: 'quota' };
+const REFUSED: SaveStatus = { type: 'failed', reason: 'failed' };
+
+describe('reopensNotices', () => {
+  it.each([
+    [SAVED, QUOTA, true],
+    [PENDING, QUOTA, true],
+    [STALE, QUOTA, true],
+    [null, QUOTA, true],
+    [QUOTA, REFUSED, true],
+    [QUOTA, { type: 'failed', reason: 'quota' }, false],
+    [QUOTA, QUOTA, false],
+    [SAVED, STALE, true],
+    [PENDING, STALE, true],
+    [QUOTA, STALE, true],
+    [STALE, { type: 'stale' }, false],
+    [QUOTA, PENDING, false],
+    [QUOTA, SAVED, false],
+    [STALE, SAVED, false],
+    [STALE, PENDING, false],
+    [SAVED, PENDING, false],
+    [PENDING, SAVED, false],
+    [QUOTA, null, false],
+  ] satisfies [SaveStatus | null, SaveStatus | null, boolean][])(
+    'D5 A6 from %j to %j reopens the notices: %s',
+    (said, next, reopens) => {
+      expect(reopensNotices(said, next)).toBe(reopens);
+    },
+  );
 });
