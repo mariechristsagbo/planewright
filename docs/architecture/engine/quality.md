@@ -15,6 +15,7 @@ REQ-Y06).
 | Canvas host        | a focusable region labelled "Drawing canvas", described by short instructions; it receives the editor's shortcuts                                                                                    | REQ-Y02                   |
 | Element list       | a list box in the Elements drawer with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                     | REQ-Y05                   |
 | Live region        | one polite region for selection counts, created and deleted elements, undo and redo; save failures use an assertive message                                                                          | REQ-Y04                   |
+| Selection          | the selection panel, or on phones the bar and its Details sheet: a `group` named by its heading, read-only figures, no live region; actions named by the registry; see below                         | REQ-C14, REQ-Y01, REQ-Y02 |
 | Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                    | REQ-Y02                   |
 | Menus              | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                       | REQ-Y01, REQ-Y03          |
 | Targets and colour | every touch target at least 24 × 24 CSS px; text contrast at least 4.5:1 and control contrast 3:1 in each theme; forced-colours mode uses system colours for the interface and the selection outline | REQ-Y06                   |
@@ -30,13 +31,15 @@ focused one for large documents, with `aria-setsize` and `aria-posinset`, so its
 tool's default-size element at the centre of the viewport, so no element kind needs a pointer
 (REQ-C04, REQ-Y05).
 
-**Order of tab stops.** The menu button, Pre-release, the tool bar, the canvas, the storage notices'
-buttons while storage needs attention, Elements and, while its drawer is open, the drawer's Close,
-its keys' summary and the element list, history controls, zoom controls and Keyboard shortcuts
-(ADR 0012, decision 14, as far as slices S2 to S5's controls go; the selection panel's actions are
-S6's). On a phone in portrait the open drawer's sheet makes the tool bar and the bottom islands
-inert, so that they leave the order while it is open. P0's order was the tool bar, the canvas, the
-element list, history and zoom.
+**Order of tab stops.** The menu button, Pre-release, the tool bar, the canvas, the selection
+panel's actions while something drawn is selected and no text is edited (Duplicate, Delete and, for
+a text that Enter would edit, Edit text, or on a phone in portrait the bar's actions and Details,
+then the open Details sheet's Close), the storage notices' buttons while storage needs attention,
+Elements and, while its drawer is open, the drawer's Close, its keys' summary and the element list,
+history controls, zoom controls and Keyboard shortcuts (ADR 0012, decision 14, as far as slices S2
+to S6's controls go). On a phone in portrait the open Elements or Details sheet makes the tool bar
+and the bottom islands inert, so that they leave the order while it is open. P0's order was the
+tool bar, the canvas, the element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
@@ -128,10 +131,27 @@ the engine, and the element list, the live region, the zoom controls and focus m
   sheet along the window's bottom, at most 62 % of its height, whose list scrolls inside it; while
   it is open the tool bar, which S8 makes the phone's dock, and the bottom islands are `inert`,
   their controls in a box that keeps a press on them from reaching the canvas, and Escape in the
-  sheet closes it and goes no further, so that the selection stays.
+  sheet closes it and goes no further, so that the selection stays. Slice S6 added the selection
+  panel, out of the page unless something drawn is selected and no text is edited, so that it has
+  no tab stop otherwise: a `group` named by its heading, the kind's name or "N elements", neither a
+  landmark nor a live region, since the polite region already says every selection and command;
+  its figures are static text in a description list, W and H read as Width and Height. Duplicate
+  and Delete take their names, `aria-keyshortcuts`, descriptions and tooltips from the registry, and
+  Edit text is described as doing what Enter on the canvas does; each shows its word, which names
+  it. Duplicate keeps the focus; Delete, or the panel going for any reason with the focus inside
+  it, gives the focus to the canvas, never to the page's body; Edit text gives it to the text area,
+  and when the session ends the canvas takes it back. On a phone in portrait the selection bar takes
+  the panel's place and tab stops, its actions 44 px glyph buttons whose words are visually hidden,
+  then Details, with `aria-expanded` and `aria-controls`, which opens the Details sheet, a region
+  named "Details" with the focus on its Close; Close or Escape closes it with the focus back on
+  Details, the Escape going no further. Opening the Details or the Elements sheet closes the other,
+  the one that opens taking the focus. The sheet closes when the selection empties, the focus going
+  to the canvas if it was in the sheet or the bar, when a text session starts and when the window
+  leaves the phone's query; it is closed at every load and stored nowhere.
 - **Targets, colour and motion.** Controls are at least 24 px, the page's link, in About this build
   since S2, is a 24 px inline block, the menu's items, its link among them, are 36 px high since S4,
-  and touch handle hit squares stay 24 px. Measured in Chromium, the shortcut hint in a pressed tool
+  and touch handle hit squares stay 24 px; the selection panel's actions are 32 px high, 44 px under
+  a coarse pointer, and the phone's bar's targets and the Details sheet's Close 44 px. Measured in Chromium, the shortcut hint in a pressed tool
   button was 4.19:1 and is now opaque, 5.59:1, and an unavailable control is dark grey with a dashed
   border, 7.2:1, instead of half transparent, 3.36:1. Each camera command and wheel event sets the
   camera once, drawn whole in the next frame with no frame after it, and nothing in the page
