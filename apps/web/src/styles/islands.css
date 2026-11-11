@@ -45,16 +45,22 @@
   font-variant-numeric: var(--pw-type-numeric-sm-figures);
 }
 
-/* The Elements drawer around P0's list; S5 gives it its own styling. */
+/*
+ * The Elements drawer around P0's list; S5 gives it its own styling. Its padding is on the list's
+ * area inside it, so that in a short window the drawer can shrink to its border.
+ */
 .element-list-drawer {
   overflow-y: auto;
-  padding: var(--pw-spacing-panel-padding);
   border: 1px solid var(--pw-color-outline-subtle);
   border-radius: var(--pw-rounded-md);
   color: var(--pw-color-on-surface);
   background: var(--pw-color-surface);
   box-shadow: var(--pw-shadow-e2);
   font: var(--pw-type-body-sm);
+}
+
+.element-list-drawer > .element-list-area {
+  padding: var(--pw-spacing-panel-padding);
 }
 
 /* The empty-canvas note (D5), centred over the canvas; presses go through it to the canvas. */

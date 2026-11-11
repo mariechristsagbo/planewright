@@ -1,15 +1,21 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { openElements, openPage, polite } from './a11y.ts';
+import { button, elementsToggle, openElements, openPage, polite } from './a11y.ts';
 import { toolButton } from './drawing.ts';
-import { refuseStorage, storageNotices } from './storage.ts';
+import { refuseStorage, showStaleNotice, storageNotices } from './storage.ts';
 import { canvas, canvasBox, expectHistoryDisabled, readout } from './support.ts';
 
 // The full-bleed shell (ADR 0012, decision 13, issue #55's A2 to A4 and A10): the canvas host fills
 // the viewport and keeps its 1 px border, made transparent, neither html nor body scrolls, the
-// islands sit at their anchors without intersecting, and a press on an island never reaches the
-// canvas. Page code is written as strings, since these files compile without the DOM library.
+// islands sit at their anchors inside the window without intersecting, and a press on an island
+// never reaches the canvas. Page code is written as strings, since these files compile without the
+// DOM library.
+
+interface Viewport {
+  readonly width: number;
+  readonly height: number;
+}
 
 interface Box {
   readonly name: string;
@@ -42,6 +48,29 @@ function intersecting(boxes: readonly Box[]): string[] {
       )
       .map((b) => `${a.name} × ${b.name}`),
   );
+}
+
+/** The boxes that reach outside the viewport, by name. */
+const outside = (boxes: readonly Box[], { width, height }: Viewport): string[] =>
+  boxes
+    .filter(
+      (box) => box.x < 0 || box.y < 0 || box.x + box.width > width || box.y + box.height > height,
+    )
+    .map(({ name }) => name);
+
+/**
+ * Every island, and the notices and the drawer while they show, inside the viewport and apart, with
+ * history and zoom at the window's bottom, no more than the largest anchor, 16 px, above its edge.
+ */
+async function expectPlaced(page: Page, viewport: Viewport, count: number): Promise<void> {
+  const boxes = await islands(page);
+  expect(boxes).toHaveLength(count);
+  expect({ outside: outside(boxes, viewport), intersecting: intersecting(boxes) }).toEqual({
+    outside: [],
+    intersecting: [],
+  });
+  const history = boxes.find(({ name }) => name === 'bottom-left');
+  expect(viewport.height - (history?.y ?? 0) - (history?.height ?? 0)).toBeLessThanOrEqual(16);
 }
 
 /** The document's and the body's scroll sizes, and where the window is after scrolling to 100. */
@@ -82,29 +111,119 @@ for (const viewport of [
       expect(await page.evaluate(SCROLL)).toEqual({ html: size, body: size, scrolled: [0, 0, 0] });
     });
 
-    test('A4 no two islands intersect, at rest and with the drawer open under a storage notice', async ({
+    test('A4 no two islands intersect and each lies inside the window, at rest and with the drawer open under a storage notice', async ({
       page,
     }) => {
       await openPage(page);
-      const rest = await islands(page);
-      expect(rest.map(({ name }) => name)).toEqual([
+      expect((await islands(page)).map(({ name }) => name)).toEqual([
         'identity',
         'tools',
         'top-right',
         'bottom-left',
         'bottom-right',
       ]);
-      expect(intersecting(rest)).toEqual([]);
+      await expectPlaced(page, viewport, 5);
       await refuseStorage(page);
       await openPage(page);
       await expect(storageNotices(page)).toBeVisible();
       await openElements(page);
-      const open = await islands(page);
-      expect(open).toHaveLength(7);
-      expect(intersecting(open)).toEqual([]);
+      await expectPlaced(page, viewport, 7);
     });
   });
 }
+
+// Short windows while storage needs attention (the S2 review's M1): the notices and the open drawer
+// share the height that the top and bottom islands leave, each scrolling within its share, so that
+// every island stays inside the window, apart from the others.
+for (const viewport of [
+  { width: 844, height: 390 },
+  { width: 667, height: 375 },
+  { width: 568, height: 320 },
+]) {
+  test.describe(`at ${String(viewport.width)} × ${String(viewport.height)}`, () => {
+    test.use({ viewport });
+
+    test('A4 M1 every island lies inside the window, apart, under the stale notice with the drawer closed and open', async ({
+      page,
+    }) => {
+      await openPage(page);
+      await showStaleNotice(page);
+      await expectPlaced(page, viewport, 6);
+      await openElements(page);
+      await expectPlaced(page, viewport, 7);
+    });
+
+    test('A4 M1 every island lies inside the window, apart, under the storage-unavailable notice with the drawer closed and open', async ({
+      page,
+    }) => {
+      await refuseStorage(page);
+      await openPage(page);
+      await expect(storageNotices(page)).toBeVisible();
+      await expectPlaced(page, viewport, 6);
+      await openElements(page);
+      await expectPlaced(page, viewport, 7);
+    });
+  });
+}
+
+test.describe('at 844 × 140, barely taller than the top and bottom islands', () => {
+  const viewport = { width: 844, height: 140 };
+  test.use({ viewport });
+
+  test('A4 M1 the notices and the open drawer shrink rather than cover the bottom islands', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await showStaleNotice(page);
+    await openElements(page);
+    await expectPlaced(page, viewport, 7);
+  });
+});
+
+/** How far the shell has scrolled, and where the canvas host's top is. */
+const SHELL = `(() => ({
+  shell: document.querySelector('.editor-shell').scrollTop,
+  canvas: document.getElementById('drawing-canvas').getBoundingClientRect().y,
+}))()`;
+
+test.describe('at 667 × 375', () => {
+  test.use({ viewport: { width: 667, height: 375 } });
+
+  test('M1 Tab past the stale notice to Undo shows each stop in the window and never scrolls the shell', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await showStaleNotice(page);
+    await canvas(page).focus();
+    const notices = storageNotices(page);
+    for (const stop of [
+      notices.getByRole('button', { name: 'Load the newer version' }),
+      notices.getByRole('button', { name: 'Keep this version' }),
+      elementsToggle(page),
+      button(page, 'Undo'),
+    ]) {
+      await page.keyboard.press('Tab');
+      await expect(stop).toBeFocused();
+      await expect(stop).toBeInViewport({ ratio: 1 });
+      expect(await page.evaluate(SHELL)).toEqual({ shell: 0, canvas: 0 });
+    }
+  });
+});
+
+test.describe('at 568 × 200, shorter than the islands need', () => {
+  test.use({ viewport: { width: 568, height: 200 } });
+
+  test('M1 Tab to Undo never scrolls the shell, so the canvas stays under the whole window', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await canvas(page).focus();
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Tab');
+    await expect(button(page, 'Undo')).toBeFocused();
+    expect(await page.evaluate(SHELL)).toEqual({ shell: 0, canvas: 0 });
+  });
+});
 
 test('A10 REQ-C11 a press or a drag on an island, with a creation tool active, creates nothing and starts no gesture', async ({
   page,
