@@ -2,10 +2,11 @@
 
 **Status: slice S0 (issue #50) wrote this plan and [ADR 0012](../adr/0012-v02-editor-chrome.md),
 slice S1 (issue #53) added the chrome's tokens, base styles and typeface
-([what S1 delivered](#what-s1-delivered)), and slice S2 (issue #55) the full-bleed shell with its
-islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered));
-slices S3 to S13 are not implemented.** This plan turns ADR
-0012's decisions into thirteen issues for milestone v0.2.0 (Editor Experience): what each slice
+([what S1 delivered](#what-s1-delivered)), slice S2 (issue #55) the full-bleed shell with its
+islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), and
+slice S3 (issue #62) the original glyphs, the palette and the tooltips
+([what S3 delivered](#what-s3-delivered)); slices S4 to S13 are not implemented.** This plan turns
+ADR 0012's decisions into thirteen issues for milestone v0.2.0 (Editor Experience): what each slice
 contains, what must land before it, the tests it writes first, how it is validated and which
 documents it updates. The decisions themselves, the tests to migrate and the visual-regression
 matrix are in the ADR; where this plan and the ADR differ, the ADR governs.
@@ -121,6 +122,7 @@ builds on; the handoff adds only that S7 may land before S2.
 - **Migrations.** The ADR's rows marked S3.
 - **Validation.** The rules above; the icons' cost, estimated at 3 to 4 KB gzip, shows in
   `check:bundle-size`.
+- **Delivered** by issue #62 ([what S3 delivered](#what-s3-delivered)).
 
 ### S4: the menu and the Keyboard shortcuts dialog
 
@@ -295,24 +297,24 @@ builds on; the handoff adds only that S7 may land before S2.
 
 Every new component is web-app chrome; the engine is unchanged.
 
-| Component                                            | Where (`apps/web/src`)          | Slice  | Owns                                                                                |
-| ---------------------------------------------------- | ------------------------------- | ------ | ----------------------------------------------------------------------------------- |
-| `EditorShell`                                        | `shell/EditorShell.tsx`         | S2, S7 | The islands' layout, the hidden h1, the shell's state and `data-save-state`         |
-| `IdentityIsland`, `PrereleaseTag`, `AboutDialog`     | `shell/`, `shell/dialogs/`      | S2     | The mark, the wordmark, the tag and About, from `foundation.ts`                     |
-| `MainMenu`, `ShortcutsDialog`                        | `shell/menu/`, `shell/dialogs/` | S4     | The menu pattern and the shortcuts list, from `editor.commands`                     |
-| `Toolbar`, `MoreTools`                               | `ui/Toolbar.tsx`, `shell/`      | S3, S8 | The palette, the phone dock and More; labels, order and shortcuts from the registry |
-| `Icon`                                               | `shell/icons.tsx`               | S3     | The 35 original glyphs                                                              |
-| `ToolHint`, `CanvasFocusChip`                        | `shell/`                        | S10    | The hint line and the canvas's focus chip                                           |
-| `CanvasHost`, `TextEditor`                           | `editor/`, `editor/text/`       | S2, S9 | The two canvases, input and resizing, and the text area with its hint chip          |
-| `EmptyCanvasNote`                                    | `shell/`                        | S2     | The note while there are no elements and no text session                            |
-| `SelectionPanel`, `DetailsSheet`, `geometry.ts`      | `shell/selection/`              | S6     | The contextual panel, the phone bar and sheet, and their pure geometry              |
-| `TopRightIsland`, `ElementsToggle`, `ElementsDrawer` | `shell/`                        | S2, S5 | The Elements toggle and the drawer or sheet around the list                         |
-| `ElementList`                                        | `a11y/ElementList.tsx`          | S5     | The list box, its rows' markup; its behaviour, names and keys stay P0's             |
-| `StorageProblemChip`, `StorageNotices`               | `ui/Saving.tsx`                 | S7     | The chip and the notices, with P0's words                                           |
-| `useSaveRecovery`                                    | `a11y/save-recovery.ts`         | S7     | The one polite sentence after a failed save succeeds again                          |
-| `HistoryControls`, `ZoomControls`, `ViewReadout`     | `ui/`                           | S2, S3 | Undo, Redo, zoom and the readout, from the registry and the view                    |
-| `DoneBar`                                            | `shell/DoneBar.tsx`             | S9     | The phone's Done bar above the keyboard                                             |
-| Tooltip layer                                        | `shell/tooltip/`                | S3     | One portal and one delegated listener                                               |
+| Component                                            | Where (`apps/web/src`)               | Slice  | Owns                                                                                |
+| ---------------------------------------------------- | ------------------------------------ | ------ | ----------------------------------------------------------------------------------- |
+| `EditorShell`                                        | `shell/EditorShell.tsx`              | S2, S7 | The islands' layout, the hidden h1, the shell's state and `data-save-state`         |
+| `IdentityIsland`, `PrereleaseTag`, `AboutDialog`     | `shell/`, `shell/dialogs/`           | S2     | The mark, the wordmark, the tag and About, from `foundation.ts`                     |
+| `MainMenu`, `ShortcutsDialog`                        | `shell/menu/`, `shell/dialogs/`      | S4     | The menu pattern and the shortcuts list, from `editor.commands`                     |
+| `Toolbar`, `MoreTools`                               | `ui/Toolbar.tsx`, `shell/`           | S3, S8 | The palette, the phone dock and More; labels, order and shortcuts from the registry |
+| `Icon`                                               | `shell/icons.tsx`, `shell/glyphs.ts` | S3     | The 35 original glyphs, in one typed record                                         |
+| `ToolHint`, `CanvasFocusChip`                        | `shell/`                             | S10    | The hint line and the canvas's focus chip                                           |
+| `CanvasHost`, `TextEditor`                           | `editor/`, `editor/text/`            | S2, S9 | The two canvases, input and resizing, and the text area with its hint chip          |
+| `EmptyCanvasNote`                                    | `shell/`                             | S2     | The note while there are no elements and no text session                            |
+| `SelectionPanel`, `DetailsSheet`, `geometry.ts`      | `shell/selection/`                   | S6     | The contextual panel, the phone bar and sheet, and their pure geometry              |
+| `TopRightIsland`, `ElementsToggle`, `ElementsDrawer` | `shell/`                             | S2, S5 | The Elements toggle and the drawer or sheet around the list                         |
+| `ElementList`                                        | `a11y/ElementList.tsx`               | S5     | The list box, its rows' markup; its behaviour, names and keys stay P0's             |
+| `StorageProblemChip`, `StorageNotices`               | `ui/Saving.tsx`                      | S7     | The chip and the notices, with P0's words                                           |
+| `useSaveRecovery`                                    | `a11y/save-recovery.ts`              | S7     | The one polite sentence after a failed save succeeds again                          |
+| `HistoryControls`, `ZoomControls`, `ViewReadout`     | `ui/`                                | S2, S3 | Undo, Redo, zoom and the readout, from the registry and the view                    |
+| `DoneBar`                                            | `shell/DoneBar.tsx`                  | S9     | The phone's Done bar above the keyboard                                             |
+| Tooltip layer                                        | `shell/tooltip/`                     | S3     | One tooltip and its listeners, delegated to the shell's root and its document       |
 
 The shell's own state is one reducer, `useShellState`, holding the open menu, the More popover,
 the drawer, the open dialog (`'shortcuts'`, `'about'` or none), whether the notices are hidden and
@@ -619,3 +621,89 @@ Issue #55 delivered slice S2.
   JavaScript is 109.9 KB, 1.1 KB more than `main`'s, within B13's 200 KB, and B11 and B12 are
   unchanged.
 - S3 to S13 are not implemented.
+
+## What S3 delivered
+
+Issue #62 delivered slice S3.
+
+- `apps/web/src/shell/glyphs.ts` holds the 35 original glyphs, 34 interface glyphs and the mark, in
+  one typed record keyed by `IconName`, and `apps/web/src/shell/icons.tsx` the `Icon` component,
+  which draws one at a requested size, 20 px by default, stroked 1.5 px wide in `currentColor` with
+  round caps and joins and hidden from assistive technology, since the control that shows a glyph
+  carries its name. Each glyph was drawn for Planewright from what its control does, on the 20 px
+  grid inside a 2 px margin, from lines, rectangles, circles, ellipses, polylines, polygons, dots
+  and paths of straight segments and circular arcs alone; none is traced from a screenshot or taken
+  from an icon set, the reference application or the design package's files. They are the eight
+  tools' glyphs (`hand`, `selection`, `rectangle`, `ellipse`, `diamond`, `line`, `freehand` and
+  `text`), `lock-open` and `lock-closed`, `undo`, `redo`, `zoom-out`, `zoom-in`, `zoom-fit`,
+  `zoom-reset`, `select-all`, `menu`, `more`, `elements`, `keyboard`, `info`, `external-link`,
+  `close`, `check`, `chevron-down`, `chevron-up`, `status-problem`, `status-tabs`, `duplicate`,
+  `delete`, `edit-text`, `details`, `multiple` and `mark`. S3 uses 16 of them, 15 at a time since
+  the padlock shows one of its two; the others wait for the controls of S4 to S10. One change this
+  plan did not foresee: the record is in a module of its own, beside `icons.tsx`, because the web
+  app's lint wants a `.tsx` module to export components alone.
+- The palette: P0's tool bar keeps its `toolbar` role, its name Tools, its one tab stop and arrow
+  keys, and every button's name, `aria-keyshortcuts` and description, while each button shows its
+  tool's glyph, 36 px square on desktops and 32 px at compact widths, with its first key in the
+  bottom-right corner in JetBrains Mono, hidden from assistive technology since the name,
+  `aria-keyshortcuts` and the description carry every key. Hairlines, also hidden, split Hand and
+  Selection, the drawing tools and tool lock, whose padlock is closed while tool lock is on, beside
+  its pressed state. The buttons are named by `aria-label`, from the registry's labels.
+  `styles/palette.css` sets the glyph buttons' size, the corner keys and the hairlines, and keeps
+  the base's pressed, disabled and focus rules, which S10 coordinates, so the chosen tool still
+  shows P0's blue; the compact size is in `responsive.css`.
+- Undo, Redo, Zoom out, Zoom in and Zoom to fit show their glyphs with their names unchanged, Reset
+  zoom keeps showing the zoom and its name, "Reset zoom, 100%", and Elements keeps its word until
+  S5's count. The identity island shows the mark before the wordmark, both hidden from assistive
+  technology, and at compact widths, where the wordmark hides, the mark stays.
+- Tooltips: `shell/tooltip/Tooltip.tsx` shows one tip, the name and keys of the control that the
+  pointer rests on or the keyboard focuses, for the 15 controls that show a glyph or the zoom, from
+  their `data-chrome-tip` and `data-chrome-keys`, which repeat the registry's label and the keys
+  that the control's `aria-keyshortcuts` and description give. It opens after `--pw-delay-tooltip`,
+  500 ms, which it reads from the page, at once on keyboard focus and never on touch, neither from a
+  touch hover nor from the focus that a tap or a click gives, and closes on Escape, on a press and
+  when the pointer or the focus leaves its control; a press or Escape keeps a hovered tip closed
+  until the pointer leaves. It sits 8 px under its control, or over it near the window's bottom, in
+  `styles/tooltip.css`, and presses go through it. `shell/tooltip/tooltip-events.ts` delegates its
+  events: the shell's root has one listener for each pointer and focus event, and one keydown
+  listener sits on the root's document, in the capture phase, so that Escape closes a hovered tip
+  while the focus is outside the shell, as it is after a load, and a key that moves the focus counts
+  before the focus moves. This plan said one listener on the shell's root. The tip has the `tooltip`
+  role, a description, but no control points to it with `aria-describedby`, so that each control
+  keeps S2's name and description and a screen reader never hears the name twice; the tip repeats
+  only what the name, `aria-keyshortcuts` and description already say.
+- Tests: `icons.test.tsx`, `Palette.test.tsx` (one button per registry tool in registry order with
+  its glyph and `aria-keyshortcuts`, the corner keys, the hairlines and the padlock with
+  `aria-pressed`), `Tooltip.test.tsx`, and new tests of Undo's and Redo's glyphs and of the mark;
+  end-to-end, `palette.spec.ts` toggles the padlock from the keyboard and `tooltip.spec.ts` opens a
+  tip on focus, closes it with Escape, opens one after the hover delay, closes it by leaving, and
+  opens none after a tap. ADR 0012's rows for `Toolbar.test.tsx` lines 21 to 40, for S3's part of
+  `ZoomControls.test.tsx` lines 20 to 38 and for `contrast-motion.spec.ts` lines 20 to 22 and 50 are
+  migrated; the last also gains a test that measures every glyph and its control's border against
+  their surfaces at a device pixel ratio of 2, from the colours the page computes and from a
+  screenshot's pixels. Decision 16 migrated one more assumption, `chrome-type.spec.ts` line 86,
+  which read Inter Medium on a tool button: it now reads it on Elements, and JetBrains Mono on the
+  tool buttons, whose corner keys it checks are hidden and set in `Planewright Mono`.
+- Contrast, measured by the new test's readings at 1280 × 720 and 800 × 720, a device pixel ratio of
+  2, with a rectangle drawn: every glyph at rest and the mark 16.70:1 (`on-surface` on the white
+  islands) and its button's border the same, the chosen tool's white glyph and its border 5.59:1 on
+  P0's `#2a62d0`, and the unavailable Redo's glyph and dashed border 7.56:1; the screenshots' most
+  contrasting pixels read 16.70 to 16.89, 5.59 and 7.68. P0's focus ring, which S3 does not change,
+  keeps the focus tests' 3:1 check.
+- Cost: the glyphs and `Icon` alone are 4,276 bytes minified and 1,663 bytes gzip, under the 3 to 4
+  KB estimated, and the tooltip 1,172 bytes gzip. The web app's initial JavaScript is 112,781 bytes
+  gzip against `main`'s 109,944 at `0e31b0d`, 2,837 bytes more for the whole slice, within B13's 200
+  KB; B11 and B12 are unchanged.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU where B1 and B2 miss
+  with unchanged code: two runs each of `npm run build`, `perf:browser` and `perf:report` on the
+  head (`9971572`, before these documents) and on `main` (`0e31b0d`) in a worktree. B1 was 48.9 and
+  30.1 ms against 32.4 and 64.7 ms on `main`, B2 12.4 and 10.3 ms against 13.8 and 13.9 ms, B3 0.2
+  ms against 0.1 ms, B4 one frame in every run, and B10 0.50 and 0.59 s against 0.87 and 0.99 s; B9
+  saw no long task in either first run and one, of 62 and 51 ms, in each second run. I1 was 89.4 and
+  80.8 ms against 90.4 and 70.4 ms. I2 was 141.7 and 170.4 ms against 78.2 and 87.9 ms, so I2 alone
+  was run six more times on each, alternating, in copies: its 95th percentile was 71 to 129 ms on
+  the head and 79 to 108 ms on `main`, and its median 41.7 to 48.6 ms against 41.3 to 49.0 ms, so
+  the difference lies within the machine's spread; I2 has no budget, and S5 changes what it
+  measures. `perf:report` exits 1 in that sequence only because B5 to B8 and B11 to B13 are not
+  measured there. B1's misses remain follow-up #49's.
+- S4 to S13 are not implemented.
