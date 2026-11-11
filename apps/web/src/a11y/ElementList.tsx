@@ -1,5 +1,5 @@
 import type { Element, ElementId } from '@planewright/engine';
-import { useEffect, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent } from 'react';
 
 import { sendKeyDown } from '../editor/attach-input.ts';
@@ -12,7 +12,9 @@ import { listAction } from './list-keys.ts';
 // list box beside the canvas, one option per drawn element, topmost first. It reads the editor's
 // view and selects through `Editor.select`, so the selection is the canvas's, both ways. The list
 // box keeps the focus and points at its active option, so a deleted option never takes the focus
-// with it; a large drawing renders only the options near the active one.
+// with it; a large drawing renders only the options near the active one. The options are memoised
+// on the elements, the selection and the active position, which a camera change keeps as they were,
+// so that a pan step renders none of them again (ADR 0012, decision 14).
 
 /** How many options a large drawing renders on each side of the active one. */
 export const OPTIONS_AROUND = 50;
@@ -46,20 +48,29 @@ function shownPositions(count: number, position: number): number[] {
   return Array.from({ length: Math.min(count, most) }, (_, offset) => first + offset);
 }
 
-/** The active option and the ways to change it and the selection from the list. */
+/**
+ * The active option and the ways to change it and the selection from the list, which keep their
+ * identity while the elements and the selection keep theirs, so that the options stay memoised.
+ */
 function useActive(elements: readonly Element[], selection: readonly ElementId[]) {
   const { editor } = useSurface();
   const [active, setActive] = useState<Active>({ id: null, position: 0 });
   const position = positionOf(elements, active);
-  const activate = (at: number): void => {
-    setActive({ id: atPosition(elements, at)?.id ?? null, position: at });
-  };
-  const choose = (at: number, toggle: boolean): void => {
-    const element = atPosition(elements, at);
-    if (element === undefined) return;
-    activate(at);
-    editor.select(toggle ? toggled(selection, element.id) : [element.id]);
-  };
+  const activate = useCallback(
+    (at: number): void => {
+      setActive({ id: atPosition(elements, at)?.id ?? null, position: at });
+    },
+    [elements],
+  );
+  const choose = useCallback(
+    (at: number, toggle: boolean): void => {
+      const element = atPosition(elements, at);
+      if (element === undefined) return;
+      activate(at);
+      editor.select(toggle ? toggled(selection, element.id) : [element.id]);
+    },
+    [editor, elements, selection, activate],
+  );
   return { position, current: atPosition(elements, position), activate, choose };
 }
 
@@ -70,8 +81,11 @@ interface OptionsProps {
   readonly choose: (at: number, toggle: boolean) => void;
 }
 
-/** The rendered options, each named, selected or not, with its place in the whole list. */
-function Options({ elements, selection, position, choose }: OptionsProps) {
+/**
+ * The rendered options, each named, selected or not, with its place in the whole list. They render
+ * again only when the elements, the selection, the active position or the way to choose change.
+ */
+const Options = memo(function Options({ elements, selection, position, choose }: OptionsProps) {
   const selected = new Set(selection);
   return shownPositions(elements.length, position).map((at) => {
     const element = atPosition(elements, at);
@@ -93,7 +107,7 @@ function Options({ elements, selection, position, choose }: OptionsProps) {
       </li>
     );
   });
-}
+});
 
 export function ElementList() {
   const { editor, platform } = useSurface();

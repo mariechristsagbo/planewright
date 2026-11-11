@@ -1,11 +1,16 @@
 import { expect, test } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 
 import { elementList, elementsToggle, openElements, openPage, polite } from './a11y.ts';
 import { canvas } from './support.ts';
 
-// The Elements drawer (ADR 0012, D4 and decision 13, issue #55's A9): the plain Elements toggle
-// opens and closes it, it is closed at every load, since the shell's state is never stored, and
-// P0's element list keeps its keys inside it (REQ-Y05).
+// The Elements drawer (ADR 0012, D4 and decisions 13 and 14, issues #55 and #66): the Elements
+// toggle, which shows the count, opens and closes it, it is closed at every load, since the shell's
+// state is never stored, it mounts no list while it is closed, and P0's element list keeps its keys
+// inside it (REQ-Y05).
+
+/** How many list boxes and options the page holds, hidden or not. */
+const mountedList = (page: Page): Locator => page.locator('[role="listbox"], [role="option"]');
 
 test('A9 D4 the Elements toggle opens and closes the drawer, which is closed after every reload', async ({
   page,
@@ -15,18 +20,21 @@ test('A9 D4 the Elements toggle opens and closes the drawer, which is closed aft
   await expect(toggle).toHaveAccessibleName('Elements');
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(elementList(page)).toBeHidden();
+  await expect(mountedList(page)).toHaveCount(0);
   await toggle.click();
   await expect(toggle).toHaveAttribute('aria-expanded', 'true');
   await expect(elementList(page)).toBeVisible();
   await toggle.click();
   await expect(toggle).toHaveAttribute('aria-expanded', 'false');
   await expect(elementList(page)).toBeHidden();
+  await expect(mountedList(page)).toHaveCount(0);
   await toggle.click();
   await expect(elementList(page)).toBeVisible();
   await page.reload();
   await expect(canvas(page)).toBeVisible();
   await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'false');
   await expect(elementList(page)).toBeHidden();
+  await expect(mountedList(page)).toHaveCount(0);
 });
 
 /** The toggle's count's text, whether it is hidden, and its face and figures. */

@@ -91,7 +91,8 @@ describe('EditorShell', () => {
     mount();
     expect(screen.getByRole('toolbar', { name: 'Tools' })).toBeInTheDocument();
     expect(screen.getByRole('region', { name: 'Drawing canvas' })).toBeInTheDocument();
-    expect(screen.queryByRole('listbox', { name: 'Elements' })).toBeNull();
+    // The closed drawer mounts no list, hidden or not (ADR 0012's row for these lines, S5's part).
+    expect(document.querySelector('[role="listbox"]')).toBeNull();
     expect(openElements()).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'History' })).toBeInTheDocument();
     expect(screen.getByRole('group', { name: 'Zoom' })).toBeInTheDocument();
@@ -157,7 +158,7 @@ describe('EditorShell', () => {
       'aria-expanded',
       'false',
     );
-    expect(screen.queryByRole('listbox')).toBeNull();
+    expect(document.querySelector('[role="listbox"]')).toBeNull();
     expect(
       [...document.querySelectorAll('[data-island]')].every((island) => main.contains(island)),
     ).toBe(true);
@@ -202,7 +203,7 @@ describe('EditorShell', () => {
       fireEvent.click(toggle);
     });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByRole('listbox', { name: 'Elements' })).toBeNull();
+    expect(document.querySelector('[role="listbox"]')).toBeNull();
   });
 
   it('shows the shared protocol version and the independence notice', () => {
