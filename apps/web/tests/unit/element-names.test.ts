@@ -1,7 +1,7 @@
 import type { Element } from '@planewright/engine';
 import { describe, expect, it } from 'vitest';
 
-import { elementName } from '../../src/a11y/element-names.ts';
+import { elementName, elementRow } from '../../src/a11y/element-names.ts';
 import { surfaceHarness } from '../support/surface.tsx';
 
 // How the element list names an element (docs/architecture/engine/quality.md#accessibility,
@@ -84,5 +84,46 @@ describe('the names of elements', () => {
     expect(elementName({ ...rectangle, rotation: 1e-9 })).toBe(
       'Rectangle, 100 by 100, at 350, 250',
     );
+  });
+
+  it('D4 A6 gives a row its kind, or a text’s words, as its label, and its size, place and turn as figures', () => {
+    const rectangle = drawn('tool.rectangle');
+    expect(elementRow(rectangle)).toEqual({ label: 'Rectangle', metadata: '100 × 100 · 350, 250' });
+    expect(elementRow({ ...rectangle, rotation: -Math.PI / 4, x: -0.04 })).toEqual({
+      label: 'Rectangle',
+      metadata: '100 × 100 · 0, 250 · 315°',
+    });
+    expect(elementRow(drawn('tool.line'))).toEqual({
+      label: 'Line',
+      metadata: '100 × 0 · 350, 300',
+    });
+    expect(elementRow(drawn('tool.freehand'))).toEqual({
+      label: 'Freehand stroke',
+      metadata: '0 × 0 · 400, 300',
+    });
+    const text = drawn('tool.text');
+    expect(elementRow(text).label).toBe('“Shopping list for the week ahead, with e…”');
+    expect(elementRow(text).metadata).toMatch(/^[\d.]+ × 50 · 400, 287\.5$/u);
+    if (text.kind !== 'text') throw new Error('The text tool drew no text.');
+    expect(elementRow({ ...text, content: { ...text.content, text: ' \n ' } }).label).toBe('Text');
+  });
+
+  it('D4 A6 shows in a row only words and figures of its name (WCAG 2.5.3, label in name)', () => {
+    const rectangle = drawn('tool.rectangle');
+    for (const element of [
+      rectangle,
+      { ...rectangle, rotation: 1, y: 12.345 },
+      drawn('tool.line'),
+      drawn('tool.freehand'),
+      drawn('tool.text'),
+    ]) {
+      const name = elementName(element);
+      const { label, metadata } = elementRow(element);
+      expect(name).toContain(label === 'Text' ? 'Text “' : label);
+      const figures = name.match(/-?[\d.]+/gu) ?? [];
+      expect(
+        (metadata.match(/-?[\d.]+/gu) ?? []).filter((figure) => !figures.includes(figure)),
+      ).toEqual([]);
+    }
   });
 });

@@ -1,11 +1,13 @@
-import type { Element, ElementId } from '@planewright/engine';
+import type { Element, ElementId, ElementKind } from '@planewright/engine';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import { sendKeyDown } from '../editor/attach-input.ts';
 import { keyInput } from '../editor/input-adapter.ts';
 import { useEditorView, useSurface } from '../editor/surface.ts';
-import { elementName } from './element-names.ts';
+import type { IconName } from '../shell/glyphs.ts';
+import { Icon } from '../shell/icons.tsx';
+import { elementName, elementRow } from './element-names.ts';
 import { listAction } from './list-keys.ts';
 
 // The element list (docs/architecture/engine/quality.md#accessibility, REQ-Y05): the drawing as a
@@ -36,6 +38,38 @@ interface Active {
 }
 
 const optionId = (id: ElementId): string => `element-${id}`;
+
+/**
+ * Each kind's original glyph (ADR 0012, decision 3): the tool's that draws it. The kinds that P0
+ * does not draw, which the view never lists, would show the list's own glyph.
+ */
+const KIND_GLYPHS: Readonly<Record<ElementKind, IconName>> = {
+  rectangle: 'rectangle',
+  ellipse: 'ellipse',
+  diamond: 'diamond',
+  line: 'line',
+  freehand: 'freehand',
+  text: 'text',
+  arrow: 'elements',
+  note: 'elements',
+  image: 'elements',
+  frame: 'elements',
+};
+
+/**
+ * One row: its kind's glyph, its label and its figures in mono. P0's name names the option, so a
+ * screen reader says P0's words, never the row's shorter text.
+ */
+function Row({ element }: { readonly element: Element }) {
+  const { label, metadata } = elementRow(element);
+  return (
+    <>
+      <Icon name={KIND_GLYPHS[element.kind]} size={16} />
+      <span className="element-row-label">{label}</span>
+      <span className="element-row-meta">{metadata}</span>
+    </>
+  );
+}
 
 /** The selection with an element added at its end, or taken out. */
 const toggled = (selection: readonly ElementId[], id: ElementId): ElementId[] =>
@@ -95,6 +129,7 @@ const Options = memo(function Options({ elements, selection, position, choose }:
         key={element.id}
         id={optionId(element.id)}
         role="option"
+        aria-label={elementName(element)}
         aria-selected={selected.has(element.id)}
         aria-setsize={elements.length}
         aria-posinset={at + 1}
@@ -103,7 +138,7 @@ const Options = memo(function Options({ elements, selection, position, choose }:
           choose(at, event.shiftKey || event.ctrlKey || event.metaKey);
         }}
       >
-        {elementName(element)}
+        <Row element={element} />
       </li>
     );
   });

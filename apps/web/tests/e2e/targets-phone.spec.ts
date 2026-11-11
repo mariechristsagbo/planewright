@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
-import { elementList, openElements, openPage, polite, targets } from './a11y.ts';
+import { elementList, expectOptionNames, openElements, openPage, polite, targets } from './a11y.ts';
 import { toolButton, touch } from './drawing.ts';
 
 // Touch on the emulated phone of docs/architecture/engine/quality.md (390 x 844 at a device pixel
@@ -34,7 +34,7 @@ async function drawTwo(page: Page): Promise<void> {
   await touch(page, [100, 450]);
   await choose(page, 'Ellipse');
   await touch(page, [250, 600]);
-  await expect((await openElements(page)).getByRole('option')).toHaveText([
+  await expectOptionNames(await openElements(page), [
     'Ellipse, 100 by 100, at 200, 550',
     'Rectangle, 100 by 100, at 50, 400',
   ]);
@@ -58,7 +58,7 @@ test('E3 A9 REQ-Y06 a touch press 11.5 px off a corner handle, inside its 24 px 
   await expect(polite(page)).toHaveText('1 element selected.');
   // The page never scrolls (ADR 0012), so the canvas is in view; the handle is below the drawer.
   await touch(page, [161.5, 511.5], [201.5, 551.5]);
-  await expect(rectangle).toHaveText('Rectangle, 140 by 140, at 50, 400');
+  await expect(rectangle).toHaveAccessibleName('Rectangle, 140 by 140, at 50, 400');
   await expect(polite(page)).toHaveText('Resized 1 rectangle. 1 element selected.');
 });
 

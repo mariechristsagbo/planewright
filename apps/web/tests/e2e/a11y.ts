@@ -10,7 +10,29 @@ import { canvas } from './support.ts';
 /** The polite live region, which says selections, changes, undo and redo (REQ-Y04). */
 export const polite = (page: Page): Locator => page.locator('#live-polite');
 
+/** The element list box, which the Elements drawer mounts only while it is open (ADR 0012, D4). */
 export const elementList = (page: Page): Locator => page.getByRole('listbox', { name: 'Elements' });
+
+/**
+ * An option's accessible name from the page's accessibility tree, which keeps P0's words while the
+ * row shows a glyph, a label and figures (ADR 0012's rows for the list's options, S5).
+ */
+export async function nameOf(option: Locator): Promise<string> {
+  const snapshot = await option.ariaSnapshot();
+  return /^- option "(?<name>[^"]*)"/u.exec(snapshot)?.groups?.['name'] ?? '';
+}
+
+/** The list's options, in order, are named by these names or patterns, not by their text. */
+export async function expectOptionNames(
+  list: Locator,
+  names: readonly (string | RegExp)[],
+): Promise<void> {
+  const options = list.getByRole('option');
+  await expect(options).toHaveCount(names.length);
+  for (const [index, name] of names.entries()) {
+    await expect(options.nth(index)).toHaveAccessibleName(name);
+  }
+}
 
 /** The Elements toggle, found by the start of its name (ADR 0012, decision 16). */
 export const elementsToggle = (page: Page): Locator =>

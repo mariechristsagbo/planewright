@@ -6,6 +6,7 @@ import {
   elementList,
   elementsToggle,
   expectIndicator,
+  expectOptionNames,
   openElements,
   openPage,
   polite,
@@ -148,6 +149,57 @@ test('D1 A2 the toggle shows the count in Inter’s tabular figures, following t
   await expect(toggle).toHaveAccessibleName('Elements');
 });
 
+/** Each option's glyph, label, figures and their faces, with what is hidden. */
+const ROWS = `[...document.querySelectorAll('[role="option"]')].map((option) => {
+  const glyph = option.querySelector('svg[data-glyph]');
+  const label = option.querySelector('.element-row-label');
+  const meta = option.querySelector('.element-row-meta');
+  return {
+    glyph: glyph?.getAttribute('data-glyph'),
+    hidden: glyph?.getAttribute('aria-hidden'),
+    label: label?.textContent,
+    labelFace: getComputedStyle(label).fontFamily.split(',')[0],
+    meta: meta?.textContent,
+    metaFace: getComputedStyle(meta).fontFamily.split(',')[0],
+  };
+})`;
+
+test('D4 A6 every row shows its kind’s glyph, a label and its figures in JetBrains Mono, named by P0’s words', async ({
+  page,
+}) => {
+  await openPage(page);
+  await canvas(page).focus();
+  for (const key of ['r', 'Enter', 't', 'Enter']) await page.keyboard.press(key);
+  await page.keyboard.type('Plan');
+  await page.keyboard.press('Escape');
+  await expect(polite(page)).toHaveText('Text created. 1 element selected.');
+  const list = await openElements(page);
+  await expectOptionNames(list, [
+    /^Text “Plan”, [\d.]+ by 25, at -?[\d.]+, -?[\d.]+$/u,
+    /^Rectangle, 100 by 100, at -?[\d.]+, -?[\d.]+$/u,
+  ]);
+  const ui = '"Planewright UI"';
+  const mono = '"Planewright Mono"';
+  expect(await page.evaluate(ROWS)).toEqual([
+    {
+      glyph: 'text',
+      hidden: 'true',
+      label: '“Plan”',
+      labelFace: ui,
+      meta: expect.stringMatching(/^[\d.]+ × 25 · -?[\d.]+, -?[\d.]+$/u),
+      metaFace: mono,
+    },
+    {
+      glyph: 'rectangle',
+      hidden: 'true',
+      label: 'Rectangle',
+      labelFace: ui,
+      meta: expect.stringMatching(/^100 × 100 · -?[\d.]+, -?[\d.]+$/u),
+      metaFace: mono,
+    },
+  ]);
+});
+
 test('A9 REQ-Y05 P0’s list keys move, select, nudge and delete inside the open drawer', async ({
   page,
 }) => {
@@ -157,7 +209,7 @@ test('A9 REQ-Y05 P0’s list keys move, select, nudge and delete inside the open
   await expect(polite(page)).toHaveText('Ellipse created. 1 element selected.');
   const list = await openElements(page);
   const options = list.getByRole('option');
-  await expect(options).toHaveText([/^Ellipse, /u, /^Rectangle, /u]);
+  await expectOptionNames(list, [/^Ellipse, /u, /^Rectangle, /u]);
   await list.focus();
   const said = async (key: string, message: string) => {
     await page.keyboard.press(key);
