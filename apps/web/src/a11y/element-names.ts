@@ -2,17 +2,16 @@ import { localBox } from '@planewright/engine';
 import type { Element } from '@planewright/engine';
 
 import { KIND_NAMES } from './names.ts';
+import { decimal, normalizedDegrees } from './rounding.ts';
 
 // How the element list names an element (docs/architecture/engine/quality.md#accessibility,
 // REQ-Y05): by its kind, a text's words, its size and its position in scene units, and how far it
 // is turned, as in "Rectangle, 120 by 100, at 300, 180". A row of the list shows the same words and
-// figures, shorter: "Rectangle" and "120 × 100 · 300, 180" (the v0.2 plan's S5).
+// figures, shorter: "Rectangle" and "120 × 100 · 300, 180" (the v0.2 plan's S5). Both round as the
+// selection's figures do (rounding.ts).
 
 /** The most of a text's words that a name holds. */
 const TEXT_LENGTH = 40;
-
-/** One decimal place, and never "-0". */
-const decimal = (value: number): string => String(Math.round(value * 10) / 10 + 0);
 
 const SPACE = /\s/u;
 
@@ -45,8 +44,8 @@ function kindOf(element: Element): string {
 
 /** The turn in degrees from 0 to 360 to a tenth, or null when it rounds to none. */
 function degreesOf(rotation: number): number | null {
-  const degrees = Math.round((((((rotation * 180) / Math.PI) % 360) + 360) % 360) * 10) / 10;
-  return degrees === 0 || degrees === 360 ? null : degrees;
+  const degrees = normalizedDegrees(rotation);
+  return degrees === 0 ? null : degrees;
 }
 
 /** The turn in degrees, or nothing when it rounds to none. */
