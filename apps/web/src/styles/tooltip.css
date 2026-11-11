@@ -1,7 +1,8 @@
 /*
  * The chrome's one tooltip (ADR 0012 and the v0.2 plan's S3): a graphite surface with white caption
- * text and the control's keys in chips, 8 px from its control and above every island. Presses go
- * through it, and it never animates.
+ * text and the control's keys in chips, 8 px from its control and above every island. It never
+ * animates. The pointer can move onto it and rest there (WCAG 2.1, 1.4.13), so it takes presses,
+ * which close it, and the gap between it and its control is part of it.
  */
 .chrome-tip {
   position: fixed;
@@ -19,7 +20,22 @@
   font: var(--pw-type-caption);
   letter-spacing: var(--pw-type-caption-tracking);
   white-space: nowrap;
-  pointer-events: none;
+}
+
+/* The gap to its control, whose side and height Tooltip.tsx gives, for the pointer to cross. */
+.chrome-tip::before {
+  position: absolute;
+  inset-inline: 0;
+  height: var(--chrome-tip-reach, 0);
+  content: '';
+}
+
+.chrome-tip[data-side='below']::before {
+  bottom: 100%;
+}
+
+.chrome-tip[data-side='above']::before {
+  top: 100%;
 }
 
 .chrome-tip[hidden] {

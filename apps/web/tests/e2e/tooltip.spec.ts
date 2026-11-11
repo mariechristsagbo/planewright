@@ -116,6 +116,33 @@ test('D4 D6 A6 a hover tooltip appears after its delay and closes when the point
   await expect(rectangle).toHaveAttribute('aria-pressed', 'false');
 });
 
+test('D4 A6 a hover tooltip stays open while the pointer moves onto it, under its control or over it, and closes when the pointer leaves both', async ({
+  page,
+}) => {
+  await openPage(page);
+  const box = await canvasBox(page);
+  const controls: [Locator, RegExp][] = [
+    [toolButton(page, 'Rectangle'), /^Rectangle\s*R\s*or\s*2$/u],
+    [page.getByRole('button', { name: 'Zoom in', exact: true }), /^Zoom in\s*Ctrl\+=/u],
+  ];
+  for (const [control, said] of controls) {
+    const [x, y] = await centreOf(control);
+    await page.mouse.move(x, y);
+    await expect(tip(page)).toHaveText(said);
+    const [toX, toY] = await centreOf(tip(page));
+    // In steps of about 3 px, across the 8 px between the control and its tip.
+    const steps = Math.ceil(Math.abs(toY - y) / 3);
+    for (let step = 1; step <= steps; step += 1) {
+      await page.mouse.move(x + ((toX - x) * step) / steps, y + ((toY - y) * step) / steps);
+      expect(await tip(page).isVisible()).toBe(true);
+    }
+    await page.waitForTimeout(SETTLE_MS);
+    await expect(tip(page)).toHaveText(said);
+    await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 4 });
+    await expect(tip(page)).toHaveCount(0);
+  }
+});
+
 test.describe('on a touch screen', () => {
   test.use({ hasTouch: true });
 

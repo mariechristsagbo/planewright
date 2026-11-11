@@ -2,8 +2,9 @@
 // listener per control: the shell's root follows the pointer and the focus for every control that
 // names a tip, and its document follows the keys, so that Escape closes a tip wherever the focus
 // is. A tip opens after the hover delay, at once on keyboard focus and never on touch, and closes
-// on Escape, on a press and when the pointer or the focus leaves its control. The Escape that
-// closes a tip does nothing else.
+// on Escape, on a press, when the focus leaves its control and when the pointer leaves both the
+// control and the tip, which the pointer can move onto (WCAG 2.1, 1.4.13). The Escape that closes
+// a tip does nothing else.
 
 /** The delay without the --pw-delay-tooltip token, as in a page without its style sheets. */
 const DELAY_MS = 500;
@@ -72,12 +73,21 @@ function tipsOf(show: (control: HTMLElement | null) => void) {
 
 type TipsState = ReturnType<typeof tipsOf>;
 
-/** The pointer's handlers: resting on a control, leaving it and pressing. */
-function pointerHandlers(root: HTMLElement, { tips, stopWaiting, open }: TipsState) {
+/**
+ * The pointer's handlers: resting on a control, leaving it and pressing. The showing tip counts as
+ * its control, so that the pointer can move from one to the other and the tip stays open.
+ */
+function pointerHandlers(
+  root: HTMLElement,
+  tip: HTMLElement,
+  { tips, stopWaiting, open }: TipsState,
+) {
+  const ownerOf = (node: EventTarget | null): HTMLElement | null =>
+    node instanceof Node && tip.contains(node) ? tips.shown : tipControlOf(node);
   const hover = (event: PointerEvent): void => {
     if (event.pointerType === 'touch') return;
-    const control = tipControlOf(event.target);
-    tips.under = control;
+    tips.under = tipControlOf(event.target);
+    const control = ownerOf(event.target);
     if (control === null || [tips.shown, tips.waiting, tips.dismissed].includes(control)) return;
     stopWaiting();
     tips.waiting = control;
@@ -86,9 +96,8 @@ function pointerHandlers(root: HTMLElement, { tips, stopWaiting, open }: TipsSta
     }, hoverDelay(root));
   };
   const leave = (event: PointerEvent): void => {
-    const control = tipControlOf(event.target);
-    const to = event.relatedTarget;
-    if (control === null || (to instanceof Node && control.contains(to))) return;
+    const control = ownerOf(event.target);
+    if (control === null || ownerOf(event.relatedTarget) === control) return;
     if (tips.under === control) tips.under = null;
     if (tips.dismissed === control) tips.dismissed = null;
     if (tips.waiting === control) stopWaiting();
@@ -125,16 +134,18 @@ function keyHandlers({ tips, open }: TipsState) {
 }
 
 /**
- * Follows the events that open and close tips: one listener of each kind on the shell's root, and
- * one for the keys on its document, ahead of the controls' own, so that a key that moves the focus
- * counts before the focus moves. Gives a function that removes them.
+ * Follows the events that open and close tips, the tip's own among them: one listener of each kind
+ * on the shell's root, which holds the tip, and one for the keys on its document, ahead of the
+ * controls' own, so that a key that moves the focus counts before the focus moves. Gives a function
+ * that removes them.
  */
 export function watchTooltips(
   root: HTMLElement,
+  tip: HTMLElement,
   show: (control: HTMLElement | null) => void,
 ): () => void {
   const state = tipsOf(show);
-  const { hover, leave, press } = pointerHandlers(root, state);
+  const { hover, leave, press } = pointerHandlers(root, tip, state);
   const { focus, blur, key } = keyHandlers(state);
   const document = root.ownerDocument;
   root.addEventListener('pointerover', hover);
