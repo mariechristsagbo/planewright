@@ -1,12 +1,15 @@
 import { PROTOCOL_VERSION } from '@planewright/protocol';
 
-import { BUILD_STATUS, FOUNDATION_CONTENTS, NOT_YET_IMPLEMENTED } from '../../foundation.ts';
+import {
+  BUILD_STATUS,
+  FOUNDATION_CONTENTS,
+  NOT_YET_IMPLEMENTED,
+  REPOSITORY_URL,
+} from '../../foundation.ts';
 import { ModalDialog } from './ModalDialog.tsx';
 
 // About this build (ADR 0012, D5): what P0's page said around the editor, in one dialog that the
-// Pre-release tag opens, so that the canvas can fill the window. The words are P0's.
-
-const REPOSITORY_URL = 'https://github.com/mariechristsagbo/planewright';
+// Pre-release tag and the menu open, so that the canvas can fill the window. The words are P0's.
 
 function NotYetImplemented() {
   return (

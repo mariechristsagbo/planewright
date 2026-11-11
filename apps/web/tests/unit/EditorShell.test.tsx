@@ -101,11 +101,12 @@ describe('EditorShell', () => {
     }
   });
 
-  it('AC REQ-Y02 puts the tab stops in the specified order: Pre-release, tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls, Keyboard shortcuts', () => {
+  it('AC REQ-Y02 puts the tab stops in the specified order: the menu, Pre-release, tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls, Keyboard shortcuts', () => {
     mount();
     const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
     const elements = screen.getByRole('button', { name: /^Elements/u });
     const before = [
+      screen.getByRole('button', { name: 'Planewright menu' }),
       screen.getByRole('button', { name: 'Pre-release' }),
       toolbar.querySelector('[tabindex="0"]'),
       screen.getByRole('region', { name: 'Drawing canvas' }),
@@ -121,6 +122,7 @@ describe('EditorShell', () => {
     const list = openElements();
     expect(tabStops()).toEqual([...before, list, ...after]);
     expect([...before, list].map((stop) => stop?.getAttribute('tabindex') ?? null)).toEqual([
+      null,
       null,
       '0',
       '0',
@@ -161,15 +163,18 @@ describe('EditorShell', () => {
     ).toBe(true);
   });
 
-  it('D3 shows the mark beside the wordmark in the identity island, hidden from assistive technology', () => {
+  it('D3 shows the mark beside the wordmark in the identity island, hidden from assistive technology, between the menu button and Pre-release', () => {
     mount();
     const identity = document.querySelector('[data-island="identity"]');
-    const mark = identity?.querySelector('svg[data-glyph]');
-    expect(mark).toHaveAttribute('data-glyph', 'mark');
+    // The menu button's glyph comes first since S4, then the mark.
+    const glyphs = [...(identity?.querySelectorAll('svg[data-glyph]') ?? [])];
+    expect(glyphs.map((glyph) => glyph.getAttribute('data-glyph'))).toEqual(['menu', 'mark']);
+    const mark = glyphs[1];
     expect(mark).toHaveAttribute('aria-hidden', 'true');
     expect(mark?.closest('.identity-mark')?.nextElementSibling).toHaveClass('wordmark');
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
     expect(within(identity as HTMLElement).getAllByRole('button')).toEqual([
+      screen.getByRole('button', { name: 'Planewright menu' }),
       screen.getByRole('button', { name: 'Pre-release' }),
     ]);
   });

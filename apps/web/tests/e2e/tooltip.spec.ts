@@ -47,6 +47,8 @@ test('D4 D6 A6 a tooltip appears at once on keyboard focus and closes on Escape,
   await openPage(page);
   const hand = toolButton(page, 'Hand');
   await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Pre-release' })).toBeFocused();
   await expect(tip(page)).toHaveCount(0);
   await page.keyboard.press('Tab');
   await expect(hand).toBeFocused();
@@ -70,7 +72,7 @@ test('D4 A6 the Escape that closes a tip goes no further: the chosen tool and th
 }) => {
   await openPage(page);
   const rectangle = toolButton(page, 'Rectangle');
-  for (const key of ['Tab', 'Tab', 'ArrowRight', 'ArrowRight', 'Enter']) {
+  for (const key of ['Tab', 'Tab', 'Tab', 'ArrowRight', 'ArrowRight', 'Enter']) {
     await page.keyboard.press(key);
   }
   await expect(rectangle).toHaveAttribute('aria-pressed', 'true');
@@ -103,8 +105,7 @@ test('D4 A6 an Escape on a focus tip leaves the hover tip of its control free to
 }) => {
   await openPage(page);
   const hand = toolButton(page, 'Hand');
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
+  for (const key of ['Tab', 'Tab', 'Tab']) await page.keyboard.press(key);
   await expect(tip(page)).toHaveText(/^Hand\s*H$/u);
   await page.keyboard.press('Escape');
   await expect(tip(page)).toHaveCount(0);

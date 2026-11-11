@@ -52,8 +52,7 @@ test('A4 REQ-Y01 the padlock closes and opens with tool lock from the keyboard, 
   const padlock = lock.locator('svg[data-glyph]');
   await expect(lock).toHaveAttribute('aria-pressed', 'false');
   await expect(padlock).toHaveAttribute('data-glyph', 'lock-open');
-  await page.keyboard.press('Tab');
-  await page.keyboard.press('Tab');
+  for (const key of ['Tab', 'Tab', 'Tab']) await page.keyboard.press(key);
   await expect(toolButton(page, 'Hand')).toBeFocused();
   await page.keyboard.press('End');
   await expect(lock).toBeFocused();

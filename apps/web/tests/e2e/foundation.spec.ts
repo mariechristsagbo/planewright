@@ -2,7 +2,8 @@ import { expect, test } from '@playwright/test';
 
 // The page states what this pre-release build is and what does not work yet (AGENTS.md: the UI
 // stays factual), in About this build, which the Pre-release tag opens (ADR 0012, D5), under a
-// visually hidden heading, with named controls in a tool bar that the arrow keys move through.
+// visually hidden heading, with named controls in a tool bar that the arrow keys move through, after
+// the menu button and the Pre-release tag.
 
 test('states what the build draws and lists what does not work', async ({ page }) => {
   await page.goto('/');
@@ -40,6 +41,8 @@ test('REQ-Y01 REQ-Y03 REQ-C14 has a named tool bar that the arrow keys move thro
   await expect(hand).toHaveAttribute('aria-keyshortcuts', 'H');
   await expect(selection).toHaveAttribute('aria-keyshortcuts', 'V 1');
   await expect(hand).toHaveAccessibleDescription('Shortcut H. Drag to pan the canvas.');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: 'Planewright menu' })).toBeFocused();
   await page.keyboard.press('Tab');
   await expect(page.getByRole('button', { name: 'Pre-release' })).toBeFocused();
   await page.keyboard.press('Tab');

@@ -1,0 +1,69 @@
+/*
+ * The identity island's menu (ADR 0012, decisions 2, 3 and 8; the v0.2 plan's S4): a popover under
+ * the island from its left edge, above every island while it is open, 264 px wide or the window
+ * less its anchors, and scrolling inside itself in a short window. Its items keep the base's
+ * focus rule, which its padding leaves room for, take the surface's hover colour while the
+ * pointer or the keyboard is on them, and show their keys in JetBrains Mono.
+ */
+.identity-island:has(> .chrome-menu) {
+  z-index: var(--pw-layer-popover);
+}
+
+.chrome-menu {
+  position: absolute;
+  top: calc(100% + 1px + var(--pw-spacing-xs));
+  left: -1px;
+  box-sizing: border-box;
+  width: min(var(--pw-spacing-menu-width), calc(100vw - 2 * var(--pw-spacing-sm)));
+  max-height: calc(100dvh - 100% - 2 * var(--pw-spacing-lg) - var(--pw-spacing-xs));
+  padding: var(--pw-spacing-sm);
+  overflow-y: auto;
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e3);
+  font: var(--pw-type-body-md);
+  letter-spacing: var(--pw-type-body-md-tracking);
+}
+
+.chrome-menu .chrome-menu-item {
+  display: flex;
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--pw-spacing-control-desktop);
+  padding: 0 var(--pw-spacing-sm);
+  border: 0;
+  border-radius: var(--pw-rounded-sm);
+  text-align: start;
+  text-decoration: none;
+}
+
+.chrome-menu .chrome-menu-item:is(:hover, :focus-visible) {
+  background: var(--pw-color-surface-hover);
+}
+
+.chrome-menu-item > svg {
+  flex: none;
+}
+
+.chrome-menu-label {
+  flex: 1;
+}
+
+/* An item's keys, which its name and aria-keyshortcuts also give. */
+.chrome-menu-keys {
+  margin: 0;
+  color: var(--pw-color-on-surface-muted);
+  font: var(--pw-type-kbd);
+  letter-spacing: var(--pw-type-kbd-tracking);
+}
+
+/* The hairline between two groups of items. */
+.chrome-menu-rule {
+  height: 1px;
+  margin: var(--pw-spacing-xs) 0;
+  background: var(--pw-color-outline-subtle);
+}
