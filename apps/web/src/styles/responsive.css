@@ -98,6 +98,34 @@
     min-height: 0;
     max-height: none;
   }
+
+  /*
+   * The selection bar (the v0.2 plan's S6) takes the notices' row, and the notices the next row,
+   * so that the bar comes first and the notices after it, in one column; with no bar the grid is
+   * as above. Both sheets then start at the room row, below the bar and the notices, and the Details
+   * sheet lies along the window's bottom as the Elements sheet does, at most 62 % of its height.
+   */
+  .selection-bar {
+    grid-area: notices;
+  }
+
+  .selection-bar ~ .notices {
+    grid-area: drawer;
+  }
+
+  .selection-bar ~ .element-list-drawer {
+    grid-row-start: room;
+  }
+
+  .details-sheet {
+    position: relative;
+    grid-column: 1 / -1;
+    grid-row: room / bottom;
+    align-self: end;
+    justify-self: stretch;
+    max-height: min(var(--pw-spacing-sheet-max-height), 100% + var(--pw-spacing-sm));
+    margin: 0 calc(-1 * var(--pw-spacing-sm)) calc(-1 * var(--pw-spacing-sm));
+  }
 }
 
 /* A phone in landscape, under 500 px high, after the compact rules: 8 px anchors. */

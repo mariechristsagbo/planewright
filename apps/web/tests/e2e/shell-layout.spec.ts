@@ -25,8 +25,11 @@ interface Box {
   readonly height: number;
 }
 
-/** Each island's box, and the notices' and the open drawer's while they show. */
-const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"], #element-list-drawer:not([hidden])')]
+/**
+ * Each island's box, the selection panel's or bar's among them, and the notices', the open
+ * drawer's and the open Details sheet's while they show.
+ */
+const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"], #element-list-drawer:not([hidden]), #details-sheet:not([hidden])')]
   .map((element) => {
     const { x, y, width, height } = element.getBoundingClientRect();
     return { name: element.dataset.island ?? (element.id || element.getAttribute('aria-label')), x, y, width, height };
@@ -64,15 +67,16 @@ const INERT = `[...document.querySelectorAll('[inert]')].map((element) => elemen
 /**
  * Every island, and the notices and the drawer while they show, inside the viewport and apart, with
  * history and zoom at the window's bottom, no more than the largest anchor, 16 px, above its edge.
- * On a phone in portrait the open drawer is a sheet over the bottom islands, which may meet it only
- * while their controls are inert (S5).
+ * On a phone in portrait the open drawer, and the Details sheet, are sheets over the bottom islands,
+ * which may meet them only while their controls are inert (S5, S6).
  */
 async function expectPlaced(page: Page, viewport: Viewport, count: number): Promise<void> {
   const boxes = await islands(page);
   expect(boxes).toHaveLength(count);
   const inert = await page.evaluate<string[]>(INERT);
   const covered = (pair: string): boolean =>
-    pair.startsWith('element-list-drawer × ') && inert.includes(pair.split(' × ')[1] ?? '');
+    /^(element-list-drawer|details-sheet) × /u.test(pair) &&
+    inert.includes(pair.split(' × ')[1] ?? '');
   expect({
     outside: outside(boxes, viewport),
     intersecting: intersecting(boxes).filter((pair) => !covered(pair)),
@@ -220,6 +224,25 @@ test.describe('at 844 × 140, barely taller than the top and bottom islands', ()
     await openElements(page);
     // The selection panel shows for the nudged rectangle, scrolling in the room it has (S6).
     await expectPlaced(page, viewport, 8);
+  });
+});
+
+test.describe('at 390 × 844 with the Details sheet', () => {
+  const viewport = { width: 390, height: 844 };
+  test.use({ viewport, isMobile: true, hasTouch: true });
+
+  test('A9 the selection bar, the stale notice and the Details sheet lie inside the window, apart from every island but the inert ones under the sheet', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await showStaleNotice(page);
+    await page.locator('[data-island="selection"]').getByRole('button', { name: 'Details' }).tap();
+    await expect(page.getByRole('region', { name: 'Details' })).toBeVisible();
+    await expectPlaced(page, viewport, 8);
+    expect(intersecting(await islands(page))).toEqual([
+      'details-sheet × bottom-left',
+      'details-sheet × bottom-right',
+    ]);
   });
 });
 

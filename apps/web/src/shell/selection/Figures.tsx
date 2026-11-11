@@ -7,6 +7,9 @@ import type { SelectionGeometry } from './geometry.ts';
 // What the selection panel and the Details sheet share (the v0.2 plan's S6): the heading with the
 // kind's glyph and name, or the count, and the read-only figures.
 
+/** The identifier of the panel's or the bar's heading, which names it. */
+export const SELECTION_HEADING_ID = 'selection-heading';
+
 /** The heading's glyph and words: the kind's, or the multiple glyph and the count. */
 function headingOf(geometry: SelectionGeometry) {
   return geometry.type === 'multiple'

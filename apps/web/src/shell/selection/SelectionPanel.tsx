@@ -1,7 +1,9 @@
 import { useRef } from 'react';
 
-import { Figures, SelectionHeading, StyleFootnote } from './Figures.tsx';
+import { Figures, SELECTION_HEADING_ID, SelectionHeading, StyleFootnote } from './Figures.tsx';
 import { SelectionActions } from './SelectionActions.tsx';
+import { SelectionBar } from './SelectionBar.tsx';
+import type { DetailsControls } from './SelectionBar.tsx';
 import { useFocusRescue, useSelected } from './use-selected.ts';
 import type { Selected } from './use-selected.ts';
 
@@ -10,9 +12,9 @@ import type { Selected } from './use-selected.ts';
 // that with no selection it has no tab stop and no cost. It shows the selection's kind or count,
 // its read-only figures, Duplicate, Delete and Edit text, and that style controls are not in this
 // build. It is a group named by its heading, neither a landmark nor a live region, since the
-// polite region already says every selection and command. Where it sits is selection.css's.
-
-const HEADING_ID = 'selection-heading';
+// polite region already says every selection and command. On a phone in portrait the selection
+// bar and its Details sheet take its place (SelectionBar.tsx). Where they sit is selection.css's
+// and responsive.css's.
 
 /** The mounted panel, which gives the focus to the canvas if it goes with the focus inside. */
 function Panel({ selected }: { readonly selected: Selected }) {
@@ -22,11 +24,11 @@ function Panel({ selected }: { readonly selected: Selected }) {
     <div
       ref={panel}
       role="group"
-      aria-labelledby={HEADING_ID}
+      aria-labelledby={SELECTION_HEADING_ID}
       className="selection-panel"
       data-island="selection"
     >
-      <SelectionHeading id={HEADING_ID} geometry={selected.geometry} />
+      <SelectionHeading id={SELECTION_HEADING_ID} geometry={selected.geometry} />
       <Figures geometry={selected.geometry} />
       <SelectionActions editsText={selected.editsText} />
       <StyleFootnote />
@@ -35,12 +37,23 @@ function Panel({ selected }: { readonly selected: Selected }) {
 }
 
 /**
- * The panel, while something drawn is selected and no text is edited, wherever the phone's sheet
- * query does not match; under it, on a phone in portrait, the panel does not show. It reads only
- * values that keep their identity across camera changes, so that a pan or zoom step renders it not
- * at all.
+ * The panel, or under the phone sheet's query the bar and its Details sheet, while something drawn
+ * is selected and no text is edited. It reads only values that keep their identity across camera
+ * changes, so that a pan or zoom step renders none of them.
  */
-export function SelectionPanel({ sheet }: { readonly sheet: boolean }) {
+export function SelectionPanel({
+  sheet,
+  controls,
+}: {
+  /** Whether the window is a phone in portrait, where the bar shows (shell/sheet.ts). */
+  readonly sheet: boolean;
+  readonly controls: DetailsControls;
+}) {
   const selected = useSelected();
-  return selected === null || sheet ? null : <Panel selected={selected} />;
+  if (selected === null) return null;
+  return sheet ? (
+    <SelectionBar selected={selected} controls={controls} />
+  ) : (
+    <Panel selected={selected} />
+  );
 }

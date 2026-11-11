@@ -208,10 +208,16 @@ describe('the selection panel’s actions', () => {
       drawRectangleAndText(editor);
     });
     const commits = vi.fn();
+    const controls = {
+      details: false,
+      drawer: false,
+      onToggleDetails: vi.fn(),
+      onCloseDetails: vi.fn(),
+    };
     render(
       harness.wrap(
         <Profiler id="selection" onRender={commits}>
-          <SelectionPanel sheet={false} />
+          <SelectionPanel sheet={false} controls={controls} />
         </Profiler>,
       ),
     );
