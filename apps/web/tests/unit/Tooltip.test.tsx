@@ -54,6 +54,7 @@ const TIPPED = [
   'Reset zoom, 100%',
   'Zoom in',
   'Zoom to fit',
+  'Keyboard shortcuts',
 ];
 
 beforeEach(() => {
@@ -255,7 +256,8 @@ describe('the tooltips', () => {
       expect(control).toHaveAccessibleName(name);
       const description = document.getElementById(control.getAttribute('aria-describedby') ?? '');
       for (const key of shown.keys) expect(description?.textContent).toContain(key);
-      expect(control.getAttribute('aria-describedby')).not.toContain(tip()?.id ?? 'no tip');
+      // A control without a description, such as Keyboard shortcuts, has its name and tip alone.
+      expect(control.getAttribute('aria-describedby') ?? '').not.toContain(tip()?.id ?? 'no tip');
     }
     expect(opened).toEqual(TIPPED);
     expect(button('Hand')).toHaveAccessibleDescription('Shortcut H. Drag to pan the canvas.');

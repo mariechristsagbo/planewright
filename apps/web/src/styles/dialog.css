@@ -47,3 +47,43 @@
 .dialog dl {
   margin: 0 0 var(--pw-spacing-sm);
 }
+
+/*
+ * The Keyboard shortcuts dialog's tables (the v0.2 plan's S4): each command's name, then its keys
+ * as key chips in JetBrains Mono, one chip for each chord (ADR 0012, decision 8).
+ */
+.shortcut-table {
+  width: 100%;
+  margin: 0 0 var(--pw-spacing-sm);
+  border-collapse: collapse;
+}
+
+.shortcut-table th,
+.shortcut-table td {
+  padding: var(--pw-spacing-xs) 0;
+  border-bottom: 1px solid var(--pw-color-outline-subtle);
+  vertical-align: baseline;
+}
+
+.shortcut-table th {
+  font-weight: 400;
+  text-align: start;
+}
+
+.shortcut-table td {
+  padding-inline-start: var(--pw-spacing-md);
+  color: var(--pw-color-on-surface-variant);
+  text-align: end;
+}
+
+.shortcut-table kbd {
+  display: inline-block;
+  margin: 0;
+  padding: 0 var(--pw-spacing-xs);
+  border: 1px solid var(--pw-color-outline);
+  border-radius: var(--pw-rounded-xs);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface-muted);
+  font: var(--pw-type-kbd);
+  letter-spacing: var(--pw-type-kbd-tracking);
+}

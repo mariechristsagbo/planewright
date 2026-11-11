@@ -87,7 +87,7 @@ test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whol
         await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
         const glyphs = await glyphContrasts(page);
         // The palette's tools and tool lock, the chosen one pressed, Undo enabled and Redo not,
-        // the zoom buttons and the mark (ADR 0012, decision 3).
+        // the zoom buttons, Keyboard shortcuts and the mark (ADR 0012, decision 3).
         expect(glyphs.map(({ glyph }) => glyph)).toEqual(
           expect.arrayContaining([
             ...PALETTE,
@@ -96,6 +96,7 @@ test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whol
             'zoom-out',
             'zoom-in',
             'zoom-fit',
+            'keyboard',
             'mark',
           ]),
         );
