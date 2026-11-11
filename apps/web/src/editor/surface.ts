@@ -24,6 +24,17 @@ export function useSurface(): EditorSurface {
   return surface;
 }
 
+/**
+ * One value of the editor's view; the component renders again only when that value changes. A pan
+ * or zoom step publishes a new view whose other values keep their identity, so a component that
+ * reads only those renders not at all (ADR 0012, decision 14).
+ */
+export function useViewValue<T>(read: (view: EditorView) => T): T {
+  const { editor } = useSurface();
+  const subscribe = useCallback((listener: () => void) => editor.subscribe(listener), [editor]);
+  return useSyncExternalStore(subscribe, () => read(editor.view));
+}
+
 /** The editor's view; the component renders again whenever the editor publishes a new one. */
 export function useEditorView(): EditorView {
   const { editor } = useSurface();
