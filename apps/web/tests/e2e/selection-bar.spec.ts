@@ -57,6 +57,40 @@ for (const viewport of [
       await expect(selectionSurface(page).getByRole('button')).toHaveCount(names.length);
     });
 
+    test('D3 the bar’s actions take the panel’s tab stops, and the Elements sheet, its list full, opens below the bar', async ({
+      page,
+    }) => {
+      await openPage(page);
+      await canvas(page).focus();
+      for (let made = 0; made < 40; made += 1) {
+        await page.keyboard.press('r');
+        await page.keyboard.press('Enter');
+      }
+      await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
+      for (const stop of [
+        panelButton(page, 'Duplicate'),
+        panelButton(page, 'Delete'),
+        panelButton(page, 'Details'),
+        elementsToggle(page),
+      ]) {
+        await page.keyboard.press('Tab');
+        await expect(stop).toBeFocused();
+      }
+      await page.keyboard.press('Enter');
+      await expect(elementList(page)).toBeFocused();
+      await expect(elementList(page).getByRole('option')).toHaveCount(40);
+      const bar = await boxOf(selectionSurface(page));
+      const sheet = await boxOf(page.locator('#element-list-drawer'));
+      expect(sheet.y).toBeGreaterThanOrEqual(bar.y + bar.height);
+      // Nothing lies over the bar's middle.
+      const topmost = await page.evaluate<boolean>(`(() => {
+        const bar = document.querySelector('[data-island="selection"]');
+        const { x, y, width, height } = bar.getBoundingClientRect();
+        return bar.contains(document.elementFromPoint(x + width / 2, y + height / 2));
+      })()`);
+      expect(topmost).toBe(true);
+    });
+
     test('D4 A7 Details opens the sheet on Close Details with the covered islands inert, and Escape and Close give the focus back to Details, the selection kept', async ({
       page,
     }) => {
