@@ -1,5 +1,5 @@
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
 import type { Platform } from '../../src/platform/platform.ts';
 import { EditorShell } from '../../src/shell/EditorShell.tsx';
@@ -152,6 +152,51 @@ describe('the identity island’s menu', () => {
     click(button);
     expect(screen.queryByRole('menu')).toBeNull();
     expect(button).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('A2 closes as the window loses the focus, giving the focus to the button, where it is when the window comes back', () => {
+    const { button } = mount();
+    const menu = openMenu(button);
+    // As in a browser, the item's focusout, with no related target and the document without the
+    // focus, comes before the window's own blur, each followed by React's update.
+    const hasFocus = vi.spyOn(document, 'hasFocus').mockReturnValue(false);
+    onTestFinished(() => {
+      hasFocus.mockRestore();
+    });
+    act(() => {
+      fireEvent.focusOut(item(menu, 'Select all'), { relatedTarget: null });
+    });
+    act(() => {
+      window.dispatchEvent(new FocusEvent('blur'));
+    });
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(button).toHaveAttribute('aria-expanded', 'false');
+    expect(button).toHaveFocus();
+  });
+
+  it('A2 closes where the focus went, to an outside element or to none while the window keeps it, and a window blur then moves nothing', () => {
+    const { button } = mount();
+    openMenu(button);
+    const toggle = screen.getByRole('button', { name: /^Elements/u });
+    act(() => {
+      toggle.focus();
+    });
+    expect(screen.queryByRole('menu')).toBeNull();
+    act(() => {
+      window.dispatchEvent(new FocusEvent('blur'));
+    });
+    expect(toggle).toHaveFocus();
+    // A press on what takes no focus, such as the wordmark, leaves the focus on the page.
+    const hasFocus = vi.spyOn(document, 'hasFocus').mockReturnValue(true);
+    onTestFinished(() => {
+      hasFocus.mockRestore();
+    });
+    const menu = openMenu(button);
+    act(() => {
+      fireEvent.focusOut(item(menu, 'Select all'), { relatedTarget: null });
+    });
+    expect(screen.queryByRole('menu')).toBeNull();
+    expect(document.body).toHaveFocus();
   });
 
   it('A3 runs Select all, Zoom to fit and Reset zoom through the registry, closing and giving the focus back to the button', () => {
