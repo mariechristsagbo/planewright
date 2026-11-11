@@ -57,6 +57,7 @@ function Shell() {
   const menu = useRef<HTMLButtonElement>(null);
   const tag = useRef<HTMLButtonElement>(null);
   const keys = useRef<HTMLButtonElement>(null);
+  const toggle = useRef<HTMLButtonElement>(null);
   const openers: Openers = { menu, tag, keys };
   const root = useRef<HTMLElement>(null);
   return (
@@ -70,7 +71,7 @@ function Shell() {
       <EmptyCanvasNote />
       <StorageNotices />
       <div className="island top-right-island" data-island="top-right">
-        <ElementsToggle open={drawer} onToggle={toggleDrawer} />
+        <ElementsToggle ref={toggle} open={drawer} onToggle={toggleDrawer} />
       </div>
       <ElementsDrawer open={drawer} />
       <div className="shell-bottom">
