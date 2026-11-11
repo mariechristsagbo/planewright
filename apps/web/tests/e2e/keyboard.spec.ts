@@ -59,7 +59,14 @@ test('E1 A1 A2 A3 A4 A5 A6 REQ-Y04 REQ-Y05 every P0 kind made, selected, nudged 
   await step(page, ['Escape'], 'Text created. 1 element selected.');
   await expect(canvas(page)).toBeFocused();
 
-  // From the canvas, Tab reaches Elements, whose drawer opens with the focus on the list (S5).
+  // From the canvas, Tab reaches the selection panel's actions for the selected text (S6), then
+  // Elements, whose drawer opens with the focus on the list (S5).
+  for (const name of ['Duplicate', 'Delete', 'Edit text']) {
+    await page.keyboard.press('Tab');
+    await expect(
+      page.locator('[data-island="selection"]').getByRole('button', { name }),
+    ).toBeFocused();
+  }
   await page.keyboard.press('Tab');
   await expect(elementsToggle(page)).toBeFocused();
   await page.keyboard.press('Enter');

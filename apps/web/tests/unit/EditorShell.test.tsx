@@ -140,6 +140,32 @@ describe('EditorShell', () => {
     ]);
   });
 
+  it('D2 A5 REQ-Y02 puts the selection panel’s actions after the canvas and before Elements while something is selected, and no stop of its own otherwise', () => {
+    const harness = surfaceHarness();
+    harness.editor.resize({ width: 800, height: 600, pixelRatio: 1 });
+    render(<EditorShell surface={harness.surface} />);
+    const rest = tabStops();
+    act(() => {
+      harness.editor.run('tool.rectangle');
+      harness.editor.run('canvas.enter');
+    });
+    const canvas = screen.getByRole('region', { name: 'Drawing canvas' });
+    const stops = tabStops();
+    const at = stops.indexOf(canvas);
+    expect(stops.slice(at, at + 4)).toEqual([
+      canvas,
+      screen.getByRole('button', { name: 'Duplicate' }),
+      screen.getByRole('button', { name: 'Delete' }),
+      screen.getByRole('button', { name: /^Elements/u }),
+    ]);
+    const panel = document.querySelector('[data-island="selection"]');
+    expect(stops.filter((stop) => panel?.contains(stop) !== true)).toEqual(rest);
+    act(() => {
+      harness.editor.select([]);
+    });
+    expect(tabStops()).toEqual(rest);
+  });
+
   it('A7 renders the main landmark with a visually hidden h1, the islands with their controls, and the drawer closed', () => {
     mount();
     // The shell's root is the page's one main landmark, as P0's main was (the S2 review's m4).

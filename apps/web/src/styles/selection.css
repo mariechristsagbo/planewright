@@ -1,0 +1,130 @@
+/*
+ * The selection panel (ADR 0012, decisions 2, 3 and 8; the v0.2 plan's S6): 232 px wide, near the
+ * upper left, in the panel layer at the second elevation. It spans the shell's rows from the
+ * notices' to the room row, which ends at the bottom islands' top, so that it adds nothing to the
+ * rows' sizes, lies beside the notices and the drawer, and is no taller than the room above the
+ * bottom row, scrolling inside itself in a window too short for it. It starts 2 px under the row,
+ * at the design's 16 / 72 on desktops, and keeps the shell's gap above the bottom islands. Its
+ * terms and heading are in the chrome's face and its values in JetBrains Mono. Its buttons keep the
+ * base's pressed, disabled and focus rules, which S10 coordinates; Delete takes the error tone.
+ * Nothing here moves (motion is S12's), and responsive.css raises its targets under a coarse
+ * pointer.
+ */
+.selection-panel {
+  position: relative;
+  z-index: var(--pw-layer-panel);
+  display: grid;
+  grid-column: 1 / -1;
+  grid-row: notices-start / room-end;
+  gap: var(--pw-spacing-md);
+  align-self: start;
+  justify-self: start;
+  box-sizing: border-box;
+  width: min(var(--pw-spacing-panel-width), 100%);
+  max-height: calc(100% - var(--pw-spacing-2xs) - var(--pw-spacing-sm));
+  margin-top: var(--pw-spacing-2xs);
+  padding: var(--pw-spacing-panel-padding);
+  overflow-y: auto;
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e2);
+  font: var(--pw-type-body-sm);
+  letter-spacing: var(--pw-type-body-sm-tracking);
+}
+
+/* The heading: the kind's glyph and name, or the multiple glyph and the count. */
+.selection-heading {
+  display: flex;
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+  min-width: 0;
+  margin: 0;
+  font: var(--pw-type-title-sm);
+  letter-spacing: var(--pw-type-title-sm-tracking);
+}
+
+.selection-heading > svg {
+  display: block;
+  flex: none;
+}
+
+.selection-heading > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The figures, two to a row, each term with its value; a long value wraps rather than hides. */
+.selection-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--pw-spacing-xs);
+  margin: 0;
+}
+
+.selection-figure {
+  display: flex;
+  gap: var(--pw-spacing-sm);
+  align-items: baseline;
+  justify-content: space-between;
+  min-width: 0;
+  padding: var(--pw-spacing-2xs) var(--pw-spacing-sm);
+  border-radius: var(--pw-rounded-sm);
+  background: var(--pw-color-surface-muted);
+}
+
+.selection-figure > dt {
+  flex: none;
+  color: var(--pw-color-on-surface-variant);
+  font: var(--pw-type-label-sm);
+  letter-spacing: var(--pw-type-label-sm-tracking);
+}
+
+.selection-value {
+  min-width: 0;
+  margin: 0;
+  color: var(--pw-color-on-surface);
+  font: var(--pw-type-geometry);
+  letter-spacing: var(--pw-type-geometry-tracking);
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+
+/* The actions, one to a row: each shows its glyph and its word. */
+.selection-actions {
+  display: grid;
+  gap: var(--pw-spacing-xs);
+}
+
+.selection-action {
+  display: flex;
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--pw-spacing-control-compact);
+  padding: 0 var(--pw-spacing-sm);
+  font: var(--pw-type-label-md);
+  letter-spacing: var(--pw-type-label-md-tracking);
+  text-align: start;
+}
+
+.selection-action > svg {
+  display: block;
+  flex: none;
+}
+
+/* Delete's word and glyph in the error tone, 6.52:1 on the surface. */
+.delete-action {
+  color: var(--pw-color-error);
+}
+
+/* The footnote: a static line, no control. */
+.selection-footnote {
+  margin: 0;
+  color: var(--pw-color-on-surface-muted);
+  font: var(--pw-type-caption);
+  letter-spacing: var(--pw-type-caption-tracking);
+}
