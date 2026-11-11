@@ -2,7 +2,8 @@
 // listener per control: the shell's root follows the pointer and the focus for every control that
 // names a tip, and its document follows the keys, so that Escape closes a tip wherever the focus
 // is. A tip opens after the hover delay, at once on keyboard focus and never on touch, and closes
-// on Escape, on a press and when the pointer or the focus leaves its control.
+// on Escape, on a press and when the pointer or the focus leaves its control. The Escape that
+// closes a tip does nothing else.
 
 /** The delay without the --pw-delay-tooltip token, as in a page without its style sheets. */
 const DELAY_MS = 500;
@@ -21,6 +22,15 @@ export function hoverDelay(root: HTMLElement): number {
   if (match === null) return DELAY_MS;
   return Number(match[1]) * (match[2] === 's' ? 1000 : 1);
 }
+
+/**
+ * Keeps the Escape that closes a showing tip from doing anything else, as in the APG's tooltip
+ * pattern: the editor's keymap, where Escape cancels, hears only the next one.
+ */
+const stop = (event: KeyboardEvent): void => {
+  event.stopPropagation();
+  event.preventDefault();
+};
 
 interface Tips {
   /** The control whose tip shows. */
@@ -87,6 +97,7 @@ function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => vo
   const key = (event: KeyboardEvent): void => {
     tips.pressed = false;
     if (event.key !== 'Escape') return;
+    if (tips.shown !== null) stop(event);
     tips.dismissed = tips.shown ?? tips.waiting;
     open(null);
   };

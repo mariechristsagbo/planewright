@@ -121,6 +121,33 @@ describe('the tooltips', () => {
     expect(tip()).toBeNull();
   });
 
+  it('D4 A6 stop the Escape that closes a showing tip there, so that only the next one reaches the editor', () => {
+    mount();
+    const rectangle = button('Rectangle');
+    const reached = vi.fn();
+    rectangle.addEventListener('keydown', reached);
+    fireEvent.click(rectangle);
+    focus(rectangle);
+    expect(said()?.name).toBe('Rectangle');
+    expect(fireEvent.keyDown(rectangle, { key: 'Escape', code: 'Escape' })).toBe(false);
+    expect(tip()).toBeNull();
+    expect(reached).not.toHaveBeenCalled();
+    expect(rectangle).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.keyDown(rectangle, { key: 'Escape', code: 'Escape' });
+    expect(reached).toHaveBeenCalledTimes(1);
+    expect(rectangle).toHaveAttribute('aria-pressed', 'false');
+    expect(button('Selection')).toHaveAttribute('aria-pressed', 'true');
+    // While a hover tip only waits, no tip shows, and Escape goes on to the editor as before.
+    fireEvent.click(rectangle);
+    fireEvent.pointerOver(button('Line'), { pointerType: 'mouse' });
+    wait(300);
+    fireEvent.keyDown(rectangle, { key: 'Escape', code: 'Escape' });
+    expect(reached).toHaveBeenCalledTimes(2);
+    expect(rectangle).toHaveAttribute('aria-pressed', 'false');
+    wait(500);
+    expect(tip()).toBeNull();
+  });
+
   it('D4 A6 never open on touch, from a touch hover or from the focus that a tap gives', () => {
     mount();
     const rectangle = button('Rectangle');
