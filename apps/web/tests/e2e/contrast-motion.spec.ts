@@ -4,6 +4,24 @@ import { button, contrast, openElements, openPage, polite, textContrasts } from 
 import { glyphContrasts } from './glyphs.ts';
 import { canvas, readout } from './support.ts';
 
+/** The words that the controls showed before S3, which show glyphs instead (ADR 0012). */
+const WORDS_NOW_GLYPHS = [
+  'Hand',
+  'Selection',
+  'Rectangle',
+  'Ellipse',
+  'Diamond',
+  'Line',
+  'Freehand',
+  'Text',
+  'Tool lock',
+  'Undo',
+  'Redo',
+  'Zoom out',
+  'Zoom in',
+  'Zoom to fit',
+];
+
 /** The palette's glyphs, which carry no word (ADR 0012, decision 3). */
 const PALETTE = [
   'hand',
@@ -32,10 +50,11 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
   await expect((await openElements(page)).getByRole('option')).toHaveCount(2);
   const contrasts = await textContrasts(page);
   // Every visible text, however many: P0's notes are in About this build now (ADR 0012, D5), and
-  // the tools show glyphs rather than words (S3), whose 3:1 the next test measures.
+  // the tools, Undo, Redo and the zoom buttons but Reset zoom show glyphs rather than words (S3),
+  // whose 3:1 the next test measures.
   const texts = contrasts.map(({ text }) => text);
-  expect(texts).toEqual(expect.arrayContaining(['Undo', 'Zoom in', 'Elements']));
-  expect(texts).not.toContain('Rectangle');
+  expect(texts).toEqual(expect.arrayContaining(['Pre-release', 'Elements', '100%']));
+  expect(texts.filter((text) => WORDS_NOW_GLYPHS.includes(text))).toEqual([]);
   expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
 });
 
@@ -50,8 +69,19 @@ test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whol
     for (const key of ['r', 'Enter']) await page.keyboard.press(key);
     await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
     const glyphs = await glyphContrasts(page);
-    // The palette's tools and tool lock, the chosen one pressed (ADR 0012, decision 3).
-    expect(glyphs.map(({ glyph }) => glyph)).toEqual(expect.arrayContaining(PALETTE));
+    // The palette's tools and tool lock, the chosen one pressed, Undo enabled and Redo not, the
+    // zoom buttons and the mark (ADR 0012, decision 3).
+    expect(glyphs.map(({ glyph }) => glyph)).toEqual(
+      expect.arrayContaining([
+        ...PALETTE,
+        'undo',
+        'redo',
+        'zoom-out',
+        'zoom-in',
+        'zoom-fit',
+        'mark',
+      ]),
+    );
     expect(glyphs.find(({ control }) => control === 'Selection')).toBeDefined();
     const below = glyphs.filter(
       ({ computed, rendered, boundary }) =>
@@ -86,7 +116,8 @@ test.describe('with the operating system asking for a dark scheme', () => {
     const list = await openElements(page);
     await expect(list.getByRole('option')).toHaveCount(2);
     const contrasts = await textContrasts(page);
-    expect(contrasts.map(({ text }) => text)).toEqual(expect.arrayContaining(['Undo', 'Redo']));
+    // Undo and Redo show glyphs since S3 (ADR 0012's row for this line): texts that stay visible.
+    expect(contrasts.map(({ text }) => text)).toEqual(expect.arrayContaining(['Elements', '100%']));
     expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
     await list.focus();
     const { outline, background } = await page.evaluate<{

@@ -1,9 +1,10 @@
 /*
- * The palette and the other glyph buttons (ADR 0012, decision 3, and the v0.2 plan's S3): square
- * controls that show an original glyph in the text colour, 36 px on desktops (32 px compact, in
- * responsive.css), the palette's tools with their first key in the bottom-right corner in JetBrains
- * Mono and hairlines between their groups. They keep the base's pressed, disabled and focus rules,
- * which S10 coordinates, so no rule here sets a control's pressed, disabled or focus styles.
+ * The palette, the other glyph buttons and the mark (ADR 0012, decision 3, and the v0.2 plan's
+ * S3): square controls that show an original glyph in the text colour, 36 px on desktops (32 px
+ * compact, in responsive.css), the palette's tools with their first key in the bottom-right corner
+ * in JetBrains Mono and hairlines between their groups. They keep the base's pressed, disabled and
+ * focus rules, which S10 coordinates, so no rule here sets a control's pressed, disabled or focus
+ * styles.
  */
 .toolbar {
   align-items: center;
@@ -38,4 +39,15 @@
   width: 1px;
   height: 20px;
   background: var(--pw-color-outline-subtle);
+}
+
+/* The mark in the identity island, beside the wordmark or, at compact widths, alone. */
+.identity-mark {
+  display: inline-grid;
+  place-items: center;
+  padding-inline-start: var(--pw-spacing-xs);
+}
+
+.identity-mark > svg {
+  display: block;
 }

@@ -7,6 +7,10 @@ import { surfaceHarness } from '../support/surface.tsx';
 // The zoom controls (docs/architecture/engine/quality.md#accessibility): the last stop of the tab
 // order, read from the command registry like the tool bar (REQ-C14, REQ-Y01, REQ-Y02).
 
+/** The name of the glyph that a button shows, if it shows one. */
+const glyphOf = (button: HTMLElement): string | null | undefined =>
+  button.querySelector('svg[data-glyph]')?.getAttribute('data-glyph');
+
 function mount() {
   const harness = surfaceHarness();
   harness.editor.resize({ width: 800, height: 600, pixelRatio: 1 });
@@ -19,14 +23,15 @@ function mount() {
 describe('the zoom controls', () => {
   it('REQ-Y01 REQ-Y02 are four named buttons in a Zoom group, each with its first shortcut', () => {
     const { group, button } = mount();
-    expect(
-      within(group)
-        .getAllByRole('button')
-        .map((each) => each.getAttribute('aria-label') ?? each.textContent),
-    ).toEqual(['Zoom out', expect.stringMatching(/^Reset zoom/u), 'Zoom in', 'Zoom to fit']);
-    for (const name of ['Zoom out', /^Reset zoom/u, 'Zoom in', 'Zoom to fit']) {
-      expect(button(name)).toBeInTheDocument();
-    }
+    // ADR 0012's row for this test: Zoom out, Zoom in and Zoom to fit show glyphs and Reset zoom
+    // shows the zoom, so the buttons' accessible names are asserted, not their text.
+    const buttons = within(group).getAllByRole('button');
+    expect(buttons).toHaveLength(4);
+    ['Zoom out', /^Reset zoom, 100%$/u, 'Zoom in', 'Zoom to fit'].forEach((name, index) => {
+      expect(buttons[index]).toHaveAccessibleName(name);
+    });
+    expect(buttons.map(glyphOf)).toEqual(['zoom-out', undefined, 'zoom-in', 'zoom-fit']);
+    expect(buttons.map((each) => each.textContent)).toEqual(['', '100%', '', '']);
     expect(button('Zoom in')).toHaveAttribute('aria-keyshortcuts', 'Control+=');
     expect(button('Zoom in')).toHaveAccessibleDescription(
       'Shortcut Ctrl+=. Zooms in one step about the centre of the canvas.',

@@ -160,6 +160,19 @@ describe('EditorShell', () => {
     ).toBe(true);
   });
 
+  it('D3 shows the mark beside the wordmark in the identity island, hidden from assistive technology', () => {
+    mount();
+    const identity = document.querySelector('[data-island="identity"]');
+    const mark = identity?.querySelector('svg[data-glyph]');
+    expect(mark).toHaveAttribute('data-glyph', 'mark');
+    expect(mark).toHaveAttribute('aria-hidden', 'true');
+    expect(mark?.closest('.identity-mark')?.nextElementSibling).toHaveClass('wordmark');
+    expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
+    expect(within(identity as HTMLElement).getAllByRole('button')).toEqual([
+      screen.getByRole('button', { name: 'Pre-release' }),
+    ]);
+  });
+
   it('REQ-C11 keeps every island a sibling of the canvas host, never inside it', () => {
     mount();
     const host = screen.getByRole('region', { name: 'Drawing canvas' });
