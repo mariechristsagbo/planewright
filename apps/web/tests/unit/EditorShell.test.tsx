@@ -101,7 +101,7 @@ describe('EditorShell', () => {
     }
   });
 
-  it('AC REQ-Y02 puts the tab stops in the specified order: Pre-release, tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls', () => {
+  it('AC REQ-Y02 puts the tab stops in the specified order: Pre-release, tool bar, canvas, Elements and the element list while it is open, history controls, zoom controls, Keyboard shortcuts', () => {
     mount();
     const toolbar = screen.getByRole('toolbar', { name: 'Tools' });
     const elements = screen.getByRole('button', { name: /^Elements/u });
@@ -115,6 +115,7 @@ describe('EditorShell', () => {
       screen.getByRole('button', { name: 'Undo' }),
       screen.getByRole('button', { name: 'Redo' }),
       ...within(screen.getByRole('group', { name: 'Zoom' })).getAllByRole('button'),
+      screen.getByRole('button', { name: 'Keyboard shortcuts' }),
     ];
     expect(tabStops()).toEqual([...before, ...after]);
     const list = openElements();

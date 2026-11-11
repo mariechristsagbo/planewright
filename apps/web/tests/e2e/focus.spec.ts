@@ -17,7 +17,7 @@ import { canvas } from './support.ts';
 // stops in the specified order, each with a visible indicator, and the focus never left on the
 // page when a control or the text area goes away (REQ-Y02).
 
-test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, Elements, the history and zoom controls, each with a visible indicator', async ({
+test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, Elements, the history and zoom controls and Keyboard shortcuts, each with a visible indicator', async ({
   page,
 }) => {
   await openPage(page);
@@ -32,13 +32,14 @@ test('E2 A7 A8 REQ-Y02 Tab visits Pre-release, the tool bar, the canvas, Element
     button(page, /^Reset zoom/u),
     button(page, 'Zoom in'),
     button(page, 'Zoom to fit'),
+    button(page, 'Keyboard shortcuts'),
   ];
   for (const stop of stops) {
     await page.keyboard.press('Tab');
     await expect(stop).toBeFocused();
     await expectIndicator(page);
   }
-  // "Source on GitHub" is in About this build now, so Zoom to fit is the last stop.
+  // "Source on GitHub" is in About this build now, so Keyboard shortcuts is the last stop.
   await expect(page.getByRole('link', { name: 'Source on GitHub' })).toHaveCount(0);
   for (const stop of stops.slice(0, -1).reverse()) {
     await page.keyboard.press('Shift+Tab');
