@@ -1,6 +1,8 @@
 import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
+import { canvas } from './support.ts';
+
 // The page's IndexedDB as the end-to-end tests read and spoil it, through the browser's own API in
 // the page (docs/architecture/engine/persistence.md#indexeddb-layout). Each test runs in a new
 // browser context, so storage starts empty. Call these only once the page has opened its database.
@@ -61,6 +63,29 @@ export const urgentAnnouncement = (page: Page): Locator => page.locator('#live-a
 /** Waits until the page says the drawing is saved in this browser. */
 export const expectSaved = (page: Page): Promise<void> =>
   expect(saveStatus(page)).toHaveText('Saved in this browser');
+
+/**
+ * Shows the stale notice on an open page: it saves a rectangle, a second page of its context saves
+ * an ellipse over it, and the page's next save, a nudge, is refused as stale.
+ */
+export async function showStaleNotice(page: Page): Promise<void> {
+  await canvas(page).focus();
+  await page.keyboard.press('r');
+  await page.keyboard.press('Enter');
+  await expectSaved(page);
+  const second = await page.context().newPage();
+  await second.goto('/');
+  await canvas(second).focus();
+  await second.keyboard.press('o');
+  await second.keyboard.press('Enter');
+  await expectSaved(second);
+  await page.bringToFront();
+  await canvas(page).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(
+    storageNotices(page).getByRole('button', { name: 'Keep this version' }),
+  ).toBeVisible();
+}
 
 /** Makes the page's IndexedDB impossible to open, before any of its scripts runs. */
 export async function refuseStorage(page: Page): Promise<void> {

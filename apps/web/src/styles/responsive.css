@@ -30,7 +30,7 @@
       'notices notices notices'
       'drawer drawer drawer'
       'bottom bottom bottom';
-    grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+    grid-template-rows: auto auto minmax(0, max-content) minmax(0, max-content) 1fr;
     padding: var(--pw-spacing-sm);
   }
 
