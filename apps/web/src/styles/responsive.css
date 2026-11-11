@@ -6,10 +6,18 @@
  * would load again, so that every text would be measured again. The bundled style sheet, which
  * declares the fonts, therefore holds no media query.
  */
-/* Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices. */
+/*
+ * Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices and 32 px glyph
+ * buttons.
+ */
 @media (max-width: 1199px) {
   .editor-shell {
     padding: var(--pw-spacing-md);
+  }
+
+  .island .glyph-button {
+    width: var(--pw-spacing-control-compact);
+    height: var(--pw-spacing-control-compact);
   }
 
   .editor-shell > .notices {

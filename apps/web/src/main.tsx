@@ -15,7 +15,8 @@ import { indexedDbOf, openStorage } from './platform/storage.ts';
 import { pageTextMeasurer } from './platform/text-measurer.ts';
 import { EditorShell } from './shell/EditorShell.tsx';
 // The style sheets in cascade order: the tokens, the fonts, the base, the controls' shared rules,
-// then the shell's layout, its islands and what they hold (ADR 0012, decision 5).
+// then the shell's layout, its islands and what they hold, and the glyph buttons (ADR 0012,
+// decision 5).
 import './styles/tokens.css';
 import './styles/fonts.css';
 import './styles/base.css';
@@ -25,6 +26,7 @@ import './styles/element-list.css';
 import './styles/saving.css';
 import './styles/shell.css';
 import './styles/islands.css';
+import './styles/palette.css';
 import './styles/dialog.css';
 import responsive from './styles/responsive.css?inline';
 
