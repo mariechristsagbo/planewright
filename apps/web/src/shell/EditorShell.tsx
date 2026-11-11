@@ -30,8 +30,9 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // while something is selected, the storage notices' buttons, Elements and, while its drawer is
 // open, the drawer's Close, its keys and the list, then Undo, Redo, the zoom controls and Keyboard
 // shortcuts. The drawer's opening and closing move the focus, to its list box and back to the
-// toggle. On a phone in portrait the open drawer is a sheet, and the palette and the bottom islands
-// are inert while it is.
+// toggle. On a phone in portrait the open drawer is a sheet, the selection bar takes the panel's
+// place with its Details sheet right after it, one sheet is open at a time, and the palette and the
+// bottom islands are inert while either is.
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -108,17 +109,25 @@ function BottomIslands({
  */
 function Shell() {
   const shell = useShellState();
-  const { drawer, dialog, opener, toggleDrawer, closeDrawer, openDialog, closeDialog } = shell;
+  const { drawer, details, dialog, opener, toggleDrawer, closeDrawer, openDialog, closeDialog } =
+    shell;
   const menu = useRef<HTMLButtonElement>(null);
   const tag = useRef<HTMLButtonElement>(null);
   const keys = useRef<HTMLButtonElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const openers: Openers = { menu, tag, keys };
   const root = useRef<HTMLElement>(null);
-  useDrawerFocus(drawer, toggle);
+  useDrawerFocus(drawer, toggle, details);
   const sheet = useSheet();
-  // The phone's sheet covers the bottom islands and stands where S8 puts the palette as a dock.
-  const covered = drawer && sheet;
+  // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and stands where
+  // S8 puts the palette as a dock.
+  const covered = sheet && (drawer || details);
+  const selection = {
+    details,
+    drawer,
+    onToggleDetails: shell.toggleDetails,
+    onCloseDetails: shell.closeDetails,
+  };
   return (
     <main ref={root} className="editor-shell">
       <h1 className="visually-hidden">Planewright</h1>
@@ -130,7 +139,7 @@ function Shell() {
       </div>
       <CanvasHost />
       <EmptyCanvasNote />
-      <SelectionPanel sheet={sheet} />
+      <SelectionPanel sheet={sheet} controls={selection} />
       <StorageNotices />
       <div className="island top-right-island" data-island="top-right">
         <ElementsToggle ref={toggle} open={drawer} onToggle={toggleDrawer} />

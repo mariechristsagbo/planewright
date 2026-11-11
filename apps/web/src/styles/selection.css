@@ -128,3 +128,84 @@
   font: var(--pw-type-caption);
   letter-spacing: var(--pw-type-caption-tracking);
 }
+
+/*
+ * The phone's selection bar (the v0.2 plan's S6): a row of the heading, the actions' glyphs and
+ * Details, each a 44 px target, with their words visually hidden; responsive.css places it under
+ * the tool bar's row, above the notices.
+ */
+.selection-bar {
+  position: relative;
+  z-index: var(--pw-layer-panel);
+  display: flex;
+  gap: var(--pw-spacing-xs);
+  align-items: center;
+  min-width: 0;
+  padding: var(--pw-spacing-xs) var(--pw-spacing-xs) var(--pw-spacing-xs) var(--pw-spacing-md);
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e2);
+}
+
+.selection-bar > .selection-heading {
+  flex: 1 1 auto;
+}
+
+.selection-bar > .selection-actions {
+  display: flex;
+  flex: none;
+  gap: var(--pw-spacing-xs);
+}
+
+.selection-bar .selection-action,
+.details-toggle,
+.details-close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--pw-spacing-control-touch);
+  height: var(--pw-spacing-control-touch);
+  padding: 0;
+}
+
+.details-toggle > svg,
+.details-close > svg {
+  display: block;
+}
+
+/*
+ * The Details sheet: the heading with Close Details beside it, the figures and the footnote, on the
+ * sheets' layer at the third elevation, its top corners rounded; responsive.css lays it along the
+ * window's bottom. It scrolls inside itself when the room left is short.
+ */
+.details-sheet {
+  z-index: var(--pw-layer-sheet);
+  display: grid;
+  gap: var(--pw-spacing-md);
+  align-content: start;
+  box-sizing: border-box;
+  padding: var(--pw-spacing-panel-padding);
+  overflow-y: auto;
+  border-top: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-lg) var(--pw-rounded-lg) 0 0;
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e3);
+  font: var(--pw-type-body-sm);
+  letter-spacing: var(--pw-type-body-sm-tracking);
+}
+
+.details-sheet[hidden] {
+  display: none;
+}
+
+.details-top {
+  display: flex;
+  gap: var(--pw-spacing-sm);
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}

@@ -162,6 +162,47 @@ test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whol
   }
 });
 
+test.describe('on a phone, 390 × 844, at a device pixel ratio of 2', () => {
+  test.use({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true,
+  });
+
+  test('A10 the selection bar’s and the Details sheet’s texts meet 4.5:1 and their glyphs 3:1, Delete’s too', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await canvas(page).focus();
+    for (const key of ['r', 'Enter']) await page.keyboard.press(key);
+    await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
+    const details = page
+      .locator('[data-island="selection"]')
+      .getByRole('button', { name: 'Details' });
+    await details.tap();
+    await expect(page.getByRole('region', { name: 'Details' })).toBeVisible();
+    const contrasts = await textContrasts(page);
+    expect(contrasts.map(({ text }) => text)).toEqual(
+      expect.arrayContaining(['Rectangle', 'Angle', 'Style controls are not in this build.']),
+    );
+    expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+    // The bar's and the sheet's glyphs: the bottom islands' lie under the sheet, inert.
+    const shown = ['rectangle', 'duplicate', 'delete', 'details', 'close'];
+    const glyphs = (await glyphContrasts(page)).filter(({ glyph }) => shown.includes(glyph));
+    expect(glyphs.map(({ glyph }) => glyph).sort()).toEqual(
+      ['close', 'delete', 'details', 'duplicate', 'rectangle', 'rectangle', 'rectangle'].sort(),
+    );
+    expect(glyphs.find(({ glyph }) => glyph === 'delete')?.computed).toBe(6.52);
+    expect(
+      glyphs.filter(
+        ({ computed, rendered, boundary }) =>
+          computed < 3 || rendered < 3 || (boundary !== null && boundary < 3),
+      ),
+    ).toEqual([]);
+  });
+});
+
 test.describe('with the operating system asking for a dark scheme', () => {
   test.use({ colorScheme: 'dark' });
 

@@ -21,10 +21,19 @@ const EDIT_TEXT_NOTE = 'Edits the text where it is drawn; Enter on the canvas do
 /**
  * Duplicate and Delete, named, described and tipped from the registry as Undo and Redo are
  * (REQ-C14), then Edit text where canvas.enter would edit the selected text. Each shows its glyph
- * and its word, which names it (WCAG 2.5.3).
+ * and its word, which names it (WCAG 2.5.3); in the phone's bar, which is too narrow for the words,
+ * the word is visually hidden and still names it.
  */
-export function SelectionActions({ editsText }: { readonly editsText: boolean }) {
+export function SelectionActions({
+  editsText,
+  compact = false,
+}: {
+  readonly editsText: boolean;
+  /** Whether the words are visually hidden, as in the phone's bar. */
+  readonly compact?: boolean;
+}) {
   const { editor, platform } = useSurface();
+  const word = compact ? 'visually-hidden' : undefined;
   return (
     <div className="selection-actions">
       {COMMANDS.flatMap(([id, glyph, className]) => {
@@ -43,8 +52,8 @@ export function SelectionActions({ editsText }: { readonly editsText: boolean })
                 editor.run(id);
               }}
             >
-              <Icon name={glyph} size={16} />
-              <span>{command.label}</span>
+              <Icon name={glyph} size={compact ? 20 : 16} />
+              <span className={word}>{command.label}</span>
             </button>
             <span id={`${id}-description`} className="visually-hidden">
               {shortcutSentence(command.shortcuts, platform)}
@@ -63,8 +72,8 @@ export function SelectionActions({ editsText }: { readonly editsText: boolean })
               editor.run('canvas.enter');
             }}
           >
-            <Icon name="edit-text" size={16} />
-            <span>Edit text</span>
+            <Icon name="edit-text" size={compact ? 20 : 16} />
+            <span className={word}>Edit text</span>
           </button>
           <span id="edit-text-description" className="visually-hidden">
             {EDIT_TEXT_NOTE}
