@@ -46,7 +46,7 @@
 }
 
 /* The Elements drawer around P0's list; S5 gives it its own styling. */
-.elements-drawer {
+.element-list-drawer {
   overflow-y: auto;
   padding: var(--pw-spacing-panel-padding);
   border: 1px solid var(--pw-color-outline-subtle);
