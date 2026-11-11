@@ -16,7 +16,7 @@ REQ-Y06).
 | Element list       | a list box in the Elements drawer with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                     | REQ-Y05                   |
 | Live region        | one polite region for selection counts, created and deleted elements, undo and redo; save failures use an assertive message                                                                          | REQ-Y04                   |
 | Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                    | REQ-Y02                   |
-| Menus (P1)         | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                       | REQ-Y01, REQ-Y03          |
+| Menus              | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                       | REQ-Y01, REQ-Y03          |
 | Targets and colour | every touch target at least 24 × 24 CSS px; text contrast at least 4.5:1 and control contrast 3:1 in each theme; forced-colours mode uses system colours for the interface and the selection outline | REQ-Y06                   |
 | Motion             | no camera animation in P0; any later animation is skipped when reduced motion is requested                                                                                                           | REQ-Y06                   |
 
@@ -30,10 +30,10 @@ focused one for large documents, with `aria-setsize` and `aria-posinset`, so its
 tool's default-size element at the centre of the viewport, so no element kind needs a pointer
 (REQ-C04, REQ-Y05).
 
-**Order of tab stops.** Pre-release, the tool bar, the canvas, the storage notices' buttons while
-storage needs attention, Elements and the element list while its drawer is open, history controls,
-zoom controls (ADR 0012, decision 14, as far as slice S2's controls go). P0's order was the tool
-bar, the canvas, the element list, history and zoom.
+**Order of tab stops.** The menu button, Pre-release, the tool bar, the canvas, the storage notices'
+buttons while storage needs attention, Elements and the element list while its drawer is open,
+history controls, zoom controls and Keyboard shortcuts (ADR 0012, decision 14, as far as slices S2
+to S4's controls go). P0's order was the tool bar, the canvas, the element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
@@ -93,21 +93,32 @@ the engine, and the element list, the live region, the zoom controls and focus m
   that becomes disabled to the page's body. Escape or Mod+Enter in the text area returns the focus
   to the canvas, which opened it; moving the focus to another control ends the session, while a page
   that loses the focus keeps it; answering the stale notice focuses the canvas first (the ENG-13
-  review's m5). P0 had no menu or dialog. Slice S2 adds About this build, a modal dialog that the
+  review's m5). P0 had no menu or dialog. Slice S2 added About this build, a modal dialog that the
   Pre-release tag opens with the focus on Close, Tab wrapping inside, and Escape or the scrim
-  closing it and returning the focus to the tag; S4 adds the menu.
+  closing it and returning the focus to the tag. Slice S4 added the identity island's menu, the
+  first tab stop: its button, with `aria-haspopup`, `aria-expanded` and, while it is open,
+  `aria-controls`, opens it on a press, Enter, Space or ArrowDown with the focus on its first item;
+  the arrow keys, wrapping, Home and End move; Enter or a press runs an item, closes the menu and
+  returns the focus to the button; Escape closes it and returns the focus; and the focus leaving
+  it, by Tab or a press elsewhere, closes it where the focus went. Its items are `menuitem`s and
+  one `menuitemcheckbox`, Show elements, whose `aria-checked` is the drawer's state; their keys,
+  shown in JetBrains Mono, are hidden from assistive technology, since each name and
+  `aria-keyshortcuts` carry them. S4 also added the Keyboard shortcuts dialog, the same modal dialog
+  as About, which the menu and a button at the bottom right, the last tab stop, open. A dialog
+  returns the focus to the control that opened it, the menu button for one opened from the menu.
 - **Targets, colour and motion.** Controls are at least 24 px, the page's link, in About this build
-  since S2, is a 24 px inline block, and touch handle hit squares stay 24 px. Measured in Chromium,
-  the shortcut hint in a pressed tool button was 4.19:1 and is now opaque, 5.59:1, and an
-  unavailable control is dark grey with a dashed border, 7.2:1, instead of half transparent, 3.36:1.
-  Each camera command and wheel event sets the camera once, drawn whole in the next frame with no
-  frame after it, and nothing in the page animates, with or without reduced motion.
+  since S2, is a 24 px inline block, the menu's items, its link among them, are 36 px high since S4,
+  and touch handle hit squares stay 24 px. Measured in Chromium, the shortcut hint in a pressed tool
+  button was 4.19:1 and is now opaque, 5.59:1, and an unavailable control is dark grey with a dashed
+  border, 7.2:1, instead of half transparent, 3.36:1. Each camera command and wheel event sets the
+  camera once, drawn whole in the next frame with no frame after it, and nothing in the page
+  animates, with or without reduced motion.
 - **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
   dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
   colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader
   pass stays a task before each release; no human accessibility audit has been made.
-- **Not here.** Menus and the dark theme (P1, P2), forced colours, other languages, a type-ahead in
-  the list and the list's performance measurements (ENG-15).
+- **Not here.** Menus other than slice S4's (P1), the dark theme (P2), forced colours, other
+  languages, a type-ahead in the list and the list's performance measurements (ENG-15).
 
 ## Testing strategy
 
