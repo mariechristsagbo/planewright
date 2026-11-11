@@ -57,6 +57,22 @@ describe('Undo and Redo', () => {
     expect(redo).toHaveAccessibleDescription(/^Shortcuts Ctrl\+Shift\+Z or Ctrl\+Y\./);
   });
 
+  it('D3 A7 show the undo and redo glyphs rather than words, and keep their names', () => {
+    const harness = surfaceHarness();
+    render(harness.wrap(<HistoryControls />));
+    const buttons = screen.getAllByRole('button');
+    expect(buttons.map((button) => button.getAttribute('aria-describedby'))).toEqual([
+      'history.undo-description',
+      'history.redo-description',
+    ]);
+    expect(buttons[0]).toHaveAccessibleName('Undo');
+    expect(buttons[1]).toHaveAccessibleName('Redo');
+    expect(
+      buttons.map((button) => button.querySelector('svg[data-glyph]')?.getAttribute('data-glyph')),
+    ).toEqual(['undo', 'redo']);
+    expect(buttons.map((button) => button.textContent)).toEqual(['', '']);
+  });
+
   it('AC REQ-V10 REQ-H04 stay disabled while the view pans and zooms', () => {
     const { editor, wrap } = surfaceHarness();
     render(wrap(<HistoryControls />));
