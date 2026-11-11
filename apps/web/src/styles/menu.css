@@ -3,9 +3,11 @@
  * the island from its left edge, above every island while it is open, 264 px wide or the window
  * less its anchors, and scrolling inside itself in a short window. Its items keep the base's
  * focus rule, which its padding leaves room for, take the surface's hover colour while the
- * pointer or the keyboard is on them, and show their keys in JetBrains Mono.
+ * pointer or the keyboard is on them, and show their keys in JetBrains Mono. While it is open its
+ * island takes the menus' layer, through a class that the island sets, so that no style sheet
+ * needs :has().
  */
-.identity-island:has(> .chrome-menu) {
+.identity-island.chrome-menu-open {
   z-index: var(--pw-layer-popover);
 }
 
