@@ -253,8 +253,9 @@ builds on; the handoff adds only that S7 may land before S2.
   active tool.
 - **Coordinates** any change to P0's pressed, disabled and focus-visible rules, which S1 left in
   `base.css` inside `:where()`, at no specificity, and which S2's islands keep: no S2 class rule
-  sets a control's colour, border or outline, and S2 only draws P0's ring 3 px inside the canvas
-  host, which fills the window (the S1 review's first suggestion, issue #55's A14).
+  sets a control's pressed, disabled or focus styles, except that S2 draws P0's ring 3 px inside
+  the canvas host, which fills the window, and the Pre-release tag sets its own text and background
+  colours (the S1 review's first suggestion, issue #55's A14).
 - **Documents.** `engine/quality.md`'s "Focus" bullet.
 
 ### S11: the overlay's colour (D1)
@@ -580,11 +581,13 @@ Issue #55 delivered slice S2.
   other style sheet, and an end-to-end test resizes across both breakpoints and back and finds the
   same faces, loaded, and the stored texts unchanged.
 - From the S1 review: `scripts/tests/base-styles.test.ts` reads a bold only in `font-weight`,
-  `font`, `font-variation-settings` and the `--pw-type-*` properties, so a planted `z-index: 700`
-  or `order: 600` is accepted while `font: 700 …` and `font-weight: 600` are still refused; the
+  `font`, `font-variation-settings` and the `--pw-type-*` properties, so a planted `z-index: 700` or
+  `order: 600` is accepted while `font: 700 …` and `font-weight: 600` are still refused; the
   scene-pixels spec has a direct test of the font-load filter, which failed with `watchPage`
-  measuring on every `loadingdone`; and no S2 class rule sets a control's colour, border or
-  outline, so P0's pressed, disabled and focus rules in `base.css` still apply.
+  measuring on every `loadingdone`; and no S2 class rule sets a control's pressed, disabled or focus
+  styles beyond drawing the canvas host's ring 3 px inside it, so P0's pressed, disabled and focus
+  rules in `base.css` still apply, while the Pre-release tag sets its own text and background
+  colours.
 - Tests: new end-to-end specs for About (`about.spec.ts`), the drawer (`drawer.spec.ts`),
   the shell's layout (`shell-layout.spec.ts`: the host's box, no scroll, islands that do not
   intersect at 1280 × 720 and 390 × 844, at rest and with the drawer open under a storage notice,
