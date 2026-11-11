@@ -120,7 +120,7 @@ describe('the names of elements', () => {
       const name = elementName(element);
       const { label, metadata } = elementRow(element);
       expect(name).toContain(label === 'Text' ? 'Text “' : label);
-      const figures = name.match(/-?[\d.]+/gu) ?? [];
+      const figures: readonly string[] = name.match(/-?[\d.]+/gu) ?? [];
       expect(
         (metadata.match(/-?[\d.]+/gu) ?? []).filter((figure) => !figures.includes(figure)),
       ).toEqual([]);
