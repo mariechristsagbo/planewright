@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { EditorShell } from '../../src/shell/EditorShell.tsx';
+import { hoverDelay } from '../../src/shell/tooltip/tooltip-events.ts';
 import { surfaceHarness } from '../support/surface.tsx';
 
 // The chrome's tooltips (ADR 0012 and the v0.2 plan's S3): delegated listeners on the shell's root
@@ -167,5 +168,18 @@ describe('the tooltips', () => {
     }
     expect(opened).toEqual(TIPPED);
     expect(button('Hand')).toHaveAccessibleDescription('Shortcut H. Drag to pan the canvas.');
+  });
+});
+
+describe('the hover delay', () => {
+  it('D4 is read from --pw-delay-tooltip in any form the built style sheet writes, and is 500 ms without it', () => {
+    const root = document.createElement('main');
+    document.body.append(root);
+    const delays = ['500ms', '.5s', '0.2s', '.1s', '150ms', '', 'soon'].map((value) => {
+      root.style.setProperty('--pw-delay-tooltip', value);
+      return hoverDelay(root);
+    });
+    root.remove();
+    expect(delays).toEqual([500, 500, 200, 100, 150, 500, 500]);
   });
 });
