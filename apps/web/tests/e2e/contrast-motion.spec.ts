@@ -35,6 +35,15 @@ const PALETTE = [
   'lock-open',
 ];
 
+/**
+ * Where A5 reads the glyphs: a desktop's 36 px glyph buttons, and the compact layout's 32 px ones,
+ * where the corner key sits nearer its glyph and the mark shows without the wordmark.
+ */
+const GLYPH_VIEWPORTS = [
+  { width: 1280, height: 720, button: 36 },
+  { width: 800, height: 720, button: 32 },
+] as const;
+
 // Colour and motion on a desktop (ENG-14, docs/architecture/engine/quality.md#accessibility,
 // REQ-Y06): every interface text meets 4.5:1 against what is behind it in the light theme, the
 // only P0 theme, every glyph and the boundary of the control that shows it 3:1 (ADR 0012,
@@ -61,34 +70,44 @@ test('E4 A10 REQ-Y06 every interface text meets 4.5:1 contrast in the light them
 test.describe('at a device pixel ratio of 2, so that a 1.5 px stroke covers whole pixels', () => {
   test.use({ deviceScaleFactor: 2 });
 
-  test('A5 every glyph and its control’s boundary meets 3:1 against its surface, computed and rendered', async ({
-    page,
-  }) => {
-    await openPage(page);
-    await canvas(page).focus();
-    for (const key of ['r', 'Enter']) await page.keyboard.press(key);
-    await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
-    const glyphs = await glyphContrasts(page);
-    // The palette's tools and tool lock, the chosen one pressed, Undo enabled and Redo not, the
-    // zoom buttons and the mark (ADR 0012, decision 3).
-    expect(glyphs.map(({ glyph }) => glyph)).toEqual(
-      expect.arrayContaining([
-        ...PALETTE,
-        'undo',
-        'redo',
-        'zoom-out',
-        'zoom-in',
-        'zoom-fit',
-        'mark',
-      ]),
-    );
-    expect(glyphs.find(({ control }) => control === 'Selection')).toBeDefined();
-    const below = glyphs.filter(
-      ({ computed, rendered, boundary }) =>
-        computed < 3 || rendered < 3 || (boundary !== null && boundary < 3),
-    );
-    expect(below).toEqual([]);
-  });
+  for (const { width, height, button: size } of GLYPH_VIEWPORTS) {
+    test.describe(`at ${String(width)} × ${String(height)}, with ${String(size)} px glyph buttons`, () => {
+      test.use({ viewport: { width, height } });
+
+      test('A5 every glyph and its control’s boundary meets 3:1 against its surface, computed and rendered', async ({
+        page,
+      }) => {
+        await openPage(page);
+        expect(await button(page, 'Hand').boundingBox()).toMatchObject({
+          width: size,
+          height: size,
+        });
+        await canvas(page).focus();
+        for (const key of ['r', 'Enter']) await page.keyboard.press(key);
+        await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
+        const glyphs = await glyphContrasts(page);
+        // The palette's tools and tool lock, the chosen one pressed, Undo enabled and Redo not,
+        // the zoom buttons and the mark (ADR 0012, decision 3).
+        expect(glyphs.map(({ glyph }) => glyph)).toEqual(
+          expect.arrayContaining([
+            ...PALETTE,
+            'undo',
+            'redo',
+            'zoom-out',
+            'zoom-in',
+            'zoom-fit',
+            'mark',
+          ]),
+        );
+        expect(glyphs.find(({ control }) => control === 'Selection')).toBeDefined();
+        const below = glyphs.filter(
+          ({ computed, rendered, boundary }) =>
+            computed < 3 || rendered < 3 || (boundary !== null && boundary < 3),
+        );
+        expect(below).toEqual([]);
+      });
+    });
+  }
 });
 
 test.describe('with the operating system asking for a dark scheme', () => {
