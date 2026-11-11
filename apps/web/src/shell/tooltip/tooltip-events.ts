@@ -40,17 +40,20 @@ interface Tips {
   timer: ReturnType<typeof setTimeout> | undefined;
   /** Whether the last input was a press, whose focus opens no tip. */
   pressed: boolean;
-  /** A control whose tip a press or Escape closed, until the pointer leaves it. */
+  /** The control under the mouse or pen, if it names a tip. */
+  under: HTMLElement | null;
+  /** The control under the pointer whose tip a press or Escape closed, until the pointer leaves. */
   dismissed: HTMLElement | null;
 }
 
-/** The handlers of each event, over the tips' state, which give the control to show, or null. */
-function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => void) {
+/** The tips' state, and what opens a control's tip, or none, at once, giving it to show. */
+function tipsOf(show: (control: HTMLElement | null) => void) {
   const tips: Tips = {
     shown: null,
     waiting: null,
     timer: undefined,
     pressed: false,
+    under: null,
     dismissed: null,
   };
   const stopWaiting = (): void => {
@@ -64,10 +67,18 @@ function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => vo
     tips.shown = control;
     show(control);
   };
+  return { tips, stopWaiting, open };
+}
+
+type TipsState = ReturnType<typeof tipsOf>;
+
+/** The pointer's handlers: resting on a control, leaving it and pressing. */
+function pointerHandlers(root: HTMLElement, { tips, stopWaiting, open }: TipsState) {
   const hover = (event: PointerEvent): void => {
+    if (event.pointerType === 'touch') return;
     const control = tipControlOf(event.target);
-    if (event.pointerType === 'touch' || control === null) return;
-    if ([tips.shown, tips.waiting, tips.dismissed].includes(control)) return;
+    tips.under = control;
+    if (control === null || [tips.shown, tips.waiting, tips.dismissed].includes(control)) return;
     stopWaiting();
     tips.waiting = control;
     tips.timer = setTimeout(() => {
@@ -78,6 +89,7 @@ function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => vo
     const control = tipControlOf(event.target);
     const to = event.relatedTarget;
     if (control === null || (to instanceof Node && control.contains(to))) return;
+    if (tips.under === control) tips.under = null;
     if (tips.dismissed === control) tips.dismissed = null;
     if (tips.waiting === control) stopWaiting();
     if (tips.shown === control) open(null);
@@ -87,6 +99,14 @@ function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => vo
     tips.dismissed = tipControlOf(event.target);
     open(null);
   };
+  return { hover, leave, press };
+}
+
+/**
+ * The focus's and the keys' handlers. Escape keeps closed only the tip of the control under the
+ * pointer, whose next hover would open it again, and never a focus tip's control elsewhere.
+ */
+function keyHandlers({ tips, open }: TipsState) {
   const focus = (event: FocusEvent): void => {
     const control = tipControlOf(event.target);
     if (!tips.pressed && control !== null) open(control);
@@ -98,10 +118,10 @@ function handlersOf(root: HTMLElement, show: (control: HTMLElement | null) => vo
     tips.pressed = false;
     if (event.key !== 'Escape') return;
     if (tips.shown !== null) stop(event);
-    tips.dismissed = tips.shown ?? tips.waiting;
+    tips.dismissed = tips.under;
     open(null);
   };
-  return { hover, leave, press, focus, blur, key, stopWaiting };
+  return { focus, blur, key };
 }
 
 /**
@@ -113,7 +133,9 @@ export function watchTooltips(
   root: HTMLElement,
   show: (control: HTMLElement | null) => void,
 ): () => void {
-  const { hover, leave, press, focus, blur, key, stopWaiting } = handlersOf(root, show);
+  const state = tipsOf(show);
+  const { hover, leave, press } = pointerHandlers(root, state);
+  const { focus, blur, key } = keyHandlers(state);
   const document = root.ownerDocument;
   root.addEventListener('pointerover', hover);
   root.addEventListener('pointerout', leave);
@@ -122,7 +144,7 @@ export function watchTooltips(
   root.addEventListener('focusout', blur);
   document.addEventListener('keydown', key, true);
   return () => {
-    stopWaiting();
+    state.stopWaiting();
     root.removeEventListener('pointerover', hover);
     root.removeEventListener('pointerout', leave);
     root.removeEventListener('pointerdown', press, true);
