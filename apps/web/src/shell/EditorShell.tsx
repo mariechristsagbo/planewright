@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import type { ReactNode, Ref } from 'react';
 
+import { useSaveRecovery } from '../a11y/save-recovery.ts';
 import { CanvasHost } from '../editor/CanvasHost.tsx';
 import { EditorProvider } from '../editor/EditorProvider.tsx';
 import type { EditorSurface } from '../editor/surface.ts';
@@ -105,7 +106,7 @@ function BottomIslands({
 /**
  * The shell's root, the page's main landmark, where S7 puts data-save-state, the islands in their
  * tab order, the open dialog, which gives the focus back to the control that opened it, and the
- * one tooltip, which follows the root's events.
+ * one tooltip, which follows the root's events. It says once when a failed save succeeds again.
  */
 function Shell() {
   const shell = useShellState();
@@ -118,6 +119,7 @@ function Shell() {
   const openers: Openers = { menu, tag, keys };
   const root = useRef<HTMLElement>(null);
   useDrawerFocus(drawer, toggle, details);
+  useSaveRecovery();
   const sheet = useSheet();
   // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and stands where
   // S8 puts the palette as a dock.

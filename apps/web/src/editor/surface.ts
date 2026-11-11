@@ -1,19 +1,22 @@
 import type { Editor, EditorView } from '@planewright/engine';
 import { createContext, useCallback, useContext, useSyncExternalStore } from 'react';
 
+import type { LiveRegion } from '../a11y/live-region.ts';
 import type { Platform } from '../platform/platform.ts';
 import type { StorageNotice } from '../platform/storage.ts';
 import type { RendererFactory } from './renderer.ts';
 
 /**
- * What the editor surface's components share: the editor, the platform, the renderer factory and
- * why storage opened no drawing, if it did not.
+ * What the editor surface's components share: the editor, the platform, the renderer factory, why
+ * storage opened no drawing, if it did not, and the live regions, where the web app says what the
+ * engine does not announce (REQ-Y04).
  */
 export interface EditorSurface {
   readonly editor: Editor;
   readonly platform: Platform;
   readonly createRenderer: RendererFactory;
   readonly storageNotice: StorageNotice | null;
+  readonly live: LiveRegion;
 }
 
 export const SurfaceContext = createContext<EditorSurface | null>(null);
