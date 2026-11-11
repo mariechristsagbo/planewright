@@ -44,7 +44,14 @@ zoom show tooltips of their names and keys. Since slice S4, issue #64, the menu 
 tab stop, opens a menu of Select all, Zoom to fit and Reset zoom, which run the registry's commands,
 Show elements, which opens and closes the drawer, Keyboard shortcuts, About this build and Source on
 GitHub, and a Keyboard shortcuts button after the view readout, the last tab stop, opens the same
-dialog, which lists every command of the registry with its keys. Its IndexedDB record backend
+dialog, which lists every command of the registry with its keys. Since slice S5, issue #66, the
+Elements toggle shows its glyph and the count of the drawn elements, hidden from screen readers so
+that its name stays "Elements"; the drawer, 300 px wide and 280 px at compact widths, mounts the
+list only while it is open, puts the focus on the list box when it opens and on the toggle when it
+closes, holds a Close button and the list's keys folded under a summary, and shows in each row the
+kind's glyph, a label and the figures in mono while each option keeps P0's name; on a phone in
+portrait it is a sheet of at most 62 % of the height, which makes the tool bar and the bottom
+islands inert and closes on Escape. Its IndexedDB record backend
 (database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
 selection are kept in the browser, and at start-up the page opens the most recently updated document
 again; it also saves at once when the page is hidden or left, and reads its preferences entry from
@@ -145,8 +152,9 @@ The editor chrome of milestone v0.2.0 (Editor Experience) is decided in
 the chrome's design tokens, base styles and typeface, with no layout rule change, though P0's text
 rewrapped in the new face, issue #55 (slice S2) replaced P0's page with the full-bleed shell
 described above, and issue #62 (slice S3) drew the chrome's 35 original glyphs, turned the tool bar
-into the palette and added tooltips, and issue #64 (slice S4) added the menu and the Keyboard
-shortcuts dialog; S5 to S13 are not implemented yet.
+into the palette and added tooltips, issue #64 (slice S4) added the menu and the Keyboard
+shortcuts dialog, and issue #66 (slice S5) gave the Elements drawer its count, its rows and its
+phone sheet; S6 to S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 
