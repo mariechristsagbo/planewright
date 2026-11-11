@@ -21,7 +21,9 @@ the keyboard alone through a list of its elements in a drawer, with its count, i
 phone sheet since slice S5 (issue #66), with a selection panel, or on phones a bar and a Details
 sheet, that shows the selection's figures read-only and offers Duplicate, Delete and Edit text
 since slice S6 (issue #69), with each change said in a live
-region, and whose drawing is saved in the browser's IndexedDB storage and restored on reload. ENG-15 (issue
+region, and whose drawing is saved in the browser's IndexedDB storage and restored on reload, with
+nothing shown while saving works and a "Not saved" chip with the storage notices while it needs
+attention since slice S7 (issue #71). ENG-15 (issue
 #33) measures every performance budget, in CI with its benchmarks, browser measurements and
 bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets in CI and B2 on a
 slower machine, and they went to issues #34 to #36

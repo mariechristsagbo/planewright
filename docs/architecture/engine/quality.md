@@ -14,7 +14,7 @@ REQ-Y06).
 | Tool bar           | `role="toolbar"` with a label; one tab stop, arrow keys move between tools; each tool a toggle button with `aria-pressed`, a name, its shortcut in `aria-keyshortcuts` and in its description        | REQ-C14, REQ-Y01, REQ-Y03 |
 | Canvas host        | a focusable region labelled "Drawing canvas", described by short instructions; it receives the editor's shortcuts                                                                                    | REQ-Y02                   |
 | Element list       | a list box in the Elements drawer with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                     | REQ-Y05                   |
-| Live region        | one polite region for selection counts, created and deleted elements, undo and redo; save failures use an assertive message                                                                          | REQ-Y04                   |
+| Live region        | one polite region for selection counts, created and deleted elements, undo and redo, and once that a failed save is saved again; save failures use an assertive message                              | REQ-Y04                   |
 | Selection          | the selection panel, or on phones the bar and its Details sheet: a `group` named by its heading, read-only figures, no live region; actions named by the registry; see below                         | REQ-C14, REQ-Y01, REQ-Y02 |
 | Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                    | REQ-Y02                   |
 | Menus              | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                       | REQ-Y01, REQ-Y03          |
@@ -56,7 +56,10 @@ the engine, and the element list, the live region, the zoom controls and focus m
   the selection holds other elements than it last said, `selection` with the new count. A save that
   has just failed, or failed for another reason, is `save-failed` with its reason, and one refused
   as stale is `save-stale`; a retry that fails for the same reason and a save that succeeds again say
-  nothing, since the notices stay until then. The selection a stored document opens with is not
+  nothing, since the notices stay until then. Since v0.2's slice S7 the web app, not the engine,
+  says "The drawing is saved again." politely, once, when a failed save, with any pending saves
+  after it, succeeds; a stale save or no storage forgets the failure, and routine saves say
+  nothing. The selection a stored document opens with is not
   announced. The web app says each key in English, as in "Rectangle created. 1 element selected."
   or "Undid move of 2 elements. 2 elements selected."
 - **The live region.** Two visually hidden regions, `aria-live` polite and assertive and
@@ -68,7 +71,11 @@ the engine, and the element list, the live region, the zoom controls and focus m
   latest of quick messages is written. Failed and stale saves and the start-up notices for
   unavailable or invalid storage are assertive. The notices, below the canvas in P0 and under the
   top-right island since S2, are no longer `role="alert"` elements but a "Storage notices" region
-  shown only while one applies (the ENG-13 review's s2).
+  shown only while one applies (the ENG-13 review's s2). Since S7 the region has a Hide button,
+  last, which folds it into the "Not saved" chip's button, `aria-expanded="false"` and
+  `aria-controls="notices"`; nothing about saving shows or is said while saving works. The polite
+  region writes only the latest of messages that come within 100 ms, so a change's announcement and
+  the recovery sentence, should they coincide, replace one another; S7 leaves the region as it is.
 - **The element list.** The editor's view gains `elements`, the drawn elements in drawing order as
   last committed: while a gesture or a text session holds the history's transaction it keeps the
   list from before, so that the list never shows a preview and a drag publishes no view. The list
@@ -270,7 +277,8 @@ what the rules above leave open:
   moving 1,000 elements by one unit and back, 400 after 80. B8: the save that autosave starts for a
   50-element change made untimed before it, from its timer to its result, over the in-memory record
   backend, 300 after 60. B9: the long tasks that overlap each of eight saves, from the frame after a
-  50-element nudge until the stored revision rises and the page says it is saved. B10: the end of
+  50-element nudge until the stored revision rises and the page says it is saved, which since v0.2's
+  slice S7 the shell's root says with `data-save-state="saved"`, since the page shows nothing. B10: the end of
   the first render that draws all 1,000 elements, from the navigation's start, over twelve loads
   after one that fills the cache. Every test first checks what it measured, such as the hit test
   against a scan of every element or the number of elements each frame drew, and fails at once when

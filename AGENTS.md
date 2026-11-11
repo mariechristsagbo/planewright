@@ -23,7 +23,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo,
   also from the keyboard alone, through a list of the elements in a drawer, which an Elements
   button showing their count opens and which is a sheet on phones, and a live region that
-  announces each change; while something is selected, a selection panel near the upper left, or on
+  announces each change; nothing shows about saving while it works, and a "Not saved" chip with
+  the storage notices while it needs attention; while something is selected, a selection panel near the upper left, or on
   phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
   size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
   Pre-release tag opens About this build, a menu at the top left runs
@@ -57,7 +58,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   registry, Edit text only where Enter would edit the lone selected text, and a footnote that style
   controls are not in this build; on phones in portrait a selection bar in its place, above the
   notices, whose Details opens a Details sheet, never open with the Elements sheet, closed at every
-  load and stored nowhere. S7 to S13 are not implemented yet.
+  load and stored nowhere. Slice S7 (issue #71) made saving show only when it needs attention: P0's
+  save status went, the shell's root carries `data-save-state` for the tests, a "Not saved" chip
+  joins the top-right island before Elements while a save failed or was refused as stale or storage
+  is unavailable, in the error or warning tone, with its glyph alone on phones, the notices under
+  it keep P0's words and gain Hide, which folds them into the chip's button, a new failure, another
+  reason or a stale save shows them again, and the web app says "The drawing is saved again." once
+  when a failed save succeeds. S8 to S13 are not implemented yet.
   Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
@@ -122,9 +129,11 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   geometry in `shell/selection/`, the tooltip and its delegated listeners in `shell/tooltip/`, and
   the modal dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host,
   input adapter and editor provider in `editor/`, the text area in `editor/text/`, the element list,
-  the live region with its messages, the figures' rounding and the focus's return in `a11y/`, the
+  the live region with its messages, the sentence after a failed save succeeds again, the figures'
+  rounding and the focus's return in `a11y/`, the
   tool bar shown as the palette, Undo and Redo, the
-  zoom controls, the view readout, the save status and the storage notices in `ui/`, and the browser
+  zoom controls, the view readout, the problem chip and the storage notices with their pure rules in
+  `ui/`, and the browser
   ports, text measurer, font loading, Mod key per platform, the IndexedDB record backend, storage
   start-up, page events and the preferences entry in `platform/`, and the style sheets in `styles/`:
   the design tokens, the fonts, the base, the controls', canvas's, list's and saving's rules, the

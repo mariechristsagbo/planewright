@@ -26,7 +26,8 @@ ENG-13 and ENG-14: a canvas host whose scene and overlay canvases the canvas ren
 adapter that sends DOM events to the engine's editor, a text area over the canvas for the text being
 edited, a tool bar with the Hand, Selection, creation and text tools and tool lock, a keyboard-operable
 list of the drawn elements, Undo and Redo and zoom controls, a live region that says the editor's
-announcements, and the save status with the notices for failed, stale, unavailable and invalid storage;
+announcements, and, while storage needs attention, a "Not saved" chip with the notices for failed,
+stale, unavailable and invalid storage;
 it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md), and sets its
 own text in the chrome's family, `Planewright UI` (Inter at 400 and 500), over the design tokens of
 [ADR 0012](../adr/0012-v02-editor-chrome.md), decision 8.
@@ -36,7 +37,7 @@ host, so that no press on them reaches the canvas. The identity island at the to
 menu button, the mark, the wordmark and a Pre-release tag, the tool bar sits at the top centre, the
 top-right island holds an Elements toggle that opens the element list in a drawer, closed at every
 load, with the storage notices under it, history and zoom sit at the bottom left, with the zoom
-shown on the Reset zoom button, and the view readout and the save status at the bottom right. Since
+shown on the Reset zoom button, and the view readout at the bottom right. Since
 slice S3, issue #62, the tool bar is a palette whose buttons show the tools' original glyphs, with
 their first keys in a corner and tool lock's padlock, Undo, Redo, Zoom out, Zoom in and Zoom to fit
 show glyphs too, all with their names, keys and descriptions unchanged, and those controls and Reset
@@ -161,8 +162,10 @@ rewrapped in the new face, issue #55 (slice S2) replaced P0's page with the full
 described above, and issue #62 (slice S3) drew the chrome's 35 original glyphs, turned the tool bar
 into the palette and added tooltips, issue #64 (slice S4) added the menu and the Keyboard
 shortcuts dialog, issue #66 (slice S5) gave the Elements drawer its count, its rows and its phone
-sheet, and issue #69 (slice S6) added the selection panel, the phone's selection bar and the
-Details sheet; S7 to S13 are not implemented yet.
+sheet, issue #69 (slice S6) added the selection panel, the phone's selection bar and the Details
+sheet, and issue #71 (slice S7) made saving show only when it needs attention, with the "Not saved"
+chip in the top-right island, notices that Hide folds into it and one polite sentence when a
+failed save succeeds again; S8 to S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 
