@@ -136,16 +136,26 @@ test('A5 REQ-Y02 while storage needs attention, the notices’ buttons come betw
   await expect(load).toBeVisible();
   await canvas(page).focus();
   const keep = notices.getByRole('button', { name: 'Keep this version' });
+  // Hide is the notices' last control since S7.
+  const hide = notices.getByRole('button', { name: 'Hide storage notices' });
   // The rectangle stays selected, so the selection panel's actions come first (S6).
   const panel = page.locator('[data-island="selection"]');
   const duplicate = panel.getByRole('button', { name: 'Duplicate' });
   const remove = panel.getByRole('button', { name: 'Delete' });
-  for (const stop of [duplicate, remove, load, keep, elementsToggle(page), button(page, 'Undo')]) {
+  for (const stop of [
+    duplicate,
+    remove,
+    load,
+    keep,
+    hide,
+    elementsToggle(page),
+    button(page, 'Undo'),
+  ]) {
     await page.keyboard.press('Tab');
     await expect(stop).toBeFocused();
     await expectIndicator(page);
   }
-  for (const stop of [elementsToggle(page), keep, load, remove, duplicate, canvas(page)]) {
+  for (const stop of [elementsToggle(page), hide, keep, load, remove, duplicate, canvas(page)]) {
     await page.keyboard.press('Shift+Tab');
     await expect(stop).toBeFocused();
   }

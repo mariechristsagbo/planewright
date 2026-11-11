@@ -169,7 +169,7 @@ describe('EditorShell', () => {
   });
 
   it('A7 renders the main landmark with a visually hidden h1, the islands with their controls, and the drawer closed', () => {
-    mount();
+    render(<EditorShell surface={saveHarness({ type: 'saved' }).surface} />);
     // The shell's root is the page's one main landmark, as P0's main was (the S2 review's m4).
     const main = screen.getByRole('main');
     expect(main).toHaveClass('editor-shell');
@@ -187,9 +187,13 @@ describe('EditorShell', () => {
         view,
       ].map(islandOf),
     ).toEqual(['identity', 'tools', 'top-right', 'bottom-left', 'bottom-left', 'bottom-right']);
-    expect(islandOf(view.parentElement?.querySelector('#save-status') ?? view)).toBe(
-      'bottom-right',
-    );
+    // While saving works nothing shows about it (S7): Elements is alone at the top right.
+    expect(document.getElementById('save-status')).toBeNull();
+    expect(
+      within(document.querySelector<HTMLElement>('[data-island="top-right"]') ?? main).getAllByRole(
+        'button',
+      ),
+    ).toEqual([screen.getByRole('button', { name: 'Elements' })]);
     expect(screen.getByRole('button', { name: 'Elements' })).toHaveAttribute(
       'aria-expanded',
       'false',
@@ -305,5 +309,22 @@ describe('the shell root’s save state', () => {
       return screen.getByRole('main').getAttribute('data-save-state');
     });
     expect(states).toEqual(['pending', 'failed', 'pending', 'saved', 'stale', 'none']);
+  });
+});
+
+describe('the problem chip in the shell', () => {
+  it('A4 D3 shows no #save-status at rest, and under a problem the chip in the top-right island before Elements', () => {
+    const harness = saveHarness({ type: 'saved' });
+    render(<EditorShell surface={harness.surface} />);
+    expect(document.getElementById('save-status')).toBeNull();
+    harness.setSave({ type: 'failed', reason: 'quota' });
+    const chip = document.getElementById('save-status');
+    expect(islandOf(chip ?? document.body)).toBe('top-right');
+    const island = chip?.closest('[data-island]');
+    const elements = screen.getByRole('button', { name: 'Elements' });
+    expect(island?.firstElementChild).toBe(chip);
+    expect(island?.lastElementChild).toBe(elements);
+    harness.setSave({ type: 'saved' });
+    expect(document.getElementById('save-status')).toBeNull();
   });
 });

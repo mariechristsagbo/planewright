@@ -1,33 +1,91 @@
-/* The save status and the storage notices (ENG-13). */
-.save-status {
+/*
+ * The problem chip and the storage notices (ADR 0012, decision 12, D7; the v0.2 plan's S7): nothing
+ * shows while saving works. While storage needs attention the chip sits in the top-right island
+ * before Elements, after a hairline, and the notices under the island, in the error tone for a
+ * failed save and the warning tone otherwise, from the tokens alone: no success colour, no motion
+ * (S12) and no blur. responsive.css sets the chip's landscape form and the touch targets.
+ */
+.problem-chip {
+  display: inline-flex;
+  gap: var(--pw-spacing-xs);
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: var(--pw-spacing-xl);
   margin: 0;
+  padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+  border: 1px solid transparent;
+  border-radius: var(--pw-rounded-sm);
+  font: var(--pw-type-caption);
+  letter-spacing: var(--pw-type-caption-tracking);
+}
+
+.island .problem-chip {
+  padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+}
+
+.problem-chip-chevron {
+  display: inline-flex;
+}
+
+/* The hairline between the chip and Elements, 1 by 20 px. */
+.island-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--pw-color-outline-subtle);
+}
+
+.tone-error {
+  color: var(--pw-color-on-error-container);
+  background: var(--pw-color-error-container);
+}
+
+.tone-warning {
+  color: var(--pw-color-on-warning-container);
+  background: var(--pw-color-warning-container);
 }
 
 .notices {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--pw-spacing-sm);
 }
 
-.notices:empty {
+/* Hidden notices stay in the page, so that the chip's button controls them. */
+.notices[hidden] {
   display: none;
 }
 
 .notice {
   margin: 0;
-  padding: 0.5rem 0.75rem;
-  border: 2px solid #b3261e;
-  border-radius: 0.375rem;
-  /* Over the canvas, under the top-right island (ADR 0012, decision 13); S7 restyles notices. */
-  background: var(--pw-color-surface);
+  padding: var(--pw-spacing-md);
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  box-shadow: var(--pw-shadow-e2);
+  font: var(--pw-type-body-sm);
+  letter-spacing: var(--pw-type-body-sm-tracking);
 }
 
 .notice p {
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--pw-spacing-sm);
 }
 
 .notice-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: var(--pw-spacing-sm);
+}
+
+.notices-foot {
+  display: flex;
+  justify-content: end;
+}
+
+/* Hide, on the islands' surface, so that it reads on any drawing under it. */
+.notices-hide {
+  border-color: var(--pw-color-outline-strong);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  font: var(--pw-type-label-md);
+  letter-spacing: var(--pw-type-label-md-tracking);
 }

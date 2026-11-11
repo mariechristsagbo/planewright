@@ -109,12 +109,13 @@ for (const viewport of [
       await expect(button(page, 'Close Elements')).toBeInViewport({ ratio: 1 });
     });
 
-    test('D5 M1 Shift+Tab from Elements reaches the stale notice’s answers in sight, the sheet covering neither', async ({
+    test('D5 M1 Shift+Tab from Elements reaches the stale notice’s Hide and answers in sight, the sheet covering none', async ({
       page,
     }) => {
       await openUnderStaleNotice(page);
       await elementsToggle(page).focus();
-      for (const name of ['Keep this version', 'Load the newer version']) {
+      // Hide is the notices' last control since S7, so it comes first going back.
+      for (const name of ['Hide storage notices', 'Keep this version', 'Load the newer version']) {
         await page.keyboard.press('Shift+Tab');
         const answer = storageNotices(page).getByRole('button', { name });
         await expect(answer).toBeFocused();

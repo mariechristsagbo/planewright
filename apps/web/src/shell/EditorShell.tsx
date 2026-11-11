@@ -7,8 +7,9 @@ import { EditorProvider } from '../editor/EditorProvider.tsx';
 import { useViewValue } from '../editor/surface.ts';
 import type { EditorSurface } from '../editor/surface.ts';
 import { HistoryControls } from '../ui/HistoryControls.tsx';
-import { SaveStatus, StorageNotices } from '../ui/Saving.tsx';
+import { StorageNotices, StorageProblemChip } from '../ui/Saving.tsx';
 import { saveStateOf } from '../ui/save-problem.ts';
+import { useNoticesControls } from '../ui/use-notices.ts';
 import { Toolbar } from '../ui/Toolbar.tsx';
 import { ViewReadout } from '../ui/ViewReadout.tsx';
 import { ZoomControls } from '../ui/ZoomControls.tsx';
@@ -30,9 +31,9 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // over it in islands at its edges, siblings of the canvas host and never inside it, so that no
 // press on them reaches the canvas (REQ-C11). The document order is the tab order of decision
 // 14: the menu, Pre-release, the tool bar's one stop, the canvas, the selection panel's actions
-// while something is selected, the storage notices' buttons, Elements and, while its drawer is
-// open, the drawer's Close, its keys and the list, then Undo, Redo, the zoom controls and Keyboard
-// shortcuts. The drawer's opening and closing move the focus, to its list box and back to the
+// while something is selected, the storage notices' buttons while they show, or the problem
+// chip's button once they are hidden, Elements and, while its drawer is open, the drawer's Close,
+// its keys and the list, then Undo, Redo, the zoom controls and Keyboard shortcuts. The drawer's opening and closing move the focus, to its list box and back to the
 // toggle. On a phone in portrait the open drawer is a sheet, the selection bar takes the panel's
 // place with its Details sheet right after it, one sheet is open at a time, and the palette and the
 // bottom islands are inert while either is.
@@ -97,7 +98,6 @@ function BottomIslands({
       <div className="island bottom-right-island" data-island="bottom-right">
         <IslandControls covered={covered}>
           <ViewReadout />
-          <SaveStatus />
           <ShortcutsButton ref={keys} onOpen={onShortcuts} />
         </IslandControls>
       </div>
@@ -142,6 +142,7 @@ function Shell() {
   const root = useRef<HTMLElement>(null);
   useDrawerFocus(drawer, toggle, details);
   useSaveRecovery();
+  const notices = useNoticesControls(shell);
   const sheet = useSheet();
   // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and stands where
   // S8 puts the palette as a dock.
@@ -164,8 +165,9 @@ function Shell() {
       <CanvasHost />
       <EmptyCanvasNote />
       <SelectionPanel sheet={sheet} controls={selection} />
-      <StorageNotices />
+      <StorageNotices controls={notices} />
       <div className="island top-right-island" data-island="top-right">
+        <StorageProblemChip controls={notices} />
         <ElementsToggle ref={toggle} open={drawer} onToggle={toggleDrawer} />
       </div>
       <ElementsDrawer open={drawer} sheet={sheet} onClose={closeDrawer} />

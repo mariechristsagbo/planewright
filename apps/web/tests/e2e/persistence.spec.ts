@@ -41,6 +41,8 @@ async function open(page: Page): Promise<void> {
   await page.goto('/');
   await canvas(page).focus();
   await expectSaved(page);
+  // While saving works the problem chip is absent (ADR 0012, decision 12).
+  await expect(saveStatus(page)).toHaveCount(0);
 }
 
 test('E1 A11 REQ-P02 REQ-P03 REQ-H03 REQ-V11 a reload brings back the drawing, the camera and the selection, with the Selection tool and no history', async ({
@@ -101,6 +103,7 @@ test('E2 A12 REQ-P06 a second tab’s newer save raises the notice, and each cho
   await notice.getByRole('button', { name: 'Keep this version' }).click();
   await expectSaved(page);
   await expect(storageNotices(page)).toHaveCount(0);
+  await expect(saveStatus(page)).toHaveCount(0);
 
   await second.bringToFront();
   await rectangle(second, [700, 100], [800, 180]);
@@ -144,7 +147,8 @@ test('E3 A13 REQ-P07 invalid stored data is left unchanged, and a new drawing op
   await page.reload();
   const invalidText =
     'The drawing saved in this browser could not be read, so a new drawing was opened. The saved data is left unchanged.';
-  await expect(storageNotices(page)).toHaveText(invalidText);
+  // The notices' region holds Hide too since S7, so the notice's own words are read exactly.
+  await expect(storageNotices(page).getByText(invalidText, { exact: true })).toBeVisible();
   await expect(urgentAnnouncement(page)).toHaveText(invalidText);
   await expect(page.getByRole('alert')).toHaveCount(0);
   await canvas(page).focus();
@@ -157,6 +161,7 @@ test('E3 A13 REQ-P07 invalid stored data is left unchanged, and a new drawing op
   await page.reload();
   await expectSaved(page);
   await expect(storageNotices(page)).toHaveCount(0);
+  await expect(saveStatus(page)).toHaveCount(0);
   await expect(urgentAnnouncement(page)).toHaveText('');
   await expectInk(page, [[100, 140]]);
 });
@@ -169,7 +174,7 @@ test('E4 storage that cannot be opened shows a notice, and drawing still works',
   await canvas(page).focus();
   const unavailableText =
     'Saving is unavailable in this browser: the drawing stays in this tab only and is lost when the tab closes.';
-  await expect(storageNotices(page)).toHaveText(unavailableText);
+  await expect(storageNotices(page).getByText(unavailableText, { exact: true })).toBeVisible();
   await expect(urgentAnnouncement(page)).toHaveText(unavailableText);
   await expect(saveStatus(page)).toHaveText('Not saved');
   await rectangle(page, [100, 100], [200, 180]);
@@ -188,11 +193,12 @@ test('REQ-P05 a failed save is reported, retried, and saved once storage takes i
   await rectangle(page, [300, 100], [400, 180]);
   const failedText =
     'Saving failed: the browser’s storage did not take the change. Your changes are kept in this tab, and saving is tried again.';
-  await expect(storageNotices(page)).toHaveText(failedText);
+  await expect(storageNotices(page).getByText(failedText, { exact: true })).toBeVisible();
   await expect(urgentAnnouncement(page)).toHaveText(failedText);
   await setRefuseWrites(page, false);
   await expectSaved(page);
   await expect(storageNotices(page)).toHaveCount(0);
+  await expect(saveStatus(page)).toHaveCount(0);
   await page.reload();
   await expectInk(page, [
     [100, 140],
