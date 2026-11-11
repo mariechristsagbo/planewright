@@ -78,6 +78,21 @@ test('D4 A6 the Escape that closes a tip goes no further: the chosen tool and th
   await expect(polite(page)).toHaveText('Nothing selected.');
 });
 
+test('D4 A6 an Escape on a focus tip leaves the hover tip of its control free to open later', async ({
+  page,
+}) => {
+  await openPage(page);
+  const hand = toolButton(page, 'Hand');
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await expect(tip(page)).toHaveText(/^Hand\s*H$/u);
+  await page.keyboard.press('Escape');
+  await expect(tip(page)).toHaveCount(0);
+  const [x, y] = await centreOf(hand);
+  await page.mouse.move(x, y);
+  await expect(tip(page)).toHaveText(/^Hand\s*H$/u);
+});
+
 test('D4 D6 A6 a hover tooltip appears after its delay and closes when the pointer leaves', async ({
   page,
 }) => {

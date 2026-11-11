@@ -148,6 +148,37 @@ describe('the tooltips', () => {
     expect(tip()).toBeNull();
   });
 
+  it('D4 A6 keep closed after Escape only the tip of the control under the pointer, until the pointer leaves it', () => {
+    mount();
+    const hand = button('Hand');
+    focus(hand);
+    fireEvent.keyDown(hand, { key: 'Escape', code: 'Escape' });
+    expect(tip()).toBeNull();
+    // The pointer was elsewhere: Hand's hover tip opens as ever.
+    fireEvent.pointerOver(hand, { pointerType: 'mouse' });
+    wait(500);
+    expect(said()?.name).toBe('Hand');
+    fireEvent.keyDown(hand, { key: 'Escape', code: 'Escape' });
+    fireEvent.pointerOver(hand.querySelector('svg') ?? hand, { pointerType: 'mouse' });
+    wait(1000);
+    expect(tip()).toBeNull();
+    fireEvent.pointerOut(hand, { pointerType: 'mouse', relatedTarget: document.body });
+    // A focus tip shows while the pointer waits on Line: Escape keeps Line's tip closed instead.
+    const line = button('Line');
+    focus(button('Undo'));
+    fireEvent.pointerOver(line, { pointerType: 'mouse' });
+    wait(300);
+    fireEvent.keyDown(button('Undo'), { key: 'Escape', code: 'Escape' });
+    expect(tip()).toBeNull();
+    fireEvent.pointerOver(line.querySelector('svg') ?? line, { pointerType: 'mouse' });
+    wait(1000);
+    expect(tip()).toBeNull();
+    fireEvent.pointerOut(line, { pointerType: 'mouse', relatedTarget: document.body });
+    fireEvent.pointerOver(line, { pointerType: 'mouse' });
+    wait(500);
+    expect(said()?.name).toBe('Line');
+  });
+
   it('D4 A6 never open on touch, from a touch hover or from the focus that a tap gives', () => {
     mount();
     const rectangle = button('Rectangle');
