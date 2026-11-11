@@ -70,6 +70,7 @@ const surface = {
   platform: platformOf(navigator),
   createRenderer: canvasRenderer(document, frameTimingOf(window)),
   storageNotice: storage.notice,
+  live,
 };
 
 createRoot(container).render(

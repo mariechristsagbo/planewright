@@ -10,6 +10,7 @@ import type { CanvasSurface } from '@planewright/render-canvas';
 import { act } from '@testing-library/react';
 import type { ReactNode } from 'react';
 
+import type { Urgency } from '../../src/a11y/live-region.ts';
 import { EditorProvider } from '../../src/editor/EditorProvider.tsx';
 import type { EditorSurface } from '../../src/editor/surface.ts';
 import type { Platform } from '../../src/platform/platform.ts';
@@ -29,6 +30,8 @@ export interface SurfaceHarness {
     disposed: boolean;
   }[];
   readonly wrap: (children: ReactNode) => ReactNode;
+  /** What the web app said in the live regions, in order (a recording fake of them). */
+  readonly said: { readonly text: string; readonly urgency: Urgency }[];
 }
 
 /** A harness over an empty drawing, or over a stored one with its session. */
@@ -57,10 +60,16 @@ export function surfaceHarness(
   };
   const editor = createEditor(ports, stored);
   const made: SurfaceHarness['made'] = [];
+  const said: SurfaceHarness['said'] = [];
   const surface: EditorSurface = {
     editor,
     platform,
     storageNotice: null,
+    live: {
+      say: (text, urgency) => {
+        said.push({ text, urgency });
+      },
+    },
     createRenderer: (scene, overlay): Renderer => {
       const record = { canvases: [scene, overlay], frames: [] as RenderFrame[], disposed: false };
       made.push(record);
@@ -78,6 +87,7 @@ export function surfaceHarness(
     editor,
     surface,
     made,
+    said,
     flush: () => {
       act(() => {
         for (const task of frames.splice(0)) task(0);
