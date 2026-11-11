@@ -73,7 +73,7 @@ function SaveNotice({ save }: { readonly save: Status | null }) {
   return save?.type === 'stale' ? <StaleNotice /> : null;
 }
 
-/** The notices about storage, below the canvas so that they never move it; none while it works. */
+/** The notices about storage, over the canvas under the top-right island; none while it works. */
 export function StorageNotices() {
   const { storageNotice } = useSurface();
   const { save } = useEditorView();
