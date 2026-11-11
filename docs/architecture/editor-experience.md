@@ -645,13 +645,14 @@ Issue #62 delivered slice S3.
 - The palette: P0's tool bar keeps its `toolbar` role, its name Tools, its one tab stop and arrow
   keys, and every button's name, `aria-keyshortcuts` and description, while each button shows its
   tool's glyph, 36 px square on desktops and 32 px at compact widths, with its first key in the
-  bottom-right corner in JetBrains Mono, hidden from assistive technology since the name,
+  bottom-right corner in JetBrains Mono, against the button's inner edge at compact widths so that
+  it keeps clear of the glyph, hidden from assistive technology since the name,
   `aria-keyshortcuts` and the description carry every key. Hairlines, also hidden, split Hand and
   Selection, the drawing tools and tool lock, whose padlock is closed while tool lock is on, beside
   its pressed state. The buttons are named by `aria-label`, from the registry's labels.
   `styles/palette.css` sets the glyph buttons' size, the corner keys and the hairlines, and keeps
   the base's pressed, disabled and focus rules, which S10 coordinates, so the chosen tool still
-  shows P0's blue; the compact size is in `responsive.css`.
+  shows P0's blue; the compact size and corner are in `responsive.css`.
 - Undo, Redo, Zoom out, Zoom in and Zoom to fit show their glyphs with their names unchanged, Reset
   zoom keeps showing the zoom and its name, "Reset zoom, 100%", and Elements keeps its word until
   S5's count. The identity island shows the mark before the wordmark, both hidden from assistive
@@ -661,17 +662,25 @@ Issue #62 delivered slice S3.
   their `data-chrome-tip` and `data-chrome-keys`, which repeat the registry's label and the keys
   that the control's `aria-keyshortcuts` and description give. It opens after `--pw-delay-tooltip`,
   500 ms, which it reads from the page, at once on keyboard focus and never on touch, neither from a
-  touch hover nor from the focus that a tap or a click gives, and closes on Escape, on a press and
-  when the pointer or the focus leaves its control; a press or Escape keeps a hovered tip closed
-  until the pointer leaves. It sits 8 px under its control, or over it near the window's bottom, in
-  `styles/tooltip.css`, and presses go through it. `shell/tooltip/tooltip-events.ts` delegates its
-  events: the shell's root has one listener for each pointer and focus event, and one keydown
-  listener sits on the root's document, in the capture phase, so that Escape closes a hovered tip
-  while the focus is outside the shell, as it is after a load, and a key that moves the focus counts
-  before the focus moves. This plan said one listener on the shell's root. The tip has the `tooltip`
-  role, a description, but no control points to it with `aria-describedby`, so that each control
-  keeps S2's name and description and a screen reader never hears the name twice; the tip repeats
-  only what the name, `aria-keyshortcuts` and description already say.
+  touch hover nor from the focus that a tap or a click gives, and closes on Escape, on a press, when
+  the focus leaves its control and when the pointer leaves both the control and the tip. The Escape
+  that closes a showing tip goes no further, as in the APG's tooltip pattern, so that dismissing a
+  tip never also clears the selection or the chosen tool through the keymap's Escape; the next
+  Escape does, and an Escape while no tip shows goes on as before. A press or an Escape keeps the
+  tip of the control under the pointer closed until the pointer leaves that control, while a focus
+  tip's control elsewhere stays free to open its hover tip. It sits 8 px under its control, or over
+  it near the window's bottom, in `styles/tooltip.css`. The pointer can move onto it and rest there
+  (WCAG 2.1's success criterion 1.4.13): the 8 px gap is part of the tip, through a `::before` that
+  `Tooltip.tsx` sizes to the measured gap on the tip's side, so crossing it has no time limit, and a
+  press on the tip closes it rather than reaching the canvas behind.
+  `shell/tooltip/tooltip-events.ts` delegates its events: the shell's root has one listener for each
+  pointer and focus event, and one keydown listener sits on the root's document, in the capture
+  phase, so that Escape closes a hovered tip while the focus is outside the shell, as it is after a
+  load, and a key that moves the focus counts before the focus moves. This plan said one listener on
+  the shell's root. The tip has the `tooltip` role, a description, but no control points to it with
+  `aria-describedby`, so that each control keeps S2's name and description and a screen reader never
+  hears the name twice; the tip repeats only what the name, `aria-keyshortcuts` and description
+  already say.
 - Tests: `icons.test.tsx`, `Palette.test.tsx` (one button per registry tool in registry order with
   its glyph and `aria-keyshortcuts`, the corner keys, the hairlines and the padlock with
   `aria-pressed`), `Tooltip.test.tsx`, and new tests of Undo's and Redo's glyphs and of the mark;
@@ -683,17 +692,27 @@ Issue #62 delivered slice S3.
   their surfaces at a device pixel ratio of 2, from the colours the page computes and from a
   screenshot's pixels. Decision 16 migrated one more assumption, `chrome-type.spec.ts` line 86,
   which read Inter Medium on a tool button: it now reads it on Elements, and JetBrains Mono on the
-  tool buttons, whose corner keys it checks are hidden and set in `Planewright Mono`.
-- Contrast, measured by the new test's readings at 1280 × 720 and 800 × 720, a device pixel ratio of
-  2, with a rectangle drawn: every glyph at rest and the mark 16.70:1 (`on-surface` on the white
-  islands) and its button's border the same, the chosen tool's white glyph and its border 5.59:1 on
-  P0's `#2a62d0`, and the unavailable Redo's glyph and dashed border 7.56:1; the screenshots' most
-  contrasting pixels read 16.70 to 16.89, 5.59 and 7.68. P0's focus ring, which S3 does not change,
-  keeps the focus tests' 3:1 check.
+  tool buttons, whose corner keys it checks are hidden and set in `Planewright Mono`. The review's
+  fixes added tests that the Escape closing a tip goes no further, the chosen tool and the selection
+  staying until a second Escape cancels; that an Escape on a focus tip keeps no hover tip of its
+  control from opening; that the pointer can move onto a tip under or over its control; and that a
+  hover tip shows 450 to 700 ms after the pointer arrives, measured in the page, with the page's
+  token at 500 ms. `icons.test.tsx` now reads each arc's bulge by SVG 1.1's centre
+  parametrisation, and `palette.spec.ts` checks at 800 × 720 that each corner key's box keeps clear
+  of what its glyph paints.
+- Contrast, measured by the new test, which reads both 1280 × 720 with the desktop's 36 px buttons
+  and 800 × 720 with the compact 32 px ones, at a device pixel ratio of 2, with a rectangle drawn:
+  every glyph at rest and the mark 16.70:1 (`on-surface` on the white islands) and its button's
+  border the same, the chosen tool's white glyph and its border 5.59:1 on P0's `#2a62d0`, and the
+  unavailable Redo's glyph and dashed border 7.56:1; the screenshots' most contrasting pixels read
+  16.70 to 16.89, 5.59 and 7.68, at both sizes, before the review's fixes and after them. P0's focus
+  ring, which S3 does not change, keeps the focus tests' 3:1 check.
 - Cost: the glyphs and `Icon` alone are 4,276 bytes minified and 1,663 bytes gzip, under the 3 to 4
-  KB estimated, and the tooltip 1,172 bytes gzip. The web app's initial JavaScript is 112,781 bytes
-  gzip against `main`'s 109,944 at `0e31b0d`, 2,837 bytes more for the whole slice, within B13's 200
-  KB; B11 and B12 are unchanged.
+  KB estimated. At `471c733` the tooltip was 1,172 bytes gzip and the web app's initial JavaScript
+  112,781 bytes gzip against `main`'s 109,944 at `0e31b0d`, 2,837 bytes more for the whole slice,
+  within B13's 200 KB; B11 and B12 are unchanged. They were 1,176 and 112,782 bytes at `cbe6ccd`,
+  and after the review's fixes, at `4fbd873`, they are 1,374 and 112,960 bytes, 3,016 bytes more
+  than `main`.
 - Performance, on the developer machine, a 6-core virtual machine without a GPU where B1 and B2 miss
   with unchanged code: two runs each of `npm run build`, `perf:browser` and `perf:report` on the
   head (`9971572`, before these documents) and on `main` (`0e31b0d`) in a worktree. B1 was 48.9 and
@@ -705,5 +724,11 @@ Issue #62 delivered slice S3.
   the head and 79 to 108 ms on `main`, and its median 41.7 to 48.6 ms against 41.3 to 49.0 ms, so
   the difference lies within the machine's spread; I2 has no budget, and S5 changes what it
   measures. `perf:report` exits 1 in that sequence only because B5 to B8 and B11 to B13 are not
-  measured there. B1's misses remain follow-up #49's.
+  measured there. After the review's fixes, which change the tooltip's pointer handling and one
+  compact-width rule, two more runs each on `4fbd873` and on `cbe6ccd` in a worktree, in the order
+  head, base, base, head, gave B1 36.0 and 56.7 ms against 30.1 and 43.0 ms, B2 17.2 and 21.0 ms
+  against 21.7 and 18.7 ms, B3 0.23 and 0.20 ms against 0.20 and 0.65 ms, B4 one frame and B9 no
+  long task in every run, B10 0.49 and 0.76 s against 0.34 and 0.51 s, and the 95th percentiles of
+  I1 93.2 and 147.9 ms against 182.0 and 181.7 ms and of I2 58.7 and 74.2 ms against 219.5 and
+  76.0 ms, differences within the machine's spread. B1's misses remain follow-up #49's.
 - S4 to S13 are not implemented.

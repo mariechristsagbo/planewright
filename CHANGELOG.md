@@ -237,5 +237,7 @@ release has been published yet.
   zoom, Elements keeps its word, and the identity island shows the mark. Every control keeps its
   name, keys and description. The glyph controls and Reset zoom show a tooltip of their name and
   keys after 500 ms of hover or at once on keyboard focus, never on touch, closed by Escape, a press
-  or leaving the control. Glyphs and their controls' borders measure 3:1 or more against their
-  surfaces. S4 to S13 are not implemented.
+  or the pointer leaving both the control and the tip, onto which the pointer can move; the Escape
+  that closes a tip does nothing else, so a second one cancels. Glyphs and their controls' borders
+  measure 3:1 or more against their surfaces at desktop and compact widths, where the corner keys
+  keep clear of the glyphs. S4 to S13 are not implemented.
