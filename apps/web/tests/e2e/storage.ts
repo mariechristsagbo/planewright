@@ -91,6 +91,25 @@ export async function showStaleNotice(page: Page): Promise<void> {
   ).toBeVisible();
 }
 
+/**
+ * Shows the failed notice on an open page whose writes are refusable (refusableWrites): it saves a
+ * rectangle, then refuses writes, and the next save, a nudge, fails.
+ */
+export async function showFailedNotice(page: Page): Promise<void> {
+  await canvas(page).focus();
+  await page.keyboard.press('r');
+  await page.keyboard.press('Enter');
+  await expectSaved(page);
+  await setRefuseWrites(page, true);
+  await canvas(page).focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(storageNotices(page)).toContainText('Saving failed:');
+}
+
+/** Folds the shown notices into the problem chip with their Hide button. */
+export const hideNotices = (page: Page): Promise<void> =>
+  storageNotices(page).getByRole('button', { name: 'Hide storage notices' }).click();
+
 /** Makes the page's IndexedDB impossible to open, before any of its scripts runs. */
 export async function refuseStorage(page: Page): Promise<void> {
   await page.addInitScript(`IDBFactory.prototype.open = function () {
