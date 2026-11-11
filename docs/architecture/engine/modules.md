@@ -184,16 +184,20 @@ into the scene store directly.
 ## Web app structure
 
 The editor surface issue (ENG-08) replaced the web app's status page with a navigation-only editor
-surface. While P0 is incomplete the page labels the build as pre-release and says what does not
-work (AGENTS.md: the UI stays factual).
+surface, and slice S2 of v0.2 (issue #55, [ADR 0012](../../adr/0012-v02-editor-chrome.md)) put it
+in the editor's full-bleed shell. The page labels the build as pre-release with a persistent tag
+that opens About this build, which says what does not work (AGENTS.md: the UI stays factual).
 
-| Directory (`apps/web/src`) | Holds                                                                                                 |
-| -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `editor/`                  | `CanvasHost` (two canvases, resize observer, pointer capture), the input adapter, the editor provider |
-| `editor/text/`             | the text-editing overlay positioned by the camera                                                     |
-| `ui/`                      | toolbar, history buttons, view readout, save status and notices; controls read the command registry   |
-| `a11y/`                    | the element list, the live region and focus management                                                |
-| `platform/`                | IndexedDB backend, storage start-up, page events, preferences, clipboard, files, text measurer, ports |
+| Directory (`apps/web/src`) | Holds                                                                                                                                                                |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `shell/`                   | `EditorShell`, which places the islands around the canvas, its state, the identity island and Pre-release tag, the Elements toggle and drawer, the empty-canvas note |
+| `shell/dialogs/`           | the modal dialog's behaviour and About this build                                                                                                                    |
+| `editor/`                  | `CanvasHost` (two canvases, resize observer, pointer capture), the input adapter, the editor provider                                                                |
+| `editor/text/`             | the text-editing overlay positioned by the camera                                                                                                                    |
+| `ui/`                      | toolbar, history buttons, zoom controls, view readout, save status and notices; controls read the command registry                                                   |
+| `a11y/`                    | the element list, the live region and focus management                                                                                                               |
+| `platform/`                | IndexedDB backend, storage start-up, page events, preferences, clipboard, files, text measurer, ports                                                                |
+| `styles/`                  | the tokens, fonts and base, the controls', canvas's, list's and saving's rules, the shell's layout, islands and dialogs, and its media queries                       |
 
 ## Requirements served
 

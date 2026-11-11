@@ -30,14 +30,22 @@ announcements, and the save status with the notices for failed, stale, unavailab
 it bundles and loads the fonts of [ADR 0011](../adr/0011-bundled-open-licence-fonts.md), and sets its
 own text in the chrome's family, `Planewright UI` (Inter at 400 and 500), over the design tokens of
 [ADR 0012](../adr/0012-v02-editor-chrome.md), decision 8.
+Since slice S2 (issue #55) these sit in the editor's shell, `EditorShell`: the canvas fills the
+window and the page never scrolls, and the controls float over it in islands, siblings of the canvas
+host, so that no press on them reaches the canvas. The identity island at the top left holds the
+wordmark and a Pre-release tag, the tool bar sits at the top centre, the top-right island holds an
+Elements toggle that opens the element list in a drawer, closed at every load, with the storage
+notices under it, history and zoom sit at the bottom left, with the zoom shown on the Reset zoom
+button, and the view readout and the save status at the bottom right.
 Its IndexedDB record backend (database `planewright`) stores what the engine's autosave saves, so
 the drawing, its camera and its selection are kept in the browser, and at start-up the page opens
 the most recently updated document again; it also saves at once when the page is hidden or left,
-and reads its preferences entry from `localStorage` at start-up. The page labels the build as
-pre-release, says that shapes, lines, freehand strokes and texts can be drawn, selected,
-transformed and undone and that the drawing is saved in this browser, and lists the capabilities
-that are not implemented, text formatting, styles, files and collaboration among them. It imports
-the protocol version to prove that workspace linking works.
+and reads its preferences entry from `localStorage` at start-up. The Pre-release tag opens About
+this build, a dialog that says that shapes, lines, freehand strokes and texts can be drawn,
+selected, transformed and undone and that the drawing is saved in this browser, and lists the
+capabilities that are not implemented, text formatting, styles, files and collaboration among them;
+an empty canvas repeats its pre-release sentence. It imports the protocol version to prove that
+workspace linking works.
 
 ### apps/collab
 
@@ -126,9 +134,10 @@ processor and so gates none yet; the rest is not implemented yet:
 
 The editor chrome of milestone v0.2.0 (Editor Experience) is decided in
 [ADR 0012](../adr/0012-v02-editor-chrome.md) and split into slices S1 to S13 by the
-[v0.2 plan](editor-experience.md). Issue #50 (slice S0) recorded both, and issue #53 (slice S1)
-added the chrome's design tokens, base styles and typeface, with no layout change; S2 to S13 are not
-implemented yet, so the web app described above is still P0's page.
+[v0.2 plan](editor-experience.md). Issue #50 (slice S0) recorded both, issue #53 (slice S1) added
+the chrome's design tokens, base styles and typeface, with no layout rule change, though P0's text
+rewrapped in the new face, and issue #55 (slice S2) replaced P0's page with the full-bleed shell
+described above; S3 to S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 
