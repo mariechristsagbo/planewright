@@ -59,7 +59,10 @@ export function contrast(a: readonly number[], b: readonly number[]): number {
   return ((light ?? 0) + 0.05) / ((dark ?? 0) + 0.05);
 }
 
-/** The focused element's outline, and the opaque background around it. */
+/**
+ * The focused element's outline, the opaque background around it, and how far the outline's outer
+ * edge, its offset and width beyond the element's box, reaches past each edge of the viewport.
+ */
 const INDICATOR = `(() => {
   const element = document.activeElement;
   const style = getComputedStyle(element);
@@ -67,7 +70,11 @@ const INDICATOR = `(() => {
   const clear = (colour) => colour === 'transparent' || /rgba\\(.*, 0\\)$/.test(colour);
   while (behind !== null && clear(getComputedStyle(behind).backgroundColor)) behind = behind.parentElement;
   const background = getComputedStyle(behind ?? document.documentElement).backgroundColor;
-  return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), colour: style.outlineColor, background };
+  const box = element.getBoundingClientRect();
+  const reach = parseFloat(style.outlineOffset) + parseFloat(style.outlineWidth);
+  const past = [-box.left, -box.top, box.right - innerWidth, box.bottom - innerHeight]
+    .map((distance) => Math.max(0, distance + reach));
+  return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), colour: style.outlineColor, background, past };
 })()`;
 
 interface Indicator {
@@ -75,14 +82,19 @@ interface Indicator {
   readonly width: number;
   readonly colour: string;
   readonly background: string;
+  readonly past: readonly number[];
 }
 
-/** The focused element shows a solid indicator of at least 2 px with 3:1 contrast (REQ-Y02). */
+/**
+ * The focused element shows a solid indicator of at least 2 px with 3:1 contrast (REQ-Y02), drawn
+ * inside the viewport, so that a ring around an element as large as the window still shows.
+ */
 export async function expectIndicator(page: Page): Promise<void> {
-  const { style, width, colour, background } = await page.evaluate<Indicator>(INDICATOR);
+  const { style, width, colour, background, past } = await page.evaluate<Indicator>(INDICATOR);
   expect(style).toBe('solid');
   expect(width).toBeGreaterThanOrEqual(2);
   expect(contrast(channels(colour), channels(background))).toBeGreaterThanOrEqual(3);
+  expect(past).toEqual([0, 0, 0, 0]);
 }
 
 /**
