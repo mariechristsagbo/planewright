@@ -50,8 +50,9 @@
       'tools tools tools'
       'notices notices notices'
       'drawer drawer drawer'
+      'room room room'
       'bottom bottom bottom';
-    grid-template-rows: auto auto minmax(0, max-content) minmax(0, max-content) 1fr;
+    grid-template-rows: auto auto minmax(0, max-content) minmax(0, max-content) 1fr auto;
     padding: var(--pw-spacing-sm);
   }
 
@@ -63,11 +64,11 @@
 /*
  * A phone in portrait, under 600 px wide and at least 500 px high: the open Elements drawer is a
  * sheet along the window's bottom, over the bottom islands, which the shell makes inert while it is
- * open, its list scrolling inside it (the v0.2 plan's S5). It spans the grid's drawer and bottom
- * rows, so that it lies below the storage notices and never covers their buttons, and its negative
- * margins take it over the shell's padding to the window's edges. It is at most 62 % of the
- * window's height, and no taller than the rows that the notices leave. The same query is
- * SHEET_QUERY in shell/sheet.ts; a phone in landscape keeps the side drawer.
+ * open, its list scrolling inside it (the v0.2 plan's S5). It spans the grid's rows from the
+ * drawer's to the bottom's, so that it lies below the storage notices and never covers their
+ * buttons, and its negative margins take it over the shell's padding to the window's edges. It is
+ * at most 62 % of the window's height, and no taller than the rows that the notices leave. The same
+ * query is SHEET_QUERY in shell/sheet.ts; a phone in landscape keeps the side drawer.
  */
 @media (max-width: 599px) and (min-height: 500px) {
   .element-list-drawer {
