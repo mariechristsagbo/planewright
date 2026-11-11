@@ -221,6 +221,10 @@ release has been published yet.
   P0's pre-release pill, notes and footer said, and an empty canvas repeats the pre-release
   sentence. The tab order is Pre-release, the tool bar, the canvas, the notices' buttons while
   storage needs attention, Elements and the list while the drawer is open, then Undo, Redo and the
-  zoom controls. The layout's media queries are in a style sheet of their own, so that a resize
-  across a breakpoint does not make the fonts load again and every text be measured again. The
-  tool bar keeps its words until S3 and wraps at narrower widths; S3 to S13 are not implemented.
+  zoom controls. The shell is the page's main landmark. While storage needs attention, the notices
+  and an open drawer share the height between the top and bottom islands, each scrolling within
+  its share, so that every island stays inside the window at the short sizes tested, down to a
+  phone's 568 × 320 in landscape, and the focus never scrolls the shell. The layout's media
+  queries are in a style sheet of their own, so that a resize across a breakpoint does not make
+  the fonts load again and every text be measured again. The tool bar keeps its words until S3
+  and wraps at narrower widths; S3 to S13 are not implemented.

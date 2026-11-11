@@ -534,29 +534,40 @@ Issue #53 delivered slice S1 with no layout rule change; P0's text rewrapped in 
 
 Issue #55 delivered slice S2.
 
-- `apps/web/src/shell/EditorShell.tsx` replaces `App`. Its root, where S7 will put
-  `data-save-state`, holds a visually hidden h1 and the islands in the tab order of ADR 0012's
-  decision 14: Pre-release, the tool bar's one stop, the canvas, the storage notices' buttons while
-  storage needs attention, Elements and the list while its drawer is open, Undo, Redo and the zoom
-  controls. The islands are siblings of the canvas host, never inside it, so no press on them
-  reaches the canvas. The shell's state, the drawer and the open dialog, is one reducer
-  (`shell/shell-state.ts`) that nothing stores.
+- `apps/web/src/shell/EditorShell.tsx` replaces `App`. Its root, a `main` element and so the page's
+  main landmark, as P0's `main` was, and where S7 will put `data-save-state`, holds a visually
+  hidden h1 and the islands in the tab order of ADR 0012's decision 14: Pre-release, the tool bar's
+  one stop, the canvas, the storage notices' buttons while storage needs attention, Elements and the
+  list while its drawer is open, Undo, Redo and the zoom controls. The islands are siblings of the
+  canvas host, never inside it, so no press on them reaches the canvas. The shell's state, the
+  drawer and the open dialog, is one reducer (`shell/shell-state.ts`) that nothing stores.
 - The canvas host fills `100vw` × `100dvh` and keeps its 1 px border, made transparent, so the
   scene canvas is the viewport less 2 px; `html` and `body` never scroll. The canvas's
   instructions stay its description, visually hidden, and P0's focus ring is drawn 3 px inside the
-  host, since a ring outside a host as large as the window would not show; S10 replaces it.
+  host, since a ring outside a host as large as the window would not show; S10 replaces it. The
+  focus tests check that each indicator they read, the canvas's included, lies inside the viewport.
 - `apps/web/src/styles/shell.css` places the islands in a grid at 16, 12 and 8 px anchors: the
   identity island (the wordmark and the Pre-release tag), the tool bar at the top centre, the
   top-right island with Elements alone, the storage notices and then the open drawer under it,
   history and zoom at the bottom left, and the view readout with P0's save status at the bottom
   right. The top row's side tracks are as wide as their islands and the tool bar, which keeps P0's
-  words until S3, wraps within the middle one, so no two islands intersect at any width; on phones
-  it takes a row of its own, so the islands at the top of a 390 px screen reach 152 px down until
-  S8's dock. Two choices differ from the [responsive rules](#responsive-rules): compact widths
-  hide the wordmark but keep Elements' word, since the toggle has no glyph before S3, and the open
-  drawer stacks under the notices instead of moving them left of it. The islands' text buttons are
-  set in `label-md`, 13 px at 500, and the view readout and save status in `numeric-sm`; the
-  notices gain a white background over the canvas.
+  words until S3, wraps within the middle one rather than crossing them; on phones it takes a row of
+  its own, so the islands at the top of a 390 px screen reach 152 px down until S8's dock. The
+  notices and the open drawer share the height that the top and bottom rows leave, each up to its
+  content and scrolling within its share, the drawer's padding being on the list's area so that it
+  can shrink to its border, and the bottom row stays at the window's bottom; the shell clips rather
+  than scrolls, so that the focus never scrolls it and the canvas stays under the whole window (the
+  S2 review's M1). The tests check that every island lies inside the window and that no two
+  intersect at 1280 × 720 and 390 × 844, at rest and with the drawer open under the
+  storage-unavailable notice; at 844 × 390, 667 × 375 and 568 × 320, under the stale and the
+  storage-unavailable notices, with the drawer closed and open; and at 844 × 140, with the drawer
+  open under the stale notice. A window shorter than the top and bottom islands need, such as
+  568 × 200, cuts the bottom islands off at its edge until S8 recomposes phones. Two choices differ
+  from the [responsive rules](#responsive-rules): compact widths hide the wordmark but keep
+  Elements' word, since the toggle has no glyph before S3, and the open drawer stacks under the
+  notices instead of moving them left of it. The islands' text buttons are set in `label-md`, 13 px
+  at 500, and the view readout and save status in `numeric-sm`; the notices gain a white background
+  over the canvas.
 - Reset zoom shows the zoom, such as "100%", and is named "Reset zoom, 100%"; it reads the zoom
   through a subscription that renders again only when the zoom changes.
 - `ElementsToggle` and `ElementsDrawer`: a plain toggle with `aria-expanded` and `aria-controls`
@@ -578,8 +589,8 @@ Issue #55 delivered slice S2.
   the fonts, a resize across a breakpoint made Chromium recreate every font face of that sheet, so
   the canvas's faces loaded again and `watchPage` measured every text again; the scene-pixels
   spec's resize failed. `scripts/tests/media-queries.test.ts` keeps media queries out of every
-  other style sheet, and an end-to-end test resizes across both breakpoints and back and finds the
-  same faces, loaded, and the stored texts unchanged.
+  other style sheet under `apps/web/src`, beside a component too, and an end-to-end test resizes
+  across both breakpoints and back and finds the same faces, loaded, and the stored texts unchanged.
 - From the S1 review: `scripts/tests/base-styles.test.ts` reads a bold only in `font-weight`,
   `font`, `font-variation-settings` and the `--pw-type-*` properties, so a planted `z-index: 700` or
   `order: 600` is accepted while `font: 700 …` and `font-weight: 600` are still refused; the
@@ -588,21 +599,23 @@ Issue #55 delivered slice S2.
   styles beyond drawing the canvas host's ring 3 px inside it, so P0's pressed, disabled and focus
   rules in `base.css` still apply, while the Pre-release tag sets its own text and background
   colours.
-- Tests: new end-to-end specs for About (`about.spec.ts`), the drawer (`drawer.spec.ts`),
-  the shell's layout (`shell-layout.spec.ts`: the host's box, no scroll, islands that do not
-  intersect at 1280 × 720 and 390 × 844, at rest and with the drawer open under a storage notice,
+- Tests: new end-to-end specs for About (`about.spec.ts`), the drawer (`drawer.spec.ts`), the
+  shell's layout (`shell-layout.spec.ts`: the host's box, no scroll, islands inside the window that
+  do not intersect at the viewports above, Tab past the stale notice to Undo at 667 × 375 scrolling
+  the notices but never the shell, Tab to Undo at 568 × 200 leaving the canvas at the window's top,
   and presses on islands that create nothing) and the empty canvas (`empty-canvas.spec.ts`), and
   unit tests of the shell, the note and the modal dialog. ADR 0012's 19 test migrations marked S2
-  are done for S2's part, and decision 16 migrated two more assumptions of
-  `chrome-type.spec.ts`: the count of headings and terms on the page, now read in About, and its
-  font samples, Inter 400 now read from the view readout.
-- Performance, on the developer machine, a 6-core virtual machine without a GPU where B1, B2 and
-  B7 miss with unchanged code: two runs each of `perf:bench`, `perf:browser` and `perf:report` on
-  S2's head and on `main` (`a766687`). The scene canvas at 1280 × 720 now has 1.67 times P0's
-  pixels. B1 was 26.8 and 36.7 ms against 25.2 and 47.3 ms on `main`, B2 9.0 and 9.6 ms against 8.2
-  and 20.5 ms, and B3 0.1 and 0.2 ms against 0.3 and 0.2 ms, within the machine's spread from run
-  to run; B10 was 0.54 and 0.68 s against 0.48 and 0.72 s. I2, which now opens the drawer, was 88
-  ms in both runs against 63 and 70 ms. B9 saw one task of 51 ms in one of the head's runs and none
-  in the other three. The web app's initial JavaScript is 109.9 KB, 1.1 KB more than `main`'s, within
-  B13's 200 KB, and B11 and B12 are unchanged.
+  are done for S2's part, and decision 16 migrated two more assumptions of `chrome-type.spec.ts`:
+  the count of headings and terms on the page, now read in About, and its font samples, Inter 400
+  now read from the view readout.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU where B1, B2 and B7
+  miss with unchanged code: two runs each of `perf:bench`, `perf:browser` and `perf:report` at S2's
+  `c6717be`, before the identifier renames and the review's fixes, and on `main` (`a766687`). The
+  scene canvas at 1280 × 720 now has 1.67 times P0's pixels. B1 was 26.8 and 36.7 ms against 25.2
+  and 47.3 ms on `main`, B2 9.0 and 9.6 ms against 8.2 and 20.5 ms, and B3 0.1 and 0.2 ms against
+  0.3 and 0.2 ms, within the machine's spread from run to run; B10 was 0.54 and 0.68 s against 0.48
+  and 0.72 s. I2, which now opens the drawer, was 88 ms in both runs against 63 and 70 ms. B9 saw
+  one task of 51 ms in one of S2's runs and none in the other three. The web app's initial
+  JavaScript is 109.9 KB, 1.1 KB more than `main`'s, within B13's 200 KB, and B11 and B12 are
+  unchanged.
 - S3 to S13 are not implemented.
