@@ -907,8 +907,8 @@ Issue #66 delivered slice S5.
   that an inert island would let it reach. Escape inside the sheet closes it and goes no further,
   so that the list keeps the selection, as the Escape that closes a tooltip does, and the focus
   returns to the toggle; on desktops and in landscape Escape in the list still reaches the editor.
-  The sheet stretches between its insets with `justify-self`, since Chromium aligns a fixed grid
-  item by it. The tool bar stays at the top until S8 and shows while inert.
+  The sheet lies in the shell's grid, below the storage notices (the S5 review's M1, below). The
+  tool bar stays at the top until S8 and shows while inert.
 - Tests: `ElementsToggle.test.tsx` (4), `ElementsDrawer.test.tsx` (6, among them the mounting, the
   options' and rows' memoisation counted through spied names, the focus moves, the folded keys and
   nothing written to storage) and `ElementsSheet.test.tsx` (3); tests of `elementRow` in
@@ -968,4 +968,23 @@ Issue #66 delivered slice S5.
   ms and rows with `content-visibility: auto` 174.9 and 191.7 ms. Single runs here vary by 40 ms,
   so no cause is established and none of these was adopted; I2 has no budget, and a pan step with
   the drawer open costing more than on `main` is left to a follow-up. B1's misses remain #49's.
+- From the S5 review: on a phone in portrait the sheet no longer covers the storage notices (M1).
+  Fixed to the window's bottom on the sheets' layer, it lay over the stale notice's two buttons,
+  which stayed in the tab order, so that Shift+Tab from Elements focused "Keep this version" under
+  it at 390 × 844, 375 × 667 and 360 × 560 with a full list. The sheet is now a grid item again in
+  `responsive.css`: it spans the shell's drawer and bottom rows, so that it lies below the notices,
+  which keep their height and their own scrolling, and over the bottom islands, still inert while
+  it is open. It is bottom-aligned, its negative margins take it over the shell's 8 px padding to
+  the window's edges, and it is at most 62 % of the window's height and no taller than those rows:
+  with 40 rectangles and no notice it is 523 px at 390 × 844, as before, and under the stale notice
+  480 px there, 303 px at 375 × 667, 196 px at 360 × 560 and 136 px at 360 × 500, where its list
+  shows 45 px. The notices take their height first: in a probe that added copies of the notice's
+  words, the sheet shrank to 108 px at 360 × 500, with Close in view, its list 17 px high and the
+  notices scrolling. The side drawer of landscape and short windows is unchanged. Six tests in
+  `elements-sheet.spec.ts`, now 10, at 390 × 844, 375 × 667 and 360 × 560 with 41 rectangles under
+  the stale notice, check that the sheet lies along the bottom below the notices in the height that
+  they leave and that Shift+Tab from Elements focuses both answers in the window with nothing over
+  their centres; all six failed against `df3c98b`. `responsive.css` ships in the JavaScript, whose
+  initial bundle is 115,625 bytes gzip at `bc22567`, 21 bytes more than at `df3c98b`; the style
+  sheet is unchanged.
 - S6 to S13 are not implemented.

@@ -263,7 +263,7 @@ release has been published yet.
   folded under a Keys summary and still describe the list box. The list is mounted only while the
   drawer is open, and its options are memoised, so that a pan step renders none of them. Each row
   shows its kind's glyph, a label and its size and place in JetBrains Mono, while the option keeps
-  P0's name. On a phone in portrait the drawer is a sheet along the bottom, at most 62 % of the
-  height, which makes the tool bar and the bottom islands inert and closes on Escape with the focus
-  on the toggle. The I1 and I2 measurements now pan with the drawer closed and open. S6 to S13 are
-  not implemented.
+  P0's name. On a phone in portrait the drawer is a sheet along the bottom, below any storage
+  notice, whose buttons it never covers, at most 62 % of the height, which makes the tool bar and
+  the bottom islands inert and closes on Escape with the focus on the toggle. The I1 and I2
+  measurements now pan with the drawer closed and open. S6 to S13 are not implemented.
