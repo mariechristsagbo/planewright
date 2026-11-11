@@ -18,22 +18,26 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   holds three runs on `main`, one on each of three processors, and a run is gated only by three runs
   on its own processor, so CI does not gate the statistical budgets yet. The web app shows a
   **pre-release** surface: a canvas that fills the window and pans and zooms, with the controls
-  floating over it in islands, on which rectangles, ellipses, diamonds, lines, freehand strokes and
-  texts can be drawn, then selected, moved, resized, rotated, duplicated, deleted and nudged, texts
-  edited again in a text area, with Undo and Redo, also from the keyboard alone, through a list of
-  the elements in a drawer and a live region that announces each change; a Pre-release tag opens
-  About this build, and the drawing is saved in the browser's IndexedDB storage and restored on
-  reload. Text formatting, styles, arrows, notes, files, exporting and collaboration features do
-  **not** exist yet.
-- **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome
-  decisions in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the
+  floating over it in islands, most of them as original glyphs with tooltips, on which rectangles,
+  ellipses, diamonds, lines, freehand strokes and texts can be drawn, then selected, moved, resized,
+  rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo,
+  also from the keyboard alone, through a list of the elements in a drawer and a live region that
+  announces each change; a Pre-release tag opens About this build, and the drawing is saved in the
+  browser's IndexedDB storage and restored on reload. Text formatting, styles, arrows, notes, files,
+  exporting and collaboration features do **not** exist yet.
+- **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome decisions
+  in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the
   [v0.2 plan](docs/architecture/editor-experience.md). Slice S1 (issue #53) added the chrome's
   design tokens, base styles and typeface, `Planewright UI` (Inter at 400 and 500), with no layout
   rule change, though P0's text rewrapped in the new face. Slice S2 (issue #55) replaced P0's page
-  with the full-bleed shell: the canvas fills the window, the controls float over it in islands,
-  the element list is in a drawer that the Elements toggle opens, and P0's pre-release line, notes
-  and footer are in About this build, which a Pre-release tag opens. S3 to S13 are not implemented
-  yet. Work on a slice follows both.
+  with the full-bleed shell: the canvas fills the window, the controls float over it in islands, the
+  element list is in a drawer that the Elements toggle opens, and P0's pre-release line, notes and
+  footer are in About this build, which a Pre-release tag opens. Slice S3 (issue #62) drew the
+  chrome's 35 original glyphs and turned the tool bar into the palette: the tools, Undo, Redo and
+  the zoom buttons but Reset zoom show glyphs with their names, keys and descriptions unchanged, the
+  tools with their first key in a corner and tool lock with a padlock, the identity island shows the
+  mark, and those controls and Reset zoom have tooltips. S4 to S13 are not implemented yet. Work on
+  a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -88,20 +92,22 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 ## Code map
 
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the editor's shell in `shell/`
-  (`EditorShell`, its state, the identity island with the Pre-release tag, the Elements toggle and
-  drawer and the empty-canvas note, and the modal dialog and About this build in `shell/dialogs/`),
-  the canvas host, input adapter and editor provider in `editor/`, the text area in `editor/text/`,
-  the element list, the live region with its messages and the focus's return in `a11y/`, the tool
-  bar, Undo and Redo, the zoom controls, the view readout, the save status and the storage notices
-  in `ui/`, and the browser ports, text measurer, font loading, Mod key per platform, the IndexedDB
-  record backend, storage start-up, page events and the preferences entry in `platform/`, and the
-  style sheets in `styles/`: the design tokens, the fonts, the base, the controls', canvas's, list's
-  and saving's rules, the shell's layout, islands and dialogs, and `responsive.css`, the only one
-  with media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never
-  makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static
-  files in `public/`, the bundled fonts with their licences in `public/fonts/`
-  ([ADR 0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter 500 of
-  [ADR 0012](docs/adr/0012-v02-editor-chrome.md)).
+  (`EditorShell`, its state, the identity island with the mark and the Pre-release tag, the Elements
+  toggle and drawer and the empty-canvas note, the 35 original glyphs in `shell/glyphs.ts` drawn by
+  `Icon` in `shell/icons.tsx`, the tooltip and its delegated listeners in `shell/tooltip/`, and the
+  modal dialog and About this build in `shell/dialogs/`), the canvas host, input adapter and editor
+  provider in `editor/`, the text area in `editor/text/`, the element list, the live region with its
+  messages and the focus's return in `a11y/`, the tool bar shown as the palette, Undo and Redo, the
+  zoom controls, the view readout, the save status and the storage notices in `ui/`, and the browser
+  ports, text measurer, font loading, Mod key per platform, the IndexedDB record backend, storage
+  start-up, page events and the preferences entry in `platform/`, and the style sheets in `styles/`:
+  the design tokens, the fonts, the base, the controls', canvas's, list's and saving's rules, the
+  shell's layout, islands and dialogs, the glyph buttons' and the tooltip's rules, and
+  `responsive.css`, the only one with media queries, which `main.tsx` adds as a style element of its
+  own so that a breakpoint never makes the fonts load again. Unit tests in `tests/unit`, Playwright
+  tests in `tests/e2e`, static files in `public/`, the bundled fonts with their licences in
+  `public/fonts/` ([ADR 0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter
+  500 of [ADR 0012](docs/adr/0012-v02-editor-chrome.md)).
 - `apps/collab`: Node.js WebSocket service built with `ws` and bundled by esbuild. In
   development it runs TypeScript directly through Node's type stripping.
 - `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and
