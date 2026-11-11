@@ -196,6 +196,7 @@ test.describe('at 667 × 375', () => {
       panel.getByRole('button', { name: 'Delete' }),
       notices.getByRole('button', { name: 'Load the newer version' }),
       notices.getByRole('button', { name: 'Keep this version' }),
+      notices.getByRole('button', { name: 'Hide storage notices' }),
       elementsToggle(page),
       button(page, 'Undo'),
     ]) {

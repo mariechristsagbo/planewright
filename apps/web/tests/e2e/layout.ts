@@ -21,9 +21,10 @@ export interface Box {
 
 /**
  * Each island's box, the selection panel's or bar's among them, and the notices', the open
- * drawer's and the open Details sheet's while they show.
+ * drawer's and the open Details sheet's while they show; hidden notices are left out, as the
+ * closed drawer is (the v0.2 plan's S7).
  */
-const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"], #element-list-drawer:not([hidden]), #details-sheet:not([hidden])')]
+const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"]:not([hidden]), #element-list-drawer:not([hidden]), #details-sheet:not([hidden])')]
   .map((element) => {
     const { x, y, width, height } = element.getBoundingClientRect();
     return { name: element.dataset.island ?? (element.id || element.getAttribute('aria-label')), x, y, width, height };

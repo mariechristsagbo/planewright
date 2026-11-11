@@ -140,6 +140,55 @@
 }
 
 /*
+ * The problem chip on a phone (the v0.2 plan's S7): its glyph alone, at least 44 px wide, with its
+ * words visually hidden, never removed, so that its name stays, and no chevron. The plan gives this
+ * form in landscape; in portrait, too, since the worded chip made the top row 444 px wide at 360 to
+ * 390 px, and the glyph alone 393 px, so there Elements also shows its glyph and count beside the
+ * chip, its word visually hidden and its name kept, as the plan's compact rule has it.
+ */
+@media (max-width: 599px), (max-height: 499px) {
+  .problem-chip {
+    min-width: var(--pw-spacing-control-touch);
+  }
+
+  .problem-chip-words {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .problem-chip-chevron {
+    display: none;
+  }
+}
+
+@media (max-width: 599px) {
+  .problem-chip ~ .elements-toggle > span:not(.toggle-count) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/*
+ * Phones and coarse pointers: the chip's button and Hide, S7's own controls, are at least 44 by
+ * 44 px (responsive rule 6; S8 raises the other targets on phones).
+ */
+@media (max-width: 599px), (max-height: 499px), (pointer: coarse) {
+  .island .problem-chip:is(button),
+  .notices-hide {
+    min-width: var(--pw-spacing-control-touch);
+    min-height: var(--pw-spacing-control-touch);
+  }
+}
+
+/*
  * A coarse pointer, such as a finger on a tablet: the selection panel's actions are at least
  * 44 px high, as wide as the panel (the v0.2 plan's S6; S8 raises the other targets).
  */
