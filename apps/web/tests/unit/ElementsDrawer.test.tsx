@@ -2,7 +2,7 @@ import type { Editor } from '@planewright/engine';
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { describe, expect, it, onTestFinished, vi } from 'vitest';
 
-import { elementName } from '../../src/a11y/element-names.ts';
+import { elementName, elementRow } from '../../src/a11y/element-names.ts';
 import { EditorShell } from '../../src/shell/EditorShell.tsx';
 import { surfaceHarness } from '../support/surface.tsx';
 
@@ -171,5 +171,33 @@ describe('the Elements drawer', () => {
     expect(second.toggle).toHaveAttribute('aria-expanded', 'false');
     expect(document.querySelector('[role="listbox"]')).toBeNull();
     expect([written.mock.calls, localStorage.length, sessionStorage.length]).toEqual([[], 0, 0]);
+  });
+
+  it('D4 builds a row’s glyph, label and figures again only when its element changes, not when the active option or the selection moves', () => {
+    const { editor, toggle, click } = mount();
+    const built = vi.mocked(elementRow);
+    /** How many rows were built since the last call. */
+    const rows = (): number => {
+      const made = built.mock.calls.length;
+      built.mockClear();
+      return made;
+    };
+    rows();
+    click(toggle);
+    expect(rows()).toBe(3);
+    const list = screen.getByRole('listbox', { name: 'Elements' });
+    act(() => {
+      fireEvent.keyDown(list, { key: 'ArrowDown', code: 'ArrowDown' });
+    });
+    act(() => {
+      fireEvent.keyDown(list, { key: ' ', code: 'Space' });
+    });
+    expect(editor.view.selection).toHaveLength(1);
+    expect(rows()).toBe(0);
+    act(() => {
+      fireEvent.keyDown(list, { key: 'ArrowRight', code: 'ArrowRight', altKey: true });
+    });
+    // The nudged element is a new one; the others keep their identity and their rows.
+    expect(rows()).toBe(1);
   });
 });

@@ -58,9 +58,10 @@ const KIND_GLYPHS: Readonly<Record<ElementKind, IconName>> = {
 
 /**
  * One row: its kind's glyph, its label and its figures in mono. P0's name names the option, so a
- * screen reader says P0's words, never the row's shorter text.
+ * screen reader says P0's words, never the row's shorter text. It renders again only when its
+ * element changes, not when the active option or the selection moves.
  */
-function Row({ element }: { readonly element: Element }) {
+const Row = memo(function Row({ element }: { readonly element: Element }) {
   const { label, metadata } = elementRow(element);
   return (
     <>
@@ -69,7 +70,7 @@ function Row({ element }: { readonly element: Element }) {
       <span className="element-row-meta">{metadata}</span>
     </>
   );
-}
+});
 
 /** The selection with an element added at its end, or taken out. */
 const toggled = (selection: readonly ElementId[], id: ElementId): ElementId[] =>
