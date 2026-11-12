@@ -7,6 +7,7 @@ import {
   animations,
   animationsLater,
   holdEntrance,
+  literal,
   probeMotionAtLoad,
   probed,
   settled,
@@ -52,7 +53,7 @@ interface Seeked {
  * and the shell's scroll positions.
  */
 const SEEK = (selector: string) => `(async () => {${DESCRIBE}
-  const surface = document.querySelector(${JSON.stringify(selector)});
+  const surface = document.querySelector(${literal(selector)});
   const all = document.getAnimations();
   const own = all.filter((animation) => animation.effect?.target === surface);
   const others = all.filter((animation) => !own.includes(animation)).map(describe);
@@ -180,7 +181,7 @@ export const timeEntrance = async (page: Page, selector: string): Promise<void> 
     for (const type of ['pointerdown', 'keydown']) document.addEventListener(type, begin, true);
     document.addEventListener('animationstart', begin, true);
     document.addEventListener('animationend', (event) => {
-      if (event.target.matches(${JSON.stringify(selector)})) timing.to = performance.now();
+      if (event.target.matches(${literal(selector)})) timing.to = performance.now();
     }, true);
   })()`);
 };
@@ -197,7 +198,7 @@ export async function entranceTime(page: Page): Promise<number> {
 export const settledBox = async (page: Page, selector: string): Promise<number[]> => {
   await settled(page);
   return page.evaluate<number[]>(`(() => {
-    const { x, y, width, height } = document.querySelector(${JSON.stringify(selector)}).getBoundingClientRect();
+    const { x, y, width, height } = document.querySelector(${literal(selector)}).getBoundingClientRect();
     return [x, y, width, height];
   })()`);
 };
