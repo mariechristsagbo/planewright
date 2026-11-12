@@ -61,13 +61,19 @@ export const outside = (boxes: readonly Box[], { width, height }: Viewport): str
 /** The islands whose controls are inert, which the phone's sheet covers (the v0.2 plan's S5). */
 export const INERT = `[...document.querySelectorAll('[inert]')].map((element) => element.closest('[data-island]').dataset.island)`;
 
-/** Whether the phone's dock shows: a phone in portrait, SHEET_QUERY in shell/sheet.ts (S8). */
-const DOCK_SHOWS = `matchMedia('(max-width: 599px) and (min-height: 500px)').matches`;
+/**
+ * Whether the phone's dock shows, a phone in portrait, SHEET_QUERY in shell/sheet.ts, and the
+ * bottom safe-area inset that the shell reads, or that a test emulates (S8).
+ */
+const BOTTOM = `({
+  dock: matchMedia('(max-width: 599px) and (min-height: 500px)').matches,
+  inset: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--shell-safe-bottom')) || 0,
+})`;
 
 /**
  * Every island, and the notices and the drawer while they show, inside the viewport and apart, with
  * history and zoom no more than the largest anchor, 16 px, above the dock's top while the phone's
- * dock shows, and above the window's bottom otherwise. On a phone in portrait the open drawer, and
+ * dock shows, and above the window's bottom less its safe-area inset otherwise. On a phone in portrait the open drawer, and
  * the Details sheet, are sheets over the dock and the bottom islands, which may meet them, in
  * either order, only while their controls are inert (S5, S6, S8).
  */
@@ -86,6 +92,7 @@ export async function expectPlaced(page: Page, viewport: Viewport, count: number
   }).toEqual({ outside: [], intersecting: [] });
   const history = boxes.find(({ name }) => name === 'bottom-left');
   const dock = boxes.find(({ name }) => name === 'tools');
-  const floor = (await page.evaluate<boolean>(DOCK_SHOWS)) ? (dock?.y ?? 0) : viewport.height;
+  const bottom = await page.evaluate<{ dock: boolean; inset: number }>(BOTTOM);
+  const floor = bottom.dock ? (dock?.y ?? 0) : viewport.height - bottom.inset;
   expect(floor - (history?.y ?? 0) - (history?.height ?? 0)).toBeLessThanOrEqual(16);
 }

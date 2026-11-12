@@ -13,7 +13,10 @@
  */
 @media (max-width: 1199px) {
   .editor-shell {
-    padding: var(--pw-spacing-md);
+    padding: calc(var(--pw-spacing-md) + var(--shell-safe-top))
+      calc(var(--pw-spacing-md) + var(--shell-safe-right))
+      calc(var(--pw-spacing-md) + var(--shell-safe-bottom))
+      calc(var(--pw-spacing-md) + var(--shell-safe-left));
   }
 
   .island .glyph-button {
@@ -57,7 +60,10 @@
       'room room room'
       'bottom bottom bottom';
     grid-template-rows: auto auto minmax(0, max-content) minmax(0, max-content) 1fr auto;
-    padding: var(--pw-spacing-sm);
+    padding: calc(var(--pw-spacing-sm) + var(--shell-safe-top))
+      calc(var(--pw-spacing-sm) + var(--shell-safe-right))
+      calc(var(--pw-spacing-sm) + var(--shell-safe-bottom))
+      calc(var(--pw-spacing-sm) + var(--shell-safe-left));
   }
 
   .editor-shell > .notices {
@@ -67,11 +73,11 @@
 
 /*
  * A phone in portrait, under 600 px wide and at least 500 px high, the query that shell/sheet.ts
- * follows as SHEET_QUERY, which a tooling test keeps equal (the v0.2 plan's S5 and S8). The tool bar
- * is the dock: in a row of its own at the window's bottom, under history and zoom, as wide as the
- * window less its anchors, its seven 44 px buttons spread over one row without hairlines. The top
- * row holds identity and the top-right island alone, and the bottom-right island is not shown: the
- * view readout is hidden on phones, and Keyboard shortcuts stays in the menu.
+ * follows as SHEET_QUERY, which a tooling test keeps equal (the v0.2 plan's S5 and S8). The tool
+ * bar is the dock: in a row of its own at the window's bottom, under history and zoom, as wide
+ * as the window less its anchors, its seven 44 px buttons spread over one row without hairlines.
+ * The top row holds identity and the top-right island alone, and the bottom-right island is not
+ * shown: the view readout is hidden on phones, and Keyboard shortcuts stays in the menu.
  */
 @media (max-width: 599px) and (min-height: 500px) {
   .editor-shell {
@@ -109,9 +115,9 @@
  * bottom islands and the dock, which the shell makes inert while it is open, its list scrolling
  * inside it (the v0.2 plan's S5 and S8). It spans the grid's rows from the drawer's to the dock's,
  * so that it lies below the storage notices and never covers their buttons, and its negative
- * margins take it over the shell's padding to the window's edges. It is at most 62 % of the
- * window's height, and no taller than the rows that the notices leave. A phone in landscape keeps
- * the side drawer.
+ * margins take it over the shell's padding and the safe-area insets to the window's edges, its
+ * content padded above the bottom inset. It is at most 62 % of the window's height, and no taller
+ * than the rows that the notices leave. A phone in landscape keeps the side drawer.
  */
 @media (max-width: 599px) and (min-height: 500px) {
   .element-list-drawer {
@@ -122,8 +128,13 @@
     align-self: end;
     justify-self: stretch;
     width: auto;
-    max-height: min(var(--pw-spacing-sheet-max-height), 100% + var(--pw-spacing-sm));
-    margin: 0 calc(-1 * var(--pw-spacing-sm)) calc(-1 * var(--pw-spacing-sm));
+    max-height: min(
+      var(--pw-spacing-sheet-max-height),
+      100% + var(--pw-spacing-sm) + var(--shell-safe-bottom)
+    );
+    margin: 0 calc(-1 * (var(--pw-spacing-sm) + var(--shell-safe-right)))
+      calc(-1 * (var(--pw-spacing-sm) + var(--shell-safe-bottom)))
+      calc(-1 * (var(--pw-spacing-sm) + var(--shell-safe-left)));
     overflow: hidden;
     border-width: 1px 0 0;
     border-radius: var(--pw-rounded-lg) var(--pw-rounded-lg) 0 0;
@@ -134,6 +145,7 @@
     display: flex;
     flex-direction: column;
     min-height: 0;
+    padding-bottom: calc(var(--pw-spacing-panel-padding) + var(--shell-safe-bottom));
   }
 
   .element-list-drawer .element-list {
@@ -167,22 +179,31 @@
     grid-row: room / tools;
     align-self: end;
     justify-self: stretch;
-    max-height: min(var(--pw-spacing-sheet-max-height), 100% + var(--pw-spacing-sm));
-    margin: 0 calc(-1 * var(--pw-spacing-sm)) calc(-1 * var(--pw-spacing-sm));
+    padding-bottom: calc(var(--pw-spacing-panel-padding) + var(--shell-safe-bottom));
+    max-height: min(
+      var(--pw-spacing-sheet-max-height),
+      100% + var(--pw-spacing-sm) + var(--shell-safe-bottom)
+    );
+    margin: 0 calc(-1 * (var(--pw-spacing-sm) + var(--shell-safe-right)))
+      calc(-1 * (var(--pw-spacing-sm) + var(--shell-safe-bottom)))
+      calc(-1 * (var(--pw-spacing-sm) + var(--shell-safe-left)));
   }
 }
 
 /*
- * A phone in landscape, under 500 px high, after the compact rules: 8 px anchors. Its top and bottom
- * rows hold 44 px targets, 54 px islands (the v0.2 plan's S8), so that a window 140 px high keeps
- * every island inside it and apart only if the rows are 4 px apart rather than 8, the bottom row
- * reaching one such gap above its row, and the selection panel can shrink to its border: its padding
- * becomes its children's margins, which look the same.
+ * A phone in landscape, under 500 px high, after the compact rules: 8 px anchors. Its top and
+ * bottom rows hold 44 px targets, 54 px islands (the v0.2 plan's S8), so that a window 140 px
+ * high keeps every island inside it and apart only if the rows are 4 px apart rather than 8, the
+ * bottom row reaching one such gap above its row, and the selection panel can shrink to its
+ * border: its padding becomes its children's margins, which look the same.
  */
 @media (max-height: 499px) {
   .editor-shell {
     row-gap: var(--pw-spacing-xs);
-    padding: var(--pw-spacing-sm);
+    padding: calc(var(--pw-spacing-sm) + var(--shell-safe-top))
+      calc(var(--pw-spacing-sm) + var(--shell-safe-right))
+      calc(var(--pw-spacing-sm) + var(--shell-safe-bottom))
+      calc(var(--pw-spacing-sm) + var(--shell-safe-left));
   }
 
   .shell-bottom {
@@ -211,9 +232,9 @@
 }
 
 /*
- * Phones, in portrait and in landscape: the view readout is hidden (the v0.2 plan's S8). It stays in
- * the page with its text, and is shown at compact and desktop widths; in landscape the bottom-right
- * island keeps Keyboard shortcuts alone.
+ * Phones, in portrait and in landscape: the view readout is hidden (the v0.2 plan's S8). It
+ * stays in the page with its text, and is shown at compact and desktop widths; in landscape the
+ * bottom-right island keeps Keyboard shortcuts alone.
  */
 @media (max-width: 599px), (max-height: 499px) {
   .view-readout {
@@ -273,11 +294,11 @@
 }
 
 /*
- * Phones and coarse pointers, after the compact rules (responsive rule 6; the v0.2 plan's S8): every
- * control that a finger presses is at least 44 by 44 px, among them the islands' buttons, Reset zoom,
- * the Pre-release tag and Elements included, the menu's items, the drawer's Close, its keys' summary
- * and the list's options, and the Details sheet's Close. Desktops keep 36 px and compact layouts
- * 32 px with a fine pointer, and P0's 24 px stays elsewhere (REQ-Y06).
+ * Phones and coarse pointers, after the compact rules (responsive rule 6; the v0.2 plan's S8):
+ * every control that a finger presses is at least 44 by 44 px, among them the islands' buttons,
+ * Reset zoom, the Pre-release tag and Elements included, the menu's items, the drawer's Close,
+ * its keys' summary and the list's options, and the Details sheet's Close. Desktops keep 36 px
+ * and compact layouts 32 px with a fine pointer, and P0's 24 px stays elsewhere (REQ-Y06).
  */
 @media (max-width: 599px), (max-height: 499px), (pointer: coarse) {
   .island button,

@@ -1,11 +1,11 @@
 /*
- * The identity island's menu (ADR 0012, decisions 2, 3 and 8; the v0.2 plan's S4): a popover under
- * the island from its left edge, above every island while it is open, 264 px wide or the window
- * less its anchors, and scrolling inside itself in a short window. Its items keep the base's
- * focus rule, which its padding leaves room for, take the surface's hover colour while the
- * pointer or the keyboard is on them, and show their keys in JetBrains Mono. While it is open its
- * island takes the menus' layer, through a class that the island sets, so that no style sheet
- * needs :has().
+ * The identity island's menu (ADR 0012, decisions 2, 3 and 8; the v0.2 plan's S4): a popover
+ * under the island from its left edge, above every island while it is open, 264 px wide or the
+ * window less its anchors and safe-area insets, and scrolling inside itself in a short window.
+ * Its items keep the base's focus rule, which its padding leaves room for, take the surface's
+ * hover colour while the pointer or the keyboard is on them, and show their keys in JetBrains
+ * Mono. While it is open its island takes the menus' layer, through a class that the island
+ * sets, so that no style sheet needs :has().
  */
 .identity-island.chrome-menu-open {
   z-index: var(--pw-layer-popover);
@@ -16,8 +16,14 @@
   top: calc(100% + 1px + var(--pw-spacing-xs));
   left: -1px;
   box-sizing: border-box;
-  width: min(var(--pw-spacing-menu-width), calc(100vw - 2 * var(--pw-spacing-sm)));
-  max-height: calc(100dvh - 100% - 2 * var(--pw-spacing-lg) - var(--pw-spacing-xs));
+  width: min(
+    var(--pw-spacing-menu-width),
+    calc(100vw - 2 * var(--pw-spacing-sm) - var(--shell-safe-left) - var(--shell-safe-right))
+  );
+  max-height: calc(
+    100dvh - 100% - 2 * var(--pw-spacing-lg) - var(--pw-spacing-xs) - var(--shell-safe-top) -
+      var(--shell-safe-bottom)
+  );
   padding: var(--pw-spacing-sm);
   overflow-y: auto;
   border: 1px solid var(--pw-color-outline-subtle);
