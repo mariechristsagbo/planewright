@@ -69,15 +69,19 @@ caption line under the palette says what the active tool does, in a row of its o
 1199 px wide, hidden on phones and while a text is edited; and pressed tools and selected rows take
 the violet container, every focus ring is violet with a white halo and unavailable controls are
 grey and dashed. Since slice S11, issue #79, the canvas draws the selection's outline, its handles'
-borders and the marquee in the same violet. Its IndexedDB record backend
-(database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
-selection are kept in the browser, and at start-up the page opens the most recently updated document
-again; it also saves at once when the page is hidden or left, and reads its preferences entry from
-`localStorage` at start-up. The Pre-release tag opens About this build, a dialog that says that
-shapes, lines, freehand strokes and texts can be drawn, selected, transformed and undone and that
-the drawing is saved in this browser, and lists the capabilities that are not implemented, text
-formatting, styles, files and collaboration among them; an empty canvas repeats its pre-release
-sentence. It imports the protocol version to prove that workspace linking works.
+borders and the marquee in the same violet. Since slice S12, issue #81, the menu, More, the
+selection panel and bar, the storage notices and the dialogs enter in 140 ms by opacity and a 4 px
+translation, the Elements drawer in 180 ms from 8 px toward its side and the sheets in 220 ms from
+16 px below, a menu item's highlight fades in 90 ms, nothing animates under reduced motion, and the
+camera never animates. Its IndexedDB record backend (database `planewright`) stores what the
+engine's autosave saves, so the drawing, its camera and its selection are kept in the browser, and
+at start-up the page opens the most recently updated document again; it also saves at once when the
+page is hidden or left, and reads its preferences entry from `localStorage` at start-up. The
+Pre-release tag opens About this build, a dialog that says that shapes, lines, freehand strokes and
+texts can be drawn, selected, transformed and undone and that the drawing is saved in this browser,
+and lists the capabilities that are not implemented, text formatting, styles, files and
+collaboration among them; an empty canvas repeats its pre-release sentence. It imports the protocol
+version to prove that workspace linking works.
 
 ### apps/collab
 
@@ -183,7 +187,8 @@ finish a text and, on a phone in portrait, a Done bar above the on-screen keyboa
 history hidden meanwhile, and slice S10 (issue #77) added the canvas's focus ring and its "Canvas
 focused" chip, the active tool's hint line and the tokens' state colours, and slice S11 (issue #79)
 drew the selection's outline, handle borders and marquee on the canvas in the same violet, changing
-only the renderer's two overlay colours; S12 and S13 are not implemented yet.
+only the renderer's two overlay colours, and slice S12 (issue #81) added the surfaces' entrances,
+the menu item's fade and reduced motion's override; S13 is not implemented yet.
 
 Still open, each for its own issue and ADR:
 
