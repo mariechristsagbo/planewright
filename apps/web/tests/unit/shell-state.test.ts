@@ -23,6 +23,7 @@ describe('the shell’s state', () => {
       dialog: null,
       opener: null,
       noticesHidden: false,
+      more: false,
     });
   });
 
@@ -120,4 +121,47 @@ describe('reopensNotices', () => {
       expect(reopensNotices(said, next)).toBe(reopens);
     },
   );
+});
+
+describe('More', () => {
+  it('D3 A14 is closed at first, and opens, closes and toggles', () => {
+    expect(INITIAL_SHELL_STATE.more).toBe(false);
+    expect(after('open-more').more).toBe(true);
+    expect(after('open-more', 'close-more').more).toBe(false);
+    expect(after('toggle-more').more).toBe(true);
+    expect(after('toggle-more', 'toggle-more').more).toBe(false);
+    // The state itself when it does not change, so that the shell renders nothing.
+    expect(shellReducer(INITIAL_SHELL_STATE, { type: 'close-more' })).toBe(INITIAL_SHELL_STATE);
+    const open = after('open-more');
+    expect(shellReducer(open, { type: 'open-more' })).toBe(open);
+  });
+
+  it('D3 D10 closes when the drawer, the Details sheet, the menu or a dialog opens', () => {
+    expect(after('open-more', 'toggle-drawer')).toMatchObject({ more: false, drawer: true });
+    expect(after('open-more', 'open-details')).toMatchObject({ more: false, details: true });
+    expect(after('open-more', 'toggle-details')).toMatchObject({ more: false, details: true });
+    expect(after('open-more', 'open-menu')).toMatchObject({ more: false, menu: true });
+    const dialog: ShellAction = { type: 'open-dialog', dialog: 'shortcuts', opener: 'keys' };
+    expect(shellReducer(after('open-more'), dialog)).toMatchObject({
+      more: false,
+      dialog: 'shortcuts',
+    });
+  });
+
+  it('D3 stays open while a surface closes or the notices fold, and opening it leaves the others', () => {
+    const closes: ShellAction['type'][] = [
+      'close-drawer',
+      'close-details',
+      'close-menu',
+      'close-dialog',
+      'hide-notices',
+      'show-notices',
+    ];
+    expect(after('open-more', ...closes).more).toBe(true);
+    expect(after('open-menu', 'hide-notices', 'open-more')).toMatchObject({
+      menu: true,
+      noticesHidden: true,
+      more: true,
+    });
+  });
 });
