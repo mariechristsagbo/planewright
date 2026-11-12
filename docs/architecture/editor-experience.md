@@ -1185,8 +1185,9 @@ Issue #71 delivered slice S7. Each choice that the plan or the ADR did not make 
   to `tests/e2e/layout.ts`. The ADR's S7 migrations and those the audit found were made:
   `e2e/storage.ts`'s `saveState` and `expectSaved`, whose callers in `persistence.spec.ts`,
   `focus.spec.ts`, `empty-canvas.spec.ts` and `selection-bar.spec.ts` did not change; B9 in
-  `perf/autosave.spec.ts`; Hide in the Tab orders of `focus.spec.ts` A5, `shell-layout.spec.ts` M1
-  and `elements-sheet.spec.ts` D5 M1; hidden notices left out of the layout checks; the chip's
+  `perf/autosave.spec.ts`; Hide in the Tab orders of `focus.spec.ts` A5, `shell-layout.spec.ts` M1,
+  `elements-sheet.spec.ts` D5 M1 and `selection-panel-actions.spec.ts` D2 A5; hidden notices left
+  out of the layout checks; the chip's
   absence and each notice's own words in `persistence.spec.ts`, since the region holds Hide too; the
   first state test's initial state; and EditorShell's A7, which expected `#save-status` at the
   bottom right. No test was deleted. The 27 mutants of the issue's 18 kinds, the variants included,
