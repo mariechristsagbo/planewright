@@ -1,8 +1,62 @@
 /*
- * The chrome over the canvas (ADR 0012, decisions 1, 3 and 14; the v0.2 plan's S10): the active
- * tool's hint line under the palette. Nothing here moves (motion is S12's), and responsive.css,
- * the only style sheet with media queries, gives the hint its compact row and hides it on phones.
+ * The chrome over the canvas (ADR 0012, decisions 1, 3 and 14; the v0.2 plan's S10): the canvas's
+ * focus ring and its "Canvas focused" chip, shown from CSS alone while the canvas host matches
+ * :focus-visible, and the active tool's hint line under the palette. Nothing here moves (motion
+ * is S12's), and responsive.css, the only style sheet with media queries, gives the hint its
+ * compact row, the chip its compact anchor, and hides both on phones.
  */
+
+/*
+ * The canvas host draws no ring of its own: its opaque canvases, positioned inside it, would cover
+ * all but the outer pixel of its outline. The element after it draws the canvas's ring instead.
+ */
+.canvas-host:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/*
+ * The canvas's ring: 2 px of the focus ring's violet at the window's edge, which forced colours
+ * keep, over a 2 px white halo inside it, 6.74:1 on the canvas, inset by the safe areas so that no
+ * notch hides it. It lies over both canvases on the hint layer, under every island, and presses go
+ * through it to the canvas.
+ */
+.canvas-focus-ring {
+  position: absolute;
+  inset: var(--shell-safe-top) var(--shell-safe-right) var(--shell-safe-bottom)
+    var(--shell-safe-left);
+  z-index: var(--pw-layer-hint);
+  display: none;
+  outline: 2px solid var(--pw-color-focus-ring);
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 4px var(--pw-color-focus-halo);
+  pointer-events: none;
+}
+
+.canvas-host:focus-visible ~ .canvas-focus-ring {
+  display: block;
+}
+
+/*
+ * The chip: "Canvas focused" in white on the inverse surface, 16.70:1, in the caption type with the
+ * tooltip's padding and radius and no shadow or glyph, centred at the ring's bottom, its bottom
+ * edge level with the bottom islands' on desktops.
+ */
+.canvas-focus-chip {
+  position: absolute;
+  right: 0;
+  bottom: var(--pw-spacing-lg);
+  left: 0;
+  width: max-content;
+  margin: 0 auto;
+  padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+  border-radius: var(--pw-rounded-sm);
+  color: var(--pw-color-on-inverse-surface);
+  background: var(--pw-color-inverse-surface);
+  font: var(--pw-type-caption);
+  letter-spacing: var(--pw-type-caption-tracking);
+  white-space: nowrap;
+}
 
 /*
  * The active tool's hint: one caption line in the muted text on an opaque surface, 5.50:1 over any

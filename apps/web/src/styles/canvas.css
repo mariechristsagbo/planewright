@@ -1,7 +1,9 @@
 /*
  * The canvas host, its two canvases and the text area over them (ADR 0006). The host fills the
  * window under every island (ADR 0012, decision 13) and keeps its 1 px border, made transparent,
- * so that the scene canvas sits inside it and the text layer keeps its 1 px inset.
+ * so that the scene canvas sits inside it and the text layer keeps its 1 px inset. Its focus ring
+ * is the element after it, in canvas-chrome.css, since its opaque canvases would cover its own
+ * outline (the v0.2 plan's S10).
  */
 .canvas-area {
   position: absolute;
@@ -19,14 +21,6 @@
   background: var(--pw-color-canvas);
   touch-action: none;
   user-select: none;
-}
-
-/*
- * P0's focus ring, drawn inside the host, since a host as large as the window would show nothing
- * of a ring drawn outside it. S10 replaces it with the canvas's own ring.
- */
-.canvas-host:focus-visible {
-  outline-offset: -3px;
 }
 
 .canvas-stage {

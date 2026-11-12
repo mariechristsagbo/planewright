@@ -83,12 +83,17 @@ export function contrast(a: readonly number[], b: readonly number[]): number {
 
 /**
  * The focused element's outline, the opaque background around it, and how far the outline's outer
- * edge, its offset and width beyond the element's box, reaches past each edge of the viewport.
+ * edge, its offset and width beyond the element's box, reaches past each edge of the viewport. The
+ * canvas host draws no outline: an element of its own after it draws the canvas's ring (the v0.2
+ * plan's S10), whose outline and halo are read instead, against the canvas's own background, with
+ * whether it shows.
  */
 const INDICATOR = `(() => {
-  const element = document.activeElement;
+  const focused = document.activeElement;
+  const ring = focused.id === 'drawing-canvas' ? document.querySelector('#drawing-canvas ~ .canvas-focus-ring') : null;
+  const element = ring ?? focused;
   const style = getComputedStyle(element);
-  let behind = element.parentElement;
+  let behind = ring === null ? element.parentElement : focused;
   const clear = (colour) => colour === 'transparent' || /rgba\\(.*, 0\\)$/.test(colour);
   while (behind !== null && clear(getComputedStyle(behind).backgroundColor)) behind = behind.parentElement;
   const background = getComputedStyle(behind ?? document.documentElement).backgroundColor;
@@ -96,7 +101,9 @@ const INDICATOR = `(() => {
   const reach = parseFloat(style.outlineOffset) + parseFloat(style.outlineWidth);
   const past = [-box.left, -box.top, box.right - innerWidth, box.bottom - innerHeight]
     .map((distance) => Math.max(0, distance + reach));
-  return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), colour: style.outlineColor, background, past };
+  const shown = box.width > 0 && box.height > 0;
+  const halo = ring === null ? null : style.boxShadow;
+  return { style: style.outlineStyle, width: parseFloat(style.outlineWidth), colour: style.outlineColor, background, past, shown, halo };
 })()`;
 
 interface Indicator {
@@ -105,18 +112,25 @@ interface Indicator {
   readonly colour: string;
   readonly background: string;
   readonly past: readonly number[];
+  readonly shown: boolean;
+  /** The canvas's ring's halo, a box shadow; null for every other element. */
+  readonly halo: string | null;
 }
 
 /**
  * The focused element shows a solid indicator of at least 2 px with 3:1 contrast (REQ-Y02), drawn
- * inside the viewport, so that a ring around an element as large as the window still shows.
+ * inside the viewport, so that a ring around an element as large as the window still shows; the
+ * canvas's ring shows, with its white halo inside it.
  */
 export async function expectIndicator(page: Page): Promise<void> {
-  const { style, width, colour, background, past } = await page.evaluate<Indicator>(INDICATOR);
+  const { style, width, colour, background, past, shown, halo } =
+    await page.evaluate<Indicator>(INDICATOR);
   expect(style).toBe('solid');
   expect(width).toBeGreaterThanOrEqual(2);
   expect(contrast(channels(colour), channels(background))).toBeGreaterThanOrEqual(3);
   expect(past).toEqual([0, 0, 0, 0]);
+  expect(shown).toBe(true);
+  if (halo !== null) expect(halo).toBe('rgb(255, 255, 255) 0px 0px 0px 4px inset');
 }
 
 /**

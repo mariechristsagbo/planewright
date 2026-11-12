@@ -9,7 +9,7 @@
 /*
  * Compact, from 600 to 1199 px wide: 12 px anchors, no wordmark, narrower notices, a 280 px
  * drawer and 32 px glyph buttons and Elements toggle, the glyph buttons' corner keys against their
- * inner edge to keep clear of their glyphs.
+ * inner edge to keep clear of their glyphs, and the canvas's chip level with the bottom islands.
  */
 @media (max-width: 1199px) {
   .editor-shell {
@@ -42,6 +42,10 @@
 
   .wordmark {
     display: none;
+  }
+
+  .canvas-focus-chip {
+    bottom: var(--pw-spacing-md);
   }
 }
 
@@ -269,10 +273,13 @@
 
 /*
  * Phones, in portrait and in landscape: the tool hint is hidden, out of the accessibility tree,
- * and takes no row (the v0.2 plan's S10); the pressed tool in the tool bar still says the tool.
+ * and takes no row, and the canvas's ring shows without its chip, since no anchor there is clear
+ * of the dock or the top bar (the v0.2 plan's S10); the pressed tool in the tool bar still says
+ * the tool.
  */
 @media (max-width: 599px), (max-height: 499px) {
-  .tool-hint {
+  .tool-hint,
+  .canvas-focus-chip {
     display: none;
   }
 }

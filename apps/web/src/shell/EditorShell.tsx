@@ -19,6 +19,7 @@ import { EmptyCanvasNote } from './EmptyCanvasNote.tsx';
 import { IdentityIsland } from './IdentityIsland.tsx';
 import { DoneBar } from './DoneBar.tsx';
 import { ShortcutsButton } from './ShortcutsButton.tsx';
+import { CanvasFocusChip } from './CanvasFocusChip.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
 import { matchesSheet, useSheet } from './sheet.ts';
@@ -39,16 +40,24 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // its keys and the list, then Undo, Redo, the zoom controls and Keyboard shortcuts. The drawer's
 // opening and closing move the focus, to its list box and back to the toggle. The active tool's
 // hint line follows the tool bar, plain text with no tab stop, absent while a text is edited and
-// hidden on phones (the v0.2 plan's S10). On a phone in portrait the tool bar is the dock at the
-// window's bottom, its stop still third, with More last, whose items join the order while it is
-// open; the bottom-right island is not shown, so the menu button takes Keyboard shortcuts' focus
-// when a window turns, and its dialog's when that closes; the open drawer is a sheet, the selection
-// bar takes the panel's place with its Details sheet right after it, one sheet is open at a time,
-// and the dock and the bottom islands are inert while either is. While a phone in portrait edits a
-// text, the dock and history and zoom are hidden, out of the tab order yet mounted, and no Elements
-// sheet is open: the text area comes right after the canvas, then the Done bar's Done, then
-// Elements (the v0.2 plan's S9). Where each island sits is the style sheets' (styles/shell.css).
-// The controls' tooltips are delegated to the root.
+// hidden on phones; the canvas's focus ring and chip lie inside the canvas's stage after the host,
+// taking no focus, and show from CSS alone while the host has keyboard focus (the v0.2 plan's
+// S10). On a phone in portrait the tool bar is the dock at the window's bottom, its stop still
+// third, with More last, whose items join the order while it is open; the bottom-right island is
+// not shown, so the menu button takes Keyboard shortcuts' focus when a window turns, and its
+// dialog's when that closes; the open drawer is a sheet, the selection bar takes the panel's place
+// with its Details sheet right after it, one sheet is open at a time, and the dock and the bottom
+// islands are inert while either is. While a phone in portrait edits a text, the dock and history
+// and zoom are hidden, out of the tab order yet mounted, and no Elements sheet is open: the text
+// area comes right after the canvas, then the Done bar's Done, then Elements (the v0.2 plan's S9).
+// Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
+// delegated to the root.
+
+/**
+ * The canvas's focus ring and chip (the v0.2 plan's S10): one element for the shell's life, so that
+ * neither a view that renders the canvas host nor a render of the shell builds it again.
+ */
+const FOCUS_CHIP = <CanvasFocusChip />;
 
 /** The open dialog, if any; closing it calls onClose. */
 function OpenDialog({
@@ -225,7 +234,7 @@ function Shell() {
       <IdentityIsland shell={shell} menuButton={menu} tag={tag} />
       <ToolsIsland shell={shell} sheet={sheet} covered={covered} hidden={session} />
       <ToolHint />
-      <CanvasHost />
+      <CanvasHost>{FOCUS_CHIP}</CanvasHost>
       {session ? <DoneBar /> : null}
       <EmptyCanvasNote />
       <SelectionPanel sheet={sheet} controls={detailsControls(shell)} />
