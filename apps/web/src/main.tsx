@@ -17,7 +17,8 @@ import { EditorShell } from './shell/EditorShell.tsx';
 // The style sheets in cascade order: the tokens, the fonts, the base, the controls' shared rules,
 // then the shell's layout, its islands and what they hold, the glyph buttons, the phone's dock and
 // More, the text-editing chrome, the chrome over the canvas, the Elements toggle and drawer, the
-// selection panel, the menu and the tooltip (ADR 0012, decision 5).
+// selection panel, the menu, the tooltip and the dialogs (ADR 0012, decision 5), then the motion
+// of their entrances (D2).
 import './styles/tokens.css';
 import './styles/fonts.css';
 import './styles/base.css';
@@ -36,10 +37,12 @@ import './styles/selection.css';
 import './styles/menu.css';
 import './styles/tooltip.css';
 import './styles/dialog.css';
+import './styles/motion.css';
 import responsive from './styles/responsive.css?inline';
 
-// The layout's media queries, last in the cascade and in a style sheet apart from the fonts', so
-// that a breakpoint never makes the canvas's faces load again (styles/responsive.css).
+// The layout's media queries and reduced motion's, last in the cascade and in a style sheet apart
+// from the fonts', so that a breakpoint never makes the canvas's faces load again
+// (styles/responsive.css).
 const media = document.createElement('style');
 media.textContent = responsive;
 document.head.append(media);

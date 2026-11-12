@@ -5,6 +5,7 @@ import { expectIndicator, openElements, openPage, targets, textContrasts } from 
 import { glyphContrasts } from './glyphs.ts';
 import { expectPlaced, islands } from './layout.ts';
 import type { Viewport } from './layout.ts';
+import { settled } from './motion.ts';
 import {
   hideNotices,
   refusableWrites,
@@ -142,11 +143,13 @@ for (const [viewport, touch] of [
   });
 }
 
+// reduced-motion.spec.ts's "A2 the failed notice" and "the stale notice" tests check that nothing
+// animates at any time under reduced motion.
 test.describe('contrast and motion at 1440 × 900', () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
   for (const state of ['failed', 'stale'] as const) {
-    test(`A11 under the ${state} notice the chip’s and the notices’ texts reach 4.5:1, their glyphs and the focus ring 3:1, and nothing animates`, async ({
+    test(`A11 under the ${state} notice the chip’s and the notices’ texts reach 4.5:1, their glyphs and the focus ring 3:1, and nothing animates once the notices’ entrance ends`, async ({
       page,
     }) => {
       await openIn(page, state);
@@ -161,6 +164,7 @@ test.describe('contrast and motion at 1440 × 900', () => {
         await control.focus();
         await expectIndicator(page);
       }
+      await settled(page);
       expect(await page.evaluate('document.getAnimations().length')).toBe(0);
     });
   }

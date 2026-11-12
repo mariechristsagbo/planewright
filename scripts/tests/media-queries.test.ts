@@ -3,7 +3,7 @@ import { join, sep } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { styleSheet } from './style-sheets.ts';
+import { mediaBlocks, styleSheet } from './style-sheets.ts';
 
 // Where the web app's media queries live (ADR 0012, decision 14, and the v0.2 plan's S2): Chromium
 // recreates every font face that a style sheet declares when that style sheet's media queries
@@ -32,26 +32,6 @@ const areaRows = (body: string): string[][] =>
   [...body.matchAll(/grid-template-areas:([^;]+);/gu)].map((match) =>
     [...(match[1] ?? '').matchAll(/'([^']+)'/gu)].map((row) => row[1] ?? ''),
   );
-
-/** A style sheet's @media blocks, each query with the rules inside it. */
-function mediaBlocks(css: string): { query: string; body: string }[] {
-  const text = plain(css);
-  const blocks: { query: string; body: string }[] = [];
-  for (let at = text.indexOf('@media '); at >= 0; at = text.indexOf('@media ', at + 1)) {
-    const open = text.indexOf('{', at);
-    let depth = 1;
-    let end = open + 1;
-    for (; depth > 0 && end < text.length; end += 1) {
-      if (text[end] === '{') depth += 1;
-      if (text[end] === '}') depth -= 1;
-    }
-    blocks.push({
-      query: text.slice(at + '@media '.length, open).trim(),
-      body: text.slice(open, end),
-    });
-  }
-  return blocks;
-}
 
 /** Phones, in portrait and in landscape: the query under which the view readout is hidden. */
 const PHONES = '(max-width: 599px), (max-height: 499px)';

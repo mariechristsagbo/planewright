@@ -7,8 +7,9 @@ import { declarationsOf, rulesOf, styleSheet, tokenValues } from './style-sheets
 
 // The canvas's chrome's style sheet (ADR 0012, decisions 5 and 14; the v0.2 plan's S10, issue
 // #77's D11 and D12): bundled from main.tsx right after the text-editing chrome's, with no media
-// query (media-queries.test.ts), no motion, which is S12's, no filter, blur, :has() or
-// :focus-within, and only the chrome's tokens, besides the safe-area insets that shell.css reads.
+// query (media-queries.test.ts), no motion, which motion.css holds since S12 and which never moves
+// this chrome, no filter, blur, :has() or :focus-within, and only the chrome's tokens, besides the
+// safe-area insets that shell.css reads.
 
 const SHEET = styleSheet('canvas-chrome.css');
 const MAIN = readFileSync(

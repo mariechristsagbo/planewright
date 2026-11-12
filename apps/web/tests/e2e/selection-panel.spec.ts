@@ -3,6 +3,7 @@ import type { Page } from '@playwright/test';
 
 import { elementsToggle, openElements, openPage, polite } from './a11y.ts';
 import { mouseClick, mouseDrag, toolButton } from './drawing.ts';
+import { settled } from './motion.ts';
 import { boxOf, drawText, figuresIn, onCanvas, panelButton, selectionSurface } from './panel.ts';
 import { canvasBox } from './support.ts';
 
@@ -180,10 +181,15 @@ test.describe('at 1280 × 720', () => {
     await expect(polite(page)).toHaveText('1 element selected.');
   });
 
-  test('D5 nothing animates while the panel shows', async ({ page }) => {
+  // reduced-motion.spec.ts's "A2 the selection panel shows at once" checks that nothing animates at
+  // any time under reduced motion.
+  test('D5 nothing animates while the panel shows, once its entrance has ended', async ({
+    page,
+  }) => {
     await openPage(page);
     await onCanvas(page, ['r', 'Enter'], 'Rectangle created. 1 element selected.');
     await expect(selectionSurface(page)).toBeVisible();
+    await settled(page);
     expect(await page.evaluate('document.getAnimations().length')).toBe(0);
   });
 });

@@ -48,6 +48,26 @@ export function declarationsOf(body: string): Declaration[] {
     });
 }
 
+/** A style sheet's @media blocks, each query with the rules inside it. */
+export function mediaBlocks(css: string): { query: string; body: string }[] {
+  const text = css.replaceAll(/\/\*[\s\S]*?\*\//gu, '');
+  const blocks: { query: string; body: string }[] = [];
+  for (let at = text.indexOf('@media '); at >= 0; at = text.indexOf('@media ', at + 1)) {
+    const open = text.indexOf('{', at);
+    let depth = 1;
+    let end = open + 1;
+    for (; depth > 0 && end < text.length; end += 1) {
+      if (text[end] === '{') depth += 1;
+      if (text[end] === '}') depth -= 1;
+    }
+    blocks.push({
+      query: text.slice(at + '@media '.length, open).trim(),
+      body: text.slice(open, end),
+    });
+  }
+  return blocks;
+}
+
 /** The value of each custom property that tokens.css declares, by its name. */
 export const tokenValues = (css: string = styleSheet('tokens.css')): Map<string, string> =>
   new Map(

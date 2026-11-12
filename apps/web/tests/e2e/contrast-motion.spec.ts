@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
 import { button, contrast, openElements, openPage, polite, textContrasts } from './a11y.ts';
 import { glyphContrasts } from './glyphs.ts';
 import { moreButton, toolButton } from './drawing.ts';
+import { settled } from './motion.ts';
 import { canvas, readout } from './support.ts';
 
 /** The words that the controls showed before S3, which show glyphs instead (ADR 0012). */
@@ -249,7 +250,7 @@ test.describe('with the operating system asking for a dark scheme', () => {
 test.describe('with reduced motion requested', () => {
   test.use({ reducedMotion: 'reduce' });
 
-  test('E4 A11 REQ-Y06 a zoom changes the view in one step, and nothing animates', async ({
+  test('E4 A11 REQ-Y06 a zoom changes the view in one step, and nothing animates, the menu and the drawer opened', async ({
     page,
   }) => {
     await openPage(page);
@@ -270,6 +271,23 @@ test.describe('with reduced motion requested', () => {
     await button(page, /^Reset zoom/u).click();
     await expect(readout(page)).toHaveText(/, zoom 100%$/u);
     expect(await page.evaluate('document.getAnimations().length')).toBe(0);
+    // ADR 0012's row for this line: always empty under reduced motion, surfaces opened (S12).
+    await button(page, 'Planewright menu').click();
+    await expect(page.getByRole('menu', { name: 'Planewright menu' })).toBeVisible();
+    expect(await page.evaluate('document.getAnimations().length')).toBe(0);
+    await openElements(page);
+    expect(await page.evaluate('document.getAnimations().length')).toBe(0);
+  });
+
+  test.describe('on a phone, 390 × 844', () => {
+    test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+
+    test('E4 A11 nothing animates as the Elements sheet opens', async ({ page }) => {
+      await openPage(page);
+      await openElements(page);
+      await expect(page.locator('#element-list-drawer')).toBeVisible();
+      expect(await page.evaluate('document.getAnimations().length')).toBe(0);
+    });
   });
 });
 
@@ -293,7 +311,9 @@ test.describe('on a phone, 390 × 844, at a device pixel ratio of 2, with More o
     return { glyphs: glyphs.map(({ control, glyph }) => `${control ?? ''} ${glyph}`), below };
   }
 
-  test('A13 every text, the corner keys included, meets 4.5:1, More’s and its items’ glyphs 3:1 at rest and pressed, and nothing animates', async ({
+  // reduced-motion.spec.ts's "A2 More’s popover shows at once" checks that nothing animates at any
+  // time under reduced motion.
+  test('A13 every text, the corner keys included, meets 4.5:1, More’s and its items’ glyphs 3:1 at rest and pressed, and nothing animates once More’s entrance ends', async ({
     page,
   }) => {
     await openPage(page);
@@ -306,10 +326,12 @@ test.describe('on a phone, 390 × 844, at a device pixel ratio of 2, with More o
       glyphs: ['More more', 'Hand hand', 'Diamond diamond', 'Tool lock lock-open'],
       below: [],
     });
+    await settled(page);
     expect(await page.evaluate('document.getAnimations().length')).toBe(0);
     await toolButton(page, 'Diamond').tap();
     await expect(moreButton(page)).toHaveAttribute('aria-pressed', 'true');
     expect(await moreGlyphs(page)).toEqual({ glyphs: ['More diamond'], below: [] });
+    await settled(page);
     expect(await page.evaluate('document.getAnimations().length')).toBe(0);
   });
 });

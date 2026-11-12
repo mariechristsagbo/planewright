@@ -7,7 +7,8 @@ import { declarationsOf, rulesOf, styleSheet, tokenValues } from './style-sheets
 
 // The selection panel's style sheet (ADR 0012, decisions 5 and 14; the v0.2 plan's S6, issue #69's
 // D5): bundled from main.tsx with the others, with no media query (media-queries.test.ts), no
-// motion, which is S12's, no blur, and only the chrome's tokens.
+// motion, which motion.css holds since S12 (motion-styles.test.ts), no blur, and only the chrome's
+// tokens.
 
 const SHEET = styleSheet('selection.css');
 const MAIN = readFileSync(

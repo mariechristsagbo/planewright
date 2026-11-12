@@ -2,8 +2,9 @@
  * The problem chip and the storage notices (ADR 0012, decision 12, D7; the v0.2 plan's S7): nothing
  * shows while saving works. While storage needs attention the chip sits in the top-right island
  * before Elements, after a hairline, and the notices under the island, in the error tone for a
- * failed save and the warning tone otherwise, from the tokens alone: no success colour, no motion
- * (S12) and no blur. responsive.css sets the chip's landscape form and the touch targets.
+ * failed save and the warning tone otherwise, from the tokens alone: no success colour, no motion,
+ * since motion.css holds the notices' entrance (S12), and no blur. responsive.css sets the chip's
+ * landscape form and the touch targets.
  */
 .problem-chip {
   display: inline-flex;

@@ -4,7 +4,8 @@
  * a caption on the islands' surface with a hairline and the first elevation, its keys in key chips
  * as the Keyboard shortcuts dialog's. It is neither turned nor zoomed with the text, keeps to one
  * line, and lets every press through to the canvas. The phone's Done bar lies along the window's
- * bottom above the on-screen keyboard. No rule here has a media query, a motion or a blur.
+ * bottom above the on-screen keyboard. No rule here has a media query, a motion or a blur, and
+ * motion.css (S12) moves none of it.
  */
 .text-hint {
   position: absolute;
