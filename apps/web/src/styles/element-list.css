@@ -32,8 +32,8 @@
 }
 
 .element-option[aria-selected='true'] {
-  color: #ffffff;
-  background: #2a62d0;
+  color: var(--pw-color-on-primary-container);
+  background: var(--pw-color-primary-container);
 }
 
 /* The active option, while the list has the focus. */
@@ -45,7 +45,8 @@
 /*
  * A row (ADR 0012, decisions 3 and 8; the v0.2 plan's S5): its kind's glyph, its label in the
  * chrome's face and its figures in JetBrains Mono, each cut short rather than wrapped. A selected
- * row keeps P0's colours, which S10 coordinates, and its figures take its text colour.
+ * row takes the accent's container, 7.61:1 (the v0.2 plan's S10), and its figures take its text
+ * colour.
  */
 .element-option {
   display: grid;

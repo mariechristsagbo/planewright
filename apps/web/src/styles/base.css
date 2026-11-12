@@ -30,22 +30,35 @@
   font: inherit;
 }
 
+/*
+ * A pressed control, the active tool, tool lock while it is on and More while it holds a tool,
+ * takes the accent's container, kept for state (ADR 0012, decision 3; the v0.2 plan's S10): its
+ * content 7.61:1 on the fill, and its edge in the accent, 5.73:1 on the fill and 6.74:1 on the
+ * surface.
+ */
 :where(button[aria-pressed='true']) {
-  color: #ffffff;
-  background: #2a62d0;
-  border-color: #2a62d0;
+  color: var(--pw-color-on-primary-container);
+  background: var(--pw-color-primary-container);
+  border-color: var(--pw-color-primary);
 }
 
-/* Unavailable controls keep 7.2:1 text contrast (REQ-Y06): a grey text and a dashed border. */
+/*
+ * Unavailable controls keep 5.50:1 contrast (REQ-Y06): the unavailable content colour and P0's
+ * dashed border.
+ */
 :where(button:disabled, button[aria-disabled='true']) {
-  color: #4b5563;
+  color: var(--pw-color-disabled-content);
   border-style: dashed;
 }
 
-/* Every focusable element shows a 3 px indicator, 5.3:1 against the page (REQ-Y02). */
+/*
+ * Every focusable element shows a 2 px ring of the focus ring's violet, 6.74:1 on the surface,
+ * outside a 2 px white halo that fills its offset (REQ-Y02; the v0.2 plan's S1 and S10).
+ */
 :where(:is(button, a, summary, [tabindex]):focus-visible) {
-  outline: 3px solid #2a62d0;
+  outline: 2px solid var(--pw-color-focus-ring);
   outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--pw-color-focus-halo);
 }
 
 :where(kbd) {

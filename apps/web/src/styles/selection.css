@@ -6,7 +6,8 @@
  * bottom row, scrolling inside itself in a window too short for it. It starts 2 px under the row,
  * at the design's 16 / 72 on desktops, and keeps the shell's gap above the bottom islands. Its
  * terms and heading are in the chrome's face and its values in JetBrains Mono. Its buttons keep the
- * base's pressed, disabled and focus rules, which S10 coordinates; Delete takes the error tone.
+ * base's pressed, disabled and focus rules, in the tokens' state colours since S10; Delete takes
+ * the error tone.
  * Nothing here moves (motion is S12's), and responsive.css raises its targets under a coarse
  * pointer.
  */
