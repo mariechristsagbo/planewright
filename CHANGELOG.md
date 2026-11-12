@@ -303,3 +303,15 @@ release has been published yet.
   every anchor, the sheets' edges and the menu's and More's limits add the safe-area insets. Every
   target is at least 44 by 44 px on phones and under a coarse pointer. A pan or zoom step renders
   neither the tool bar, the dock nor More. S9 to S13 are not implemented.
+- The v0.2 text-editing chrome (slice S9, issue #75, ADR 0012 decisions 11, 13 and 14): while a text
+  is edited outside a phone in portrait, a caption chip 8 px under the text area names the keys that
+  finish it, "Finish with Esc or Ctrl+Enter" (Cmd+Enter on Apple platforms), each in a key chip,
+  follows the text area through typing, zooming and panning, describes it and lets a press through
+  to the canvas. On a phone in portrait a Done bar along the window's bottom sits above the
+  on-screen keyboard at its inset, read from the visual viewport, and above the bottom safe-area
+  inset where no keyboard covers it; Done, at least 44 px, commits the text as Escape does and gives
+  the focus to the canvas, during an input method's composition too; a press on the bar keeps the
+  text area's focus; the dock and history and zoom are hidden during the session, and an open
+  Elements sheet closes. The caret is not kept above the keyboard and the camera is not moved (D6).
+  Neither a camera step, a typed value nor a viewport event renders the shell. S10 to S13 are not
+  implemented.

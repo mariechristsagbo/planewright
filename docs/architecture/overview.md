@@ -58,8 +58,11 @@ name, or the count, the selection's position, size and turn read-only in mono, w
 a freehand stroke's points or a text's lines, Duplicate and Delete, which run the registry's
 commands, Edit text for a lone text that Enter would edit, and a line saying that style controls are
 not in this build; on a phone in portrait a bar under the tool bar takes its place, with Details,
-which opens the figures in a sheet along the bottom, never together with the Elements sheet. Its
-IndexedDB record backend
+which opens the figures in a sheet along the bottom, never together with the Elements sheet. Since
+slice S9, issue #75, while a text is edited a caption chip 8 px under the text area names the keys
+that finish it, Esc and Ctrl+Enter, or Cmd+Enter on Apple platforms, and describes the text area,
+except on a phone in portrait, where a Done bar above the on-screen keyboard finishes it as Escape
+does while the dock and history and zoom are hidden. Its IndexedDB record backend
 (database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
 selection are kept in the browser, and at start-up the page opens the most recently updated document
 again; it also saves at once when the page is hidden or left, and reads its preferences entry from
@@ -165,10 +168,12 @@ dialog, issue #66 (slice S5) gave the Elements drawer its count, its rows and it
 #69 (slice S6) added the selection panel, the phone's selection bar and the Details sheet, and issue
 #71 (slice S7) made saving show only when it needs attention, with the "Not saved" chip in the
 top-right island, notices that Hide folds into it and one polite sentence when a failed save
-succeeds again, and issue #73 (slice S8) composed phones, with the tool bar as a dock and More at
-the bottom in portrait, the whole palette in the top row in landscape, the view readout hidden, the
-anchors clear of the safe areas and 44 px targets on phones and under a coarse pointer; S9 to S13
-are not implemented yet.
+succeeds again, issue #73 (slice S8) composed phones, with the tool bar as a dock and More at the
+bottom in portrait, the whole palette in the top row in landscape, the view readout hidden, the
+anchors clear of the safe areas and 44 px targets on phones and under a coarse pointer, and slice S9
+(issue #75) added the text-editing chrome, a chip under the text area that names the keys that
+finish a text and, on a phone in portrait, a Done bar above the on-screen keyboard, the dock and
+history hidden meanwhile; S10 to S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 

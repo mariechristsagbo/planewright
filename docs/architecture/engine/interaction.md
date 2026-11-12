@@ -220,7 +220,10 @@ history entry (REQ-T11).
 
 The engine holds a text session: the element, whether it is new, and its starting content (ENG-12
 keeps the content in the session's transaction). The web app shows a text area over the canvas at the element's screen position, scaled by the zoom and
-rotated by the element, with the element hidden from the scene layer.
+rotated by the element, with the element hidden from the scene layer. Since v0.2's slice S9 it also
+shows, outside a phone in portrait, a hint chip under the text area that names Escape and Mod+Enter,
+and on a phone in portrait a Done bar above the on-screen keyboard whose Done ends the session ([the
+v0.2 plan's S9](../editor-experience.md#s9-text-editing-chrome)).
 
 ```ts
 export type TextEdit =
@@ -231,7 +234,8 @@ export type TextEdit =
 - The web app sends each input as `editText({ type: 'value', text })`, which updates the element
   transiently and re-measures its size; a new left-aligned text keeps its top-left corner after
   creation.
-- Enter inserts a line break. Escape and Mod+Enter in the text area send a `commit` edit; a press
+- Enter inserts a line break. Escape and Mod+Enter in the text area send a `commit` edit, as the
+  phone's Done does since v0.2's slice S9; a press
   outside the text, which reaches the engine through `input`, and a tool change commit too, and so
   does moving the focus to another control ([what ENG-14 decided](quality.md#what-eng-14-decided)).
 - A session is one history entry; a new text left empty is removed without an entry, and an
@@ -544,7 +548,8 @@ text. It decided what the rules above leave open:
   again with `layoutText` through the editor's `text` port and keeps its origin, so a new
   left-aligned text keeps its top-left corner. A value longer than 100,000 characters, or measured
   past the 10⁷ size limit, is not applied, and an edit with no session does nothing.
-- **Ending.** `editText({ type: 'commit' })`, which Escape and Mod+Enter in the text area send, a
+- **Ending.** `editText({ type: 'commit' })`, which Escape and Mod+Enter in the text area send, and
+  since v0.2's slice S9 the phone's Done, a
   press that reaches the active tool and a tool change end the session. The wheel and a
   middle-button drag move the camera without a press, so they leave it open; a touch pinch does
   not, because its first finger's press reaches the tool before the second finger lands, so the
@@ -574,7 +579,15 @@ text. It decided what the rules above leave open:
   whatever its alignment. It is focused when a session starts, sends its whole value on each input,
   holds at most 100,000 characters, and ends the session on Escape or Mod+Enter (Cmd on Apple
   platforms, Ctrl elsewhere), after which the canvas host takes the focus back, so the shortcuts
-  work again at once; while an input method composes, those keys are its own and end nothing.
+  work again at once; while an input method composes, those keys are its own and end nothing. Since
+  v0.2's slice S9 a hint chip 8 px under the text area's axis-aligned bounds, the caret's room and
+  the rotation included, names those keys, "Finish with Esc or Ctrl+Enter" (Cmd+Enter on Apple
+  platforms), and describes the text area, outside a phone in portrait; on a phone in portrait a
+  Done bar along the window's bottom, above the on-screen keyboard's inset that the visual viewport
+  gives, holds Done, which sends `commit` and gives the focus to the canvas as Escape does, during a
+  composition too, and the text area's blur to Done keeps the session. Neither moves the camera or
+  keeps the caret above the keyboard (ADR 0012, D6), and the engine's `TextEdit` comment still names
+  Escape and Mod+Enter alone.
   Enter inserts a line break. The tool bar shows Text (T, 7) after Freehand, and the page says what
   can be written and that text formatting does not exist yet.
 - **Not here.** Labels in shapes, wrapping and the font picker, which are out of scope; alignment,
