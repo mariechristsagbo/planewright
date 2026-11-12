@@ -172,9 +172,9 @@ export async function textContrasts(page: Page): Promise<{ text: string; ratio: 
   }));
 }
 
-/** The boxes of every control that a finger can press, by role and name. */
+/** The boxes of every control that a finger can press, by role and name, a summary among them. */
 const TARGETS = `(() => {
-  const selector = 'button, a[href], [role="option"], [role="listbox"], [tabindex="0"], textarea';
+  const selector = 'button, a[href], summary, [role="option"], [role="listbox"], [tabindex="0"], textarea';
   return [...document.querySelectorAll(selector)]
     .filter((element) => element.getBoundingClientRect().width > 0)
     .map((element) => {
