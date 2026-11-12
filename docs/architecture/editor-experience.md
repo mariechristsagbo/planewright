@@ -13,10 +13,10 @@ visibility ([what S7 delivered](#what-s7-delivered)), and slice S8 (issue #73) t
 and the safe areas ([what S8 delivered](#what-s8-delivered)), and slice S9 (issue #75) the
 text-editing chrome ([what S9 delivered](#what-s9-delivered)), and slice S10 (issue #77) the
 canvas's focus ring and chip and the tool hint line ([what S10 delivered](#what-s10-delivered)),
-and slice S11 (issue #79) the overlay's colour ([what S11 delivered](#what-s11-delivered)); slices
-S12 and S13 are not implemented.** This plan turns ADR 0012's decisions into thirteen
-issues for milestone v0.2.0 (Editor Experience): what each slice contains, what must land before
-it, the tests it writes first,
+and slice S11 (issue #79) the overlay's colour ([what S11 delivered](#what-s11-delivered)), and
+slice S12 (issue #81) the chrome's motion ([what S12 delivered](#what-s12-delivered)); slice S13 is
+not implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
+(Editor Experience): what each slice contains, what must land before it, the tests it writes first,
 how it is validated and which documents it updates. The decisions themselves, the tests to migrate
 and the visual-regression matrix are in the ADR; where this plan and the ADR differ, the ADR
 governs.
@@ -300,6 +300,10 @@ builds on; the handoff adds only that S7 may land before S2.
   drawer, `document.getAnimations()` is empty.
 - **Migrations.** The ADR's row for `contrast-motion.spec.ts:84`.
 - **Documents.** `engine/quality.md`'s statement that nothing in the page animates.
+- **Validation.** `npm run validate` and `npm run test:e2e` pass at the head with their real counts,
+  the new motion specs pass five times in a row with `--repeat-each=5`, and `npm run perf:browser`
+  and `npm run perf:report` run on the head and on `main` in the order head, main, main, head.
+- **Delivered** by issue #81 ([what S12 delivered](#what-s12-delivered)).
 
 ### S13: the visual-regression baselines
 
@@ -1730,3 +1734,119 @@ edited.
   issue chooses the dark mapping. The visual-regression baselines that will show the overlay are
   S13's.
 - S12 and S13 are not implemented.
+
+## What S12 delivered
+
+Issue #81 delivered slice S12, ADR 0012's decision D2, with no change to `packages/`, the
+dependencies, `index.html`, the tokens' values, the commands or the preferences. ADR 0012 is not
+edited.
+
+- **Timing source.** Every value is ADR D2's, as the [motion
+  paragraph](#elevation-layers-and-motion) above and `tokens.css` give it, read from the approved
+  design package's prototype style sheet in S0 (`17de66a`): 140 ms and 4 px for the menu, More, the
+  selection panel and bar, the notices and the dialogs, 180 ms and 8 px for the Elements
+  drawer, 220 ms and 16 px for the two sheets, 90 ms for a fade, eased by
+  `cubic-bezier(0.2, 0, 0, 1)`. `tokens.css` keeps its 114 values.
+- **The entrances.** `apps/web/src/styles/motion.css`, bundled from `main.tsx` after `dialog.css`
+  and before the inline `responsive.css`, holds no media query and every keyframe, entrance and
+  fade. Its four keyframes, `pw-enter-above`, `-below`, `-side` and `-sheet`, start at opacity 0 and
+  a translation by `--pw-shift-enter`, `-panel` or `-sheet` and settle into place; each surface
+  takes one by the `animation` shorthand with its duration token, `--pw-ease` and the fill mode
+  `backwards`, with no delay and one iteration, so that nothing stays in effect and
+  `document.getAnimations()` is empty once it ends. Only `opacity` and the `translate` property
+  animate. An entrance runs when its surface mounts, leaves `hidden` or opens as a modal, and at
+  load for a notice; closing stays instant, and a closing during an entrance cancels it.
+- **[Inferred] choices.** The menu enters from 4 px above, hanging from the identity island; More
+  from 4 px below, rising out of the dock; the phone's bar as the panel; the dialogs from 4 px
+  above, their scrim at once. The Elements sheet takes `pw-enter-sheet` and `--pw-dur-sheet` by two
+  longhands in `responsive.css`'s existing block under exactly `SHEET_QUERY`, so phone landscape and
+  compact layouts keep the drawer's entrance. Only the existing hover colour fades: the menu item's
+  highlight, on hover and keyboard focus, `transition: background-color` alone in `--pw-dur-quick`
+  by `--pw-ease`. The tooltip's delay stays 500 ms under reduced motion, answering the custom
+  properties' open question: it is a wait, not motion.
+- **Reduced motion.** `responsive.css`'s last block, under `prefers-reduced-motion: reduce`, sets
+  `--pw-dur-quick`, `-enter`, `-panel` and `-sheet` to `0ms` on `:root` and gives `animation: none`
+  to the eight selectors that `motion.css` animates and `transition: none` to the menu item, since
+  a 0 s CSS animation still runs and fires its events. Being last, it needs no `!important`, and the
+  sheet holds 397 lines. The production build writes `0ms` as `0s`, so the end-to-end test accepts
+  either; the tooling test pins `0ms` in the source.
+- **Tooltips (D8).** A tip that the keyboard opens at once inside an entering surface, Hand's in
+  More or Close Details' in the Details sheet, was placed from its control's translated box. The
+  tooltip now listens on the shell's root, while a tip shows, for an `animationend` on an element
+  that holds its control, and places the tip again there: 8 px from the settled control, its reach
+  matching the gap. It measures no ancestor's translation and adds no editor subscription.
+- **Tests first.** At `bc694c5`'s sources `motion-styles.test.ts` failed 9 of its 10 tests, the
+  canvas check passing by design, `saving-styles.test.ts`'s migrated D9 test failed, and the D8 unit
+  test, `tooltip-entrance.test.tsx`, found the tip at 108 px where it expected 104; with the change
+  all passed. The three new specs, 70 tests, ran against a build of `bc694c5`'s sources: 38 failed,
+  every entrance, timing, first-frame, Escape, tap, reopening, fade and token check, and 32 passed
+  by design, the checks that something stays absent under reduced motion or never animates, and A10,
+  whose tips go wrong only with an entrance; with motion and without D8, A10 failed for More's Hand
+  and, alone, for Close Details. A first version of A7 failed at the base because Zoom to fit after
+  Zoom out changed nothing on its scene, a fault of the test, which now zooms in before each fit and
+  reset. The new specs passed five times in a row, 350 tests with `--repeat-each=5`.
+- **The ADR row's migration.** `contrast-motion.spec.ts`'s "E4 A11 REQ-Y06 a zoom changes the view
+  in one step, and nothing animates, the menu and the drawer opened" keeps the zoom in one step and
+  the empty `document.getAnimations()`, then opens the menu and the drawer under reduced motion and
+  finds it still empty; "E4 A11 nothing animates as the Elements sheet opens" does the same
+  at 390 × 844.
+- **Other migrations.** "A13 … and nothing animates once More’s entrance ends", saving-layout's "A11
+  under the … notice … and nothing animates once the notices’ entrance ends" and selection-panel's
+  "D5 nothing animates while the panel shows, once its entrance has ended" wait for the entrances,
+  each paired with reduced-motion.spec.ts's A2 test for its surface. `textContrasts`, `targets`,
+  `glyphContrasts`, `boxOf`, `islands` and so `expectPlaced` wait first for the page's animations,
+  at most 1 s, failing with the names of those still running, and so do the direct box reads after
+  an opening in `about`, `menu`, `more`, `shortcuts`, `elements-sheet` and `safe-areas`, and the
+  failed and stale notice helpers before their last nudge. I2 waits for the drawer's entrance, its
+  `by:` now "as I1, once the drawer’s entrance has ended", and B3 B4 for the panel's before the Hand
+  drag. `saving-styles.test.ts` allows `responsive.css`'s two motion blocks and still refuses motion
+  in the chip's and the targets' rules. `canvas-focus` D1 A2, `done-bar` A15 and `text-hint` D4 A15
+  pass unchanged, and no test was deleted or skipped.
+- **Sabotage.** After the unmutated controls, 46 tooling and unit tests and the 70 tests of the
+  three specs passing, 46 mutants of the issue's list ran, each in a copy of its own outside the
+  repository, against the tooling and unit tests, and 23 of them also against the end-to-end test
+  that covers them. 44 failed the tooling or unit tests; the menu at 180 ms and a dialog at 220 ms,
+  written as `animation-duration` longhands that the tooling test does not read, passed there and
+  failed end to end, in A3. Every end-to-end run failed but one: the menu item's fade kept under
+  reduced motion is equivalent in the page, since a transition of 0 s is never created, and the
+  tooling test fails it. The mutants were the reduced-motion block removed; each of the eight
+  surfaces' `animation: none` missing; the durations zeroed with the animations kept; the menu
+  at 180 ms, the drawer at 140 ms, either sheet at 180 ms and a dialog at 220 ms; 8 px for the
+  menu, 4 px for the drawer and 8 px for the sheets; the drawer from the left, the sheets from above
+  and More from above; fill mode `both`; `infinite`; `ease` and `linear`; `top` and `margin-top`
+  animated instead of `translate`; an exit animation that keeps More shown; `pointer-events: none`
+  during the sheet's entrance; a transition on `.canvas-host`; `scroll-behavior: smooth`; the fade
+  on `outline-color`, `box-shadow` or `all`; the fade kept under reduced motion; the tooltip's delay
+  zeroed under it; the sheet's override removed; the sheet's entrance given to the landscape drawer;
+  the notices and the bar not animated; the tooltip, the scrim, the Done bar and the canvas's chip
+  animated; a media query in `motion.css`; and D8 reverted.
+- **Performance and cost.** `npm run build`, `perf:browser` and `perf:report` ran on the head
+  (`c63ca98`) and on `main` (`bc694c5`) in the order head, main, main, head, on a VM loaded 5 to 7
+  by other work. B1's 95th percentiles were 75.12, 41.26, 92.03 and 77.06 ms and
+  B2's 30.53, 17.19, 12.04 and 21.32 ms, both over their budgets in every run, B1's misses being
+  those of issue #49; B3 0.23, 0.23, 0.42 and 0.23 ms; B4 one frame in each run; B9 no task
+  over 50 ms in each; B10 0.58, 0.96, 0.62 and 0.46 s; I1's 95th percentiles 130.2, 110.4, 84.3
+  and 97.0 ms and I2's 112.8, 153.5, 163.6 and 148.8 ms. `perf:report` exited 1 in each run only
+  because B5 to B8 and B11 to B13 are not measured in that sequence. Since B2 read higher on the
+  head in both of its runs, `panning.spec.ts` ran alone in turn on the head, `main`, the head and
+  `main`, at a load of about 3: B2 read 17.20, 20.95, 18.92 and 21.73 ms, I1 100.2, 117.3, 116.0
+  and 149.4 ms and I2 191.6, 151.4, 176.5 and 151.2 ms, so I2 read higher on the head in that order
+  and lower in the first; `frames.spec.ts` alone, in the same order, read B1 37.96, 68.80, 74.19
+  and 49.03 ms. Nothing animates while B1, B2, B3 or I1 is measured, and I2 and B4 now start once
+  the drawer's and the panel's entrances have ended. The bundled style sheet is 4,955 bytes gzip
+  against `main`'s 4,786, and the initial JavaScript, which inlines `responsive.css`, 121,190 bytes
+  against 121,030, by the bundle-size guardrail's `gzipSize`; `check:bundle-size` passes, the web
+  app's initial JavaScript at 121.2 KB of its 200 KB.
+- **Validation.** On the tree committed as `c63ca98`, whose code is the head's, `npm run validate`
+  passed, 362 test files and 3,909 tests with coverage of 98.16 % of statements, 96.53 % of
+  branches, 98.07 % of functions and 98.55 % of lines, and `npm run test:e2e` passed its 451 tests;
+  at each of the first two commits, `d2c7599` and `b5b16ec`, `npm run validate` passed in a copy
+  outside the repository, 3,899 tests each.
+- **Known limitations.** During an entrance the 4, 8 or 16 px band at a surface's leading edge does
+  not yet cover its resting area. Turning a phone with the drawer open swaps the sheet and the side
+  drawer and replays the new form's entrance, and the panel and the bar likewise. The panel enters
+  again after each text session and after Delete then Undo, since it mounts again. A tip opened
+  during an entrance sits at the translated place until the entrance ends. Closing, tooltips, the
+  scrim and the chrome that D2 does not name appear at once. Reduced motion is emulated in the
+  tests, never a real operating-system setting, and forced colours are out of scope.
+- S13 is not implemented.
