@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+import { FIXTURE_DOCUMENT_ID, openFixture } from './fixture-page.ts';
 import { fixtureRecords, referenceCalls } from './scene-fixture.ts';
 import { storedRecords } from './storage.ts';
 import type { StoredRecords } from './storage.ts';
@@ -13,35 +14,6 @@ import { canvasBox } from './support.ts';
 // by the same browser, so any difference is a change in what the renderer draws. The comparison
 // holds at one and two device pixels per CSS pixel, and again after frames that leave state
 // behind: a pan away and back, and a resize, which resets the scene canvas.
-
-const DOCUMENT_ID = 'SceneFixtureDocument00';
-
-async function openFixture(page: Page): Promise<number> {
-  await page.goto('/');
-  await expect(page.getByRole('region', { name: 'Drawing canvas' })).toBeVisible();
-  const { record, elements, count } = fixtureRecords(DOCUMENT_ID);
-  await page.evaluate(`(async () => {
-    const database = await new Promise((resolve, reject) => {
-      const request = indexedDB.open('planewright');
-      request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
-    });
-    await new Promise((resolve, reject) => {
-      const transaction = database.transaction(['documents', 'elements'], 'readwrite');
-      transaction.objectStore('documents').put({ ...${JSON.stringify(record)}, updated: Date.now() });
-      const store = transaction.objectStore('elements');
-      for (const element of ${JSON.stringify(elements)}) store.put(element);
-      transaction.oncomplete = resolve;
-      transaction.onerror = () => reject(transaction.error);
-    });
-    database.close();
-  })()`);
-  await page.goto('/?measure');
-  await page.waitForFunction(
-    `performance.getEntriesByName('planewright:render-scene').some((entry) => entry.detail.elements === ${String(count)})`,
-  );
-  return count;
-}
 
 const renders = (page: Page): Promise<number> =>
   page.evaluate<number>("performance.getEntriesByName('planewright:render-scene').length");
@@ -158,7 +130,7 @@ const CHROME_500_LOADED = `[...document.fonts].some((face) =>
 test('a chrome face that loads after start-up measures no text again and saves nothing', async ({
   page,
 }) => {
-  const { record, elements } = fixtureRecords(DOCUMENT_ID);
+  const { record, elements } = fixtureRecords(FIXTURE_DOCUMENT_ID);
   // The records as the fixture stores them, plain data as IndexedDB keeps it.
   const stored = storedTexts(
     JSON.parse(JSON.stringify({ documents: [record], elements })) as StoredRecords,
@@ -189,7 +161,7 @@ const SAME_FACES = `(() => {
 test('a resize across the layout’s breakpoints keeps every font face, measures no text again and saves nothing', async ({
   page,
 }) => {
-  const { record, elements } = fixtureRecords(DOCUMENT_ID);
+  const { record, elements } = fixtureRecords(FIXTURE_DOCUMENT_ID);
   const stored = storedTexts(
     JSON.parse(JSON.stringify({ documents: [record], elements })) as StoredRecords,
   );
