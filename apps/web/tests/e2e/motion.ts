@@ -7,6 +7,16 @@ import type { Page } from '@playwright/test';
 // test measures boxes or colours. Page code is written as strings, since these files compile
 // without the DOM library.
 
+/**
+ * A string as a JavaScript literal for page code: JSON's escapes, and the characters that a script
+ * reads apart, <, >, / and the line and paragraph separators, as Unicode escapes too.
+ */
+export const literal = (value: string): string =>
+  JSON.stringify(value).replace(
+    /[<>/\u2028\u2029]/gu,
+    (character) => `\\u${character.charCodeAt(0).toString(16).padStart(4, '0')}`,
+  );
+
 /** How long a measurement waits for the page's animations to end: longer than any entrance. */
 export const SETTLE_MS = 1000;
 
@@ -120,7 +130,7 @@ export const probed = (page: Page): Promise<{ events: string[]; tasks: number[] 
  */
 export async function holdEntrance(page: Page, selector: string): Promise<void> {
   await page.addInitScript(`new MutationObserver(() => {
-    for (const surface of document.querySelectorAll(${JSON.stringify(selector)})) {
+    for (const surface of document.querySelectorAll(${literal(selector)})) {
       for (const animation of surface.getAnimations()) {
         if (animation.animationName === undefined || animation.playState === 'paused') continue;
         animation.pause();
@@ -155,7 +165,7 @@ export const watchFirstFrame = async (page: Page, selector: string): Promise<voi
     const label = (element) => element === null ? 'none'
       : element.getAttribute('aria-label') ?? named(element) ?? element.textContent.trim().slice(0, 30);
     const look = () => {
-      const surface = document.querySelector(${JSON.stringify(selector)});
+      const surface = document.querySelector(${literal(selector)});
       if (surface === null || surface.getClientRects().length === 0) return requestAnimationFrame(look);
       const entering = surface.getAnimations().some((animation) =>
         (animation.currentTime ?? 0) < animation.effect.getComputedTiming().duration);
