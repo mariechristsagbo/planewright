@@ -5,10 +5,13 @@ import type { Platform } from '../../src/platform/platform.ts';
 import { EditorShell } from '../../src/shell/EditorShell.tsx';
 import { shortcutText } from '../../src/ui/shortcuts.ts';
 import { surfaceHarness } from '../support/surface.tsx';
+import { phoneQuery } from '../support/viewport.ts';
 
 // The Keyboard shortcuts dialog (ADR 0012, decisions 2 and 13; the v0.2 plan's S4): the
 // bottom-right button opens it, and it lists every command of the registry with its keys, as
-// shortcutText() writes them, in the modal dialog that About this build uses.
+// shortcutText() writes them, in the modal dialog that About this build uses. A phone in portrait
+// does not show the button (the v0.2 plan's S8), so a window that turns to portrait gives its
+// focus, or the dialog's on closing, to the menu button, which holds Keyboard shortcuts too.
 
 function mount(platform: Platform = 'other') {
   const harness = surfaceHarness(platform);
@@ -100,6 +103,64 @@ describe('the Keyboard shortcuts dialog', () => {
       fireEvent.click(close);
     });
     expect(screen.queryByRole('dialog')).toBeNull();
+    expect(opener).toHaveFocus();
+  });
+});
+
+describe('Keyboard shortcuts on a window that turns to portrait', () => {
+  /** The shell in landscape, with the way to turn it, its button and the menu button. */
+  function turning() {
+    const turn = phoneQuery(false);
+    const { opener } = mount();
+    const menu = screen.getByRole('button', { name: 'Planewright menu' });
+    return { turn, opener, menu };
+  }
+
+  it('A12 D5 gives the focus to the menu button when the query’s change comes first, the button still focused', () => {
+    const { turn, opener, menu } = turning();
+    act(() => {
+      opener.focus();
+    });
+    turn(true);
+    expect(menu).toHaveFocus();
+  });
+
+  it('A12 D5 gives the focus to the menu button when the style hides the button first, which blurs it to the body, and to no control when the button loses the focus in landscape', () => {
+    const { turn, opener, menu } = turning();
+    act(() => {
+      opener.focus();
+    });
+    act(() => {
+      opener.blur();
+    });
+    expect(document.body).toHaveFocus();
+    act(() => {
+      opener.focus();
+    });
+    turn(true, () => {
+      opener.blur();
+    });
+    expect(menu).toHaveFocus();
+  });
+
+  it('A12 D5 gives the focus to the menu button when the dialog that the button opened closes in portrait, and to the button once turned back', () => {
+    const { turn, opener, menu } = turning();
+    const close = (dialog: HTMLElement): void => {
+      act(() => {
+        fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
+      });
+    };
+    const dialog = open(opener);
+    turn(true);
+    expect(within(dialog).getByRole('button', { name: 'Close' })).toHaveFocus();
+    close(dialog);
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(menu).toHaveFocus();
+    turn(false);
+    const again = open(opener);
+    turn(true);
+    turn(false);
+    close(again);
     expect(opener).toHaveFocus();
   });
 });

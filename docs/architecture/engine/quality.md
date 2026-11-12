@@ -43,8 +43,9 @@ order is the same in every layout: the tool bar's one stop is third, Selection f
 dock, which sits at the window's bottom, and Hand first in the landscape palette; More's items join
 the order only while its popover is open, after More; Keyboard shortcuts follows only where it
 shows, in landscape, its island not shown in portrait; and when More, its popover or a window that
-turns takes away the focused control, the focus goes to the tool bar's stop, never to the body. P0's
-order was the tool bar, the canvas, the element list, history and zoom.
+turns takes away the focused control, the focus goes to the tool bar's stop, or from Keyboard
+shortcuts to the menu button, as it does when that button's dialog closes in portrait, never to the
+body. P0's order was the tool bar, the canvas, the element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 

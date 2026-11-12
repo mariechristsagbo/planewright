@@ -15,7 +15,10 @@ function subscribe(listener: () => void): () => void {
   };
 }
 
+/** Whether the window is a phone in portrait now, as the style sheets read it. */
+export const matchesSheet = (): boolean => window.matchMedia(SHEET_QUERY).matches;
+
 /** Whether the drawer shows as the phone's sheet, following the window as it changes. */
 export function useSheet(): boolean {
-  return useSyncExternalStore(subscribe, () => window.matchMedia(SHEET_QUERY).matches);
+  return useSyncExternalStore(subscribe, matchesSheet);
 }
