@@ -243,6 +243,16 @@
 }
 
 /*
+ * Phones, in portrait and in landscape: the tool hint is hidden, out of the accessibility tree,
+ * and takes no row (the v0.2 plan's S10); the pressed tool in the tool bar still says the tool.
+ */
+@media (max-width: 599px), (max-height: 499px) {
+  .tool-hint {
+    display: none;
+  }
+}
+
+/*
  * The problem chip on a phone (the v0.2 plan's S7): its glyph alone, at least 44 px wide, with its
  * words visually hidden, never removed, so that its name stays, and no chevron. The plan gives this
  * form in landscape; in portrait, too, since the worded chip made the top row 444 px wide at 360 to

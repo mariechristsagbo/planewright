@@ -53,6 +53,17 @@ function mediaBlocks(css: string): { query: string; body: string }[] {
   return blocks;
 }
 
+/** Phones, in portrait and in landscape: the query under which the view readout is hidden. */
+const PHONES = '(max-width: 599px), (max-height: 499px)';
+
+/** The selectors that responsive.css's blocks under a query hide with display: none. */
+const hiddenUnder = (query: string): string[] =>
+  mediaBlocks(styleSheet('responsive.css'))
+    .filter((block) => block.query === query)
+    .flatMap(({ body }) => [...body.matchAll(/([^{}]+)\{([^{}]*)\}/gu)])
+    .filter(([, , declarations = '']) => /\bdisplay: none;/u.test(declarations))
+    .flatMap(([, selectors = '']) => selectors.split(',').map((selector) => selector.trim()));
+
 describe("the web app's media queries", () => {
   it('are all in responsive.css, which declares no font, among every style sheet under apps/web/src', () => {
     expect(SHEETS).toContain('styles/fonts.css');
@@ -86,5 +97,9 @@ describe("the web app's media queries", () => {
     const rows = dock.flatMap(({ body }) => areaRows(body));
     expect(rows.map((areas) => areas.at(-1))).toEqual(['tools tools tools']);
     expect(rows[0]?.[0]).toBe('identity . top-right');
+  });
+
+  it('hide the tool hint on phones, in portrait and in landscape, under the view readout’s query (issue #77’s D8)', () => {
+    expect(hiddenUnder(PHONES)).toEqual(expect.arrayContaining(['.view-readout', '.tool-hint']));
   });
 });
