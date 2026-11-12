@@ -3,8 +3,8 @@
  * lies in the text layer under the text area, at the place that editor/text/text-area.ts works out:
  * a caption on the islands' surface with a hairline and the first elevation, its keys in key chips
  * as the Keyboard shortcuts dialog's. It is neither turned nor zoomed with the text, keeps to one
- * line, and lets every press through to the canvas. No rule here has a media query, a motion or a
- * blur.
+ * line, and lets every press through to the canvas. The phone's Done bar lies along the window's
+ * bottom above the on-screen keyboard. No rule here has a media query, a motion or a blur.
  */
 .text-hint {
   position: absolute;
@@ -32,4 +32,41 @@
   background: var(--pw-color-surface-muted);
   font: var(--pw-type-kbd);
   letter-spacing: var(--pw-type-kbd-tracking);
+}
+
+/*
+ * The phone's Done bar, which the shell mounts only while a phone in portrait edits a text: fixed
+ * from the window's left edge to its right edge, at the keyboard's inset above its bottom, --kb,
+ * which shell/keyboard-inset.ts writes on the bar at run time and no style sheet declares, on the
+ * islands' layer and surface with a top hairline and the first elevation. Its padding adds the side
+ * safe-area insets, and the bottom one only where no keyboard covers it, so that Done sits 8 px
+ * above the keyboard or above the bottom inset. Done, at its inline end, is a text button of at
+ * least 44 by 44 px, with no accent.
+ */
+.done-bar {
+  position: fixed;
+  right: 0;
+  bottom: var(--kb, 0px);
+  left: 0;
+  z-index: var(--pw-layer-island);
+  display: flex;
+  justify-content: flex-end;
+  justify-self: stretch;
+  box-sizing: border-box;
+  padding: var(--pw-spacing-sm) calc(var(--pw-spacing-sm) + var(--shell-safe-right))
+    calc(var(--pw-spacing-sm) + max(0px, var(--shell-safe-bottom) - var(--kb, 0px)))
+    calc(var(--pw-spacing-sm) + var(--shell-safe-left));
+  border-top: 1px solid var(--pw-color-outline-subtle);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e1);
+}
+
+.done-button {
+  min-width: var(--pw-spacing-control-touch);
+  min-height: var(--pw-spacing-control-touch);
+  padding: var(--pw-spacing-xs) var(--pw-spacing-md);
+  border-radius: var(--pw-rounded-sm);
+  font: var(--pw-type-label-md);
+  letter-spacing: var(--pw-type-label-md-tracking);
 }

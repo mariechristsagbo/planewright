@@ -13,6 +13,12 @@ type EditedText = NonNullable<EditorView['text']>;
 /** The hint chip's identifier, which describes the text area while it shows. */
 export const HINT_ID = 'text-editor-hint';
 
+/** The text area's identifier, which the phone's Done gives the focus back to. */
+export const TEXT_EDITOR_ID = 'text-editor';
+
+/** The phone's Done button's identifier, to which the text area's focus may move (S9). */
+export const DONE_ID = 'text-editor-done';
+
 /** The chip's gap under the text area, the chrome's small spacing (--pw-spacing-sm). */
 const HINT_GAP = 8;
 
@@ -24,6 +30,13 @@ interface KeyPress {
   readonly isComposing: boolean;
   readonly keyCode: number;
 }
+
+/**
+ * Whether a blur ends the session: the focus moving to another control does, but not to the
+ * partner control, the text area's Done or Done's text area, and not out of the page (S9).
+ */
+export const blurCommits = (to: Element | null, partner: string): boolean =>
+  to !== null && to.id !== partner;
 
 /**
  * Whether a key press in the text area ends the session: Escape, or Mod+Enter (REQ-V05), but never

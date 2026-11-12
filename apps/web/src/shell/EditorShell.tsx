@@ -17,10 +17,10 @@ import { ElementsDrawer } from './ElementsDrawer.tsx';
 import { ElementsToggle } from './ElementsToggle.tsx';
 import { EmptyCanvasNote } from './EmptyCanvasNote.tsx';
 import { IdentityIsland } from './IdentityIsland.tsx';
+import { DoneBar } from './DoneBar.tsx';
 import { ShortcutsButton } from './ShortcutsButton.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
-import { useDrawerFocus } from './drawer-focus.ts';
 import { matchesSheet, useSheet } from './sheet.ts';
 import type { DetailsControls } from './selection/SelectionBar.tsx';
 import { SelectionPanel } from './selection/SelectionPanel.tsx';
@@ -42,8 +42,8 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // dialog's when that closes; the open drawer is a sheet, the selection bar takes the panel's place
 // with its Details sheet right after it, one sheet is open at a time, and the dock and the bottom
 // islands are inert while either is. While a phone in portrait edits a text, the dock and history
-// and zoom are hidden, out of the tab order yet mounted, so the text area comes right after the
-// canvas and Elements after it (the v0.2 plan's S9).
+// and zoom are hidden, out of the tab order yet mounted, and no Elements sheet is open: the text
+// area comes right after the canvas, then the Done bar's Done, then Elements (the v0.2 plan's S9).
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -208,20 +208,21 @@ function Shell() {
     menu.current?.focus();
   }, []);
   const root = useRef<HTMLElement>(null);
-  useDrawerFocus(drawer, toggle, details);
   useSaveRecovery();
   const notices = useNoticesControls(shell);
   const sheet = useSheet();
   // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and the dock.
   const covered = sheet && (drawer || details);
-  // While a phone in portrait edits a text, the dock and history and zoom are hidden (S9).
-  const session = useTextSession(sheet);
+  // While a phone in portrait edits a text, the dock and history and zoom are hidden and the Done
+  // bar shows (S9).
+  const session = useTextSession(shell, toggle, sheet);
   return (
     <ShellRoot root={root}>
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland shell={shell} menuButton={menu} tag={tag} />
       <ToolsIsland shell={shell} sheet={sheet} covered={covered} hidden={session} />
       <CanvasHost />
+      {session ? <DoneBar /> : null}
       <EmptyCanvasNote />
       <SelectionPanel sheet={sheet} controls={detailsControls(shell)} />
       <StorageNotices controls={notices} />
