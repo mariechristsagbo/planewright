@@ -211,6 +211,17 @@
 }
 
 /*
+ * Phones, in portrait and in landscape: the view readout is hidden (the v0.2 plan's S8). It stays in
+ * the page with its text, and is shown at compact and desktop widths; in landscape the bottom-right
+ * island keeps Keyboard shortcuts alone.
+ */
+@media (max-width: 599px), (max-height: 499px) {
+  .view-readout {
+    display: none;
+  }
+}
+
+/*
  * The problem chip on a phone (the v0.2 plan's S7): its glyph alone, at least 44 px wide, with its
  * words visually hidden, never removed, so that its name stays, and no chevron. The plan gives this
  * form in landscape; in portrait, too, since the worded chip made the top row 444 px wide at 360 to
