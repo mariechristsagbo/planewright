@@ -91,7 +91,7 @@ test('D2 A3 Edit text is absent with tool lock and the Text tool, with Hand, and
   await expect(panelButton(page, 'Edit text')).toHaveCount(0);
 });
 
-test('D2 A5 REQ-Y02 with a selection, Tab goes from the canvas through the panel’s actions to the stale notice’s answers and Elements, and back', async ({
+test('D2 A5 REQ-Y02 with a selection, Tab goes from the canvas through the panel’s actions to the stale notice’s answers, its Hide and Elements, and back', async ({
   page,
 }) => {
   await openPage(page);
@@ -105,6 +105,8 @@ test('D2 A5 REQ-Y02 with a selection, Tab goes from the canvas through the panel
     panelButton(page, 'Edit text'),
     notices.getByRole('button', { name: 'Load the newer version' }),
     notices.getByRole('button', { name: 'Keep this version' }),
+    // Hide is the notices' last control since S7.
+    notices.getByRole('button', { name: 'Hide storage notices' }),
     elementsToggle(page),
   ];
   for (const stop of stops.slice(1)) {
