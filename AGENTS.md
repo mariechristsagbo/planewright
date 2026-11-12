@@ -35,14 +35,17 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   tool does, except on phones and while a text is edited; pressed tools and selected rows take the
   violet container, every focus ring is violet with a white halo and unavailable controls are grey
   and dashed; the canvas draws the selection's outline, its handles' borders and the marquee in the
-  same violet; while something is selected, a selection panel near the upper left, or on
-  phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
-  size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
-  Pre-release tag opens About this build, a menu at the top left runs Select all and the zoom
-  commands, shows the elements and opens About this build and a Keyboard shortcuts dialog that lists
-  every command's keys, which a button at the bottom right opens too, and the drawing is saved in
-  the browser's IndexedDB storage and restored on reload. Text formatting, styles, arrows, notes,
-  files, exporting and collaboration features do **not** exist yet.
+  same violet; the menu, More, the selection panel and bar, the storage notices, the dialogs, the
+  Elements drawer and the sheets enter by a short fade and slide, a menu item's highlight fades,
+  nothing animates under reduced motion and the camera never does; while something is selected, a
+  selection panel near the upper left, or on phones a bar under the tool bar with a Details sheet,
+  shows its kind or count and its position, size and turn read-only and offers Duplicate, Delete
+  and, for a lone text, Edit text; a Pre-release tag opens About this build, a menu at the top left
+  runs Select all and the zoom commands, shows the elements and opens About this build and a
+  Keyboard shortcuts dialog that lists every command's keys, which a button at the bottom right
+  opens too, and the drawing is saved in the browser's IndexedDB storage and restored on reload.
+  Text formatting, styles, arrows, notes, files, exporting and collaboration features do **not**
+  exist yet.
 - **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome decisions
   in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the [v0.2
   plan](docs/architecture/editor-experience.md). Slice S1 (issue #53) added the chrome's design
@@ -99,8 +102,15 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   overlay colours, in `packages/render-canvas/src/overlay-layer.ts`, the one change to `packages/`
   of the v0.2 slices: the selection outline, the handles' borders and the marquee's edge are
   Construction Violet `#6547b4` instead of P0's `#2a62d0`, and the marquee's fill `#6547b41a`
-  instead of `#2a62d01a`, the overlay's geometry, alpha and behaviour unchanged. S12 and S13 are
-  not implemented yet. Work on a slice follows both.
+  instead of `#2a62d01a`, the overlay's geometry, alpha and behaviour unchanged. Slice S12
+  (issue #81) added D2's motion from `motion.css`: the menu, More, the selection panel and bar, the
+  notices and the dialogs enter in 140 ms by opacity and 4 px, the Elements drawer in 180 ms from
+  8 px toward its side and the sheets in 220 ms from 16 px below, eased by
+  `cubic-bezier(0.2, 0, 0, 1)`, and a menu item's highlight fades in 90 ms; under reduced motion
+  `responsive.css` sets the durations to 0 and removes every entrance and fade, the tooltip still
+  waiting 500 ms; the camera never animates, and a tip that the keyboard opens in an entering
+  surface is placed again when the entrance ends. S13 is not implemented yet. Work on a slice
+  follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -181,8 +191,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   (`dock.css`), the hint chip's and the Done bar's (`text-session.css`), the canvas's ring's and
   chip's and the tool hint's (`canvas-chrome.css`), the Elements toggle's and
   drawer's, the selection panel's, bar's and sheet's (`selection.css`), the menu's and the tooltip's
-  rules, and `responsive.css`, the only one with
-  media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never
+  rules, the entrances and the menu item's fade (`motion.css`), and `responsive.css`, the only one
+  with media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never
   makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static
   files in `public/`, the bundled fonts with their licences in `public/fonts/` ([ADR
   0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter 500 of [ADR

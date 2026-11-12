@@ -19,7 +19,7 @@ REQ-Y06).
 | Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                                                                                                      | REQ-Y02                   |
 | Menus              | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                                                                                                         | REQ-Y01, REQ-Y03          |
 | Targets and colour | every touch target at least 24 × 24 CSS px, and since v0.2's S8 at least 44 × 44 CSS px on phones and under a coarse pointer; text contrast at least 4.5:1 and control contrast 3:1 in each theme; forced-colours mode uses system colours for the interface and the selection outline | REQ-Y06                   |
-| Motion             | no camera animation in P0; any later animation is skipped when reduced motion is requested                                                                                                                                                                                             | REQ-Y06                   |
+| Motion             | the camera never animates; since v0.2's S12 the chrome's surfaces enter in 140 to 220 ms, and nothing animates when reduced motion is requested                                                                                                                                        | REQ-Y06                   |
 
 **Element list.** Up and Down move through the options; Space toggles an element in the selection
 and Enter selects it alone; Delete deletes the selection; Alt+arrow keys nudge it by 1 unit and
@@ -198,8 +198,14 @@ the engine, and the element list, the live region, the zoom controls and focus m
   transparent, 3.36:1. Since S10 a pressed control takes the violet container, its glyph and corner
   key 7.61:1 on it and its edge 5.73:1 on it and 6.74:1 on the surface, and an unavailable control
   the unavailable content colour, 5.50:1, with P0's dashed border. Each camera command and wheel
-  event sets the camera once, drawn whole in the next frame with no frame after it, and nothing in
-  the page animates, with or without reduced motion.
+  event sets the camera once, drawn whole in the next frame with no frame after it, with or without
+  reduced motion: the camera never animates. Since S12 the menu, More, the selection panel and bar,
+  the storage notices and the dialogs enter in 140 ms by opacity and a 4 px translation, the
+  Elements drawer in 180 ms from 8 px toward its side and the two sheets in 220 ms from 16 px below,
+  eased by `cubic-bezier(0.2, 0, 0, 1)`, once, as they appear, and a menu item's highlight fades in
+  90 ms; under reduced motion the four durations are 0 and none of them animates, no CSS animation
+  or transition being created at all, while the tooltip still waits 500 ms. Nothing else in the page
+  animates.
 - **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
   dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
   colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader

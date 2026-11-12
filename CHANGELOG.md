@@ -335,3 +335,13 @@ release has been published yet.
   tenth of its opacity, `#6547b41a`, instead of `#2a62d01a`, so that the chrome and the canvas
   show state in one colour. The handles' white fill, the line widths, the overlay's geometry and
   alpha, hit testing and every other behaviour are unchanged. S12 and S13 are not implemented.
+- The v0.2 motion (slice S12, issue #81, ADR 0012 decision D2): the menu, More's popover, the
+  selection panel and the phone's selection bar, the storage notices and the two dialogs enter by
+  opacity and a 4 px translation in 140 ms, the Elements drawer from 8 px toward its side in 180 ms,
+  and the Elements and Details sheets from 16 px below in 220 ms, eased by
+  `cubic-bezier(0.2, 0, 0, 1)`, once, as they appear; closing stays instant. A menu item's highlight
+  fades in 90 ms. Under `prefers-reduced-motion: reduce` the four durations are 0 and no entrance or
+  fade is created, while the tooltip still waits 500 ms. The camera never animates, the canvas, the
+  tooltip, the scrim and the chrome that D2 does not name never move, and a tip that the keyboard
+  opens inside an entering surface is placed again where its control comes to rest. S13 is not
+  implemented.

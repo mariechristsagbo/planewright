@@ -20,22 +20,24 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > button above the on-screen keyboard finishes it instead. Keyboard focus on the canvas shows a
 > violet ring at the window's edge, with a "Canvas focused" chip outside phones, a line under the
 > tools says what the active tool does, and the active tool, focused controls and the selection's
-> outline, handle borders and marquee on the canvas are marked in violet. A Pre-release tag opens
-> About this build, which says what the build contains and what it
-> does not, and a menu at the top left and a button at the bottom right open a list of every
-> command's keyboard shortcuts. There is no text formatting, no style control, no file opening,
-> saving or exporting and no collaboration. This repository currently contains the workspace
-> structure, that editor surface, a
-> collaboration-service skeleton, the first layers of the engine package (math primitives, platform
-> ports, the document model with its codec, the scene store with its change sets and transactions,
-> the undo and redo history, the camera, the geometry, text layout and hit testing, the transforms,
-> input gestures, the Hand, Selection, creation and text tools, commands, local persistence with
-> autosave and the editor with its render loop, text sessions and announcements), a Canvas 2D
-> renderer package, and the quality gates that future work must pass, among them the measurements of
-> every performance budget, which CI reports and does not gate yet. The marquee query and a change
-> set that moves 1,000 elements have since met their budgets in CI, the redraw while panning meets
-> its budget in CI and misses it only on a slower machine, and the redraw of 5,000 elements in view
-> meets its budget in most CI runs but misses it in some, which issue #49 follows.
+> outline, handle borders and marquee on the canvas are marked in violet. The menu, More, the
+> selection panel, the notices, the dialogs, the Elements drawer and the sheets enter by a short
+> fade and slide, except when reduced motion is requested, and the camera never animates. A
+> Pre-release tag opens About this build, which says what the build contains and what it does not,
+> and a menu at the top left and a button at the bottom right open a list of every command's
+> keyboard shortcuts. There is no text formatting, no style control, no file opening, saving or
+> exporting and no collaboration. This repository currently contains the workspace structure, that
+> editor surface, a collaboration-service skeleton, the first layers of the engine package (math
+> primitives, platform ports, the document model with its codec, the scene store with its change
+> sets and transactions, the undo and redo history, the camera, the geometry, text layout and hit
+> testing, the transforms, input gestures, the Hand, Selection, creation and text tools, commands,
+> local persistence with autosave and the editor with its render loop, text sessions and
+> announcements), a Canvas 2D renderer package, and the quality gates that future work must pass,
+> among them the measurements of every performance budget, which CI reports and does not gate yet.
+> The marquee query and a change set that moves 1,000 elements have since met their budgets in CI,
+> the redraw while panning meets its budget in CI and misses it only on a slower machine, and the
+> redraw of 5,000 elements in view meets its budget in most CI runs but misses it in some, which
+> issue #49 follows.
 
 ## Goals
 
