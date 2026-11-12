@@ -172,10 +172,37 @@
   }
 }
 
-/* A phone in landscape, under 500 px high, after the compact rules: 8 px anchors. */
+/*
+ * A phone in landscape, under 500 px high, after the compact rules: 8 px anchors. Its top and bottom
+ * rows hold 44 px targets, 54 px islands (the v0.2 plan's S8), so that a window 140 px high keeps
+ * every island inside it and apart only if the rows are 4 px apart rather than 8, the bottom row
+ * reaching one such gap above its row, and the selection panel can shrink to its border: its padding
+ * becomes its children's margins, which look the same.
+ */
 @media (max-height: 499px) {
   .editor-shell {
+    row-gap: var(--pw-spacing-xs);
     padding: var(--pw-spacing-sm);
+  }
+
+  .shell-bottom {
+    margin-top: calc(-1 * var(--pw-spacing-xs));
+  }
+
+  .selection-panel {
+    padding: 0;
+  }
+
+  .selection-panel > * {
+    margin-inline: var(--pw-spacing-panel-padding);
+  }
+
+  .selection-panel > :first-child {
+    margin-top: var(--pw-spacing-panel-padding);
+  }
+
+  .selection-panel > :last-child {
+    margin-bottom: var(--pw-spacing-panel-padding);
   }
 
   .editor-shell > .notices {
@@ -188,7 +215,9 @@
  * words visually hidden, never removed, so that its name stays, and no chevron. The plan gives this
  * form in landscape; in portrait, too, since the worded chip made the top row 444 px wide at 360 to
  * 390 px, and the glyph alone 393 px, so there Elements also shows its glyph and count beside the
- * chip, its word visually hidden and its name kept, as the plan's compact rule has it.
+ * chip, its word visually hidden and its name kept, as the plan's compact rule has it. In landscape
+ * the same holds since S8: with 44 px targets the palette's row with Elements' word beside the chip
+ * is about 853 px at 844 px wide.
  */
 @media (max-width: 599px), (max-height: 499px) {
   .problem-chip {
@@ -209,7 +238,7 @@
   }
 }
 
-@media (max-width: 599px) {
+@media (max-width: 599px), (max-height: 499px) {
   .problem-chip ~ .elements-toggle > span:not(.toggle-count) {
     position: absolute;
     width: 1px;
@@ -222,7 +251,7 @@
 
 /*
  * Phones and coarse pointers: the chip's button and Hide, S7's own controls, are at least 44 by
- * 44 px (responsive rule 6; S8 raises the other targets on phones).
+ * 44 px (responsive rule 6; S8's rule below raises the other targets).
  */
 @media (max-width: 599px), (max-height: 499px), (pointer: coarse) {
   .island .problem-chip:is(button),
@@ -233,8 +262,27 @@
 }
 
 /*
+ * Phones and coarse pointers, after the compact rules (responsive rule 6; the v0.2 plan's S8): every
+ * control that a finger presses is at least 44 by 44 px, among them the islands' buttons, Reset zoom,
+ * the Pre-release tag and Elements included, the menu's items, the drawer's Close, its keys' summary
+ * and the list's options, and the Details sheet's Close. Desktops keep 36 px and compact layouts
+ * 32 px with a fine pointer, and P0's 24 px stays elsewhere (REQ-Y06).
+ */
+@media (max-width: 599px), (max-height: 499px), (pointer: coarse) {
+  .island button,
+  .chrome-menu .chrome-menu-item,
+  .element-list-drawer .drawer-close,
+  .element-list-guide > summary,
+  .element-option,
+  .details-close {
+    min-width: var(--pw-spacing-control-touch);
+    min-height: var(--pw-spacing-control-touch);
+  }
+}
+
+/*
  * A coarse pointer, such as a finger on a tablet: the selection panel's actions are at least
- * 44 px high, as wide as the panel (the v0.2 plan's S6; S8 raises the other targets).
+ * 44 px high, as wide as the panel (the v0.2 plan's S6).
  */
 @media (pointer: coarse) {
   .selection-action {
