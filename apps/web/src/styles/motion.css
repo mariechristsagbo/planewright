@@ -1,0 +1,63 @@
+/*
+ * The chrome's motion (ADR 0012, D2; the v0.2 plan's S12). Each surface that D2 names enters by
+ * opacity and a short translation, eased by --pw-ease, once and without delay, filling backwards
+ * only, so that nothing stays in effect once it ends: the menu, the selection panel and the phone's
+ * bar, the storage notices and the dialogs in 140 ms from 4 px above, More's popover from 4 px
+ * below, the Elements drawer in 180 ms from 8 px toward its side, and the Details sheet in 220 ms
+ * from 16 px below, as responsive.css makes the Elements sheet. An entrance runs when its surface
+ * appears, by mounting, leaving hidden or opening as a modal, and closing is instant. A menu item's
+ * highlight fades in 90 ms. Nothing else moves: not the camera, the canvas, the tooltip, the
+ * scrim or any chrome that D2 does not name. Bundled with the fonts, this style sheet holds no
+ * media query; responsive.css removes all of it under reduced motion.
+ */
+@keyframes pw-enter-above {
+  from {
+    opacity: 0;
+    translate: 0 calc(-1 * var(--pw-shift-enter));
+  }
+}
+
+@keyframes pw-enter-below {
+  from {
+    opacity: 0;
+    translate: 0 var(--pw-shift-enter);
+  }
+}
+
+@keyframes pw-enter-side {
+  from {
+    opacity: 0;
+    translate: var(--pw-shift-panel) 0;
+  }
+}
+
+@keyframes pw-enter-sheet {
+  from {
+    opacity: 0;
+    translate: 0 var(--pw-shift-sheet);
+  }
+}
+
+.chrome-menu,
+.selection-panel,
+.selection-bar,
+.notices,
+.dialog {
+  animation: pw-enter-above var(--pw-dur-enter) var(--pw-ease) backwards;
+}
+
+.more-tools {
+  animation: pw-enter-below var(--pw-dur-enter) var(--pw-ease) backwards;
+}
+
+.element-list-drawer {
+  animation: pw-enter-side var(--pw-dur-panel) var(--pw-ease) backwards;
+}
+
+.details-sheet {
+  animation: pw-enter-sheet var(--pw-dur-sheet) var(--pw-ease) backwards;
+}
+
+.chrome-menu .chrome-menu-item {
+  transition: background-color var(--pw-dur-quick) var(--pw-ease);
+}

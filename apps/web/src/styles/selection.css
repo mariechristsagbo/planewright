@@ -8,8 +8,8 @@
  * terms and heading are in the chrome's face and its values in JetBrains Mono. Its buttons keep the
  * base's pressed, disabled and focus rules, in the tokens' state colours since S10; Delete takes
  * the error tone.
- * Nothing here moves (motion is S12's), and responsive.css raises its targets under a coarse
- * pointer.
+ * Nothing here moves: motion.css holds the panel's and the bar's entrances and the Details sheet's
+ * (S12), and responsive.css raises its targets under a coarse pointer.
  */
 .selection-panel {
   position: relative;

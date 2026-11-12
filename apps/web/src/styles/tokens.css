@@ -120,7 +120,8 @@
   --pw-layer-sheet: 80;
   --pw-layer-dialog: 90;
 
-  /* Motion (D2), eased; every duration is 0 under reduced motion, which S12 applies. */
+  /* Motion (D2), eased; motion.css reads them, and responsive.css sets every duration to 0 under
+     reduced motion (S12). */
   --pw-ease: cubic-bezier(0.2, 0, 0, 1);
   --pw-dur-quick: 90ms;
   --pw-dur-enter: 140ms;

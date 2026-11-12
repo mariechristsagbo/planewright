@@ -3,7 +3,7 @@ import { join, sep } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { declarationsOf, rulesOf, styleSheet } from './style-sheets.ts';
+import { declarationsOf, mediaBlocks, rulesOf, styleSheet } from './style-sheets.ts';
 
 // Saving's chrome in the style sheets (ADR 0012, decisions 3, 12 and 14; the v0.2 plan's S7):
 // data-save-state exists for the tests alone, so no style sheet under apps/web/src selects it and
@@ -65,6 +65,16 @@ describe('saving.css', () => {
     const css = plain(styleSheet('responsive.css'));
     expect(css).toMatch(/\.problem-chip-words \{[^}]*clip-path: inset\(50%\)/u);
     expect(css).not.toMatch(/\.problem-chip-words \{[^}]*display: none/u);
-    expect(css).not.toMatch(/transition|animation|backdrop-filter/iu);
+    expect(css).not.toMatch(/backdrop-filter/iu);
+    // Since S12 its only motion is the Elements sheet's entrance and the reduced-motion block
+    // (issue #81's D3 and D7): the chip's and the targets' blocks hold none.
+    expect(
+      mediaBlocks(css)
+        .filter(({ body }) => /transition|animation/iu.test(body))
+        .map(({ query }) => query),
+    ).toEqual(['(max-width: 599px) and (min-height: 500px)', '(prefers-reduced-motion: reduce)']);
+    const chip = rulesOf(css).filter(({ selector }) => /problem-chip|notices-hide/u.test(selector));
+    expect(chip.length).toBeGreaterThan(0);
+    expect(chip.filter(({ body }) => /transition|animation/iu.test(body))).toEqual([]);
   });
 });

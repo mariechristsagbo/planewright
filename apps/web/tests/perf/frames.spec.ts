@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+import { settled } from '../e2e/motion.ts';
 import { canvas, canvasBox } from '../e2e/support.ts';
 import {
   PROBES,
@@ -113,6 +114,9 @@ test('B3 B4 REQ-F02 the overlay redrawn by a marquee, and each pointer move show
   const overlay = durations(marquee, 'overlay');
   expect(overlay.length).toBeGreaterThanOrEqual(60);
   const marqueeFrames = await framesToShow(page);
+  // The marquee's selection mounts the selection panel, whose entrance ends before the Hand drag.
+  await expect(page.locator('[data-island="selection"]')).toBeVisible();
+  await settled(page);
 
   await canvas(page).focus();
   await page.keyboard.press('h');

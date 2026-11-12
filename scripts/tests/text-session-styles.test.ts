@@ -7,8 +7,9 @@ import { declarationsOf, rulesOf, styleSheet, tokenValues } from './style-sheets
 
 // The text-editing chrome's style sheet (ADR 0012, decisions 5 and 14; the v0.2 plan's S9, issue
 // #75's D14): bundled from main.tsx after the dock's, with no media query (media-queries.test.ts),
-// no motion, which is S12's, no filter, blur or :has(), and only the chrome's tokens, besides the
-// safe-area insets that shell.css reads and the keyboard's inset that the Done bar sets at run time.
+// no motion, which motion.css holds since S12 and which never moves this chrome, no filter, blur or
+// :has(), and only the chrome's tokens, besides the safe-area insets that shell.css reads and the
+// keyboard's inset that the Done bar sets at run time.
 
 const SHEET = styleSheet('text-session.css');
 const MAIN = readFileSync(

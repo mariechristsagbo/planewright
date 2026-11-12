@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import type { CDPSession, Page } from '@playwright/test';
 
+import { settled } from '../e2e/motion.ts';
 import { canvasBox } from '../e2e/support.ts';
 import {
   PROBES,
@@ -121,10 +122,17 @@ test('I2 the same pans with the drawer open, its 101 options texts of 100,000 ch
   await page.getByRole('button', { name: /^Elements/u }).click();
   await expect(page.getByRole('listbox', { name: 'Elements' })).toBeFocused();
   await expect(page.getByRole('option')).toHaveCount(101);
+  await settled(page);
   const busy = await panAround(page, session);
   writeMeasurement(page, {
     id: 'I2',
     samples: busy,
-    details: { ...SCENE, longTexts: 101, textLength: 100_000, warmUp: WARM_UP, by: 'as I1' },
+    details: {
+      ...SCENE,
+      longTexts: 101,
+      textLength: 100_000,
+      warmUp: WARM_UP,
+      by: 'as I1, once the drawer’s entrance has ended',
+    },
   });
 });
