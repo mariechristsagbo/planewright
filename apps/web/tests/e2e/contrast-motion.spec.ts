@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 import { button, contrast, openElements, openPage, polite, textContrasts } from './a11y.ts';
 import { glyphContrasts } from './glyphs.ts';
+import { moreButton, toolButton } from './drawing.ts';
 import { canvas, readout } from './support.ts';
 
 /** The words that the controls showed before S3, which show glyphs instead (ADR 0012). */
@@ -267,6 +269,47 @@ test.describe('with reduced motion requested', () => {
     expect([new Set(frames).size, zoomed]).toEqual([1, expect.stringMatching(/, zoom 110%$/u)]);
     await button(page, /^Reset zoom/u).click();
     await expect(readout(page)).toHaveText(/, zoom 100%$/u);
+    expect(await page.evaluate('document.getAnimations().length')).toBe(0);
+  });
+});
+
+test.describe('on a phone, 390 × 844, at a device pixel ratio of 2, with More open', () => {
+  test.use({
+    viewport: { width: 390, height: 844 },
+    deviceScaleFactor: 2,
+    isMobile: true,
+    hasTouch: true,
+  });
+
+  /** More's glyphs and its items', with every one under 3:1 by its paint, its pixels or its edge. */
+  async function moreGlyphs(page: Page) {
+    const glyphs = (await glyphContrasts(page)).filter(({ control }) =>
+      ['More', 'Hand', 'Diamond', 'Tool lock'].includes(control ?? ''),
+    );
+    const below = glyphs.filter(
+      ({ computed, rendered, boundary }) =>
+        computed < 3 || rendered < 3 || (boundary !== null && boundary < 3),
+    );
+    return { glyphs: glyphs.map(({ control, glyph }) => `${control ?? ''} ${glyph}`), below };
+  }
+
+  test('A13 every text, the corner keys included, meets 4.5:1, More’s and its items’ glyphs 3:1 at rest and pressed, and nothing animates', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await moreButton(page).tap();
+    await expect(moreButton(page)).toHaveAttribute('aria-expanded', 'true');
+    const texts = await textContrasts(page);
+    expect(texts.map(({ text }) => text)).toEqual(expect.arrayContaining(['H', 'D', 'Q', 'V']));
+    expect(texts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
+    expect(await moreGlyphs(page)).toEqual({
+      glyphs: ['More more', 'Hand hand', 'Diamond diamond', 'Tool lock lock-open'],
+      below: [],
+    });
+    expect(await page.evaluate('document.getAnimations().length')).toBe(0);
+    await toolButton(page, 'Diamond').tap();
+    await expect(moreButton(page)).toHaveAttribute('aria-pressed', 'true');
+    expect(await moreGlyphs(page)).toEqual({ glyphs: ['More diamond'], below: [] });
     expect(await page.evaluate('document.getAnimations().length')).toBe(0);
   });
 });
