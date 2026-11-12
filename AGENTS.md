@@ -18,28 +18,29 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   holds three runs on `main`, one on each of three processors, and a run is gated only by three runs
   on its own processor, so CI does not gate the statistical budgets yet. The web app shows a
   **pre-release** surface: a canvas that fills the window and pans and zooms, with the controls
-  floating over it in islands, most of them as original glyphs with tooltips, on which rectangles,
-  ellipses, diamonds, lines, freehand strokes and texts can be drawn, then selected, moved, resized,
-  rotated, duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo,
-  also from the keyboard alone, through a list of the elements in a drawer, which an Elements
-  button showing their count opens and which is a sheet on phones, and a live region that
-  announces each change; nothing shows about saving while it works, and a "Not saved" chip with
-  the storage notices while it needs attention; while something is selected, a selection panel near
-  the upper left, or on phones a bar under the tool bar with a Details sheet, shows its kind or
-  count and its position, size and turn read-only and offers Duplicate, Delete and, for a lone text,
-  Edit text; a
-  Pre-release tag opens About this build, a menu at the top left runs
-  Select all and the zoom commands, shows the elements and opens About this build and a Keyboard
-  shortcuts dialog that lists every command's keys, which a button at the bottom right opens too,
-  and the drawing is saved in the browser's IndexedDB storage and restored on reload. Text
-  formatting, styles, arrows, notes, files, exporting and collaboration features do **not** exist
-  yet.
+  floating over it in islands, most of them as original glyphs with tooltips, on a phone in portrait
+  the tool bar a dock at the bottom whose More holds Hand, Diamond and Tool lock and in landscape
+  the whole palette in the top row, the view readout hidden on phones, every target 44 px on phones
+  and under a coarse pointer and the islands clear of the safe areas, on which rectangles, ellipses,
+  diamonds, lines, freehand strokes and texts can be drawn, then selected, moved, resized, rotated,
+  duplicated, deleted and nudged, texts edited again in a text area, with Undo and Redo, also from
+  the keyboard alone, through a list of the elements in a drawer, which an Elements button showing
+  their count opens and which is a sheet on phones, and a live region that announces each change;
+  nothing shows about saving while it works, and a "Not saved" chip with the storage notices while
+  it needs attention; while something is selected, a selection panel near the upper left, or on
+  phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
+  size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
+  Pre-release tag opens About this build, a menu at the top left runs Select all and the zoom
+  commands, shows the elements and opens About this build and a Keyboard shortcuts dialog that lists
+  every command's keys, which a button at the bottom right opens too, and the drawing is saved in
+  the browser's IndexedDB storage and restored on reload. Text formatting, styles, arrows, notes,
+  files, exporting and collaboration features do **not** exist yet.
 - **v0.2.0 (Editor Experience).** Slice S0 (issue #50) recorded the approved editor-chrome decisions
-  in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the
-  [v0.2 plan](docs/architecture/editor-experience.md). Slice S1 (issue #53) added the chrome's
-  design tokens, base styles and typeface, `Planewright UI` (Inter at 400 and 500), with no layout
-  rule change, though P0's text rewrapped in the new face. Slice S2 (issue #55) replaced P0's page
-  with the full-bleed shell: the canvas fills the window, the controls float over it in islands, the
+  in [ADR 0012](docs/adr/0012-v02-editor-chrome.md) and their slices S1 to S13 in the [v0.2
+  plan](docs/architecture/editor-experience.md). Slice S1 (issue #53) added the chrome's design
+  tokens, base styles and typeface, `Planewright UI` (Inter at 400 and 500), with no layout rule
+  change, though P0's text rewrapped in the new face. Slice S2 (issue #55) replaced P0's page with
+  the full-bleed shell: the canvas fills the window, the controls float over it in islands, the
   element list is in a drawer that the Elements toggle opens, and P0's pre-release line, notes and
   footer are in About this build, which a Pre-release tag opens. Slice S3 (issue #62) drew the
   chrome's 35 original glyphs and turned the tool bar into the palette: the tools, Undo, Redo and
@@ -52,8 +53,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   and compact 280 px widths, its Close and folded keys, its focus moves to the list box and back to
   the toggle, its rows of a kind glyph, a label and mono figures under P0's names, the list mounted
   only while it is open with its options memoised, and on phones a sheet of at most 62 % of the
-  height that makes the tool bar and the bottom islands inert and closes on Escape. Slice S6
-  (issue #69) added the selection panel, 232 px wide at 16 / 72 on desktops and mounted only while
+  height that makes the tool bar and the bottom islands inert and closes on Escape. Slice S6 (issue
+  #69) added the selection panel, 232 px wide at 16 / 72 on desktops and mounted only while
   something drawn is selected and no text is edited, with the kind's glyph and name or the count,
   read-only figures in JetBrains Mono from a pure geometry module, Duplicate and Delete from the
   registry, Edit text only where Enter would edit the lone selected text, and a footnote that style
@@ -62,11 +63,17 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   load and stored nowhere. Slice S7 (issue #71) made saving show only when it needs attention: P0's
   save status went, the shell's root carries `data-save-state` for the tests, a "Not saved" chip
   joins the top-right island before Elements while a save failed or was refused as stale or storage
-  is unavailable, in the error or warning tone, with its glyph alone on phones, the notices under
-  it keep P0's words and gain Hide, which folds them into the chip's button, a new failure, another
+  is unavailable, in the error or warning tone, with its glyph alone on phones, the notices under it
+  keep P0's words and gain Hide, which folds them into the chip's button, a new failure, another
   reason or a stale save shows them again, and the web app says "The drawing is saved again." once
-  when a failed save succeeds. S8 to S13 are not implemented yet.
-  Work on a slice follows both.
+  when a failed save succeeds. Slice S8 (issue #73) composed phones: in portrait the tool bar is a
+  dock 8 px above the window's bottom, Selection, Rectangle, Ellipse, Line, Freehand and Text, then
+  More, whose popover holds Hand, Diamond and Tool lock and which shows the active tool's glyph,
+  pressed, while it holds that tool, history and zoom above it, the top bar holding identity and
+  Elements alone and the bottom-right island not shown; in landscape the whole palette sits in the
+  top row; the view readout is hidden on phones; `index.html` declares `viewport-fit=cover` and
+  every anchor adds its safe-area inset; and targets are at least 44 px on phones and under a coarse
+  pointer. S9 to S13 are not implemented yet. Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -123,28 +130,30 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the editor's shell in `shell/`
   (`EditorShell`, its state, the identity island with the mark and the Pre-release tag, the Elements
   toggle with its count and the drawer with its focus moves and the phone's sheet query, the
-  empty-canvas note and the Keyboard shortcuts button, the menu's button, the
-  menu and its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon`
-  in `shell/icons.tsx` and the kinds' glyphs in `shell/kind-glyphs.ts`, the selection panel, the
+  empty-canvas note and the Keyboard shortcuts button, the phone dock's More and its popover in
+  `MoreTools.tsx` with the dock's composition in `more-tools.ts`, the menu's button, the menu and
+  its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon` in
+  `shell/icons.tsx` and the kinds' glyphs in `shell/kind-glyphs.ts`, the selection panel, the
   phone's selection bar and Details sheet, what they read of the view and the selection's pure
   geometry in `shell/selection/`, the tooltip and its delegated listeners in `shell/tooltip/`, and
   the modal dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host,
   input adapter and editor provider in `editor/`, the text area in `editor/text/`, the element list,
   the live region with its messages, the sentence after a failed save succeeds again, the figures'
-  rounding and the focus's return in `a11y/`, the
-  tool bar shown as the palette, Undo and Redo, the
+  rounding and the focus's return in `a11y/`, the tool bar shown as the palette or the phone's dock,
+  its buttons' data in `tool-items.ts` and its button in `PaletteButton.tsx`, Undo and Redo, the
   zoom controls, the view readout, the problem chip and the storage notices with their pure rules in
-  `ui/`, and the browser
-  ports, text measurer, font loading, Mod key per platform, the IndexedDB record backend, storage
-  start-up, page events and the preferences entry in `platform/`, and the style sheets in `styles/`:
-  the design tokens, the fonts, the base, the controls', canvas's, list's and saving's rules, the
-  shell's layout, islands and dialogs, the glyph buttons', the Elements toggle's and drawer's, the
-  selection panel's, bar's and sheet's (`selection.css`), the menu's and the tooltip's rules, and
-  `responsive.css`, the only one with media queries, which `main.tsx` adds as a style element of its
-  own so that a breakpoint never makes the fonts load again. Unit tests in `tests/unit`, Playwright
-  tests in `tests/e2e`, static files in `public/`, the bundled fonts with their licences in
-  `public/fonts/` ([ADR 0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter
-  500 of [ADR 0012](docs/adr/0012-v02-editor-chrome.md)).
+  `ui/`, and the browser ports, text measurer, font loading, Mod key per platform, the IndexedDB
+  record backend, storage start-up, page events and the preferences entry in `platform/`, and the
+  style sheets in `styles/`: the design tokens, the fonts, the base, the controls', canvas's, list's
+  and saving's rules, the shell's layout with the `--shell-safe-*` properties that read the
+  safe-area insets, islands and dialogs, the glyph buttons', the phone dock's and More's
+  (`dock.css`), the Elements toggle's and drawer's, the selection panel's, bar's and sheet's
+  (`selection.css`), the menu's and the tooltip's rules, and `responsive.css`, the only one with
+  media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never
+  makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static
+  files in `public/`, the bundled fonts with their licences in `public/fonts/` ([ADR
+  0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter 500 of [ADR
+  0012](docs/adr/0012-v02-editor-chrome.md)).
 - `apps/collab`: Node.js WebSocket service built with `ws` and bundled by esbuild. In
   development it runs TypeScript directly through Node's type stripping.
 - `packages/protocol`: source-only, runtime-agnostic protocol package. Keep it free of DOM and

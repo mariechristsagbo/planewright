@@ -9,17 +9,17 @@ A canvas is opaque to assistive technology, so the editor offers a structured, k
 equivalent beside it and holds every control to the backlog's "do better" list (REQ-Y01 to
 REQ-Y06).
 
-| Part               | Design                                                                                                                                                                                               | Requirements              |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| Tool bar           | `role="toolbar"` with a label; one tab stop, arrow keys move between tools; each tool a toggle button with `aria-pressed`, a name, its shortcut in `aria-keyshortcuts` and in its description        | REQ-C14, REQ-Y01, REQ-Y03 |
-| Canvas host        | a focusable region labelled "Drawing canvas", described by short instructions; it receives the editor's shortcuts                                                                                    | REQ-Y02                   |
-| Element list       | a list box in the Elements drawer with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                     | REQ-Y05                   |
-| Live region        | one polite region for selection counts, created and deleted elements, undo and redo, and once that a failed save is saved again; save failures use an assertive message                              | REQ-Y04                   |
-| Selection          | the selection panel, or on phones the bar and its Details sheet: a `group` named by its heading, read-only figures, no live region; actions named by the registry; see below                         | REQ-C14, REQ-Y01, REQ-Y02 |
-| Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                    | REQ-Y02                   |
-| Menus              | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                       | REQ-Y01, REQ-Y03          |
-| Targets and colour | every touch target at least 24 × 24 CSS px; text contrast at least 4.5:1 and control contrast 3:1 in each theme; forced-colours mode uses system colours for the interface and the selection outline | REQ-Y06                   |
-| Motion             | no camera animation in P0; any later animation is skipped when reduced motion is requested                                                                                                           | REQ-Y06                   |
+| Part               | Design                                                                                                                                                                                                                                                                                 | Requirements              |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| Tool bar           | `role="toolbar"` with a label; one tab stop, arrow keys move between tools; each tool a toggle button with `aria-pressed`, a name, its shortcut in `aria-keyshortcuts` and in its description                                                                                          | REQ-C14, REQ-Y01, REQ-Y03 |
+| Canvas host        | a focusable region labelled "Drawing canvas", described by short instructions; it receives the editor's shortcuts                                                                                                                                                                      | REQ-Y02                   |
+| Element list       | a list box in the Elements drawer with one option per element, topmost first, named by kind, text and geometry ("Rectangle, 120 by 100, at 300, 180"); see below                                                                                                                       | REQ-Y05                   |
+| Live region        | one polite region for selection counts, created and deleted elements, undo and redo, and once that a failed save is saved again; save failures use an assertive message                                                                                                                | REQ-Y04                   |
+| Selection          | the selection panel, or on phones the bar and its Details sheet: a `group` named by its heading, read-only figures, no live region; actions named by the registry; see below                                                                                                           | REQ-C14, REQ-Y01, REQ-Y02 |
+| Focus              | a visible indicator of at least 2 px with 3:1 contrast on every focusable element; Escape closes a menu or dialog and returns focus to the control that opened it                                                                                                                      | REQ-Y02                   |
+| Menus              | `menu` and `menuitem` roles; toggles as `menuitemcheckbox` with `aria-checked`, never a check mark in the name                                                                                                                                                                         | REQ-Y01, REQ-Y03          |
+| Targets and colour | every touch target at least 24 × 24 CSS px, and since v0.2's S8 at least 44 × 44 CSS px on phones and under a coarse pointer; text contrast at least 4.5:1 and control contrast 3:1 in each theme; forced-colours mode uses system colours for the interface and the selection outline | REQ-Y06                   |
+| Motion             | no camera animation in P0; any later animation is skipped when reduced motion is requested                                                                                                                                                                                             | REQ-Y06                   |
 
 **Element list.** Up and Down move through the options; Space toggles an element in the selection
 and Enter selects it alone; Delete deletes the selection; Alt+arrow keys nudge it by 1 unit and
@@ -38,8 +38,13 @@ then the open Details sheet's Close), the storage notices' buttons while storage
 Elements and, while its drawer is open, the drawer's Close, its keys' summary and the element list,
 history controls, zoom controls and Keyboard shortcuts (ADR 0012, decision 14, as far as slices S2
 to S6's controls go). On a phone in portrait the open Elements or Details sheet makes the tool bar
-and the bottom islands inert, so that they leave the order while it is open. P0's order was the
-tool bar, the canvas, the element list, history and zoom.
+and the bottom islands inert, so that they leave the order while it is open. On phones since S8 the
+order is the same in every layout: the tool bar's one stop is third, Selection first in the portrait
+dock, which sits at the window's bottom, and Hand first in the landscape palette; More's items join
+the order only while its popover is open, after More; Keyboard shortcuts follows only where it
+shows, in landscape, its island not shown in portrait; and when More, its popover or a window that
+turns takes away the focused control, the focus goes to the tool bar's stop, never to the body. P0's
+order was the tool bar, the canvas, the element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
@@ -158,11 +163,16 @@ the engine, and the element list, the live region, the zoom controls and focus m
 - **Targets, colour and motion.** Controls are at least 24 px, the page's link, in About this build
   since S2, is a 24 px inline block, the menu's items, its link among them, are 36 px high since S4,
   and touch handle hit squares stay 24 px; the selection panel's actions are 32 px high, 44 px under
-  a coarse pointer, and the phone's bar's targets and the Details sheet's Close 44 px. Measured in Chromium, the shortcut hint in a pressed tool
-  button was 4.19:1 and is now opaque, 5.59:1, and an unavailable control is dark grey with a dashed
-  border, 7.2:1, instead of half transparent, 3.36:1. Each camera command and wheel event sets the
-  camera once, drawn whole in the next frame with no frame after it, and nothing in the page
-  animates, with or without reduced motion.
+  a coarse pointer, and the phone's bar's targets and the Details sheet's Close 44 px. Since S8
+  every target is at least 44 by 44 px on phones, in portrait and in landscape, and under a coarse
+  pointer (REQ-Y06, the v0.2 plan's responsive rule 6): the islands' buttons, the menu's items, the
+  drawer's Close, its keys' summary, the list's options and the Details sheet's Close; desktops keep
+  36 px and compact layouts 32 px with a fine pointer, and touch handle hit squares stay 24 px.
+  Measured in Chromium, the shortcut hint in a pressed tool button was 4.19:1 and is now opaque,
+  5.59:1, and an unavailable control is dark grey with a dashed border, 7.2:1, instead of half
+  transparent, 3.36:1. Each camera command and wheel event sets the camera once, drawn whole in the
+  next frame with no frame after it, and nothing in the page animates, with or without reduced
+  motion.
 - **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
   dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
   colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader
@@ -177,16 +187,16 @@ that proves a requirement names it in its title, for example
 `it('REQ-V02 keeps the viewport centre when zooming in', …)`, so a search for an identifier lists
 its tests.
 
-| Level              | Runs in                                                | Covers                                                                                                                                                           |
-| ------------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Engine unit        | Vitest `engine:unit`, Node.js, no DOM                  | math, codec, order keys, geometry and distances, camera, scene store and indexes, history, selection, transforms, gestures, each tool reducer, commands          |
-| Engine properties  | Vitest, seeded generators in the engine's test helpers | invariants over random inputs: see below                                                                                                                         |
-| Engine integration | Vitest `engine:integration`                            | an editor with fake ports driven by scripted input sessions: document, selection, history, autosave and `remote` change sets                                     |
-| Renderer unit      | Vitest `render-canvas:unit`                            | draw calls recorded by a fake 2D context for fixture scenes; device-pixel transforms; path-cache invalidation                                                    |
-| Web unit           | Vitest `web:unit`, jsdom                               | the input adapter's event mapping (pointer, wheel modes, Mod per platform), the tool bar, element list and live region by role                                   |
-| End-to-end         | Playwright, Chromium, production build                 | desktop 1280 × 720 and an emulated phone (390 × 844, DPR 3, touch): every P0 flow, reload, keyboard-only use; state read from the element list and the ARIA tree |
-| Visual             | Playwright screenshots                                 | Planewright's own rendering of fixture documents at DPR 1 and 2, compared with committed baselines of its own output                                             |
-| Benchmarks         | Vitest bench and a Playwright trace                    | the budgets below                                                                                                                                                |
+| Level              | Runs in                                                | Covers                                                                                                                                                                                                                                                                                                                                                                     |
+| ------------------ | ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Engine unit        | Vitest `engine:unit`, Node.js, no DOM                  | math, codec, order keys, geometry and distances, camera, scene store and indexes, history, selection, transforms, gestures, each tool reducer, commands                                                                                                                                                                                                                    |
+| Engine properties  | Vitest, seeded generators in the engine's test helpers | invariants over random inputs: see below                                                                                                                                                                                                                                                                                                                                   |
+| Engine integration | Vitest `engine:integration`                            | an editor with fake ports driven by scripted input sessions: document, selection, history, autosave and `remote` change sets                                                                                                                                                                                                                                               |
+| Renderer unit      | Vitest `render-canvas:unit`                            | draw calls recorded by a fake 2D context for fixture scenes; device-pixel transforms; path-cache invalidation                                                                                                                                                                                                                                                              |
+| Web unit           | Vitest `web:unit`, jsdom                               | the input adapter's event mapping (pointer, wheel modes, Mod per platform), the tool bar, element list and live region by role                                                                                                                                                                                                                                             |
+| End-to-end         | Playwright, Chromium, production build                 | desktop 1280 × 720 and an emulated phone (390 × 844, DPR 3, touch, in portrait, where S8 puts the tool bar in a dock at the bottom with More; S8's tests add 375 × 667, 360 × 560, 844 × 390 and 568 × 320, and emulate safe-area insets with the shell's custom properties): every P0 flow, reload, keyboard-only use; state read from the element list and the ARIA tree |
+| Visual             | Playwright screenshots                                 | Planewright's own rendering of fixture documents at DPR 1 and 2, compared with committed baselines of its own output                                                                                                                                                                                                                                                       |
+| Benchmarks         | Vitest bench and a Playwright trace                    | the budgets below                                                                                                                                                                                                                                                                                                                                                          |
 
 - **Test vectors from the baseline.** The camera table in [scene and viewport](scene-and-viewport.md#test-vectors-from-the-baseline),
   the hit ladder of REQ-S03, the creation boxes of B-01, the resize boxes of B-16, the duplicate

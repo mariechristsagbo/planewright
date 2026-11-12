@@ -291,3 +291,15 @@ release has been published yet.
   notice" button, and the notices show at every load. When a failed save succeeds again, the page
   says "The drawing is saved again." once in the polite live region. The shell's root carries
   `data-save-state` for the tests, and B9 now ends each save at it. S8 to S13 are not implemented.
+- The v0.2 phone composition (slice S8, issue #73, ADR 0012 decisions 2, 13 and 14): on a phone in
+  portrait the tool bar is a dock 8 px above the window's bottom, with Selection, Rectangle,
+  Ellipse, Line, Freehand and Text and then More, whose popover holds Hand, Diamond and Tool lock;
+  More shows the hand's or the diamond's glyph, pressed, while that tool is active, opens by a tap,
+  Enter or Space with the focus on Hand, and closes on an item, Escape, the focus leaving it, a
+  press outside it, a sheet, the menu, a dialog or the window turning, and is never stored. History
+  and zoom sit above the dock, the top bar holds identity and Elements alone, and the bottom-right
+  island is not shown. In landscape the whole palette sits in the top row at 44 px. The view
+  readout is hidden on phones, keeping its text. `index.html` declares `viewport-fit=cover`, and
+  every anchor, the sheets' edges and the menu's and More's limits add the safe-area insets. Every
+  target is at least 44 by 44 px on phones and under a coarse pointer. A pan or zoom step renders
+  neither the tool bar, the dock nor More. S9 to S13 are not implemented.
