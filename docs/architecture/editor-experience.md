@@ -10,7 +10,8 @@ slice S5 (issue #66) the Elements drawer's count, rows and phone sheet ([what S5
 delivered](#what-s5-delivered)), and slice S6 (issue #69) the selection panel, the phone selection
 bar and the Details sheet ([what S6 delivered](#what-s6-delivered)), slice S7 (issue #71) saving's
 visibility ([what S7 delivered](#what-s7-delivered)), and slice S8 (issue #73) the phone composition
-and the safe areas ([what S8 delivered](#what-s8-delivered)); slices S9 to S13 are not
+and the safe areas ([what S8 delivered](#what-s8-delivered)), and slice S9 (issue #75) the
+text-editing chrome ([what S9 delivered](#what-s9-delivered)); slices S10 to S13 are not
 implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
 (Editor Experience): what each slice contains, what must land before it, the tests it writes first,
 how it is validated and which documents it updates. The decisions themselves, the tests to migrate
@@ -253,6 +254,7 @@ builds on; the handoff adds only that S7 may land before S2.
 - **Tests first.** End-to-end on a phone: Done commits the text, and the dock is hidden while
   editing. On a desktop: the chip shows while editing. Composition with an input method stays
   covered by the existing tests that a composition never ends the session.
+- **Delivered** by issue #75 ([what S9 delivered](#what-s9-delivered)).
 
 ### S10: the canvas focus ring, chip and hint line
 
@@ -1348,3 +1350,155 @@ Issue #73 delivered slice S8. Each choice that the plan or the ADR did not make 
   with the bundle-size guardrail's `gzipSize`; `responsive.css`, whose rules are inlined in the
   JavaScript, is counted there. The plan gave no estimate for S8.
 - S9 to S13 are not implemented.
+
+## What S9 delivered
+
+Issue #75 delivered slice S9. Each choice that the plan or the ADR did not make is marked
+[Inferred], as in the issue; each of the issue's was kept unless this section says otherwise.
+
+- **One switch.** The treatment follows `SHEET_QUERY` through the shell's `useSheet()`, as S8's dock
+  does: on a phone in portrait the Done bar shows and the dock and history and zoom are hidden,
+  with no chip; elsewhere, desktops, compact layouts and phones in landscape with any pointer, the
+  chip shows and nothing is hidden [Inferred]. No media query, `matchMedia` query or
+  `responsive.css` rule was added, and the treatment follows the window during a session.
+- **The hint chip.** `editor/text/TextHint.tsx`, which `TextEditor` renders while a text is edited
+  outside the phone's query, is a `<p id="text-editor-hint">` reading "Finish with Esc or
+  Ctrl+Enter", "Cmd+Enter" on Apple platforms, each key in a `<kbd>` that `shortcutText()` writes
+  through `finishKeys` in `editor/text/text-area.ts`. While it shows the text area has
+  `aria-describedby="text-editor-hint"` [Inferred, WCAG 1.3.1] and keeps the name "Text"; the chip
+  takes no focus and is no live region, landmark or tooltip, and with `pointer-events: none` a press
+  on it reaches the canvas as a press beside it would [Inferred]. `hintPlace`, beside
+  `textAreaStyle`, puts its left at the left of the text area's axis-aligned bounds as drawn, the
+  caret's room included and turned about the box's centre by the text's rotation, and its top 8 px
+  under them, so that it follows typing, a wheel zoom and a pan without being turned or zoomed; it
+  does not flip or clamp at the canvas's edges [Inferred]. It lies in the text layer, which clips
+  it at the canvas's edges and keeps it under the islands. Its look is the tokens': the `caption`
+  type in `on-surface-variant` on `surface` (8.16:1 measured), an `outline-subtle` hairline, a 6 px
+  radius, 4 and 8 px padding, the first elevation, one line, and key chips as the Keyboard
+  shortcuts dialog's, JetBrains Mono in `on-surface` on `surface-muted` (15.48:1), at 400 only.
+- **The Done bar.** `shell/DoneBar.tsx`, which the shell mounts right after the canvas host while a
+  phone in portrait edits a text, is a `div` with `data-island="done"` and no role, fixed from the
+  window's left edge to its right edge at `bottom: var(--kb, 0px)` on the islands' layer, on the
+  islands' surface with a top hairline and the first elevation, its one button, Done, at its inline
+  end, in `label-md`, at least 44 by 44 px, with no glyph, tooltip, keys or accent [Inferred]. Its
+  inline padding adds the side insets, and its bottom padding is
+  `calc(var(--pw-spacing-sm) + max(0px, var(--shell-safe-bottom) - var(--kb, 0px)))`, so that the
+  bottom inset counts only while no keyboard covers it [Inferred]. `shell/keyboard-inset.ts` gives
+  `keyboardInset`, the layout viewport's height less the visual viewport's height and offset, never
+  below 0 and 0 without a visual viewport, and `useKeyboardInset`, which writes it into the bar's
+  `--kb`, in px, in a layout effect before the first paint and at each of the visual viewport's
+  `resize` and `scroll` events, with no React state, and removes its listeners with the bar. `--kb`
+  is declared in no style sheet and is not a token.
+- **What Done does.** A click, Enter or Space sends `editor.editText({ type: 'commit' })` and gives
+  the focus to the canvas, as Escape does, so that the text is drawn and selected, the Selection
+  tool becomes active unless tool lock is on, the session is one undo step and the engine's
+  announcement is said. It commits during an input method's composition too, with the value the
+  text area last sent [Inferred], and handles no other key. `pointerdown` and `mousedown` on the bar
+  are default-prevented, so that the text area and its keyboard keep the focus until Done commits.
+  The text area's blur to Done keeps the session, the one exception to a blur to another control
+  ending it, and Done's blur commits unless it goes to the text area or to no element [Inferred].
+  Done commits on its blur only while a session is open, since the engine publishes a view even for
+  a commit without one. When Done leaves the page with the focus while the session stays open, as
+  when the window turns to landscape, the text area takes the focus back, never the body
+  [Inferred, as S8's rescues]; were the session over, the canvas would take it.
+- **Hidden chrome and the shell.** While a phone in portrait edits a text, the tools island, the
+  dock with More, and the bottom-left island, history and zoom, carry `hidden`, which
+  `islands.css`'s new `.island[hidden] { display: none; }` honours, so that they leave the layout,
+  the tab order and the accessibility tree while staying mounted, the tool bar keeping its roving
+  stop [Inferred]; the bottom-right island is already not shown in portrait, and the selection
+  panel, bar and Details sheet stay out of the page during every session, as since S6. The shell
+  reads whether a text is edited through `useViewValue` in `useTextSession`
+  (`shell/text-session.ts`), which also holds the Elements drawer's focus moves, and `Shell` moved
+  the Details controls' object into a helper, so that it has 53 counted lines.
+- **No sheet during a portrait session.** While the Elements drawer is open, `useTextSession`
+  listens to the editor and to the phone's query, and closes the drawer when a phone in portrait
+  edits a text, as a session that starts or a window that turns during one makes it [Inferred, as
+  S6's Details sheet]; `useDrawerFocus` then leaves the text area's focus where it is, since it
+  focuses the toggle on closing only while no text is edited. The session stays open, and More is
+  closed, since opening the drawer closed it.
+- **No camera movement and no caret accommodation (D6).** S9 calls no `editor.resize`, no
+  `editor.run` and no camera change for the keyboard, scrolls nothing and moves no text area: `--kb`
+  places the Done bar alone. The canvas host stays `100vw` by `100dvh`, the text area keeps
+  `focus({ preventScroll: true })`, `index.html`'s viewport meta is unchanged, and `endsSession`
+  and its tests did not change.
+- **Style ownership and guardrails.** `styles/text-session.css`, imported from `main.tsx` right
+  after `dock.css` [Inferred], holds the chip's and the bar's rules with no media query, motion,
+  filter, blur or `:has()`, and reads only the tokens, `--shell-safe-*` and `--kb`, which
+  `scripts/tests/text-session-styles.test.ts` checks; `responsive.css` did not change. No token,
+  font, weight, glyph, command, package or engine change was made.
+- **Choices the issue did not foresee.** The chip's unit tests are in `TextHint.test.tsx`, so that
+  `TextEditor.test.tsx`, its composition tests included, stays byte for byte as it was. The commits
+  hide the dock and history before they add the Done bar, since the bar's mounting needs the
+  shell's session subscription and its render test, which the hiding commit brought. The text area
+  has the id `text-editor` and Done `text-editor-done`, through which their blurs recognise each
+  other.
+- **Tests.** New: `text-hint.test.ts` (6, the issue's two examples, a half turn and two seeded
+  properties over `tests/support/property.ts`, and the words), `TextHint.test.tsx` (7),
+  `session-chrome.test.tsx` (5), `text-session-renders.test.tsx` (4: no render of the shell, its
+  root, the tool bar, the chip, the notices or the Done bar across ten camera steps and ten typed
+  values on a phone and on a desktop, while the text area renders at each view, and none at a
+  visual viewport's `resize` or `scroll`), `DoneBar.test.tsx` (8), `keyboard-inset.test.tsx` (7),
+  `text-session-sheets.test.tsx` (3) and the tooling test `text-session-styles.test.ts` (3); end to
+  end, `text-hint.spec.ts` (6 tests, 18 runs at 1440 × 900, 800 × 720 and 844 × 390 with touch),
+  `done-bar.spec.ts` (8 tests, 24 runs at 390 × 844, 375 × 667 and 360 × 560 with touch) and
+  `done-bar-sheets.spec.ts` (4 tests, 10 runs), with an emulated keyboard through the visual
+  viewport's height and offset and the inset through `--shell-safe-bottom`, and lost taps on Done
+  tapped again and noted on the report. Each new test failed before its change for its reason,
+  bar the checks that something stays absent or unchanged, which passed there by design; each of
+  the issue's 30 mutant kinds failed at least one of them. One mutant, Done disabled through the
+  DOM's disabled attribute during a composition, first passed, since jsdom's click still reached
+  React's handler; the composition test now also checks that Done stays enabled, and that mutant,
+  one that disables Done through its prop and one that marks it aria-disabled fail it.
+- **Migrations.** `e2e/dock.spec.ts`'s Text tool test, whose title said that S9 changed nothing
+  there, now checks that the dock and history are hidden during the session and back once the tap
+  commits it, and its header says so. `e2e/layout.ts`'s `expectPlaced` measures history and zoom
+  only while they are laid out, and requires the dock under them in portrait, where it measured
+  them against an absent dock before and so passed whatever their place; the Done bar counts as an
+  island through `data-island`. `e2e/text.ts`'s `inkAround` masks the chip in white, so that only
+  the text's glyphs count; at this slice the chip's box starts inside the rotated-text test's
+  120 px square but its first dark pixel lies just below it, so that test still passed with the
+  chip unmasked, and a 70 px square counts the chip's words without the mask and none with it.
+  `e2e/chrome-type.spec.ts`'s session case reads the chip's faces. The source comments of
+  `EditorShell.tsx`, `TextEditor.tsx` and `CanvasHost.tsx` describe the chip, the bar and the
+  hidden islands. Re-verified unchanged and passing: `text.spec.ts` E1 to E5, `text-phone.spec.ts`
+  E6 to E8, whose 412 × 915 sessions now hide the dock and show the bar, `focus.spec.ts`,
+  `selection-bar.spec.ts`, `selection-panel-actions.spec.ts`, `keyboard.spec.ts`,
+  `empty-canvas.spec.ts`, `phone-layout.spec.ts`, `safe-areas.spec.ts`, `targets-phone.spec.ts`,
+  and the unit tests of `TextEditor`, the Details sheet, the panel's actions, `EditorShell`,
+  `saving-renders` and `dock-renders`. No test was deleted.
+- **Known limitations,** as the issue lists them: near the canvas's bottom or right edge the chip
+  may be cut off by the text layer or lie under an island; in landscape and on touch tablets the
+  chip shows and there is no Done bar, so a soft-keyboard user there finishes with a press
+  elsewhere, as before, and the landscape bottom row may sit under the keyboard; the caret is not
+  kept above the keyboard (D6), and a browser that resizes the layout viewport for the keyboard
+  resizes the canvas host as before; in a pinch-zoomed page `--kb` counts the part that the zoom
+  leaves unseen; real soft keyboards and `env()` are emulated in the tests only; and the engine's
+  `TextEdit` comment still names Escape and Mod+Enter alone.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load average
+  of 3.8 to 6.0 from other work: `npm run build`, `perf:browser` and `perf:report` on the head
+  (`bc4698c`, whose application code is `53ecb9c`'s) and on `main` (`5f187a2`) in a scratch
+  worktree, in the order head, main, main, head. The perf specs run at desktop viewports with no
+  session, so they measure the shell's new subscription and B10's tree, not the chip or the bar. B1
+  was 28.81 and 28.52 ms against 40.08 and 23.81 ms on `main`, over its budget on both, its misses
+  remaining #49's; B2 was 13.03 and 6.52 ms against 13.48 and 5.83 ms, over its 4 ms on both; B3
+  0.13 and 0.35 ms against 0.42 and 0.23 ms; B4 one frame and B9 no task over 50 ms in every run;
+  B10 0.42 and 0.47 s against 0.52 and 0.40 s. The 95th percentiles of I1 were 82.1 and 49.6 ms
+  against 70.5 and 43.5 ms, its medians 36.1 and 33.6 ms against 36.4 and 33.1 ms, and those of I2
+  88.0 and 122.8 ms against 100.0 and 85.5 ms, its medians 51.2 and 55.8 ms against 51.8 and
+  50.4 ms. Since I2's second head run read higher, `panning.spec.ts` alone ran four times on each,
+  alternating: I2's 95th percentiles were 102.0, 100.2, 95.3 and 81.4 ms on the head against 79.8,
+  82.8, 115.4 and 79.9 ms on `main`, its medians 54.1, 50.5, 54.7 and 53.0 ms against 53.8, 49.3,
+  57.1 and 51.8 ms, and I1's medians 32.9 to 35.7 ms against 33.8 to 37.0 ms, differences within
+  the machine's spread; with the drawer open a pan step adds one selector of the shell and one
+  editor listener that reads `view.text`. `perf:report` exits 1 in this sequence only because B5
+  to B8 and B11 to B13 are not measured there.
+- Cost: S9's modules (`editor/text/TextHint.tsx`, `editor/text/TextEditor.tsx`,
+  `editor/text/text-area.ts`, `shell/DoneBar.tsx`, `shell/keyboard-inset.ts`,
+  `shell/text-session.ts` and `shell/drawer-focus.ts`), bundled and minified with React, the engine
+  and the earlier slices' modules left out, are 5,010 bytes, 2,289 bytes gzip, against 1,805 and
+  1,030 bytes for `main`'s `editor/text/TextEditor.tsx`, `editor/text/text-area.ts` and
+  `shell/drawer-focus.ts`. The web app's initial JavaScript is 120,756 bytes gzip against `main`'s
+  120,011 at `5f187a2`, 745 bytes more, within B13's 200 KB, B11 (30.3 KB) and B12 (2.5 KB) are
+  unchanged, and the style sheet grows from 4,480 to 4,643 bytes gzip, measured with the
+  bundle-size guardrail's `gzipSize`. The plan gave no estimate for S9.
+- S10 to S13 are not implemented.
