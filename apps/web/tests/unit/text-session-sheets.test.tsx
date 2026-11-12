@@ -64,6 +64,32 @@ describe('the Elements sheet and a phone’s text session', () => {
     expect(editor.view.text).not.toBeNull();
   });
 
+  it('D10 A11 closes an Elements sheet opened during a portrait session at once, the text area keeping the focus and the session open', () => {
+    const { editor, tap, toggle, area } = mount(true);
+    startText(editor);
+    act(() => {
+      fireEvent.change(area(), { target: { value: 'Plan' } });
+    });
+    // A tap that moves no focus, as Safari on iOS gives one: the text area keeps it.
+    tap(toggle());
+    expect(elementsOpen(toggle())).toEqual(['false', false]);
+    expect(area()).toHaveFocus();
+    expect(editor.view.text?.element.content.text).toBe('Plan');
+    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument();
+  });
+
+  it('D10 keeps the drawer’s opening elsewhere: during a desktop session the list box takes the focus, which ends the session, as before', () => {
+    const { editor, tap, toggle, area } = mount(false);
+    startText(editor);
+    act(() => {
+      fireEvent.change(area(), { target: { value: 'Plan' } });
+    });
+    tap(toggle());
+    expect(elementsOpen(toggle())).toEqual(['true', true]);
+    expect(screen.getByRole('listbox', { name: 'Elements' })).toHaveFocus();
+    expect(editor.view.text).toBeNull();
+  });
+
   it('D10 keeps the drawer’s focus moves outside a session: closing it gives the focus to Elements', () => {
     const { tap, toggle } = mount(true);
     tap(toggle());
