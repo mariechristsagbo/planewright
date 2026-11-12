@@ -1,6 +1,7 @@
 import type { Page } from '@playwright/test';
 
 import { contrast } from './a11y.ts';
+import { settled } from './motion.ts';
 
 // Readings of the chrome's original glyphs from a real render (ADR 0012, decision 3): glyphs and
 // control boundaries carry 3:1 against the surface they sit on. Each glyph is read twice, from the
@@ -99,6 +100,7 @@ const rounded = (ratio: number): number => Math.round(ratio * 100) / 100;
 
 /** Every visible glyph's contrast against what is behind it, computed and rendered. */
 export async function glyphContrasts(page: Page): Promise<GlyphContrast[]> {
+  await settled(page);
   const glyphs = await page.evaluate<Glyph[]>(GLYPHS);
   const results: GlyphContrast[] = [];
   for (const { glyph, control, paints, background, live, border } of glyphs) {

@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // Readings for the accessibility end-to-end tests (ENG-14, docs/architecture/engine/quality.md):
@@ -177,8 +178,12 @@ interface Text {
   readonly background: number[];
 }
 
-/** The page's visible interface texts with their contrast against what is behind them. */
+/**
+ * The page's visible interface texts with their contrast against what is behind them, once every
+ * entrance has ended, since an entrance fades its surface in from transparent (ADR 0012, D2).
+ */
 export async function textContrasts(page: Page): Promise<{ text: string; ratio: number }[]> {
+  await settled(page);
   const texts = await page.evaluate<Text[]>(TEXTS);
   return texts.map(({ text, colour, background }) => ({
     text,
@@ -204,4 +209,8 @@ export interface Target {
   readonly height: number;
 }
 
-export const targets = (page: Page): Promise<Target[]> => page.evaluate<Target[]>(TARGETS);
+/** The targets' boxes, once every entrance has ended (ADR 0012, D2). */
+export async function targets(page: Page): Promise<Target[]> {
+  await settled(page);
+  return page.evaluate<Target[]>(TARGETS);
+}

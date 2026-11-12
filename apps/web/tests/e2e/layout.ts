@@ -1,6 +1,8 @@
 import { expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
+import { settled } from './motion.ts';
+
 // Where the shell's islands lie (ADR 0012, decision 13): every island, the selection panel or bar,
 // the shown notices, the open drawer and the open Details sheet inside the window and apart, for
 // the end-to-end layout tests. Page code is written as strings, since these files compile without
@@ -32,7 +34,11 @@ const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Stor
     return { name: element.dataset.island ?? (element.id || element.getAttribute('aria-label')), x, y, width, height };
   })`;
 
-export const islands = (page: Page): Promise<Box[]> => page.evaluate<Box[]>(ISLANDS);
+/** The islands' boxes, once every entrance has ended (ADR 0012, D2). */
+export async function islands(page: Page): Promise<Box[]> {
+  await settled(page);
+  return page.evaluate<Box[]>(ISLANDS);
+}
 
 /** The pairs of boxes that share any area. */
 export function intersecting(boxes: readonly Box[]): string[] {

@@ -3,6 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { button, elementList, elementsToggle, expectIndicator, openPage, polite } from './a11y.ts';
 import { toolButton } from './drawing.ts';
+import { settled } from './motion.ts';
 import { canvas, readout } from './support.ts';
 
 // The identity island's menu (ADR 0012, decisions 2, 10 and 14; the v0.2 plan's S4): the first tab
@@ -112,6 +113,7 @@ test('A2 a press inside the menu, on the hairline between its groups, keeps it o
   await menuButton(page).click();
   await expect(item(page, 'Select all')).toBeFocused();
   const rule = menuOf(page).getByRole('separator').first();
+  await settled(page);
   const box = await rule.boundingBox();
   if (box === null) throw new Error('The hairline is not laid out.');
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
@@ -277,6 +279,7 @@ test.describe('at 390 × 844, a phone in portrait', () => {
     );
     expect(heights.filter((height) => height < 44)).toEqual([]);
     // The tool bar is the dock at the window's bottom, below the menu (S8).
+    await settled(page);
     const tools = await page.getByRole('toolbar', { name: 'Tools' }).boundingBox();
     const menu = await menuOf(page).boundingBox();
     expect(tools !== null && menu !== null && menu.y + menu.height < tools.y).toBe(true);
@@ -292,6 +295,7 @@ test.describe('at 568 × 320, a short window', () => {
     await openPage(page);
     await tabToMenu(page);
     await page.keyboard.press('Enter');
+    await settled(page);
     const box = await menuOf(page).boundingBox();
     expect(box !== null && box.y + box.height <= 320 && box.x + box.width <= 568).toBe(true);
     await page.keyboard.press('End');

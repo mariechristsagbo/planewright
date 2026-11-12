@@ -3,6 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { expectIndicator, openPage, polite } from './a11y.ts';
 import { expectInk, moreButton, toolButton, touch } from './drawing.ts';
+import { settled } from './motion.ts';
 import { canvas, cameraOf, expectHistoryDisabled } from './support.ts';
 
 // More on the phone's dock (ADR 0012, decisions 2, 13 and 14; the v0.2 plan's S8, issue #73's A3,
@@ -43,6 +44,7 @@ test('A3 A13 a tap on More opens its popover above the dock, right-aligned with 
 }) => {
   await openPage(page);
   await openMore(page);
+  await settled(page);
   const popover = await group(page).boundingBox();
   const dock = await page.locator('[data-island="tools"]').boundingBox();
   const more = await moreButton(page).boundingBox();
@@ -114,6 +116,7 @@ test('A13 REQ-C11 a tap on More, on its popover’s padding or on the dock’s, 
   await toolButton(page, 'Rectangle').tap();
   await expect(toolButton(page, 'Rectangle')).toHaveAttribute('aria-pressed', 'true');
   await openMore(page);
+  await settled(page);
   const popover = await group(page).boundingBox();
   const dock = await page.locator('[data-island="tools"]').boundingBox();
   if (popover === null || dock === null) throw new Error('Not laid out.');

@@ -2,6 +2,7 @@ import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
 import { polite } from './a11y.ts';
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // What the selection panel's end-to-end tests read and drive (the v0.2 plan's S6): the panel or the
@@ -51,10 +52,11 @@ export async function drawText(page: Page, words: readonly string[]): Promise<vo
   await expect(polite(page)).toHaveText(/^Text created\. 1 element selected\.$/u);
 }
 
-/** The box of a laid-out element. */
+/** The box of a laid-out element, once every entrance has ended (ADR 0012, D2). */
 export async function boxOf(
   element: Locator,
 ): Promise<{ x: number; y: number; width: number; height: number }> {
+  await settled(element.page());
   const box = await element.boundingBox();
   if (box === null) throw new Error('The element is not laid out.');
   return box;

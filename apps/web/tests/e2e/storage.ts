@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // The page's IndexedDB as the end-to-end tests read and spoil it, through the browser's own API in
@@ -70,7 +71,8 @@ export const expectSaved = (page: Page): Promise<void> =>
 
 /**
  * Shows the stale notice on an open page: it saves a rectangle, a second page of its context saves
- * an ellipse over it, and the page's next save, a nudge, is refused as stale.
+ * an ellipse over it, and the page's next save, a nudge, is refused as stale, once the selection
+ * panel's entrance has ended, so that the notices' entrance is the only one (ADR 0012, D2).
  */
 export async function showStaleNotice(page: Page): Promise<void> {
   await canvas(page).focus();
@@ -84,6 +86,7 @@ export async function showStaleNotice(page: Page): Promise<void> {
   await second.keyboard.press('Enter');
   await expectSaved(second);
   await page.bringToFront();
+  await settled(page);
   await canvas(page).focus();
   await page.keyboard.press('ArrowRight');
   await expect(
@@ -93,13 +96,15 @@ export async function showStaleNotice(page: Page): Promise<void> {
 
 /**
  * Shows the failed notice on an open page whose writes are refusable (refusableWrites): it saves a
- * rectangle, then refuses writes, and the next save, a nudge, fails.
+ * rectangle, then refuses writes, and the next save, a nudge, fails, once the selection panel's
+ * entrance has ended, so that the notices' entrance is the only one (ADR 0012, D2).
  */
 export async function showFailedNotice(page: Page): Promise<void> {
   await canvas(page).focus();
   await page.keyboard.press('r');
   await page.keyboard.press('Enter');
   await expectSaved(page);
+  await settled(page);
   await setRefuseWrites(page, true);
   await canvas(page).focus();
   await page.keyboard.press('ArrowRight');

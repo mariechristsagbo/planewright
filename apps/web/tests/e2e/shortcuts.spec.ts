@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import type { Page } from '@playwright/test';
 
 import { button, expectIndicator, openPage } from './a11y.ts';
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // The Keyboard shortcuts dialog (ADR 0012, decisions 2 and 14; the v0.2 plan's S4): the button at
@@ -81,6 +82,7 @@ test('D3 A6 REQ-Y02 a press on the scrim closes Keyboard shortcuts and gives the
   const dialog = dialogOf(page);
   await dialog.getByRole('heading', { name: 'Keyboard shortcuts' }).click();
   await expect(dialog).toBeVisible();
+  await settled(page);
   const box = await dialog.boundingBox();
   if (box === null) throw new Error('Keyboard shortcuts is not laid out.');
   await page.mouse.click(Math.max(2, box.x / 2), box.y + box.height / 2);
@@ -122,6 +124,7 @@ test('D3 A4 lists the commands with their keys in JetBrains Mono, scrolling insi
   );
   expect(fonts.length).toBeGreaterThanOrEqual(rows);
   expect(fonts.every((font) => font.startsWith('"Planewright Mono"'))).toBe(true);
+  await settled(page);
   const box = await dialog.boundingBox();
   const size = page.viewportSize();
   expect(box !== null && size !== null && box.y + box.height <= size.height).toBe(true);
