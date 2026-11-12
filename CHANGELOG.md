@@ -329,3 +329,9 @@ release has been published yet.
   container with a violet edge for pressed controls, the unavailable content colour with a dashed
   border, and a 2 px violet ring with a white halo on every focusable element. S11 to S13 are not
   implemented.
+- The v0.2 selection overlay's colour (slice S11, issue #79, ADR 0012 decision D1): the canvas
+  draws the selection outline, the handles' borders and the marquee's edge in Construction Violet,
+  `#6547b4`, instead of P0's blue, `#2a62d0`, and fills the marquee with the same violet at about a
+  tenth of its opacity, `#6547b41a`, instead of `#2a62d01a`, so that the chrome and the canvas
+  show state in one colour. The handles' white fill, the line widths, the overlay's geometry and
+  alpha, hit testing and every other behaviour are unchanged. S12 and S13 are not implemented.

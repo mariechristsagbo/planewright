@@ -19,8 +19,9 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > finish it, Esc and Ctrl+Enter (Cmd+Enter on Apple platforms), and on a phone in portrait a Done
 > button above the on-screen keyboard finishes it instead. Keyboard focus on the canvas shows a
 > violet ring at the window's edge, with a "Canvas focused" chip outside phones, a line under the
-> tools says what the active tool does, and the active tool and focused controls are marked in
-> violet. A Pre-release tag opens About this build, which says what the build contains and what it
+> tools says what the active tool does, and the active tool, focused controls and the selection's
+> outline, handle borders and marquee on the canvas are marked in violet. A Pre-release tag opens
+> About this build, which says what the build contains and what it
 > does not, and a menu at the top left and a button at the bottom right open a list of every
 > command's keyboard shortcuts. There is no text formatting, no style control, no file opening,
 > saving or exporting and no collaboration. This repository currently contains the workspace

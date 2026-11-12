@@ -68,7 +68,8 @@ focused" chip at the bottom centre outside phones, while a press focuses it with
 caption line under the palette says what the active tool does, in a row of its own from 600 to
 1199 px wide, hidden on phones and while a text is edited; and pressed tools and selected rows take
 the violet container, every focus ring is violet with a white halo and unavailable controls are
-grey and dashed. Its IndexedDB record backend
+grey and dashed. Since slice S11, issue #79, the canvas draws the selection's outline, its handles'
+borders and the marquee in the same violet. Its IndexedDB record backend
 (database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
 selection are kept in the browser, and at start-up the page opens the most recently updated document
 again; it also saves at once when the page is hidden or left, and reads its preferences entry from
@@ -180,8 +181,9 @@ anchors clear of the safe areas and 44 px targets on phones and under a coarse p
 (issue #75) added the text-editing chrome, a chip under the text area that names the keys that
 finish a text and, on a phone in portrait, a Done bar above the on-screen keyboard, the dock and
 history hidden meanwhile, and slice S10 (issue #77) added the canvas's focus ring and its "Canvas
-focused" chip, the active tool's hint line and the tokens' state colours; S11 to S13 are not
-implemented yet.
+focused" chip, the active tool's hint line and the tokens' state colours, and slice S11 (issue #79)
+drew the selection's outline, handle borders and marquee on the canvas in the same violet, changing
+only the renderer's two overlay colours; S12 and S13 are not implemented yet.
 
 Still open, each for its own issue and ADR:
 

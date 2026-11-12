@@ -34,7 +34,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   chip, except on phones, where the ring shows alone; a line under the palette says what the active
   tool does, except on phones and while a text is edited; pressed tools and selected rows take the
   violet container, every focus ring is violet with a white halo and unavailable controls are grey
-  and dashed; while something is selected, a selection panel near the upper left, or on
+  and dashed; the canvas draws the selection's outline, its handles' borders and the marquee in the
+  same violet; while something is selected, a selection panel near the upper left, or on
   phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
   size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
   Pre-release tag opens About this build, a menu at the top left runs Select all and the zoom
@@ -94,8 +95,12 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   under the palette on desktops and in an 18 px row of its own from 600 to 1199 px wide and 500 px
   high, which moves the panel, the notices and the drawer 26 px lower, hidden on phones and absent
   while a text is edited; and the tokens' colours for the pressed, unavailable and focus-visible
-  rules, the selected row and the text area. S11 to S13 are not implemented yet. Work on a slice
-  follows both.
+  rules, the selected row and the text area. Slice S11 (issue #79) changed only the renderer's two
+  overlay colours, in `packages/render-canvas/src/overlay-layer.ts`, the one change to `packages/`
+  of the v0.2 slices: the selection outline, the handles' borders and the marquee's edge are
+  Construction Violet `#6547b4` instead of P0's `#2a62d0`, and the marquee's fill `#6547b41a`
+  instead of `#2a62d01a`, the overlay's geometry, alpha and behaviour unchanged. S12 and S13 are
+  not implemented yet. Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
