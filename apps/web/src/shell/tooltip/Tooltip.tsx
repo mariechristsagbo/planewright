@@ -45,8 +45,22 @@ export function Tooltip({ root }: { readonly root: RefObject<HTMLElement | null>
       : watchTooltips(element, shown, setControl);
   }, [root]);
   useLayoutEffect(() => {
-    if (control !== null && tip.current !== null) place(tip.current, control);
-  }, [control]);
+    const shown = tip.current;
+    const element = root.current;
+    if (control === null || shown === null) return undefined;
+    place(shown, control);
+    if (element === null) return undefined;
+    // A surface that enters moves its controls by its translation until its entrance ends (ADR
+    // 0012, D2): a tip that opened meanwhile, as keyboard focus opens one at once, is placed again
+    // then, at its control's settled place.
+    const settle = (event: Event): void => {
+      if (event.target instanceof Node && event.target.contains(control)) place(shown, control);
+    };
+    element.addEventListener('animationend', settle);
+    return () => {
+      element.removeEventListener('animationend', settle);
+    };
+  }, [control, root]);
   const keys = control?.dataset['chromeKeys']?.split(' or ') ?? [];
   return (
     <div ref={tip} id="chrome-tip" role="tooltip" className="chrome-tip" hidden={control === null}>
