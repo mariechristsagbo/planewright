@@ -6,11 +6,14 @@ import { place } from './place.ts';
 
 // The overlay layer (docs/architecture/engine/rendering-and-hit-testing.md#drawing-the-overlay-layer).
 
-/** Planewright's selection colour, for outlines, handle borders and the marquee's edge. */
-export const SELECTION_COLOR = '#2a62d0';
+/**
+ * Planewright's selection colour, Construction Violet (ADR 0012's decision D1), for outlines,
+ * handle borders and the marquee's edge.
+ */
+export const SELECTION_COLOR = '#6547b4';
 export const HANDLE_FILL = '#ffffff';
 /** The selection colour at about a tenth of its opacity. */
-export const MARQUEE_FILL = '#2a62d01a';
+export const MARQUEE_FILL = '#6547b41a';
 
 export type OverlayFrame = NonNullable<RenderFrame['overlay']>;
 

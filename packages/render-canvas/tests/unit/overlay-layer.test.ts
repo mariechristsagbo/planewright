@@ -62,11 +62,11 @@ const clearing = (width: number, height: number, line: number): Call[] => [
 ];
 
 describe('the overlay layer', () => {
-  it('uses its own colours', () => {
+  it('uses Construction Violet, white handles and the violet at about a tenth for the marquee', () => {
     expect([SELECTION_COLOR, HANDLE_FILL, MARQUEE_FILL]).toEqual([
-      '#2a62d0',
+      '#6547b4',
       '#ffffff',
-      '#2a62d01a',
+      '#6547b41a',
     ]);
   });
 
