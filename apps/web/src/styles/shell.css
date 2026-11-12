@@ -9,8 +9,18 @@
  * bottom row holds history and zoom at the left and the view readout at the right, at the window's
  * bottom. The shell clips its content rather than scrolling it, so that the focus never scrolls it
  * and the canvas stays under the whole window. The anchors and areas that change with the viewport
- * are in responsive.css, the only style sheet with media queries.
+ * are in responsive.css, the only style sheet with media queries. Every anchor adds its side's
+ * safe-area inset, read once below into custom properties outside the tokens, so that on a phone
+ * whose page covers the notch and the home indicator (viewport-fit=cover in index.html) no island
+ * lies under them, while the canvas still fills the whole window (the v0.2 plan's S8).
  */
+:root {
+  --shell-safe-top: env(safe-area-inset-top, 0px);
+  --shell-safe-right: env(safe-area-inset-right, 0px);
+  --shell-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --shell-safe-left: env(safe-area-inset-left, 0px);
+}
+
 :where(html, body) {
   height: 100%;
   overflow: hidden;
@@ -30,7 +40,10 @@
   grid-template-columns: max-content minmax(0, 1fr) max-content;
   gap: var(--pw-spacing-sm);
   align-items: start;
-  padding: var(--pw-spacing-lg);
+  padding: calc(var(--pw-spacing-lg) + var(--shell-safe-top))
+    calc(var(--pw-spacing-lg) + var(--shell-safe-right))
+    calc(var(--pw-spacing-lg) + var(--shell-safe-bottom))
+    calc(var(--pw-spacing-lg) + var(--shell-safe-left));
   overflow: clip;
 }
 
