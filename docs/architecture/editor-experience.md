@@ -1,21 +1,21 @@
 # v0.2 editor experience: implementation and test plan
 
 **Status: slice S0 (issue #50) wrote this plan and [ADR 0012](../adr/0012-v02-editor-chrome.md),
-slice S1 (issue #53) added the chrome's tokens, base styles and typeface
-([what S1 delivered](#what-s1-delivered)), slice S2 (issue #55) the full-bleed shell with its
-islands, the Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), slice
-S3 (issue #62) the original glyphs, the palette and the tooltips
-([what S3 delivered](#what-s3-delivered)), slice S4 (issue #64) the menu and the Keyboard
-shortcuts dialog ([what S4 delivered](#what-s4-delivered)), slice S5 (issue #66) the Elements
-drawer's count, rows and phone sheet ([what S5 delivered](#what-s5-delivered)), and slice S6
-(issue #69) the selection panel, the phone selection bar and the Details sheet
-([what S6 delivered](#what-s6-delivered)), and slice S7 (issue #71) saving's visibility
-([what S7 delivered](#what-s7-delivered)); slices S8 to S13 are not implemented.** This plan
-turns ADR 0012's decisions into thirteen issues for milestone
-v0.2.0 (Editor Experience): what each slice contains, what must land before it, the tests it writes
-first, how it is validated and which documents it updates. The decisions themselves, the tests to migrate
-and the visual-regression
-matrix are in the ADR; where this plan and the ADR differ, the ADR governs.
+slice S1 (issue #53) added the chrome's tokens, base styles and typeface ([what S1
+delivered](#what-s1-delivered)), slice S2 (issue #55) the full-bleed shell with its islands, the
+Elements drawer and About this build ([what S2 delivered](#what-s2-delivered)), slice S3 (issue #62)
+the original glyphs, the palette and the tooltips ([what S3 delivered](#what-s3-delivered)), slice
+S4 (issue #64) the menu and the Keyboard shortcuts dialog ([what S4 delivered](#what-s4-delivered)),
+slice S5 (issue #66) the Elements drawer's count, rows and phone sheet ([what S5
+delivered](#what-s5-delivered)), and slice S6 (issue #69) the selection panel, the phone selection
+bar and the Details sheet ([what S6 delivered](#what-s6-delivered)), slice S7 (issue #71) saving's
+visibility ([what S7 delivered](#what-s7-delivered)), and slice S8 (issue #73) the phone composition
+and the safe areas ([what S8 delivered](#what-s8-delivered)); slices S9 to S13 are not
+implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
+(Editor Experience): what each slice contains, what must land before it, the tests it writes first,
+how it is validated and which documents it updates. The decisions themselves, the tests to migrate
+and the visual-regression matrix are in the ADR; where this plan and the ADR differ, the ADR
+governs.
 
 The approved design package that both derive from stays outside the repository. Its values that
 the slices need (the tokens and the contrast pairs) are written out [below](#tokens), so that a
@@ -240,6 +240,7 @@ builds on; the handoff adds only that S7 may land before S2.
   with custom properties, since the emulator has no inset); the top bar at rest holds identity and
   Elements only.
 - **Migrations.** The ADR's rows marked S8.
+- **Delivered** by issue #73 ([what S8 delivered](#what-s8-delivered)).
 
 ### S9: text-editing chrome
 
@@ -1223,3 +1224,125 @@ Issue #71 delivered slice S7. Each choice that the plan or the ADR did not make 
   the style sheet grows from 4,220 to 4,323 bytes gzip, measured with the bundle-size guardrail's
   `gzipSize`; `responsive.css`, whose rules are inlined in the JavaScript, is counted there.
 - S8 to S13 are not implemented.
+
+## What S8 delivered
+
+Issue #73 delivered slice S8. Each choice that the plan or the ADR did not make is marked
+[Inferred], as in the issue; each of the issue's was kept unless this section says otherwise.
+
+- **One switch.** The shell renders the tool bar as the dock where `SHEET_QUERY` matches, through
+  `useSheet()`, and as the palette elsewhere; `SHEET_QUERY` is reused, and `responsive.css`'s dock
+  block is under the same query, which `scripts/tests/media-queries.test.ts` checks, so the dock
+  exists exactly where the sheets cover it and a window under 600 px wide and under 500 px high is
+  landscape [Inferred]. The rules that put the tool bar in a row of its own under
+  `(max-width: 599px)` stay as they were: the dock block, after them, overrides them in portrait, so
+  that they hold only in such narrow, short windows, where the palette keeps its own row under
+  identity and Elements, now one row of 44 px buttons at 568 × 320 [Inferred].
+- **The dock.** The same `Toolbar`, still the toolbar "Tools" in `data-island="tools"` [Inferred],
+  holds Selection, Rectangle, Ellipse, Line, Freehand and Text in the registry's order with their
+  names, states, keys, descriptions and tooltips, then More, seven 44 px buttons spread over one row
+  8 px plus the bottom inset above the window's bottom, with no hairline [Inferred; one row at
+  360 × 560]. Its roving tab stop is kept by command, falling back to the first button when the
+  composition lacks it [Inferred], and a button that leaves the page with the focus on it, Tool
+  lock when the palette becomes the dock, More when it goes back, or More's item when its popover
+  closes on a press outside, gives the focus to that stop, never to the body
+  (`ui/focus-lost.ts`). The palette's data and button moved, unchanged, to `ui/tool-items.ts` and
+  `ui/PaletteButton.tsx`, which More shares.
+- **More.** `shell/more-tools.ts` holds the shell's constant, Hand and Diamond plus `tool.lock`, and
+  reads the dock and More from `editor.commands` in the registry's order, leaving out what it
+  lacks. `shell/MoreTools.tsx` renders More, named and tipped "More", with `aria-expanded`,
+  `aria-controls="more-tools"`, no keys, and `aria-pressed`, true with the hand's or the diamond's
+  glyph while that tool is active, never for tool lock [Inferred]. Its popover, `#more-tools`, a
+  group labelled by More [Inferred] inside the tool bar, holds Hand, Diamond and Tool lock as the
+  palette's buttons in one row [Inferred], above the dock, right-aligned with More, at e3 on the
+  menus' layer, which the tools island takes through the `more-tools-open` class rather than
+  `:has()`; its items are mounted only while it is open, its element staying, empty and hidden
+  [Inferred]. A press, Enter or Space opens it on Hand [Inferred]; its items have one tab stop of
+  their own, so they join the order after More only while it is open; the arrow keys, wrapping,
+  Home and End move among them and never the dock's stop; other keys reach the keymap. An item
+  runs its command through `editor.run` and closes More with the focus on it [Inferred], as Escape
+  does, going no further [Inferred]. S3's tooltip shows an item's tip at once on keyboard focus, and
+  the Escape that closes a tip does only that, so from the keyboard a second Escape closes More;
+  the tests press both. It also closes when the focus leaves it, on a pointer press outside it
+  [Inferred], when the drawer, the Details sheet, the menu or a dialog opens, in the shell's
+  reducer, and when the window leaves the query, as the dock unmounts. A press on its padding keeps
+  the focus and reaches the island, never the canvas. The shell's state holds `more`, closed at
+  every load and never stored.
+- **Top and bottom.** The portrait top row is `'identity . top-right'` alone; Elements keeps its
+  word at rest [Inferred], it fits at 360 px, and S7's rule hides it beside the chip; the
+  identity-gap fallback was not needed. History and zoom sit 8 px above the dock, and the
+  bottom-right island is not shown in portrait [Inferred], Keyboard shortcuts staying in the menu;
+  in landscape that island keeps Keyboard shortcuts alone. The Elements and Details sheets now span
+  to the dock's row, over history, zoom and the dock, which stay inert as before.
+- **Landscape.** The whole palette, 44 px with its hairlines, is one row in the top row at
+  844 × 390 at rest and under the failed chip, beside which Elements' word is visually hidden, its
+  name kept [Inferred]. One choice the issue did not foresee: S2's and S7's layout tests at
+  844 × 140 keep every island inside the window, and with 54 px islands the rows needed 160 px,
+  since the selection panel cannot shrink below its 26 px of padding and border. In phone
+  landscape the rows are therefore 4 px apart instead of 8, the bottom row reaching one such gap
+  above its row, and the panel's padding becomes its children's margins, which look the same and
+  let it shrink to its border; the rows then need 136 px.
+- **Readout, safe areas and targets.** The view readout is `display: none` on phones and stays
+  mounted with its text. `index.html` declares `viewport-fit=cover`; `shell.css` reads the four
+  insets once on `:root` into `--shell-safe-top`, `-right`, `-bottom` and `-left`, outside the
+  tokens [Inferred], which every padding of the shell, the sheets' margins and inner bottom padding
+  and the menu's and More's size limits add, while the canvas still fills the window; the tests set
+  the properties, with test inputs of 47, 34 and 21 px [Inferred]. One block after the compact rules
+  makes the islands' buttons, the menu's items, the drawer's Close, its keys' summary, the list's
+  options and the Details sheet's Close at least 44 by 44 px on phones and under a coarse pointer;
+  desktops and compact layouts keep 36 and 32 px with a fine pointer.
+- **Render cost and style ownership.** The tool bar reads `view.tool` and `view.toolLock` through
+  `useViewValue` [Inferred], so `dock-renders.test.tsx` counts no render of the palette, the dock,
+  More or its open popover across ten camera steps, while the readout still renders at each. The
+  dock's and More's rules without media queries are in `styles/dock.css` [Inferred], imported after
+  `palette.css`; `responsive.css`, at 323 lines, holds every media query; no token, font, weight,
+  glyph or command was added, and no rule uses `:has()` or `backdrop-filter`.
+- **The menu at phone widths.** S4's delivered section says the phone's menu sheet is S8's, but
+  neither ADR 0012, whose shell state and matrix list no menu sheet, nor this plan's S8 defines one.
+  S8 keeps S4's menu as a popover at every width, with 44 px items on phones; a menu sheet needs a
+  maintainer's decision and an issue of its own.
+- **Tests.** New: `more-tools.test.ts`, `Dock.test.tsx`, `MoreTools.test.tsx`,
+  `dock-renders.test.tsx`, the `more` state tests, `viewport-meta.test.ts`, `safe-areas.test.ts`,
+  the dock's query in `media-queries.test.ts`, and end to end `dock.spec.ts`, `more.spec.ts`,
+  `landscape.spec.ts`, `safe-areas.spec.ts`, `phone-layout.spec.ts`, the new targets cases and
+  contrast with More open. Migrated: `targets-phone.spec.ts` (44 px, no minimum count, the header),
+  `creation-phone.spec.ts` (Tool lock and Diamond through More, Diamond's state read on More, the
+  header), `drawing.ts` (`moreButton`), `layout.ts` (islands with no area left out, a sheet and an
+  inert island in either order, history and zoom measured against the dock or the bottom inset),
+  `shell-layout.spec.ts`, `selection-bar.spec.ts`, `menu.spec.ts`, `contrast-motion.spec.ts`,
+  `elements-sheet.spec.ts`'s comments, the targets reading's `summary`, and the first state test.
+  `support.ts`'s `readout` did not change: its users read its text or read it at desktop
+  viewports. The pointer points of the phone specs needed no change. No test was deleted. Each
+  new test failed on the sources before its change, and each migrated test's old version failed on
+  the new sources; each mutant of the issue's 27 kinds failed at least one of them.
+- **Known limitations,** as the issue lists them: the dock holds one row from 358 px wide; the
+  landscape palette may wrap within its track at 667 × 375 or with large side insets; tool lock
+  shows on the dock only in More's open popover; More exposes `aria-expanded` and `aria-pressed`;
+  the dock is third in the tab order while it sits at the bottom; until S9 the dock and history stay
+  during a phone text session; the hidden readout still renders per camera step; and `env()` on real
+  devices is not exercised in CI.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load average
+  of 2.9 to 3.9 from other work: `npm run build`, `perf:browser` and `perf:report` on the head
+  (`b4271c9`, whose application code the documents' commits leave as it is) and on `main`
+  (`a6b96d0`) in a scratch worktree, in the order head, main, main, head. The perf specs run at
+  desktop viewports, so they measure S8's tool-bar subscription and B10's tree, not the dock. B1 was
+  59.31 and 31.98 ms against 41.78 and 43.30 ms on `main`, over its budget on both, its misses
+  remaining #49's; B2 was 12.71 and 8.87 ms against 22.03 and 8.61 ms, over its 4 ms on both; B3
+  0.20 and 0.28 ms against 0.55 and 0.10 ms; B4 one frame in every run; B10 0.36 and 0.40 s against
+  0.57 and 0.42 s. B9 found one task over 50 ms in one of its 8 rounds in the first head run, a miss
+  that the report records, and none in the second head run or on `main`; S8 changes nothing on
+  saving's path, and the budgets stay report-only. The 95th percentiles of I1 were 66.2 and 50.8 ms
+  against 102.8 and 59.8 ms, its medians 36.6 and 35.2 ms against 38.4 and 37.1 ms, and those of I2
+  155.6 and 88.2 ms against 127.2 and 90.4 ms, its medians 56.6 and 55.2 ms against 62.9 and 55.5
+  ms. `perf:report` exits 1 in this sequence only because B5 to B8 and B11 to B13 are not measured
+  there.
+- Cost: S8's modules (`ui/Toolbar.tsx`, `shell/MoreTools.tsx`, `shell/more-tools.ts`,
+  `ui/tool-items.ts`, `ui/PaletteButton.tsx`, `ui/focus-lost.ts`, `shell/shell-state.ts` and
+  `shell/sheet.ts`), bundled and minified with React, the engine and the earlier slices' modules
+  left out, are 10,239 bytes, 4,096 bytes gzip, against 6,136 and 2,593 bytes for `main`'s
+  `ui/Toolbar.tsx`, `shell/shell-state.ts` and `shell/sheet.ts`. The web app's initial JavaScript is
+  119,904 bytes gzip against `main`'s 118,535, 1,369 bytes more, within B13's 200 KB, B11 (30.3 KB)
+  and B12 (2.5 KB) are unchanged, and the style sheet grows from 4,323 to 4,480 bytes gzip, measured
+  with the bundle-size guardrail's `gzipSize`; `responsive.css`, whose rules are inlined in the
+  JavaScript, is counted there. The plan gave no estimate for S8.
+- S9 to S13 are not implemented.
