@@ -9,7 +9,8 @@ S3 (issue #62) the original glyphs, the palette and the tooltips
 shortcuts dialog ([what S4 delivered](#what-s4-delivered)), slice S5 (issue #66) the Elements
 drawer's count, rows and phone sheet ([what S5 delivered](#what-s5-delivered)), and slice S6
 (issue #69) the selection panel, the phone selection bar and the Details sheet
-([what S6 delivered](#what-s6-delivered)); slices S7 to S13 are not implemented.** This plan
+([what S6 delivered](#what-s6-delivered)), and slice S7 (issue #71) saving's visibility
+([what S7 delivered](#what-s7-delivered)); slices S8 to S13 are not implemented.** This plan
 turns ADR 0012's decisions into thirteen issues for milestone
 v0.2.0 (Editor Experience): what each slice contains, what must land before it, the tests it writes
 first, how it is validated and which documents it updates. The decisions themselves, the tests to migrate
@@ -223,6 +224,7 @@ builds on; the handoff adds only that S7 may land before S2.
   is inferred; this slice shows it or reports the difference.
 - **Documents.** `engine/persistence.md`'s web app bullet and `engine/quality.md`'s live-region
   bullet.
+- **Delivered** by issue #71 ([what S7 delivered](#what-s7-delivered)).
 
 ### S8: the phone composition and safe areas
 
@@ -1108,3 +1110,115 @@ Issue #69 delivered slice S6.
   the panning scene selects nothing, so no panel is mounted there. `perf:report` exits 1 in this
   sequence only because B5 to B8 and B11 to B13 are not measured there.
 - S7 to S13 are not implemented.
+
+## What S7 delivered
+
+Issue #71 delivered slice S7. Each choice that the plan or the ADR did not make is marked
+[Inferred], as in the issue.
+
+- P0's save status and its three texts went. While `view.save` is `saved` or `pending` nothing about
+  saving shows or is said: no `#save-status` exists, the top-right island holds Elements alone and
+  the bottom-right island the view readout and Keyboard shortcuts, and no saving message reaches
+  either live region.
+- The shell's root, `ShellRoot` in `shell/EditorShell.tsx`, carries `data-save-state`,
+  `view.save?.type ?? 'none'`, for the tests alone; no style sheet under `apps/web/src` selects it
+  and no production code reads it (`scripts/tests/saving-styles.test.ts`). It reads `view.save`
+  through `useViewValue`, which moved from S6's selection hooks to `editor/surface.ts` rather than
+  being copied [Inferred], so that a camera step renders neither the root nor the shell, and a new
+  status renders the root without the islands it is given.
+- `StorageProblemChip` in `ui/Saving.tsx`, its pure rules in `ui/save-problem.ts`, keeps the id
+  `save-status` and P0's "Not saved", in the top-right island before Elements after an
+  `aria-hidden` hairline, in `caption` type with a 6 px radius: the error tone and `status-problem`
+  for a failed save, the warning tone and `status-tabs` for a stale one, and the warning tone and
+  `status-problem` without storage. It is a `<p>` while its notices show and a
+  `<button aria-expanded="false" aria-controls="notices">` once they are hidden, which shows
+  `chevron-down` outside phone landscape [Inferred]. A hidden unreadable-data notice alone gives the
+  same element reading "Storage notice" in the warning tone with `status-problem` [Inferred], and a
+  save problem with it says "Not saved" [Inferred]. Its glyphs are `aria-hidden`, so its name is its
+  words in every form.
+- `StorageNotices` keeps the region "Storage notices", now with the id `notices`, P0's words byte
+  for byte and no `role=alert`, the failed notice in the error tone and the stale and start-up
+  notices in the warning tone, at e2 with an 8 px radius in `body-sm`, from the tokens alone; the
+  hard-coded `#b3261e` went. One Hide control serves the region, since the shell's state holds one
+  flag: its visible word is "Hide", its name "Hide storage notices", and it is the region's last
+  control, after the stale answers [Inferred]. Hidden, the section stays in the page with `hidden`,
+  so that `aria-controls` resolves [Inferred]. The stale answers take no accent: the plan names no
+  primary action, and both drop data in different ways (the issue's autonomous default).
+- The shell's reducer holds `noticesHidden` with `hide-notices` and `show-notices`, never stored,
+  so that the notices show at every load. `reopensNotices` in `shell/shell-state.ts` shows them
+  again on a failure after a status that was no failure or failed for another reason, or a stale
+  save after one that was not stale, the engine's own condition for announcing a status, so that
+  they come back exactly when the assertive region speaks and a same-reason retry keeps them hidden
+  [Inferred]. `useNoticesControls` in `ui/use-notices.ts` applies it at every view the editor
+  publishes. A reopening is a shell-state update from the editor's listener, so React may commit it
+  just after the commit that renders the new status in the attribute, the chip and the notices'
+  words.
+- The focus (decision 14, [Inferred] moves): Hide gives the focus to the chip's button and the
+  button gives it to Hide; a focused chip button or Hide that leaves the page gives it to the shown
+  notices' Hide, or else to the canvas, never to the body, as when the problem clears or a new
+  failure reopens the notices; the stale answers keep P0's move to the canvas. The tab order puts
+  the notices' buttons, Hide last, or the chip's button once they are hidden, between the canvas,
+  or the selection panel's actions, and Elements, and nothing while saving works.
+- `useSaveRecovery` in `a11y/save-recovery.ts` says "The drawing is saved again." politely, once,
+  after `failed` then `saved` with any `pending` between, and never otherwise. Its pure step keeps a
+  failure through further failures, whatever their reason, and through `pending`, and forgets it at
+  `stale`, at no storage and once it speaks, so that Keep, Load and a failure that turned stale say
+  nothing [Inferred]. It follows every publish through `editor.subscribe`, not what React renders
+  [Inferred], and `EditorSurface` gained the live region, which `main.tsx` passes and the test
+  harness records [Inferred]. The engine's announcement keys and announcer are unchanged. The polite
+  region still writes only the latest of messages within 100 ms, so a change's announcement and the
+  sentence, should they coincide, replace one another; S7 leaves the region as it is.
+- `styles/saving.css` was rewritten from the tokens alone, with no motion, blur or weight, and the
+  media rules are in `responsive.css`. On phones the chip shows its glyph alone, at least 44 px wide,
+  its words visually hidden and never `display: none`, and no chevron; the chip's button and Hide are
+  at least 44 by 44 px on phones and under a coarse pointer, S7's own controls only. The plan gives
+  the glyph-only form in landscape; in portrait at 360 to 390 px the worded chip made the top row
+  444 px wide and the glyph alone 393 px, so in portrait the chip is its glyph alone too, and
+  Elements beside it shows its glyph and count with its word visually hidden and its name kept, as
+  the plan's compact rule has it, which brings the row to the window's width. The layout tests at
+  390 × 844 and 360 × 560 failed with the plan's form, every island outside the window, and pass
+  with this one.
+- Tests: `Saving.test.tsx` rewritten and `Saving-hide.test.tsx`, `save-recovery.test.tsx`,
+  `saving-renders.test.tsx` (no render of the shell, its root, the chip or the notices across ten
+  camera steps under `saved` and `failed`), the state tests and EditorShell's; end to end,
+  `saving.spec.ts`, `saving-focus.spec.ts` and `saving-layout.spec.ts`, with the layout checks moved
+  to `tests/e2e/layout.ts`. The ADR's S7 migrations and those the audit found were made:
+  `e2e/storage.ts`'s `saveState` and `expectSaved`, whose callers in `persistence.spec.ts`,
+  `focus.spec.ts`, `empty-canvas.spec.ts` and `selection-bar.spec.ts` did not change; B9 in
+  `perf/autosave.spec.ts`; Hide in the Tab orders of `focus.spec.ts` A5, `shell-layout.spec.ts` M1
+  and `elements-sheet.spec.ts` D5 M1; hidden notices left out of the layout checks; the chip's
+  absence and each notice's own words in `persistence.spec.ts`, since the region holds Hide too; the
+  first state test's initial state; and EditorShell's A7, which expected `#save-status` at the
+  bottom right. No test was deleted. The 27 mutants of the issue's 18 kinds, the variants included,
+  each failed at least one new test.
+- B9's measurement point moved from P0's words to `data-save-state="saved"`. At `db57f31`, where
+  both existed, a page observer found the attribute's change and the words' change in the same
+  callback in each of B9's 8 rounds, in two runs, 0 ms apart, and no long task in any window,
+  whether it ended at the attribute, at the words, or where the test saw either. The inference that
+  React writes the attribute in the same commit as P0's words, so that B9's window keeps its
+  meaning, therefore held there.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load average
+  of 1.4 to 4.3 from other work: `npm run build`, `perf:browser` and `perf:report` on the head
+  (`eb886ef`, whose application code is `6155b71`'s) and on `main` (`37b8bf5`) in a scratch
+  worktree, in the order head, main, main, head. B9 found no long task in any of its 8 rounds and a
+  longest task of 0 ms in all four runs, measured to `data-save-state="saved"` on the head and to
+  P0's words on `main`, and B4 one frame in each, both with a selection. B1 was 74.45 and 43.86 ms
+  against 26.41 and 30.03 ms on `main`, over its budget on both, its misses remaining #49's; B2 was
+  10.61 and 12.05 ms against 8.21 and 21.06 ms, B3 0.32 and 0.42 ms against 0.20 and 0.10 ms, and
+  B10 0.44 and 0.45 s against 0.41 and 0.35 s. The 95th percentiles of I1 were 65.2 and 71.6 ms
+  against 52.1 and 106.9 ms, its medians 36.6 and 34.9 ms against 34.6 and 40.2 ms, and those of I2
+  112.3 and 115.4 ms against 115.1 and 143.1 ms, its medians 54.2 and 56.8 ms against 54.5 and
+  55.0 ms. Since B1 read higher on the head, and B1 times only the engine's scene-layer drawing,
+  which S7 does not change, `frames.spec.ts` alone ran again, alternating: head 32.56 and 31.71 ms
+  against `main`'s 27.11 and 27.52 ms, then `db57f31`, `main` and the head twice more at 27.48,
+  26.35 and 26.21 ms and at 30.88, 37.7 and 31.62 ms, so the head's B1 moved with the machine's
+  spread rather than consistently. `perf:report` exits 1 in this sequence only because B5 to B8 and
+  B11 to B13 are not measured there.
+- Cost: S7's modules (`ui/Saving.tsx`, `ui/save-problem.ts`, `ui/use-notices.ts` and
+  `a11y/save-recovery.ts`), bundled and minified with React, the engine and the earlier slices'
+  modules left out, are 4,987 bytes, 2,041 bytes gzip, against 2,028 and 905 bytes for `main`'s
+  `ui/Saving.tsx` alone. The web app's initial JavaScript is 118,535 bytes gzip against `main`'s
+  117,523, 1,012 bytes more, within B13's 200 KB; B11 (30.3 KB) and B12 (2.5 KB) are unchanged, and
+  the style sheet grows from 4,220 to 4,323 bytes gzip, measured with the bundle-size guardrail's
+  `gzipSize`; `responsive.css`, whose rules are inlined in the JavaScript, is counted there.
+- S8 to S13 are not implemented.
