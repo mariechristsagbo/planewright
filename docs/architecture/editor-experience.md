@@ -11,9 +11,11 @@ delivered](#what-s5-delivered)), and slice S6 (issue #69) the selection panel, t
 bar and the Details sheet ([what S6 delivered](#what-s6-delivered)), slice S7 (issue #71) saving's
 visibility ([what S7 delivered](#what-s7-delivered)), and slice S8 (issue #73) the phone composition
 and the safe areas ([what S8 delivered](#what-s8-delivered)), and slice S9 (issue #75) the
-text-editing chrome ([what S9 delivered](#what-s9-delivered)); slices S10 to S13 are not
-implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
-(Editor Experience): what each slice contains, what must land before it, the tests it writes first,
+text-editing chrome ([what S9 delivered](#what-s9-delivered)), and slice S10 (issue #77) the
+canvas's focus ring and chip and the tool hint line ([what S10 delivered](#what-s10-delivered));
+slices S11 to S13 are not implemented.** This plan turns ADR 0012's decisions into thirteen
+issues for milestone v0.2.0 (Editor Experience): what each slice contains, what must land before
+it, the tests it writes first,
 how it is validated and which documents it updates. The decisions themselves, the tests to migrate
 and the visual-regression matrix are in the ADR; where this plan and the ADR differ, the ADR
 governs.
@@ -272,6 +274,7 @@ builds on; the handoff adds only that S7 may land before S2.
   the canvas host, which fills the window, and the Pre-release tag sets its own text and background
   colours (the S1 review's first suggestion, issue #55's A14).
 - **Documents.** `engine/quality.md`'s "Focus" bullet.
+- **Delivered** by issue #77 ([what S10 delivered](#what-s10-delivered)).
 
 ### S11: the overlay's colour (D1)
 
@@ -1502,3 +1505,168 @@ Issue #75 delivered slice S9. Each choice that the plan or the ADR did not make 
   unchanged, and the style sheet grows from 4,480 to 4,643 bytes gzip, measured with the
   bundle-size guardrail's `gzipSize`. The plan gave no estimate for S9.
 - S10 to S13 are not implemented.
+
+## What S10 delivered
+
+Issue #77 delivered slice S10. Each choice that the plan or the ADR did not make is marked
+[Inferred], as in the issue; each of the issue's was kept unless this section says otherwise.
+
+- **The canvas's ring.** P0's ring was the canvas host's outline, 3 px at −3 px, but the host's
+  opaque canvases, positioned inside it, painted over all of it but the outer pixel: at `4e43be8`
+  the middle of each window edge showed 1 px of `#2a62d0`, then white. `shell/CanvasFocusChip.tsx`
+  now renders an element of its own, `.canvas-focus-ring`, after the host and its text layer inside
+  `.canvas-stage`, never inside the host [Inferred], and `styles/canvas-chrome.css` draws it as an
+  outline of 2 px of `--pw-color-focus-ring` at a −2 px offset, which forced colours keep, over an
+  inset shadow of 4 px of `--pw-color-focus-halo`, so 2 px of violet over 2 px of white, inset by
+  `--shell-safe-*`, positioned on the hint layer inside `.canvas-area`, above both canvases and
+  under every island, with `pointer-events: none` [Inferred]. It is `display: none` unless
+  `.canvas-host:focus-visible ~ .canvas-focus-ring` matches, with no `:focus`, `:focus-within`,
+  `:has()`, listener or state, and `.canvas-host:focus-visible` draws no outline or shadow;
+  `canvas.css` lost its −3 px rule. Screenshots read 2 px of `rgb(101, 71, 180)` and then 2 px of
+  white inward from the middle of each edge at 1440 × 900, 1280 × 720, 800 × 720, 1024 × 768 with
+  touch, 390 × 844 and 844 × 390, within 4 levels a channel, since an island's shadow, which lies
+  over the canvas's layer, darkens a phone's bottom edge by 1 or 2 levels.
+- **The chip.** Inside the ring, a paragraph reading "Canvas focused" in white on `inverse-surface`,
+  16.70:1, in the caption type with the tooltip's 4 × 8 px padding and 6 px radius and no shadow or
+  glyph, centred, its bottom 16 px above the ring's bottom on desktops and 12 px at compact widths,
+  so level with the bottom islands' bottom whatever the bottom inset [Inferred]. The ring's element
+  carries `aria-hidden="true"`, so the chip is out of the accessibility tree, with no role and no
+  tab stop [Inferred], and it is `display: none` on phones, under
+  `(max-width: 599px), (max-height: 499px)`, where the ring shows alone [Inferred]. The shell passes
+  it to `CanvasHost` through a new `children` slot after the text layer [Inferred], so that
+  `editor/` imports no shell component; one choice the issue did not foresee is that the shell
+  builds the element once, a module constant of `EditorShell.tsx`, so that it renders once even when
+  the shell renders again, as the render test counts.
+- **Focus semantics, and one change the issue did not foresee.** The ring and the chip show exactly
+  while the host matches `:focus-visible`: after Tab or Shift+Tab to the canvas and after Escape
+  from the text area, never while the text area, a control, a menu or a dialog has the focus. A
+  press, though, focused the canvas from script in `editor/attach-input.ts`'s pointerdown handler,
+  and Chromium matches `:focus-visible` for such a focus, so a mouse press showed the new ring, as
+  it had shown P0's blue pixel at `4e43be8`; the end-to-end mouse test failed on that at the four
+  viewports. The press now calls `focus({ preventScroll: true, focusVisible: false })`, the HTML
+  option that Chromium honours, so that a mouse, pen or finger press focuses the canvas without
+  them; a probe found that a key pressed afterwards does not turn them on. Nothing new takes the
+  focus or enters the tab order, and the stops, the focus returns and the rescues are unchanged.
+- **The words.** `shell/tool-hints.ts` holds `TOOL_HINTS`, typed `Readonly<Record<ToolId, string>>`
+  so that every tool has exactly one, and `hintOf`, with the issue's eight sentences, Planewright's
+  own, unchanged [Inferred]: Hand "Drag to pan the view", Selection "Select, move, resize or rotate
+  what is drawn", Rectangle "Drag to draw a rectangle; tap for the default size", Ellipse "Drag to
+  draw an ellipse; tap for the default size", Diamond "Drag to draw a diamond; tap for the default
+  size", Line "Drag to draw a line; tap for a horizontal one", Freehand "Drag to draw a stroke; tap
+  for a dot" and Text "Tap to place a text, then type it", each one line of at most 50 characters
+  with no final full stop, and none a tool button's description.
+- **The hint.** `shell/ToolHint.tsx`, which the shell places right after the tools island, renders
+  `<p id="tool-hint" className="tool-hint">` with the active tool's words, and nothing while a text
+  is edited. It reads `view.tool` and `view.text !== null` through `useViewValue` alone. It is plain
+  text [Inferred]: no role, no live region, no tab stop, no `data-island`, and no element is
+  described by it, and with `pointer-events: none` a press on it reaches the canvas. It follows the
+  tool's key, the palette, More, the return to Selection after a creation or a session, and tool
+  lock keeping a creation tool, and says nothing about tool lock [Inferred].
+- **Desktops.** From 1200 px wide and 500 px high the hint is an absolutely positioned item of the
+  shell's grid in the tools area, so that it takes no row, `top: calc(100% + 8px)` of that area and
+  centred in it like the palette, so 8 px under the palette's bottom, 70 px down with the 16 px
+  anchor [Inferred]. Its backing is the opaque surface with a 6 px radius and 1 px block and 8 px
+  inline padding, an 18 px box with no hairline or shadow, in the caption type in
+  `on-surface-muted`, 5.50:1, one line ending in an ellipsis when its column is narrower [Inferred].
+  The panel stays at 16 / 72 and the notices 8 px under the top row, and at 1440 × 900, 1280 × 720
+  and 1200 × 800, under the stale notice with the drawer open, none of the eight hints meets an
+  island, the panel, the notices or the drawer. Over a rectangle drawn across its band, its darkest
+  pixel stayed at the words' own colour, no darker than the words' 5.50:1, where a stroke showing
+  through would have read darker.
+- **Compact.** Under `(min-width: 600px) and (max-width: 1199px) and (min-height: 500px)` in
+  `responsive.css` [Inferred], the shell's grid gains a fixed 18 px row named `hint` between the top
+  row and the notices' row, and the hint, centred in it [Inferred], so that with the 8 px gap the
+  selection panel, the notices and the drawer start 26 px lower; the track is fixed, so a text
+  session that removes the hint moves nothing [Inferred]. Phones undo it by keeping their own rows:
+  the `(max-width: 599px)` block defines its own areas and landscape keeps the base's. One finding
+  the issue did not foresee: at 600 × 800 the palette already wraps to two rows at `4e43be8`, so the
+  top row ends at 90 px while the identity island ends at 54 px, and the tests measure the hint, the
+  panel and the notices from the top row's bottom, the lowest of its three islands, which is the
+  identity island's at 1199 × 800, 800 × 720 and 1024 × 768. A probe of every island's, the notices'
+  and the drawer's box with the storage-unavailable notice, a selected rectangle and the open
+  drawer, on the head and on `main`, found no difference at 1440 × 900, 1280 × 720 and 1200 × 800
+  and on phones at 390 × 844, 375 × 667, 844 × 390 and 568 × 320, and the panel, the notices and the
+  drawer exactly 26 px lower, every other box unchanged, at 1199 × 800, 800 × 720, 800 × 520,
+  600 × 800 and 1024 × 768 with touch.
+- **Phones and sessions.** The hint and the chip are `display: none` under the view readout's phone
+  query, so the hint is out of the accessibility tree and adds no row, and a test checks that the
+  notices still start one gap under the row above them at 390 × 844, 375 × 667, 844 × 390 and
+  568 × 320; the hint is not rendered while a text is edited at any width. The phone layouts, the
+  dock, the top bar, the selection bar, the notices, the sheets and the Done bar, are unchanged.
+- **D9, the state colours.** The rules stay inside `:where()` in `base.css`, the row and the text
+  area being class rules. A pressed control, the active tool, tool lock while it is on and More
+  while it holds a tool, takes `primary-container` with `on-primary-container` content, 7.61:1, and
+  a `primary` edge, 5.73:1 on the fill and 6.74:1 on the surface; an unavailable one takes
+  `disabled-content`, 5.50:1, and keeps P0's dashed border [Inferred], since the tokens give only
+  the colour; every focusable element's ring is 2 px of `focus-ring` at a 2 px offset with a 2 px
+  `focus-halo` shadow filling the offset, 6.74:1 on the surface; the selected row takes
+  `primary-container` and `on-primary-container`, its figures inheriting them; and the text area's
+  outline is 2 px of `focus-ring`. The active option's `#111827` outline, the root's text and
+  background, the buttons' borders at rest and the hover colours did not change [Inferred], and no
+  style sheet under `apps/web/src` holds `#2a62d0` or `#4b5563`. A class rule that sets its own
+  shadow on a focusable element would hide the halo, which is decoration only; none does at this
+  slice.
+- **Render cost and guardrails.** `canvas-chrome-renders.test.tsx` counts no render of the hint, no
+  call of `hintOf` and no render of the chip across ten camera steps and across ten camera steps and
+  ten typed values in a session, while the view readout renders at each step, one render of the hint
+  for one tool change, and one render of the chip from the shell's mounting through an opened
+  drawer. `Shell` gained no subscription and has 54 counted lines; no new editor listener was added
+  beyond `ToolHint`'s two. `styles/canvas-chrome.css` [Inferred], imported from `main.tsx` right
+  after `text-session.css`, holds the ring's, the chip's and the hint's rules with no media query,
+  motion, filter, blur, `:has()`, `:focus-within` or `:focus`, and reads only the tokens and
+  `--shell-safe-*`; `responsive.css`, at 365 lines, holds the compact row, the chip's compact anchor
+  and the phones' rule. The 114 tokens, the fonts and weights, the glyphs, the commands, the shell's
+  state, the preferences entry, `index.html`, the dependencies and everything under `packages/` are
+  unchanged.
+- **Tests.** New: `tool-hints.test.ts` (4), `ToolHint.test.tsx` (6), `CanvasFocusChip.test.tsx` (3),
+  `canvas-chrome-renders.test.tsx` (4), the tooling test `canvas-chrome-styles.test.ts` (5), two
+  cases in `media-queries.test.ts` and three in `base-styles.test.ts`; end to end,
+  `canvas-focus.spec.ts` (8 tests, 27 runs), `tool-hint.spec.ts` (13 tests, 32 runs) and
+  `state-colours.spec.ts` (4 tests, 8 runs). Each failed before its change for its reason, bar the
+  checks that something stays absent or unchanged, the mouse press without the ring, the session
+  that moves nothing and the phones' rows, which passed there by design.
+- **Migrations.** `e2e/a11y.ts`'s `expectIndicator`, when the canvas has the focus, reads the ring
+  element's outline and halo against the canvas's background and that it shows, and every other
+  element as before; its old version fails on S10's sources at six canvas stops of `focus.spec.ts`,
+  `saving-focus.spec.ts`, `more.spec.ts` and `phone-layout.spec.ts`, reading no outline.
+  `e2e/selection-panel.spec.ts` expects the compact panel at the identity island's bottom plus 36,
+  desktops keeping 16 / 72; its old version fails on S10's sources at 800 × 720 and 1024 × 768, and
+  the new one failed before them. The source comments that deferred to S10 now say what it did. No
+  other test assumed P0's state colours or the host's outline, and no test was deleted.
+- **Sabotage.** After an unmutated control of the unit and tooling files (37 tests) and of five
+  end-to-end specs (78 runs), each of the issue's 29 kinds, in 49 variants, failed at least one new
+  or migrated test in a copy outside the repository, and so did one more, a press focusing the
+  canvas without `focusVisible: false`.
+- **Known limitations.** At compact widths the chip lies partly under the bottom-left island, which
+  is above it, below 623 px wide with a fine pointer and below 743 px with a coarse one, measured at
+  800 px high from 1199 px down; the issue estimated about 660 and 800 px. The chip does not show on
+  phones, where the ring shows alone. Where a sheet or the Done bar reaches the window's edge it
+  covers that part of the ring, and an island's shadow lies over it. A press focuses the canvas
+  without the ring, but a focus given by script elsewhere follows Chromium's `:focus-visible` rules:
+  Escape shows it, a tap on Done does not. In forced-colours mode the halo, a shadow, goes and the
+  outline stays; forced colours are not in scope. `env()` on real devices is not exercised in CI.
+  The hint says nothing about tool lock.
+- Performance, on the developer machine, a 6-core virtual machine without a GPU under a load average
+  of 3.1 to 6.3 from other work: `npm run build`, `perf:browser` and `perf:report` on the head
+  (`863b3b1`, whose application code the documents' commits leave as it is) and on `main`
+  (`4e43be8`) in a scratch worktree, in the order head, main, main, head. The perf specs run at
+  1280 × 720, so they measure the hint over the canvas, its two subscriptions and B10's tree; the
+  chip shows only on keyboard focus. B1 was 48.82 and 56.54 ms against 64.68 and 32.99 ms on `main`,
+  over its budget on both, its misses remaining #49's; B2 was 14.24 and 19.38 ms against 15.05 and
+  14.64 ms, over its 4 ms on both; B3 0.30 and 0.10 ms against 0.40 and 0.22 ms; B4 one frame and B9
+  no task over 50 ms in every run; B10 0.61 and 0.60 s against 0.62 and 0.67 s. The 95th percentiles
+  of I1 were 92.5 and 115.7 ms against 93.5 and 81.0 ms, its medians 38.5 and 39.7 ms against 39.7
+  and 39.2 ms, and those of I2 114.7 and 137.9 ms against 155.3 and 164.6 ms, its medians 61.1 and
+  59.0 ms against 61.2 and 63.6 ms; I1's second 95th percentile on the head lies above the others
+  with an equal median, within the spread that single runs show on this machine. `perf:report` exits
+  1 in this sequence only because B5 to B8 and B11 to B13 are not measured there.
+- Cost: S10's new modules, `shell/ToolHint.tsx`, `shell/tool-hints.ts` and
+  `shell/CanvasFocusChip.tsx`, bundled and minified with every import left out, are 1,118 bytes,
+  593 bytes gzip together; the changed `editor/CanvasHost.tsx`, `editor/attach-input.ts` and
+  `shell/EditorShell.tsx` are 7,815 bytes, 3,093 bytes gzip, against 7,649 and 3,036 bytes on
+  `main`. The web app's initial JavaScript is 121,028 bytes gzip against `main`'s 120,764 at
+  `4e43be8`, 264 bytes more, within B13's 200 KB, B11 (30.3 KB) and B12 (2.5 KB) are unchanged, and
+  the style sheet grows from 4,643 to 4,786 bytes gzip, measured with the bundle-size guardrail's
+  `gzipSize`; `responsive.css`, whose rules are inlined in the JavaScript, is counted there. The
+  plan gave no estimate for S10.
+- S11 to S13 are not implemented.
