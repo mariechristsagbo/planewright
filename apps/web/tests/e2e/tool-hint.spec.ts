@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
 
-import { openElements, openPage, polite, textContrasts } from './a11y.ts';
+import { elementsToggle, openElements, openPage, polite, textContrasts } from './a11y.ts';
 import { mouseDrag, toolButton } from './drawing.ts';
-import { intersecting, islands } from './layout.ts';
+import { expectPlaced, intersecting, islands } from './layout.ts';
 import type { Box, Viewport } from './layout.ts';
 import { boxOf, selectionSurface } from './panel.ts';
 import { showStaleNotice, storageNotices } from './storage.ts';
@@ -203,6 +203,104 @@ test('D5 A10 a press on the hint reaches the canvas: with Rectangle, a click at 
   await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
 });
 
+/** The bottom of the top row: its three islands' lowest bottom. */
+async function topRowBottom(page: Page): Promise<number> {
+  const boxes = await islands(page);
+  const top = boxes.filter(({ name }) => ['identity', 'tools', 'top-right'].includes(name));
+  expect(top).toHaveLength(3);
+  return Math.max(...top.map(({ y, height }) => y + height));
+}
+
+const COMPACT: readonly (Viewport & { readonly touch: boolean })[] = [
+  { width: 1199, height: 800, touch: false },
+  { width: 800, height: 720, touch: false },
+  { width: 600, height: 800, touch: false },
+  { width: 1024, height: 768, touch: true },
+];
+
+for (const { width, height, touch } of COMPACT) {
+  test.describe(`at ${String(width)} × ${String(height)}${touch ? ' with touch' : ''}`, () => {
+    test.use({ viewport: { width, height }, hasTouch: touch, isMobile: touch });
+
+    test('D7 A8 the hint owns an 18 px row under the top row, centred in the window, and the panel, the notices and the drawer start 26 px lower', async ({
+      page,
+    }) => {
+      await openPage(page);
+      // Measured from the top row's bottom, which is the identity island's unless the palette
+      // wraps, as it does at 600 px wide.
+      const identity = await boxOf(page.locator('[data-island="identity"]'));
+      const atRest = await topRowBottom(page);
+      test.info().annotations.push({
+        type: 'top row',
+        description: `bottom ${String(atRest)}, identity island's bottom ${String(identity.y + identity.height)}`,
+      });
+      const line = await boxOf(hint(page));
+      expect(line.y).toBe(atRest + 8);
+      expect(line.height).toBeCloseTo(18, 1);
+      expect(Math.abs(line.x + line.width / 2 - width / 2)).toBeLessThanOrEqual(1);
+      await showStaleNotice(page);
+      const top = await topRowBottom(page);
+      expect((await boxOf(hint(page))).y).toBe(top + 8);
+      const panel = await boxOf(selectionSurface(page));
+      const notices = await boxOf(storageNotices(page));
+      // 2 px under the notices' row, as S6 placed it, and 8 px under the hint's row.
+      expect([panel.y, notices.y]).toEqual([top + 36, top + 34]);
+      await openElements(page);
+      const drawer = await boxOf(page.locator('#element-list-drawer'));
+      expect(drawer.y).toBe(notices.y + notices.height + 8);
+      expect(await hintMeets(page)).toEqual([]);
+    });
+  });
+}
+
+for (const viewport of [
+  { width: 800, height: 720 },
+  { width: 800, height: 520 },
+]) {
+  test.describe(`at ${String(viewport.width)} × ${String(viewport.height)}, with the stale notice, a selection and the drawer`, () => {
+    test.use({ viewport });
+
+    test('D7 A15 every island lies inside the window and apart, and the hint meets none', async ({
+      page,
+    }) => {
+      await openPage(page);
+      await showStaleNotice(page);
+      await openElements(page);
+      await expect(selectionSurface(page)).toBeVisible();
+      await expectPlaced(page, viewport, 8);
+      expect(await hintMeets(page)).toEqual([]);
+    });
+  });
+}
+
+test.describe('at 800 × 720, a text session', () => {
+  test.use({ viewport: { width: 800, height: 720 } });
+
+  test('D7 A8 A9 removes the hint and moves neither the notices nor the drawer; Escape brings Selection’s words back', async ({
+    page,
+  }) => {
+    await openPage(page);
+    await showStaleNotice(page);
+    await openElements(page);
+    const tops = async () => [
+      (await boxOf(storageNotices(page))).y,
+      (await boxOf(page.locator('#element-list-drawer'))).y,
+    ];
+    const before = await tops();
+    await canvas(page).focus();
+    await page.keyboard.press('t');
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('textbox', { name: 'Text' })).toBeFocused();
+    await expect(hint(page)).toHaveCount(0);
+    await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'true');
+    expect(await tops()).toEqual(before);
+    await page.keyboard.type('Plan');
+    await page.keyboard.press('Escape');
+    await expect(hint(page)).toHaveText(SELECTION);
+    expect(await tops()).toEqual(before);
+  });
+});
+
 const PHONES: readonly Viewport[] = [
   { width: 390, height: 844 },
   { width: 375, height: 667 },
@@ -219,6 +317,22 @@ for (const viewport of PHONES) {
       await expect(hint(page)).toHaveCount(1);
       await expect(hint(page)).toBeHidden();
       expect(await page.locator('body').ariaSnapshot()).not.toContain(SELECTION);
+    });
+
+    test('D8 A9 the hint adds no row: the notices start one gap under the row above them', async ({
+      page,
+    }) => {
+      await openPage(page);
+      await showStaleNotice(page);
+      await expect(hint(page)).toBeHidden();
+      const notices = await boxOf(storageNotices(page));
+      // The rows above the notices: the top row, and the tool bar's or the selection bar's
+      // own row where a phone's layout gives one.
+      const above = (await islands(page)).filter(
+        ({ name, y }) => name !== 'Storage notices' && y < notices.y,
+      );
+      const gap = viewport.height < 500 ? 4 : 8;
+      expect(notices.y - Math.max(...above.map(({ y, height }) => y + height))).toBe(gap);
     });
   });
 }

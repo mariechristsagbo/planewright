@@ -8,7 +8,8 @@ import { canvasBox } from './support.ts';
 
 // The selection panel on desktops and tablets (ADR 0012, decisions 2, 8 and 14; the v0.2 plan's S6,
 // issue #69's D2): none at rest; with a selection, 232 px wide at the anchor under the top row, at
-// 16 / 72 on desktops, its figures those of the element's list row, its values in JetBrains Mono,
+// 16 / 72 on desktops, and at compact widths under the tool hint's row too (S10, issue #77's D7),
+// its figures those of the element's list row, its values in JetBrains Mono,
 // its targets 44 px under a coarse pointer, and presses on it reaching no canvas. Page code is
 // written as strings, since these files compile without the DOM library.
 
@@ -32,10 +33,11 @@ for (const { width, height, anchor, touch } of VIEWPORTS) {
       await expect(selectionSurface(page)).toBeVisible();
       const panel = await boxOf(selectionSurface(page));
       const identity = await boxOf(page.locator('[data-island="identity"]'));
-      // The shell's 8 px gap and a 2 px step under the top row: 16 / 72 on desktops.
+      // The shell's 8 px gap and a 2 px step under the top row: 16 / 72 on desktops. At compact
+      // widths the tool hint's 18 px row and its gap come between them (the v0.2 plan's S10).
       expect([panel.x, panel.y, panel.width]).toEqual([
         anchor,
-        identity.y + identity.height + 10,
+        identity.y + identity.height + (width >= 1200 ? 10 : 36),
         232,
       ]);
       if (width >= 1200) expect([panel.x, panel.y]).toEqual([16, 72]);

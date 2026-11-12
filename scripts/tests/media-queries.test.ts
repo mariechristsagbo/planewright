@@ -56,6 +56,9 @@ function mediaBlocks(css: string): { query: string; body: string }[] {
 /** Phones, in portrait and in landscape: the query under which the view readout is hidden. */
 const PHONES = '(max-width: 599px), (max-height: 499px)';
 
+/** Compact and at least 500 px high, where the tool hint owns a row (issue #77's D7). */
+const HINT_ROW = '(min-width: 600px) and (max-width: 1199px) and (min-height: 500px)';
+
 /** The selectors that responsive.css's blocks under a query hide with display: none. */
 const hiddenUnder = (query: string): string[] =>
   mediaBlocks(styleSheet('responsive.css'))
@@ -101,5 +104,20 @@ describe("the web app's media queries", () => {
 
   it('hide the tool hint on phones, in portrait and in landscape, under the view readout’s query (issue #77’s D8)', () => {
     expect(hiddenUnder(PHONES)).toEqual(expect.arrayContaining(['.view-readout', '.tool-hint']));
+  });
+
+  it('give the tool hint a fixed 18 px row under the top row, compact and at least 500 px high alone (issue #77’s D7)', () => {
+    const blocks = mediaBlocks(styleSheet('responsive.css')).filter(({ body }) =>
+      body.includes("'hint hint hint'"),
+    );
+    expect(blocks.map(({ query }) => query)).toEqual([HINT_ROW]);
+    const body = blocks[0]?.body ?? '';
+    expect(areaRows(body)[0]?.slice(0, 3)).toEqual([
+      'identity tools top-right',
+      'hint hint hint',
+      'notices notices notices',
+    ]);
+    expect(body).toMatch(/grid-template-rows: auto 18px minmax\(0, max-content\) /u);
+    expect(body).toMatch(/\.tool-hint \{[^}]*grid-area: hint;/u);
   });
 });

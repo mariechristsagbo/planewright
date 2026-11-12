@@ -46,6 +46,31 @@
 }
 
 /*
+ * Compact and at least 500 px high: the tool hint owns a fixed 18 px row between the top row and
+ * the notices' row, centred in it, so that the selection panel, the notices and the drawer start
+ * 26 px lower, and stay there while a text session removes the hint (the v0.2 plan's S10). Phones
+ * undo it by keeping their own rows: a window under 600 px wide defines its own areas, and one
+ * under 500 px high keeps the base's.
+ */
+@media (min-width: 600px) and (max-width: 1199px) and (min-height: 500px) {
+  .editor-shell {
+    grid-template-areas:
+      'identity tools top-right'
+      'hint hint hint'
+      'notices notices notices'
+      'drawer drawer drawer'
+      'room room room'
+      'bottom bottom bottom';
+    grid-template-rows: auto 18px minmax(0, max-content) minmax(0, max-content) 1fr auto;
+  }
+
+  .tool-hint {
+    top: 0;
+    grid-area: hint;
+  }
+}
+
+/*
  * Under 600 px wide: 8 px anchors, the tool bar in a row of its own. A phone in portrait, at least
  * 500 px high, then has the dock below instead; a window under 600 px wide and under 500 px high,
  * a phone in landscape, keeps this row (the v0.2 plan's S8).
