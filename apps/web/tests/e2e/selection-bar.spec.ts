@@ -38,9 +38,13 @@ for (const viewport of [
       await openPage(page);
       await showStaleNotice(page);
       const bar = await boxOf(selectionSurface(page));
-      const tools = await boxOf(page.locator('[data-island="tools"]'));
+      // The top rows are identity's and the top-right island's, the tool bar being the dock (S8).
+      const identity = await boxOf(page.locator('[data-island="identity"]'));
+      const topRight = await boxOf(page.locator('[data-island="top-right"]'));
       const notices = await boxOf(storageNotices(page));
-      expect(bar.y).toBeGreaterThanOrEqual(tools.y + tools.height);
+      expect(bar.y).toBeGreaterThanOrEqual(
+        Math.max(identity.y + identity.height, topRight.y + topRight.height),
+      );
       expect(notices.y).toBeGreaterThanOrEqual(bar.y + bar.height);
       expect([bar.x, bar.width]).toEqual([8, viewport.width - 16]);
       // The bar comes before the notices in the document's order too.

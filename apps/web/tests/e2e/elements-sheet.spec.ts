@@ -8,8 +8,8 @@ import { canvas } from './support.ts';
 
 // The Elements drawer on a phone in portrait (ADR 0012, decisions 2 and 14; the v0.2 plan's S5,
 // issue #66's D5): a sheet along the window's bottom, at most 62 % of its height, whose list
-// scrolls inside it. While it is open the palette, which S8 makes the phone's dock, and the bottom
-// islands it covers are inert, and Escape closes it with the focus back on the toggle.
+// scrolls inside it. While it is open the phone's dock (S8) and the bottom islands, which it covers,
+// are inert, and Escape closes it with the focus back on the toggle.
 
 const HEIGHT = 844;
 test.use({ viewport: { width: 390, height: HEIGHT }, isMobile: true, hasTouch: true });
@@ -135,8 +135,9 @@ test('D5 A8 the sheet makes the dock and the bottom islands inert, and Escape cl
   expect(await page.evaluate<string[]>(INERT)).toEqual([]);
   await openElements(page);
   expect(await page.evaluate<string[]>(INERT)).toEqual(['tools', 'bottom-left', 'bottom-right']);
-  // A tap on the inert palette chooses no tool and reaches its island, never the canvas; like a
-  // tap on any island's padding, it takes the focus from the list.
+  // A tap on the inert dock, under the sheet, lands on the sheet, which lies over it (S8): it
+  // chooses no tool and reaches no canvas, and, like a tap on any island's padding, takes the focus
+  // from the list.
   await tapAt(page, toolButton(page, 'Ellipse'));
   await expect(toolButton(page, 'Ellipse')).toHaveAttribute('aria-pressed', 'false');
   await expect(toolButton(page, 'Selection')).toHaveAttribute('aria-pressed', 'true');

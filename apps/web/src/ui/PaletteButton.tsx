@@ -1,5 +1,8 @@
+import { useRef } from 'react';
+
 import type { Platform } from '../platform/platform.ts';
 import { Icon } from '../shell/icons.tsx';
+import { useFocusLost } from './focus-lost.ts';
 import { ariaKeyShortcuts, shortcutSentence, shortcutText } from './shortcuts.ts';
 import type { ToolItem } from './tool-items.ts';
 
@@ -11,12 +14,15 @@ export interface PaletteButtonProps {
   readonly onRef: (button: HTMLButtonElement | null) => void;
   readonly onFocus: () => void;
   readonly onPress: () => void;
+  /** Called when the button leaves the page with the focus on it. */
+  readonly onLost?: (() => void) | undefined;
 }
 
 /**
  * One palette button (ADR 0012, decision 3): the command's glyph, named by its label, and its first
  * key in the corner, hidden from assistive technology, since aria-keyshortcuts and the description
- * that follows the button carry every key, as its tooltip repeats them with the label.
+ * that follows the button carry every key, as its tooltip repeats them with the label. A button that
+ * leaves the page with the focus on it says so, for the tool bar to keep the focus.
  */
 export function PaletteButton({
   item,
@@ -25,12 +31,18 @@ export function PaletteButton({
   onRef,
   onFocus,
   onPress,
+  onLost,
 }: PaletteButtonProps) {
   const { command, pressed, note, glyph } = item;
+  const own = useRef<HTMLButtonElement | null>(null);
+  useFocusLost(own, onLost);
   return (
     <>
       <button
-        ref={onRef}
+        ref={(button) => {
+          own.current = button;
+          onRef(button);
+        }}
         type="button"
         className="glyph-button"
         tabIndex={tabStop ? 0 : -1}

@@ -42,7 +42,11 @@
   }
 }
 
-/* A phone in portrait, under 600 px wide: 8 px anchors, the tool bar in a row of its own. */
+/*
+ * Under 600 px wide: 8 px anchors, the tool bar in a row of its own. A phone in portrait, at least
+ * 500 px high, then has the dock below instead; a window under 600 px wide and under 500 px high,
+ * a phone in landscape, keeps this row (the v0.2 plan's S8).
+ */
 @media (max-width: 599px) {
   .editor-shell {
     grid-template-areas:
@@ -62,20 +66,59 @@
 }
 
 /*
- * A phone in portrait, under 600 px wide and at least 500 px high: the open Elements drawer is a
- * sheet along the window's bottom, over the bottom islands, which the shell makes inert while it is
- * open, its list scrolling inside it (the v0.2 plan's S5). It spans the grid's rows from the
- * drawer's to the bottom's, so that it lies below the storage notices and never covers their
- * buttons, and its negative margins take it over the shell's padding to the window's edges. It is
- * at most 62 % of the window's height, and no taller than the rows that the notices leave. The same
- * query is SHEET_QUERY in shell/sheet.ts; a phone in landscape keeps the side drawer.
+ * A phone in portrait, under 600 px wide and at least 500 px high, the query that shell/sheet.ts
+ * follows as SHEET_QUERY, which a tooling test keeps equal (the v0.2 plan's S5 and S8). The tool bar
+ * is the dock: in a row of its own at the window's bottom, under history and zoom, as wide as the
+ * window less its anchors, its seven 44 px buttons spread over one row without hairlines. The top
+ * row holds identity and the top-right island alone, and the bottom-right island is not shown: the
+ * view readout is hidden on phones, and Keyboard shortcuts stays in the menu.
+ */
+@media (max-width: 599px) and (min-height: 500px) {
+  .editor-shell {
+    grid-template-areas:
+      'identity . top-right'
+      'notices notices notices'
+      'drawer drawer drawer'
+      'room room room'
+      'bottom bottom bottom'
+      'tools tools tools';
+    grid-template-rows: auto minmax(0, max-content) minmax(0, max-content) 1fr auto auto;
+  }
+
+  .tools-island {
+    justify-self: stretch;
+  }
+
+  .tools-island .toolbar {
+    flex: 1 1 auto;
+    justify-content: space-between;
+  }
+
+  .tools-island .glyph-button {
+    width: var(--pw-spacing-control-touch);
+    height: var(--pw-spacing-control-touch);
+  }
+
+  .bottom-right-island {
+    display: none;
+  }
+}
+
+/*
+ * A phone in portrait: the open Elements drawer is a sheet along the window's bottom, over the
+ * bottom islands and the dock, which the shell makes inert while it is open, its list scrolling
+ * inside it (the v0.2 plan's S5 and S8). It spans the grid's rows from the drawer's to the dock's,
+ * so that it lies below the storage notices and never covers their buttons, and its negative
+ * margins take it over the shell's padding to the window's edges. It is at most 62 % of the
+ * window's height, and no taller than the rows that the notices leave. A phone in landscape keeps
+ * the side drawer.
  */
 @media (max-width: 599px) and (min-height: 500px) {
   .element-list-drawer {
     z-index: var(--pw-layer-sheet);
     display: flex;
     flex-direction: column;
-    grid-row-end: bottom;
+    grid-row-end: tools;
     align-self: end;
     justify-self: stretch;
     width: auto;
@@ -103,7 +146,8 @@
    * The selection bar (the v0.2 plan's S6) takes the notices' row, and the notices the next row,
    * so that the bar comes first and the notices after it, in one column; with no bar the grid is
    * as above. Both sheets then start at the room row, below the bar and the notices, and the Details
-   * sheet lies along the window's bottom as the Elements sheet does, at most 62 % of its height.
+   * sheet lies along the window's bottom over the dock as the Elements sheet does, at most 62 % of
+   * its height.
    */
   .selection-bar {
     grid-area: notices;
@@ -120,7 +164,7 @@
   .details-sheet {
     position: relative;
     grid-column: 1 / -1;
-    grid-row: room / bottom;
+    grid-row: room / tools;
     align-self: end;
     justify-self: stretch;
     max-height: min(var(--pw-spacing-sheet-max-height), 100% + var(--pw-spacing-sm));
