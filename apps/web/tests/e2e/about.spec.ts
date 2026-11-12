@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { button, expectIndicator, openPage } from './a11y.ts';
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // About this build (ADR 0012, D5, issue #55's A6): the persistent Pre-release tag opens a modal
@@ -70,6 +71,7 @@ test('A6 REQ-Y02 a press on the scrim closes About and gives the focus back to t
   const about = page.getByRole('dialog', { name: 'About this build' });
   await about.getByRole('heading', { name: 'About this build' }).click();
   await expect(about).toBeVisible();
+  await settled(page);
   const box = await about.boundingBox();
   if (box === null) throw new Error('About this build is not laid out.');
   await page.mouse.click(box.x + box.width / 2, Math.max(2, box.y / 2));

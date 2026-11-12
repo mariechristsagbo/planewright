@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test';
 import { openElements, openPage, polite } from './a11y.ts';
 import { expectPlaced, islands } from './layout.ts';
 import type { Viewport } from './layout.ts';
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // The safe areas (ADR 0012, decision 14; the v0.2 plan's S8, issue #73's A9): every island lies 8 px
@@ -108,6 +109,7 @@ test.describe('at 390 × 844 with touch and insets, the sheets', () => {
     await openPage(page);
     await emulate(page, insets);
     await openElements(page);
+    await settled(page);
     const elements = await page.evaluate<Sheet>(SHEET('element-list-drawer'));
     expect([elements.x, elements.right, elements.bottom]).toEqual([0, 390, 844]);
     expect(elements.content).toBeLessThanOrEqual(844 - insets.bottom);
@@ -118,6 +120,7 @@ test.describe('at 390 × 844 with touch and insets, the sheets', () => {
     await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
     await page.locator('[data-island="selection"]').getByRole('button', { name: 'Details' }).tap();
     await expect(page.getByRole('region', { name: 'Details' })).toBeVisible();
+    await settled(page);
     const details = await page.evaluate<Sheet>(SHEET('details-sheet'));
     expect([details.x, details.right, details.bottom]).toEqual([0, 390, 844]);
     expect(details.content).toBeLessThanOrEqual(844 - insets.bottom);

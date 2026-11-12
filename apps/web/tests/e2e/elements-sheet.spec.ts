@@ -3,6 +3,7 @@ import type { Locator, Page } from '@playwright/test';
 
 import { button, elementList, elementsToggle, openElements, openPage, polite } from './a11y.ts';
 import { toolButton } from './drawing.ts';
+import { settled } from './motion.ts';
 import { showStaleNotice, storageNotices } from './storage.ts';
 import { canvas } from './support.ts';
 
@@ -27,10 +28,11 @@ async function draw(page: Page, count: number): Promise<void> {
   await expect(polite(page)).toHaveText('Rectangle created. 1 element selected.');
 }
 
-/** An element's box, which must be laid out. */
+/** An element's box, which must be laid out, once every entrance has ended (ADR 0012, D2). */
 async function boxOf(
   element: Locator,
 ): Promise<{ x: number; y: number; width: number; height: number }> {
+  await settled(element.page());
   const box = await element.boundingBox();
   if (box === null) throw new Error('The element is not laid out.');
   return box;
@@ -71,6 +73,7 @@ test('D5 A8 the open drawer is a sheet along the bottom, at most 62 % of the hei
   const list = await openElements(page);
   await expect(list).toBeFocused();
   await expect(list.getByRole('option')).toHaveCount(40);
+  await settled(page);
   const sheet = await page.locator('#element-list-drawer').boundingBox();
   expect(sheet).not.toBeNull();
   const { x = -1, y = -1, width = 0, height = 0 } = sheet ?? {};
