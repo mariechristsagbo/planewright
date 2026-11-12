@@ -59,6 +59,11 @@ Git hooks:
   limits. Split code rather than raising limits; raising a limit needs an ADR.
 - **Tests**: add unit tests for logic and integration tests for service boundaries. Visible
   behaviour needs an end-to-end test once the editor exists. Coverage thresholds are enforced.
+- **Visual baselines**: the end-to-end suite's screenshot baselines are Linux images that CI's
+  Chromium made; CI compares them, other platforms skip them, and no local run writes one. A change
+  to what they show makes them again only through CI's `visual-baselines` dispatch, as
+  [the quality document](docs/architecture/engine/quality.md#visual-baselines) describes, and its
+  pull request shows each changed image.
 - **Dependencies**: add a dependency only when it is necessary, maintained and licensed
   compatibly with MIT. Versions are pinned exactly. Explain new dependencies in the pull request.
 - **Security**: treat files, clipboard data and network messages as untrusted. Never commit

@@ -228,7 +228,7 @@ its tests.
 | Renderer unit      | Vitest `render-canvas:unit`                            | draw calls recorded by a fake 2D context for fixture scenes; device-pixel transforms; path-cache invalidation                                                                                                                                                                                                                                                              |
 | Web unit           | Vitest `web:unit`, jsdom                               | the input adapter's event mapping (pointer, wheel modes, Mod per platform), the tool bar, element list and live region by role                                                                                                                                                                                                                                             |
 | End-to-end         | Playwright, Chromium, production build                 | desktop 1280 × 720 and an emulated phone (390 × 844, DPR 3, touch, in portrait, where S8 puts the tool bar in a dock at the bottom with More; S8's tests add 375 × 667, 360 × 560, 844 × 390 and 568 × 320, and emulate safe-area insets with the shell's custom properties): every P0 flow, reload, keyboard-only use; state read from the element list and the ARIA tree |
-| Visual             | Playwright screenshots                                 | Planewright's own rendering of fixture documents at DPR 1 and 2, compared with committed baselines of its own output                                                                                                                                                                                                                                                       |
+| Visual             | Playwright `toHaveScreenshot`, Linux, CI's Chromium    | the 30 states of ADR 0012's visual-regression matrix on the seeded fixture, at DPR 1 and, once, 2, compared with committed baselines of Planewright's own output that CI made ([visual baselines](#visual-baselines))                                                                                                                                                      |
 | Benchmarks         | Vitest bench and a Playwright trace                    | the budgets below                                                                                                                                                                                                                                                                                                                                                          |
 
 - **Test vectors from the baseline.** The camera table in [scene and viewport](scene-and-viewport.md#test-vectors-from-the-baseline),
@@ -256,6 +256,62 @@ its tests.
 - **Comparison with the baseline.** The later behavioural comparison phase measures Planewright
   against the baseline's committed numbers. It never contacts the reference application without a
   new investigation issue.
+
+### Visual baselines
+
+Issue #83, slice S13 of the [v0.2
+plan](../editor-experience.md#s13-the-visual-regression-baselines), made the "Visual" level real, as
+[ADR 0012](../../adr/0012-v02-editor-chrome.md)'s decision 17 asks. What exists, how the images are
+made and updated, and the policy for thresholds and masks:
+
+- **What.** Thirty `toHaveScreenshot` baselines, V01 to V30, one per state of ADR 0012's
+  [visual-regression matrix](../../adr/0012-v02-editor-chrome.md#visual-regression-matrix), in
+  `apps/web/tests/e2e/visual-desktop.spec.ts` and `visual-touch.spec.ts`, their images beside them
+  in `*-snapshots/` as `<viewport>-<state>-chromium-linux.png`. Every state but the two empty ones
+  and start-up unavailable starts from the seeded scene of `scene-fixture.ts`, which
+  `fixture-page.ts` stores through IndexedDB. Before each capture `visual.ts` checks that every face
+  the shown text uses is loaded, the scene is drawn, no animation runs and no tooltip shows, with
+  the mouse parked where nothing covers the canvas, and fails naming what is wrong. Captures disable
+  animations, hide the caret and take the viewport at one image pixel per CSS pixel, but V30 at the
+  device's two. `scripts/tests/visual-baselines.test.ts` checks the set: exactly the 30 Linux
+  images, each used by one capture in the test of its V number, at its viewport's size and within
+  the file-size guardrail's 262,144 bytes.
+- **Where.** Linux only, with the Chromium of CI's end-to-end job, which compares all 30 on every
+  pull request and `main` push and writes none (`updateSnapshots: 'none'`). Off Linux the visual
+  assertions neither compare nor write (`ignoreSnapshots`). A developer machine on Linux compares
+  against the committed images and may rasterise differently; its failures are reported baseline by
+  baseline, and neither a threshold is loosened nor a baseline made there to make it pass.
+- **How they are made.** Only by CI: the CI workflow dispatched with its `visual-baselines` input on
+  a temporary candidate branch, `test/<issue>-visual-baseline-candidates`, that holds the change
+  without its images, builds the web app, runs only the visual specs with `--update-snapshots=all`
+  and no retry, and uploads an artifact of the images and a manifest that names the commit, the run
+  and attempt, the runner image, the processor, the Playwright and Chromium versions and each file's
+  SHA-256 and size. The commit that adds or changes a visual spec adds its images from that
+  artifact, after checking the manifest's commit, that its tree equals the candidate's but for the
+  images, and every hash, the count, the names and the sizes, and cites the run. The candidate
+  branch opens no pull request and is deleted after adoption.
+- **When they change.** An intended chrome change makes the affected baselines again through that
+  path in the pull request that makes it, and that pull request shows each changed image. A failing
+  comparison is never fixed by making the baseline again without explaining its diff. A Playwright
+  or Chromium upgrade makes them again in its own pull request, since the browser renders them.
+- **Thresholds.** Playwright's defaults: a per-pixel threshold of 0.2 and no differing pixel
+  allowed. A looser value is allowed only per assertion, never in the configuration, and only with
+  evidence: the failing CI run's id, its processor model, the diff image and its pixel count, from a
+  run whose tree had not changed. It is the smallest value that passes, it is listed in the pull
+  request and the v0.2 plan, and it never rises above 0.2. None exists.
+- **Masks.** None by default. A mask is allowed only for a region shown to differ between runs of an
+  unchanged tree, with that evidence, never over the canvas, an island, a surface or text, in a
+  fixed colour, and listed like a loosened threshold. None exists.
+- **Failures in CI.** A failed end-to-end job uploads `playwright-test-results` beside the HTML
+  report: each failing baseline's expected, actual and diff images, named by the baseline, since the
+  report keeps its attachments under content hashes. Every end-to-end run prints its runner image
+  and processor model.
+- **Blind spots.** A pixel passes when its colour differs from the baseline's by less than the
+  threshold in Playwright's YIQ measure, which weighs luminance most. A change of hue at nearly the
+  same luminance can therefore pass: in S13's sabotage the selection overlay drawn in P0's `#2a62d0`
+  instead of `#6547b4` and the failed save's chip in the warning tone instead of the error tone
+  passed every baseline, as would `#6547b4` to `#6547b5`. Exact colours stay the token, style-sheet
+  and renderer tests' to catch.
 
 ## Performance budgets
 
