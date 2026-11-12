@@ -185,6 +185,7 @@ test.describe('in a landscape window, 844 × 390', () => {
     await openPage(page);
     await draw(page, 1);
     await openElements(page);
+    await settled(page);
     expect((await page.locator('#element-list-drawer').boundingBox())?.width).toBe(280);
     expect(await page.evaluate<string[]>(INERT)).toEqual([]);
     await page.keyboard.press('Escape');
