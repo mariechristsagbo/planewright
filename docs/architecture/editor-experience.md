@@ -1271,9 +1271,11 @@ Issue #73 delivered slice S8. Each choice that the plan or the ADR did not make 
 - **Top and bottom.** The portrait top row is `'identity . top-right'` alone; Elements keeps its
   word at rest [Inferred], it fits at 360 px, and S7's rule hides it beside the chip; the
   identity-gap fallback was not needed. History and zoom sit 8 px above the dock, and the
-  bottom-right island is not shown in portrait [Inferred], Keyboard shortcuts staying in the menu;
-  in landscape that island keeps Keyboard shortcuts alone. The Elements and Details sheets now span
-  to the dock's row, over history, zoom and the dock, which stay inert as before.
+  bottom-right island is not shown in portrait [Inferred], Keyboard shortcuts staying in the menu,
+  so a window that turns to portrait gives that button's focus, or its dialog's on closing, to the
+  menu button, never to the body, whether the browser hides the button or tells the phone's query
+  first; in landscape that island keeps Keyboard shortcuts alone. The Elements and Details sheets
+  now span to the dock's row, over history, zoom and the dock, which stay inert as before.
 - **Landscape.** The whole palette, 44 px with its hairlines, is one row in the top row at
   844 × 390 at rest and under the failed chip, beside which Elements' word is visually hidden, its
   name kept [Inferred]. One choice the issue did not foresee: S2's and S7's layout tests at

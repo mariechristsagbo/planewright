@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import type { ReactNode, Ref } from 'react';
+import { useCallback, useRef } from 'react';
+import type { ReactNode, Ref, RefObject } from 'react';
 
 import { useSaveRecovery } from '../a11y/save-recovery.ts';
 import { CanvasHost } from '../editor/CanvasHost.tsx';
@@ -21,10 +21,10 @@ import { ShortcutsButton } from './ShortcutsButton.tsx';
 import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
 import { useDrawerFocus } from './drawer-focus.ts';
-import { useSheet } from './sheet.ts';
+import { matchesSheet, useSheet } from './sheet.ts';
 import { SelectionPanel } from './selection/SelectionPanel.tsx';
 import { useShellState } from './shell-state.ts';
-import type { Openers, ShellControls, ShellDialog } from './shell-state.ts';
+import type { DialogOpener, Openers, ShellControls, ShellDialog } from './shell-state.ts';
 import { Tooltip } from './tooltip/Tooltip.tsx';
 
 // The editor's shell (ADR 0012, decision 13): the canvas fills the window, and the controls float
@@ -36,9 +36,10 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // its keys and the list, then Undo, Redo, the zoom controls and Keyboard shortcuts. The drawer's opening and closing move the focus, to its list box and back to the
 // toggle. On a phone in portrait the tool bar is the dock at the window's bottom, its stop still
 // third, with More last, whose items join the order while it is open; the bottom-right island is
-// not shown; the open drawer is a sheet, the selection bar takes the panel's place with its Details
-// sheet right after it, one sheet is open at a time, and the dock and the bottom islands are inert
-// while either is.
+// not shown, so the menu button takes Keyboard shortcuts' focus when a window turns, and its
+// dialog's when that closes; the open drawer is a sheet, the selection bar takes the panel's place
+// with its Details sheet right after it, one sheet is open at a time, and the dock and the bottom
+// islands are inert while either is.
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -108,15 +109,20 @@ function ToolsIsland({
   );
 }
 
-/** History and zoom at the bottom left, and the view and Keyboard shortcuts at the bottom right. */
+/**
+ * History and zoom at the bottom left, and the view and Keyboard shortcuts at the bottom right,
+ * whose focus onKeysHidden takes when a window that turns to portrait hides it.
+ */
 function BottomIslands({
   covered,
   keys,
   onShortcuts,
+  onKeysHidden,
 }: {
   readonly covered: boolean;
-  readonly keys: Ref<HTMLButtonElement>;
+  readonly keys: RefObject<HTMLButtonElement | null>;
   readonly onShortcuts: () => void;
+  readonly onKeysHidden: () => void;
 }) {
   return (
     <div className="shell-bottom">
@@ -129,7 +135,7 @@ function BottomIslands({
       <div className="island bottom-right-island" data-island="bottom-right">
         <IslandControls covered={covered}>
           <ViewReadout />
-          <ShortcutsButton ref={keys} onOpen={onShortcuts} />
+          <ShortcutsButton ref={keys} onOpen={onShortcuts} onHidden={onKeysHidden} />
         </IslandControls>
       </div>
     </div>
@@ -157,6 +163,16 @@ function ShellRoot({
 }
 
 /**
+ * Gives the focus back to the control that opened the closed dialog, or, for Keyboard shortcuts
+ * while a phone in portrait does not show it, to the menu button, whose menu holds it too (the v0.2
+ * plan's S8), never to the body (REQ-Y02).
+ */
+function returnFocus(openers: Openers, opener: DialogOpener | null): void {
+  if (opener === null) return;
+  openers[opener === 'keys' && matchesSheet() ? 'menu' : opener].current?.focus();
+}
+
+/**
  * The shell: its root, the islands in their tab order, the open dialog, which gives the focus back
  * to the control that opened it, and the one tooltip, which follows the root's events. It says once
  * when a failed save succeeds again.
@@ -170,6 +186,9 @@ function Shell() {
   const keys = useRef<HTMLButtonElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const openers: Openers = { menu, tag, keys };
+  const toMenu = useCallback(() => {
+    menu.current?.focus();
+  }, []);
   const root = useRef<HTMLElement>(null);
   useDrawerFocus(drawer, toggle, details);
   useSaveRecovery();
@@ -203,12 +222,13 @@ function Shell() {
         onShortcuts={() => {
           openDialog('shortcuts', 'keys');
         }}
+        onKeysHidden={toMenu}
       />
       <OpenDialog
         dialog={dialog}
         onClose={() => {
           closeDialog();
-          if (opener !== null) openers[opener].current?.focus();
+          returnFocus(openers, opener);
         }}
       />
       <Tooltip root={root} />
