@@ -30,7 +30,11 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   it needs attention; while a text is edited, a chip under the text area names Esc and Ctrl+Enter,
   or Cmd+Enter on Apple platforms, as the ways to finish it, except on a phone in portrait, where a
   Done bar above the on-screen keyboard finishes it and the dock and history and zoom are hidden;
-  while something is selected, a selection panel near the upper left, or on
+  keyboard focus on the canvas shows a violet ring at the window's edge with a "Canvas focused"
+  chip, except on phones, where the ring shows alone; a line under the palette says what the active
+  tool does, except on phones and while a text is edited; pressed tools and selected rows take the
+  violet container, every focus ring is violet with a white halo and unavailable controls are grey
+  and dashed; while something is selected, a selection panel near the upper left, or on
   phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
   size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
   Pre-release tag opens About this build, a menu at the top left runs Select all and the zoom
@@ -82,7 +86,16 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   sits above the on-screen keyboard at its inset, which the visual viewport gives and the bar holds
   in `--kb`, and Done commits the text as Escape does, while the dock and history and zoom are
   hidden and an open Elements sheet closes; the caret is not kept above the keyboard and the camera
-  is not moved (D6). S10 to S13 are not implemented yet. Work on a slice follows both.
+  is not moved (D6). Slice S10 (issue #77) added the canvas's focus ring, drawn from CSS alone by an
+  element of its own after the canvas host while the host matches `:focus-visible`, 2 px of violet
+  at the window's edge inset by the safe areas over a 2 px white halo, with a "Canvas focused" chip
+  at the bottom centre, hidden from assistive technology and on phones, a press focusing the canvas
+  without them; the active tool's hint, one caption line from a constant per tool, centred 8 px
+  under the palette on desktops and in an 18 px row of its own from 600 to 1199 px wide and 500 px
+  high, which moves the panel, the notices and the drawer 26 px lower, hidden on phones and absent
+  while a text is edited; and the tokens' colours for the pressed, unavailable and focus-visible
+  rules, the selected row and the text area. S11 to S13 are not implemented yet. Work on a slice
+  follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -141,10 +154,11 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   toggle with its count and the drawer with its focus moves and the phone's sheet query, the
   empty-canvas note and the Keyboard shortcuts button, the phone's Done bar in `DoneBar.tsx` with
   the keyboard's inset in `keyboard-inset.ts` and the shell's part of a text session in
-  `text-session.ts`, the phone dock's More and its popover in
-  `MoreTools.tsx` with the dock's composition in `more-tools.ts`, the menu's button, the menu and
-  its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon` in
-  `shell/icons.tsx` and the kinds' glyphs in `shell/kind-glyphs.ts`, the selection panel, the
+  `text-session.ts`, the canvas's focus ring and chip in `CanvasFocusChip.tsx`, the active tool's
+  hint line in `ToolHint.tsx` with its words in `tool-hints.ts`, the phone dock's More and its
+  popover in `MoreTools.tsx` with the dock's composition in `more-tools.ts`, the menu's button, the
+  menu and its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon`
+  in `shell/icons.tsx` and the kinds' glyphs in `shell/kind-glyphs.ts`, the selection panel, the
   phone's selection bar and Details sheet, what they read of the view and the selection's pure
   geometry in `shell/selection/`, the tooltip and its delegated listeners in `shell/tooltip/`, and
   the modal dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host,
@@ -159,7 +173,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   style sheets in `styles/`: the design tokens, the fonts, the base, the controls', canvas's, list's
   and saving's rules, the shell's layout with the `--shell-safe-*` properties that read the
   safe-area insets, islands and dialogs, the glyph buttons', the phone dock's and More's
-  (`dock.css`), the hint chip's and the Done bar's (`text-session.css`), the Elements toggle's and
+  (`dock.css`), the hint chip's and the Done bar's (`text-session.css`), the canvas's ring's and
+  chip's and the tool hint's (`canvas-chrome.css`), the Elements toggle's and
   drawer's, the selection panel's, bar's and sheet's (`selection.css`), the menu's and the tooltip's
   rules, and `responsive.css`, the only one with
   media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never

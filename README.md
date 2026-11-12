@@ -17,11 +17,14 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > for Hand, Diamond and Tool lock, every target is at least 44 px on phones, and the controls keep
 > clear of the screen's safe areas. While a text is edited, a chip under it names the keys that
 > finish it, Esc and Ctrl+Enter (Cmd+Enter on Apple platforms), and on a phone in portrait a Done
-> button above the on-screen keyboard finishes it instead. A Pre-release tag opens About this
-> build, which says what the build contains and what it does not, and a menu at the top left and a
-> button at the bottom right open a list of every command's keyboard shortcuts. There is no text
-> formatting, no style control, no file opening, saving or exporting and no collaboration. This
-> repository currently contains the workspace structure, that editor surface, a
+> button above the on-screen keyboard finishes it instead. Keyboard focus on the canvas shows a
+> violet ring at the window's edge, with a "Canvas focused" chip outside phones, a line under the
+> tools says what the active tool does, and the active tool and focused controls are marked in
+> violet. A Pre-release tag opens About this build, which says what the build contains and what it
+> does not, and a menu at the top left and a button at the bottom right open a list of every
+> command's keyboard shortcuts. There is no text formatting, no style control, no file opening,
+> saving or exporting and no collaboration. This repository currently contains the workspace
+> structure, that editor surface, a
 > collaboration-service skeleton, the first layers of the engine package (math primitives, platform
 > ports, the document model with its codec, the scene store with its change sets and transactions,
 > the undo and redo history, the camera, the geometry, text layout and hit testing, the transforms,

@@ -62,7 +62,13 @@ which opens the figures in a sheet along the bottom, never together with the Ele
 slice S9, issue #75, while a text is edited a caption chip 8 px under the text area names the keys
 that finish it, Esc and Ctrl+Enter, or Cmd+Enter on Apple platforms, and describes the text area,
 except on a phone in portrait, where a Done bar above the on-screen keyboard finishes it as Escape
-does while the dock and history and zoom are hidden. Its IndexedDB record backend
+does while the dock and history and zoom are hidden. Since slice S10, issue #77, keyboard focus on
+the canvas shows a violet ring at the window's edge, inset by the safe areas, with a "Canvas
+focused" chip at the bottom centre outside phones, while a press focuses it without them; one
+caption line under the palette says what the active tool does, in a row of its own from 600 to
+1199 px wide, hidden on phones and while a text is edited; and pressed tools and selected rows take
+the violet container, every focus ring is violet with a white halo and unavailable controls are
+grey and dashed. Its IndexedDB record backend
 (database `planewright`) stores what the engine's autosave saves, so the drawing, its camera and its
 selection are kept in the browser, and at start-up the page opens the most recently updated document
 again; it also saves at once when the page is hidden or left, and reads its preferences entry from
@@ -173,7 +179,9 @@ bottom in portrait, the whole palette in the top row in landscape, the view read
 anchors clear of the safe areas and 44 px targets on phones and under a coarse pointer, and slice S9
 (issue #75) added the text-editing chrome, a chip under the text area that names the keys that
 finish a text and, on a phone in portrait, a Done bar above the on-screen keyboard, the dock and
-history hidden meanwhile; S10 to S13 are not implemented yet.
+history hidden meanwhile, and slice S10 (issue #77) added the canvas's focus ring and its "Canvas
+focused" chip, the active tool's hint line and the tokens' state colours; S11 to S13 are not
+implemented yet.
 
 Still open, each for its own issue and ADR:
 

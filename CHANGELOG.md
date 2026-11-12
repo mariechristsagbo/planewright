@@ -315,3 +315,17 @@ release has been published yet.
   Elements sheet closes. The caret is not kept above the keyboard and the camera is not moved (D6).
   Neither a camera step, a typed value nor a viewport event renders the shell. S10 to S13 are not
   implemented.
+- The v0.2 canvas focus ring, chip and tool hint (slice S10, issue #77, ADR 0012 decisions 1, 3,
+  13 and 14): keyboard focus on the canvas shows, from CSS alone, 2 px of violet at the window's
+  edge, inset by the safe areas, over a 2 px white halo, drawn by an element of its own after the
+  canvas host, whose opaque canvases covered its own outline, with a "Canvas focused" chip at the
+  bottom centre, level with the bottom islands, hidden from assistive technology and on phones; a
+  press focuses the canvas without them. One caption line under the palette says what the active
+  tool does, in Planewright's own words, centred 8 px under the palette on desktops and in an 18 px
+  row of its own from 600 to 1199 px wide, which moves the selection panel, the notices and the
+  drawer 26 px lower; it is plain text that presses pass through, hidden on phones and absent while
+  a text is edited, and neither a camera step nor a typed value renders it. The pressed, unavailable
+  and focus-visible rules, the selected row and the text area take the tokens' colours: the violet
+  container with a violet edge for pressed controls, the unavailable content colour with a dashed
+  border, and a 2 px violet ring with a white halo on every focusable element. S11 to S13 are not
+  implemented.

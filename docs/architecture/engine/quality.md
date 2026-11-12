@@ -114,9 +114,18 @@ the engine, and the element list, the live region, the zoom controls and focus m
 - **Focus.** The tab stops were the tool bar's one stop, the canvas, the element list, Undo, Redo,
   Zoom out, Reset zoom, Zoom in and Zoom to fit; since slice S2 they are those of the order above.
   The zoom controls read the command registry and show each command's first shortcut, and since S2
-  Reset zoom shows the zoom and is named by it, "Reset zoom, 100%". Every focusable element shows a
-  3 px outline in `#2a62d0`, 5.3:1 against the page, and the text area a 2 px one; since S2 the
-  canvas host, as large as the window, draws its outline 3 px inside its edge. Undo and Redo are
+  Reset zoom shows the zoom and is named by it, "Reset zoom, 100%". Every focusable element showed a
+  3 px outline in `#2a62d0`, 5.3:1 against the page, and the text area a 2 px one; since slice S10
+  every focusable element shows a 2 px ring of the focus ring's violet, `#6547b4`, 6.74:1 on the
+  surface, outside a 2 px white halo that fills its 2 px offset, and the text area a 2 px violet
+  outline. Since S2 the canvas host, as large as the window, drew its outline 3 px inside its edge,
+  where its opaque canvases covered all but the outer pixel; since S10 it draws none, and while it
+  matches `:focus-visible` an element of its own after it shows, from CSS alone, 2 px of violet at
+  the window's edge, inset by the safe areas, over a 2 px white halo, 6.74:1 on the canvas, with a
+  "Canvas focused" chip at the bottom centre, hidden from assistive technology and on phones, where
+  the ring shows alone. A press focuses the canvas with `focusVisible: false`, so that Tab,
+  Shift+Tab and the focus that Escape returns from the text area show them and a press does not;
+  neither takes the focus or a press. Undo and Redo are
   unavailable through `aria-disabled`, not `disabled`, because Chromium moves the focus of a button
   that becomes disabled to the page's body. Escape or Mod+Enter in the text area returns the focus
   to the canvas, which opened it; moving the focus to another control ends the session, while a page
@@ -184,11 +193,13 @@ the engine, and the element list, the live region, the zoom controls and focus m
   36 px and compact layouts 32 px with a fine pointer, and touch handle hit squares stay 24 px.
   Since S9 the phone's Done is at least 44 by 44 px, and the hint chip, which takes no press, is no
   target.
-  Measured in Chromium, the shortcut hint in a pressed tool button was 4.19:1 and is now opaque,
-  5.59:1, and an unavailable control is dark grey with a dashed border, 7.2:1, instead of half
-  transparent, 3.36:1. Each camera command and wheel event sets the camera once, drawn whole in the
-  next frame with no frame after it, and nothing in the page animates, with or without reduced
-  motion.
+  Measured in Chromium, the shortcut hint in a pressed tool button was 4.19:1 and P0 made it opaque,
+  5.59:1, and an unavailable control dark grey with a dashed border, 7.2:1, instead of half
+  transparent, 3.36:1. Since S10 a pressed control takes the violet container, its glyph and corner
+  key 7.61:1 on it and its edge 5.73:1 on it and 6.74:1 on the surface, and an unavailable control
+  the unavailable content colour, 5.50:1, with P0's dashed border. Each camera command and wheel
+  event sets the camera once, drawn whole in the next frame with no frame after it, and nothing in
+  the page animates, with or without reduced motion.
 - **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
   dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
   colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader
