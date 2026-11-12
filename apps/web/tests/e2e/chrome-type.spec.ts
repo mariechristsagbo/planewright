@@ -8,8 +8,9 @@ import { textArea } from './text.ts';
 // The chrome's type (ADR 0012, decision 8, and the v0.2 plan's S1): the chrome is set in Planewright
 // UI, Inter at 400 and 500, whose 400 face shares the canvas's file, so that file is downloaded
 // once; 500 is the only emphasis weight, so that no browser synthesises a bold; and the text area
-// keeps the canvas's Planewright Sans at 400. Page code is written as strings, since these files
-// compile without the DOM library.
+// keeps the canvas's Planewright Sans at 400, its hint chip's words in Planewright UI and its keys in
+// Planewright Mono, both at 400 (the v0.2 plan's S9). Page code is written as strings, since these
+// files compile without the DOM library.
 
 /** Each element of the page by its tag and class, with its computed weight and family. */
 const FONTS = `[...document.querySelectorAll('body, body *')].map((element) => {
@@ -19,13 +20,18 @@ const FONTS = `[...document.querySelectorAll('body, body *')].map((element) => {
   return { name, weight: fontWeight, family: fontFamily };
 })`;
 
+/** The hint chip's and its keys' computed weight and family, in that order (S9). */
+const HINT = `[document.getElementById('text-editor-hint'), ...document.querySelectorAll('#text-editor-hint kbd')].map(
+  (element) => getComputedStyle(element).fontWeight + ' ' + getComputedStyle(element).fontFamily,
+)`;
+
 interface Font {
   readonly name: string;
   readonly weight: string;
   readonly family: string;
 }
 
-test('D3 every element computes 400 or 500, and the text area keeps Planewright Sans at 400', async ({
+test('D3 every element computes 400 or 500, the text area keeps Planewright Sans at 400, and its hint chip is in Planewright UI with its keys in Planewright Mono, at 400', async ({
   page,
 }) => {
   await openPage(page);
@@ -40,6 +46,11 @@ test('D3 every element computes 400 or 500, and the text area keeps Planewright 
     weight: '400',
     family: '"Planewright Sans", sans-serif',
   });
+  expect(await page.evaluate<string[]>(HINT)).toEqual([
+    '400 "Planewright UI", "Planewright UI Fallback", sans-serif',
+    '400 "Planewright Mono", monospace',
+    '400 "Planewright Mono", monospace',
+  ]);
   // The headings and terms that P0's page showed are in About this build now (ADR 0012, D5).
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Pre-release' }).click();
