@@ -154,18 +154,21 @@ processor and so gates none yet; the rest is not implemented yet:
 - file formats and the clipboard: Planewright's own document format (P2) and clipboard format (P1)
   ([ADR 0009](../adr/0009-persistence-and-interchange.md)); no other application's format.
 
-The editor chrome of milestone v0.2.0 (Editor Experience) is decided in
-[ADR 0012](../adr/0012-v02-editor-chrome.md) and split into slices S1 to S13 by the
-[v0.2 plan](editor-experience.md). Issue #50 (slice S0) recorded both, issue #53 (slice S1) added
-the chrome's design tokens, base styles and typeface, with no layout rule change, though P0's text
+The editor chrome of milestone v0.2.0 (Editor Experience) is decided in [ADR
+0012](../adr/0012-v02-editor-chrome.md) and split into slices S1 to S13 by the [v0.2
+plan](editor-experience.md). Issue #50 (slice S0) recorded both, issue #53 (slice S1) added the
+chrome's design tokens, base styles and typeface, with no layout rule change, though P0's text
 rewrapped in the new face, issue #55 (slice S2) replaced P0's page with the full-bleed shell
 described above, and issue #62 (slice S3) drew the chrome's 35 original glyphs, turned the tool bar
-into the palette and added tooltips, issue #64 (slice S4) added the menu and the Keyboard
-shortcuts dialog, issue #66 (slice S5) gave the Elements drawer its count, its rows and its phone
-sheet, issue #69 (slice S6) added the selection panel, the phone's selection bar and the Details
-sheet, and issue #71 (slice S7) made saving show only when it needs attention, with the "Not saved"
-chip in the top-right island, notices that Hide folds into it and one polite sentence when a
-failed save succeeds again; S8 to S13 are not implemented yet.
+into the palette and added tooltips, issue #64 (slice S4) added the menu and the Keyboard shortcuts
+dialog, issue #66 (slice S5) gave the Elements drawer its count, its rows and its phone sheet, issue
+#69 (slice S6) added the selection panel, the phone's selection bar and the Details sheet, and issue
+#71 (slice S7) made saving show only when it needs attention, with the "Not saved" chip in the
+top-right island, notices that Hide folds into it and one polite sentence when a failed save
+succeeds again, and issue #73 (slice S8) composed phones, with the tool bar as a dock and More at
+the bottom in portrait, the whole palette in the top row in landscape, the view readout hidden, the
+anchors clear of the safe areas and 44 px targets on phones and under a coarse pointer; S9 to S13
+are not implemented yet.
 
 Still open, each for its own issue and ADR:
 
