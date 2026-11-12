@@ -52,6 +52,34 @@ describe("the canvas's chrome's style sheet", () => {
     expect(used.filter((name) => !tokens.has(name) && !OUTSIDE_TOKENS.test(name))).toEqual([]);
   });
 
+  it('D1 D3 A14 draws the ring through .canvas-host:focus-visible ~ alone, the host drawing no outline of its own', () => {
+    const rules = rulesOf(SHEET);
+    const rule = (selector: string) =>
+      declarationsOf(rules.find((each) => each.selector === selector)?.body ?? '');
+    expect(rule('.canvas-host:focus-visible')).toEqual([
+      { property: 'outline', value: 'none' },
+      { property: 'box-shadow', value: 'none' },
+    ]);
+    expect(
+      rules.filter(({ body }) => body.includes('display: block')).map(({ selector }) => selector),
+    ).toEqual(['.canvas-host:focus-visible ~ .canvas-focus-ring']);
+    expect(rule('.canvas-focus-ring')).toEqual(
+      expect.arrayContaining([
+        {
+          property: 'inset',
+          value:
+            'var(--shell-safe-top) var(--shell-safe-right) var(--shell-safe-bottom) var(--shell-safe-left)',
+        },
+        { property: 'z-index', value: 'var(--pw-layer-hint)' },
+        { property: 'display', value: 'none' },
+        { property: 'outline', value: '2px solid var(--pw-color-focus-ring)' },
+        { property: 'outline-offset', value: '-2px' },
+        { property: 'box-shadow', value: 'inset 0 0 0 4px var(--pw-color-focus-halo)' },
+        { property: 'pointer-events', value: 'none' },
+      ]),
+    );
+  });
+
   it('D6 lays the hint out of the flow, in the tools area, on the hint layer, letting presses through', () => {
     const hint = Object.fromEntries(
       declarations()

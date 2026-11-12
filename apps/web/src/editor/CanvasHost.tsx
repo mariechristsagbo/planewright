@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 
 import { CANVAS_ID } from '../a11y/focus.ts';
 import { attachInput, observeSize } from './attach-input.ts';
@@ -9,9 +10,11 @@ import { TextEditor } from './text/TextEditor.tsx';
  * The canvas host: a scene canvas and an overlay canvas stacked in one focusable region, sized
  * from the page, whose input goes to the editor and which draws every frame the editor builds. The
  * text area of a text being edited, with its hint chip, lies over it, outside the region, so its
- * input stays its own.
+ * input stays its own. The shell's chrome over the canvas, its focus ring and chip (the v0.2 plan's
+ * S10), comes as children after the text layer, inside the stage and outside the region, so that
+ * this module imports no shell component and a view that renders the host builds them not again.
  */
-export function CanvasHost() {
+export function CanvasHost({ children }: { readonly children?: ReactNode }) {
   const { editor, platform, createRenderer } = useSurface();
   const { cursor } = useEditorView();
   const host = useRef<HTMLDivElement>(null);
@@ -54,6 +57,7 @@ export function CanvasHost() {
         <div className="text-layer">
           <TextEditor host={host} />
         </div>
+        {children}
       </div>
       {/* The canvas's description, said with its name; the full-bleed canvas shows no paragraph. */}
       <p id="canvas-instructions" className="visually-hidden">

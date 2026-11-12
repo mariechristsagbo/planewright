@@ -102,8 +102,10 @@ describe("the web app's media queries", () => {
     expect(rows[0]?.[0]).toBe('identity . top-right');
   });
 
-  it('hide the tool hint on phones, in portrait and in landscape, under the view readout’s query (issue #77’s D8)', () => {
-    expect(hiddenUnder(PHONES)).toEqual(expect.arrayContaining(['.view-readout', '.tool-hint']));
+  it('hide the tool hint and the canvas’s chip on phones, in portrait and in landscape, under the view readout’s query (issue #77’s D2 and D8)', () => {
+    expect(hiddenUnder(PHONES)).toEqual(
+      expect.arrayContaining(['.view-readout', '.tool-hint', '.canvas-focus-chip']),
+    );
   });
 
   it('give the tool hint a fixed 18 px row under the top row, compact and at least 500 px high alone (issue #77’s D7)', () => {

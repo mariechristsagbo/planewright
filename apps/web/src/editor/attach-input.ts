@@ -28,7 +28,9 @@ export function sendKeyDown(
 
 function onPointer(host: HTMLElement, type: PointerInput['type'], event: PointerEvent): void {
   if (type === 'pointer-down') {
-    host.focus({ preventScroll: true });
+    // A press focuses the canvas without its focus ring, which keyboard focus alone shows (the
+    // v0.2 plan's S10): Chromium would match :focus-visible for a focus by script.
+    host.focus({ preventScroll: true, focusVisible: false });
     host.setPointerCapture(event.pointerId);
     // A middle press would start the browser's autoscroll.
     if (event.button === 1) event.preventDefault();
