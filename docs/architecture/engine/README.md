@@ -29,7 +29,8 @@ areas, and, since slice S9 (issue #75), a chip under the text area that names th
 text, or on a phone in portrait a Done bar above the on-screen keyboard, and, since slice S10
 (issue #77), a violet ring at the window's edge with a "Canvas focused" chip while the canvas has
 keyboard focus, a line under the palette saying what the active tool does, and the tokens' colours
-for pressed, unavailable and focused controls. ENG-15 (issue
+for pressed, unavailable and focused controls, and, since slice S11 (issue #79), the renderer's
+selection outline, handle borders and marquee in the same violet. ENG-15 (issue
 #33) measures every performance budget, in CI with its benchmarks, browser measurements and
 bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets in CI and B2 on a
 slower machine, and they went to issues #34 to #36

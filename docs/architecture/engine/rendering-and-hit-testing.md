@@ -303,8 +303,11 @@ the canvas renderer in `@planewright/render-canvas`. It decided what the rules a
 - **The overlay's pixels.** The overlay is drawn in device pixels with lines the pixel ratio
   rounded, at least 1, device pixels wide, on the device grid: an odd width on pixel centres, an
   even one on pixel edges. Handles are white squares and the rotation handle a white circle, with
-  borders, outlines and the marquee's edge in Planewright's selection colour `#2a62d0` and the
-  marquee filled with `#2a62d01a`.
+  borders, outlines and the marquee's edge in Planewright's selection colour, Construction Violet
+  `#6547b4`, 6.74:1 on the white canvas, and the marquee filled with the same violet at about a
+  tenth of its opacity, `#6547b41a`. P0 drew them in `#2a62d0` and `#2a62d01a`, until v0.2's slice
+  S11 (issue #79) applied [ADR 0012](../../adr/0012-v02-editor-chrome.md)'s decision D1 and changed
+  only those two values.
 - **Backing stores.** The renderer sizes a layer's backing store to the CSS size times the pixel
   ratio, rounded, before it draws that layer, and assigns a size only when it changed, since
   assigning one clears the canvas. A canvas without a 2D context is refused.
