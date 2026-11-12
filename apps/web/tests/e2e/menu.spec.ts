@@ -269,6 +269,7 @@ test.describe('at 390 × 844, a phone in portrait', () => {
     await openPage(page);
     await menuButton(page).click();
     await expect(menuOf(page)).toBeVisible();
+    await settled(page);
     // Each item's centre, and whether the element there is that item or inside it.
     const hits = await page.evaluate<boolean[]>(`[...document.querySelectorAll('[role^=menuitem]')]
       .map((item) => { const box = item.getBoundingClientRect(); return item.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)); })`);
@@ -279,7 +280,6 @@ test.describe('at 390 × 844, a phone in portrait', () => {
     );
     expect(heights.filter((height) => height < 44)).toEqual([]);
     // The tool bar is the dock at the window's bottom, below the menu (S8).
-    await settled(page);
     const tools = await page.getByRole('toolbar', { name: 'Tools' }).boundingBox();
     const menu = await menuOf(page).boundingBox();
     expect(tools !== null && menu !== null && menu.y + menu.height < tools.y).toBe(true);

@@ -11,6 +11,7 @@ import {
   openPage,
   polite,
 } from './a11y.ts';
+import { settled } from './motion.ts';
 import { canvas } from './support.ts';
 
 // The Elements drawer (ADR 0012, D4 and decisions 13 and 14, issues #55 and #66): the Elements
@@ -81,6 +82,7 @@ for (const [width, height, drawerWidth] of [
       await toggle.focus();
       await page.keyboard.press('Enter');
       await expect(elementList(page)).toBeFocused();
+      await settled(page);
       await expectIndicator(page);
       expect((await drawer(page).boundingBox())?.width).toBe(drawerWidth);
       await button(page, 'Close Elements').click();
