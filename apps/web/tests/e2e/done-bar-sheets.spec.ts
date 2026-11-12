@@ -9,7 +9,8 @@ import { textArea } from './text.ts';
 
 // The Done bar with the phone's other surfaces (the v0.2 plan's S9, issue #75's D1, D8 to D10): Edit
 // text on the selection bar opens a session without the bar and its Details sheet, which Done brings
-// back; a session closes the Elements sheet and keeps the text area's focus, Done on top; a window
+// back; a session closes the Elements sheet, even one opened during it by a press that moves no
+// focus, and keeps the text area's focus, Done on top; a window
 // that turns with Done focused gives the text area the focus and shows the chip in landscape, and a
 // turn back shows Done again; and a phone in landscape shows the chip and no bar. Page code is
 // written as strings, since these files compile without the DOM library.
@@ -19,6 +20,24 @@ const TOPMOST = (selector: string) => `(() => {
   const { x, y, width, height } = document.querySelector('${selector}').getBoundingClientRect();
   const top = document.elementFromPoint(x + width / 2, y + height / 2);
   return top.id || top.tagName;
+})()`;
+
+/**
+ * Clicks the Elements toggle from the page, which moves no focus, and gives how many times its
+ * `aria-expanded` turned from false to true meanwhile, read from the mutation records.
+ */
+const OPEN_ELEMENTS_WITHOUT_FOCUS = `(async () => {
+  const toggle = document.querySelector('[aria-controls="element-list-drawer"]');
+  let opened = 0;
+  const observer = new MutationObserver((records) => {
+    opened += records.filter((record) => record.oldValue === 'false').length;
+  });
+  observer.observe(toggle, { attributes: true, attributeFilter: ['aria-expanded'], attributeOldValue: true });
+  toggle.click();
+  await new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
+  opened += observer.takeRecords().filter((record) => record.oldValue === 'false').length;
+  observer.disconnect();
+  return opened;
 })()`;
 
 for (const viewport of [
@@ -61,6 +80,24 @@ for (const viewport of [
         'text-editor-done',
       );
       await expectPlaced(page, viewport, 3);
+    });
+
+    test('D10 A11 Elements opened during a session by a press that moves no focus closes at once, the text area keeping the focus and the session open', async ({
+      page,
+    }) => {
+      await openPage(page);
+      await startSession(page);
+      await page.keyboard.type('Plan');
+      // The toggle's own click moves no focus, as a tap on iOS does not; the observer counts the
+      // drawer's openings, so that the test sees the press open it before the session closes it.
+      expect(await page.evaluate<number>(OPEN_ELEMENTS_WITHOUT_FOCUS)).toBe(1);
+      await expect(elementsToggle(page)).toHaveAttribute('aria-expanded', 'false');
+      await expect(elementList(page)).toHaveCount(0);
+      await expect(textArea(page)).toBeFocused();
+      await expect(textArea(page)).toHaveValue('Plan');
+      expect(await page.evaluate<string>(TOPMOST('[data-island="done"] button'))).toBe(
+        'text-editor-done',
+      );
     });
 
     test('D8 A12 a turn with Done focused gives the text area the focus and shows the chip, and a turn back shows Done and hides the dock', async ({
