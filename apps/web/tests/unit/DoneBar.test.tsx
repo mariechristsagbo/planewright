@@ -135,6 +135,9 @@ describe('the Done bar', () => {
       });
       expect([editor.view.text?.element.content.text, bar() === null]).toEqual(['か', false]);
       expect(area()).toHaveFocus();
+      // Done stays available while the input method composes, since it is no key of the method's.
+      expect(done()).toBeEnabled();
+      expect(done()).not.toHaveAttribute('aria-disabled');
       act(() => {
         fireEvent.click(done());
       });
