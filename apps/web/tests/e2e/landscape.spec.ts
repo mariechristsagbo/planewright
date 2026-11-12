@@ -113,9 +113,10 @@ test.describe('at 568 × 320 with touch', () => {
     await expectOneRow(page);
     const [identity, tools, topRight] = await boxesOf(page, 'identity', 'tools', 'top-right');
     if (identity === undefined || tools === undefined || topRight === undefined) return;
-    expect(tools.y).toBeGreaterThanOrEqual(
-      Math.max(identity.y + identity.height, topRight.y + topRight.height),
-    );
+    // The palette's row comes right after the top row, one gap under it, not at the bottom.
+    const top = Math.max(identity.y + identity.height, topRight.y + topRight.height);
+    expect(tools.y).toBeGreaterThanOrEqual(top);
+    expect(tools.y - top).toBeLessThanOrEqual(8);
     await expect(readout(page)).toBeHidden();
   });
 });
