@@ -54,25 +54,28 @@ for (const viewport of [
       page,
     }) => {
       await openPage(page);
+      // On a phone in portrait the bottom-right island is not shown (S8).
+      const phone = viewport.width < 600;
       expect((await islands(page)).map(({ name }) => name)).toEqual([
         'identity',
         'tools',
         'top-right',
         'bottom-left',
-        'bottom-right',
+        ...(phone ? [] : ['bottom-right']),
       ]);
-      await expectPlaced(page, viewport, 5);
+      await expectPlaced(page, viewport, phone ? 4 : 5);
       await refuseStorage(page);
       await openPage(page);
       await expect(storageNotices(page)).toBeVisible();
       await openElements(page);
-      await expectPlaced(page, viewport, 7);
-      // The phone's sheet covers the bottom islands, whose controls it makes inert (S5).
+      await expectPlaced(page, viewport, phone ? 6 : 7);
+      // The phone's sheet covers the dock, which comes before it in the document, and the bottom
+      // islands, whose controls it makes inert (S5, S8).
       const met = intersecting(await islands(page));
       expect([met, await page.evaluate<string[]>(INERT)]).toEqual(
-        viewport.width < 600
+        phone
           ? [
-              ['element-list-drawer × bottom-left', 'element-list-drawer × bottom-right'],
+              ['tools × element-list-drawer', 'element-list-drawer × bottom-left'],
               ['tools', 'bottom-left', 'bottom-right'],
             ]
           : [[], []],
@@ -165,10 +168,11 @@ test.describe('at 390 × 844 with the Details sheet', () => {
     await showStaleNotice(page);
     await page.locator('[data-island="selection"]').getByRole('button', { name: 'Details' }).tap();
     await expect(page.getByRole('region', { name: 'Details' })).toBeVisible();
-    await expectPlaced(page, viewport, 8);
+    // The bottom-right island is not shown in portrait, and the sheet lies over the dock (S8).
+    await expectPlaced(page, viewport, 7);
     expect(intersecting(await islands(page))).toEqual([
+      'tools × details-sheet',
       'details-sheet × bottom-left',
-      'details-sheet × bottom-right',
     ]);
   });
 });

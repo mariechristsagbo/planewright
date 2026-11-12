@@ -261,7 +261,7 @@ test('D3 D4 A6 A7 Keyboard shortcuts and About this build open from the menu; ea
 test.describe('at 390 × 844, a phone in portrait', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test('A2 the open menu lies over the tool bar under it, so a press on any item reaches the item', async ({
+  test('A2 the open menu lies apart from the dock, and a press on any item reaches the item', async ({
     page,
   }) => {
     await openPage(page);
@@ -271,9 +271,10 @@ test.describe('at 390 × 844, a phone in portrait', () => {
     const hits = await page.evaluate<boolean[]>(`[...document.querySelectorAll('[role^=menuitem]')]
       .map((item) => { const box = item.getBoundingClientRect(); return item.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height / 2)); })`);
     expect(hits).toEqual(Array.from({ length: 7 }, () => true));
+    // The tool bar is the dock at the window's bottom, below the menu (S8).
     const tools = await page.getByRole('toolbar', { name: 'Tools' }).boundingBox();
     const menu = await menuOf(page).boundingBox();
-    expect(tools !== null && menu !== null && tools.y < menu.y + menu.height).toBe(true);
+    expect(tools !== null && menu !== null && menu.y + menu.height < tools.y).toBe(true);
   });
 });
 

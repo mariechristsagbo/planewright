@@ -22,9 +22,11 @@ export interface Box {
 /**
  * Each island's box, the selection panel's or bar's among them, and the notices', the open
  * drawer's and the open Details sheet's while they show; hidden notices are left out, as the
- * closed drawer is (the v0.2 plan's S7).
+ * closed drawer is (the v0.2 plan's S7), and so is an island with no area, as the bottom-right
+ * island is on a phone in portrait (S8).
  */
 const ISLANDS = `[...document.querySelectorAll('[data-island], [aria-label="Storage notices"]:not([hidden]), #element-list-drawer:not([hidden]), #details-sheet:not([hidden])')]
+  .filter((element) => { const { width, height } = element.getBoundingClientRect(); return width > 0 && height > 0; })
   .map((element) => {
     const { x, y, width, height } = element.getBoundingClientRect();
     return { name: element.dataset.island ?? (element.id || element.getAttribute('aria-label')), x, y, width, height };
@@ -59,23 +61,31 @@ export const outside = (boxes: readonly Box[], { width, height }: Viewport): str
 /** The islands whose controls are inert, which the phone's sheet covers (the v0.2 plan's S5). */
 export const INERT = `[...document.querySelectorAll('[inert]')].map((element) => element.closest('[data-island]').dataset.island)`;
 
+/** Whether the phone's dock shows: a phone in portrait, SHEET_QUERY in shell/sheet.ts (S8). */
+const DOCK_SHOWS = `matchMedia('(max-width: 599px) and (min-height: 500px)').matches`;
+
 /**
  * Every island, and the notices and the drawer while they show, inside the viewport and apart, with
- * history and zoom at the window's bottom, no more than the largest anchor, 16 px, above its edge.
- * On a phone in portrait the open drawer, and the Details sheet, are sheets over the bottom islands,
- * which may meet them only while their controls are inert (S5, S6).
+ * history and zoom no more than the largest anchor, 16 px, above the dock's top while the phone's
+ * dock shows, and above the window's bottom otherwise. On a phone in portrait the open drawer, and
+ * the Details sheet, are sheets over the dock and the bottom islands, which may meet them, in
+ * either order, only while their controls are inert (S5, S6, S8).
  */
 export async function expectPlaced(page: Page, viewport: Viewport, count: number): Promise<void> {
   const boxes = await islands(page);
   expect(boxes).toHaveLength(count);
   const inert = await page.evaluate<string[]>(INERT);
-  const covered = (pair: string): boolean =>
-    /^(element-list-drawer|details-sheet) × /u.test(pair) &&
-    inert.includes(pair.split(' × ')[1] ?? '');
+  const sheets = new Set(['element-list-drawer', 'details-sheet']);
+  const covered = (pair: string): boolean => {
+    const [a = '', b = ''] = pair.split(' × ');
+    return (sheets.has(a) && inert.includes(b)) || (sheets.has(b) && inert.includes(a));
+  };
   expect({
     outside: outside(boxes, viewport),
     intersecting: intersecting(boxes).filter((pair) => !covered(pair)),
   }).toEqual({ outside: [], intersecting: [] });
   const history = boxes.find(({ name }) => name === 'bottom-left');
-  expect(viewport.height - (history?.y ?? 0) - (history?.height ?? 0)).toBeLessThanOrEqual(16);
+  const dock = boxes.find(({ name }) => name === 'tools');
+  const floor = (await page.evaluate<boolean>(DOCK_SHOWS)) ? (dock?.y ?? 0) : viewport.height;
+  expect(floor - (history?.y ?? 0) - (history?.height ?? 0)).toBeLessThanOrEqual(16);
 }

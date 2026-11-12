@@ -1,0 +1,35 @@
+/*
+ * The phone's dock and More (ADR 0012, decisions 2 and 13; the v0.2 plan's S8). responsive.css lays
+ * the tool bar out as the dock at the window's bottom on a phone in portrait; these rules, which
+ * hold no media query, place More's popover above the dock, right-aligned with More, inside the
+ * window less its anchors, at the third elevation on the menus' layer, which the tools island takes
+ * while it is open through a class that the island sets, so that no style sheet needs :has(). Its
+ * items are the palette's buttons in one row. No rule here sets a control's pressed, disabled or
+ * focus styles, which stay the base's.
+ */
+.more-slot {
+  display: contents;
+}
+
+.tools-island.more-tools-open {
+  z-index: var(--pw-layer-popover);
+}
+
+.more-tools {
+  position: absolute;
+  right: var(--pw-spacing-island-padding);
+  bottom: calc(100% + 1px + var(--pw-spacing-xs));
+  display: flex;
+  gap: var(--pw-spacing-xs);
+  box-sizing: border-box;
+  max-width: calc(100vw - 2 * var(--pw-spacing-sm));
+  padding: var(--pw-spacing-island-padding);
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-md);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e3);
+}
+
+.more-tools[hidden] {
+  display: none;
+}

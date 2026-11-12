@@ -187,11 +187,15 @@ test.describe('on a phone, 390 × 844, at a device pixel ratio of 2', () => {
       expect.arrayContaining(['Rectangle', 'Angle', 'Style controls are not in this build.']),
     );
     expect(contrasts.filter(({ ratio }) => ratio < 4.5)).toEqual([]);
-    // The bar's and the sheet's glyphs: the bottom islands' lie under the sheet, inert.
+    // The bar's and the sheet's glyphs: the bottom islands' and the dock's lie under the sheet,
+    // inert, the dock's Rectangle among them (S8), so the kind's glyph shows twice, in the bar and in
+    // the sheet's heading.
     const shown = ['rectangle', 'duplicate', 'delete', 'details', 'close'];
-    const glyphs = (await glyphContrasts(page)).filter(({ glyph }) => shown.includes(glyph));
+    const glyphs = (await glyphContrasts(page)).filter(
+      ({ glyph, control }) => shown.includes(glyph) && control !== 'Rectangle',
+    );
     expect(glyphs.map(({ glyph }) => glyph).sort()).toEqual(
-      ['close', 'delete', 'details', 'duplicate', 'rectangle', 'rectangle', 'rectangle'].sort(),
+      ['close', 'delete', 'details', 'duplicate', 'rectangle', 'rectangle'].sort(),
     );
     expect(glyphs.find(({ glyph }) => glyph === 'delete')?.computed).toBe(6.52);
     expect(

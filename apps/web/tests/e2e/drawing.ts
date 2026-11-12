@@ -124,3 +124,9 @@ export async function touch(page: Page, from: Point, to: Point = from, shift = f
 /** The tool bar button of a tool or of tool lock, found by its exact name. */
 export const toolButton = (page: Page, name: string) =>
   page.getByRole('toolbar', { name: 'Tools' }).getByRole('button', { name, exact: true });
+
+/**
+ * The phone dock's More, whose popover holds Hand, Diamond and Tool lock (the v0.2 plan's S8);
+ * toolButton finds those three inside the tool bar while it is open.
+ */
+export const moreButton = (page: Page) => toolButton(page, 'More');

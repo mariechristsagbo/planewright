@@ -21,6 +21,38 @@ const MAIN = readFileSync(join(SOURCES, 'main.tsx'), 'utf8');
 
 const plain = (css: string): string => css.replaceAll(/\/\*[\s\S]*?\*\//gu, '');
 
+/** The phone sheet's query, as shell/sheet.ts exports it. */
+const sheetQuery = (): string | undefined =>
+  /^export const SHEET_QUERY = '(?<query>[^']+)';$/mu.exec(
+    readFileSync(join(SOURCES, 'shell', 'sheet.ts'), 'utf8'),
+  )?.groups?.['query'];
+
+/** The rows of each grid-template-areas in a block, each row's area names as written. */
+const areaRows = (body: string): string[][] =>
+  [...body.matchAll(/grid-template-areas:([^;]+);/gu)].map((match) =>
+    [...(match[1] ?? '').matchAll(/'([^']+)'/gu)].map((row) => row[1] ?? ''),
+  );
+
+/** A style sheet's @media blocks, each query with the rules inside it. */
+function mediaBlocks(css: string): { query: string; body: string }[] {
+  const text = plain(css);
+  const blocks: { query: string; body: string }[] = [];
+  for (let at = text.indexOf('@media '); at >= 0; at = text.indexOf('@media ', at + 1)) {
+    const open = text.indexOf('{', at);
+    let depth = 1;
+    let end = open + 1;
+    for (; depth > 0 && end < text.length; end += 1) {
+      if (text[end] === '{') depth += 1;
+      if (text[end] === '}') depth -= 1;
+    }
+    blocks.push({
+      query: text.slice(at + '@media '.length, open).trim(),
+      body: text.slice(open, end),
+    });
+  }
+  return blocks;
+}
+
 describe("the web app's media queries", () => {
   it('are all in responsive.css, which declares no font, among every style sheet under apps/web/src', () => {
     expect(SHEETS).toContain('styles/fonts.css');
@@ -40,12 +72,19 @@ describe("the web app's media queries", () => {
   });
 
   it('hold the phone sheet’s query that shell/sheet.ts follows, so that the sheet and its inert islands agree', () => {
-    const source = readFileSync(join(SOURCES, 'shell', 'sheet.ts'), 'utf8');
-    const query = /^export const SHEET_QUERY = '(?<query>[^']+)';$/mu.exec(source)?.groups?.[
-      'query'
-    ];
+    const query = sheetQuery();
     expect(query).toBe('(max-width: 599px) and (min-height: 500px)');
     const media = [...plain(styleSheet('responsive.css')).matchAll(/@media ([^{]+?) \{/gu)];
     expect(media.map((match) => match[1])).toContain(query);
+  });
+
+  it('hold the dock’s rules under that same query alone, where the dock puts the tool bar in the last row (issue #73’s D1)', () => {
+    const blocks = mediaBlocks(styleSheet('responsive.css'));
+    const dock = blocks.filter(({ body }) => /\.tools-island\b/u.test(body));
+    expect(dock.length).toBeGreaterThan(0);
+    expect(new Set(dock.map(({ query }) => query))).toEqual(new Set([sheetQuery()]));
+    const rows = dock.flatMap(({ body }) => areaRows(body));
+    expect(rows.map((areas) => areas.at(-1))).toEqual(['tools tools tools']);
+    expect(rows[0]?.[0]).toBe('identity . top-right');
   });
 });

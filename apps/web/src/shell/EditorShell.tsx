@@ -24,7 +24,7 @@ import { useDrawerFocus } from './drawer-focus.ts';
 import { useSheet } from './sheet.ts';
 import { SelectionPanel } from './selection/SelectionPanel.tsx';
 import { useShellState } from './shell-state.ts';
-import type { Openers, ShellDialog } from './shell-state.ts';
+import type { Openers, ShellControls, ShellDialog } from './shell-state.ts';
 import { Tooltip } from './tooltip/Tooltip.tsx';
 
 // The editor's shell (ADR 0012, decision 13): the canvas fills the window, and the controls float
@@ -34,9 +34,11 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // while something is selected, the storage notices' buttons while they show, or the problem
 // chip's button once they are hidden, Elements and, while its drawer is open, the drawer's Close,
 // its keys and the list, then Undo, Redo, the zoom controls and Keyboard shortcuts. The drawer's opening and closing move the focus, to its list box and back to the
-// toggle. On a phone in portrait the open drawer is a sheet, the selection bar takes the panel's
-// place with its Details sheet right after it, one sheet is open at a time, and the palette and the
-// bottom islands are inert while either is.
+// toggle. On a phone in portrait the tool bar is the dock at the window's bottom, its stop still
+// third, with More last, whose items join the order while it is open; the bottom-right island is
+// not shown; the open drawer is a sheet, the selection bar takes the panel's place with its Details
+// sheet right after it, one sheet is open at a time, and the dock and the bottom islands are inert
+// while either is.
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -73,6 +75,35 @@ function IslandControls({
   return (
     <div className="island-controls" inert={covered}>
       {children}
+    </div>
+  );
+}
+
+/**
+ * The tool bar's island: the palette or, on a phone in portrait, the dock with More (the v0.2 plan's
+ * S8), whose open popover raises the island over the bottom islands through a class, so that no
+ * style sheet needs :has().
+ */
+function ToolsIsland({
+  shell,
+  sheet,
+  covered,
+}: {
+  readonly shell: ShellControls;
+  readonly sheet: boolean;
+  readonly covered: boolean;
+}) {
+  const more = sheet
+    ? { open: shell.more, onToggle: shell.toggleMore, onClose: shell.closeMore }
+    : undefined;
+  return (
+    <div
+      className={`island tools-island${more?.open === true ? ' more-tools-open' : ''}`}
+      data-island="tools"
+    >
+      <IslandControls covered={covered}>
+        <Toolbar more={more} />
+      </IslandControls>
     </div>
   );
 }
@@ -144,8 +175,7 @@ function Shell() {
   useSaveRecovery();
   const notices = useNoticesControls(shell);
   const sheet = useSheet();
-  // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and stands where
-  // S8 puts the palette as a dock.
+  // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and the dock.
   const covered = sheet && (drawer || details);
   const selection = {
     details,
@@ -157,11 +187,7 @@ function Shell() {
     <ShellRoot root={root}>
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland shell={shell} menuButton={menu} tag={tag} />
-      <div className="island tools-island" data-island="tools">
-        <IslandControls covered={covered}>
-          <Toolbar />
-        </IslandControls>
-      </div>
+      <ToolsIsland shell={shell} sheet={sheet} covered={covered} />
       <CanvasHost />
       <EmptyCanvasNote />
       <SelectionPanel sheet={sheet} controls={selection} />
