@@ -1941,7 +1941,12 @@ element or the matrix. ADR 0012 is not edited.
 - **The image review.** Every image was opened. 29 of the 30 are byte for byte those that this
   development VM's Chromium made from the same tree; V27 differs in 2 pixels, by at most 7 levels of
   one channel, at a corner of the focused option's ring, well under the threshold. No image shows a
-  product defect, so no issue was opened. Worth knowing: the selection panel covers the fixture's
+  defect that S13 introduced. V17 shows a factual-copy defect that predates S13: the empty-canvas
+  note, which says that the drawing is saved in this browser, sits beside the storage-unavailable
+  notice, which says that the drawing stays in this tab only. Issue #86 tracks it, and S13 does not
+  fix it. In V27 the landscape side drawer is scrolled to the focused list option, so its Elements
+  heading and Close button are out of view, as the drawer's scrolling within its share specifies;
+  this is an observation, not an S13 defect. Worth knowing: the selection panel covers the fixture's
   left part at 1440 × 900, as shipped; the drawer's list keeps P0's 12rem height, 7 of its 15
   options in view on desktops; V03's rotation handle shows between the identity island and the
   palette.
