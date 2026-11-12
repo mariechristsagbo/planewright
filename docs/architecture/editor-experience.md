@@ -14,8 +14,9 @@ and the safe areas ([what S8 delivered](#what-s8-delivered)), and slice S9 (issu
 text-editing chrome ([what S9 delivered](#what-s9-delivered)), and slice S10 (issue #77) the
 canvas's focus ring and chip and the tool hint line ([what S10 delivered](#what-s10-delivered)),
 and slice S11 (issue #79) the overlay's colour ([what S11 delivered](#what-s11-delivered)), and
-slice S12 (issue #81) the chrome's motion ([what S12 delivered](#what-s12-delivered)); slice S13 is
-not implemented.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
+slice S12 (issue #81) the chrome's motion ([what S12 delivered](#what-s12-delivered)), and slice
+S13 (issue #83) the visual-regression baselines ([what S13 delivered](#what-s13-delivered)); every
+slice is delivered.** This plan turns ADR 0012's decisions into thirteen issues for milestone v0.2.0
 (Editor Experience): what each slice contains, what must land before it, the tests it writes first,
 how it is validated and which documents it updates. The decisions themselves, the tests to migrate
 and the visual-regression matrix are in the ADR; where this plan and the ADR differ, the ADR
@@ -314,6 +315,11 @@ builds on; the handoff adds only that S7 may land before S2.
   states come from the end-to-end storage helpers. The baselines are made where CI renders them
   (Linux, the CI job's Chromium), since a developer machine may rasterise differently, and each
   image is reviewed in the pull request.
+- **Validation.** `npm run validate` and `npm run test:e2e` pass at the head with their real counts,
+  the visual specs pass three times in a row in a copy whose baselines were made there, and at least
+  three CI end-to-end runs at the final head pass all 30 with no flaky test, their processors
+  listed.
+- **Delivered** by issue #83 ([what S13 delivered](#what-s13-delivered)).
 
 ## Component ownership
 
@@ -1850,3 +1856,154 @@ edited.
   scrim and the chrome that D2 does not name appear at once. Reduced motion is emulated in the
   tests, never a real operating-system setting, and forced colours are out of scope.
 - S13 is not implemented.
+
+## What S13 delivered
+
+Issue #83 delivered slice S13, ADR 0012's decision 17, with tests, their baselines, the CI path that
+makes and keeps them, and documents. No file under `apps/web/src`, `apps/web/index.html`,
+`apps/web/public` or `packages/` changed, nor any dependency, token, word, glyph, command, fixture
+element or the matrix. ADR 0012 is not edited.
+
+- **The states.** The 30 tests are titled by their V numbers and the matrix's words, in
+  `apps/web/tests/e2e/visual-desktop.spec.ts` (V01 to V14 and V30) and `visual-touch.spec.ts` (V15
+  to V29), each image `<name>-chromium-linux.png` in the spec's `-snapshots` directory. Every state
+  but V13, V17 and V25 starts from the 15 elements of `scene-fixture.ts` at `FIXTURE_CAMERA`, which
+  `openFixture` of `fixture-page.ts` stores through IndexedDB:
+
+| State | Image                                 | Reached by                                                    |
+| ----- | ------------------------------------- | ------------------------------------------------------------- |
+| V01   | `1440x900-rest`                       | The fixture opened, nothing selected                          |
+| V02   | `1440x900-single-selection`           | A mouse press inside the first rectangle                      |
+| V03   | `1440x900-multi-selection`            | A press on the empty canvas, then Ctrl+A                      |
+| V04   | `1440x900-text-selected`              | A press on "sans again"                                       |
+| V05   | `1440x900-text-editing`               | V04, then the panel's Edit text                               |
+| V06   | `1440x900-menu`                       | A press on Planewright menu                                   |
+| V07   | `1440x900-shortcuts`                  | A press on the bottom-right Keyboard shortcuts                |
+| V08   | `1440x900-about`                      | A press on the Pre-release tag                                |
+| V09   | `1440x900-drawer-open`                | A press on the Elements toggle                                |
+| V10   | `1440x900-stale-notice`               | `showStaleNotice`                                             |
+| V11   | `1440x900-failed-notice`              | `refusableWrites` before the load, then `showFailedNotice`    |
+| V12   | `1440x900-notices-hidden`             | V11, then `hideNotices`                                       |
+| V13   | `1440x900-empty`                      | A fresh page, nothing stored                                  |
+| V14   | `1440x900-canvas-focus`               | Tab four times from the start of the page                     |
+| V15   | `1024x768-touch-rest`                 | As V01                                                        |
+| V16   | `1024x768-touch-selection-and-drawer` | A tap inside the first rectangle, then a tap on Elements      |
+| V17   | `1024x768-touch-startup-unavailable`  | `refuseStorage` before the load                               |
+| V18   | `390x844-touch-rest`                  | As V01                                                        |
+| V19   | `390x844-touch-selection-bar`         | A tap inside the first rectangle                              |
+| V20   | `390x844-touch-details-sheet`         | V19, then the bar's Details                                   |
+| V21   | `390x844-touch-more-open`             | A tap on More                                                 |
+| V22   | `390x844-touch-elements-sheet`        | A tap on Elements                                             |
+| V23   | `390x844-touch-text-editing`          | A tap on "sans again", then the bar's Edit text               |
+| V24   | `390x844-touch-stale-notice`          | `showStaleNotice`                                             |
+| V25   | `390x844-touch-empty`                 | As V13                                                        |
+| V26   | `844x390-touch-rest`                  | As V01                                                        |
+| V27   | `844x390-touch-selection-and-drawer`  | As V16                                                        |
+| V28   | `844x390-touch-tool-lock`             | A tap on Tool lock in the top-row palette                     |
+| V29   | `844x390-touch-failed-notice`         | `refusableWrites`, then `showFailedNotice`                    |
+| V30   | `1440x900-dpr2-rest`                  | As V01, at two device pixels per CSS pixel, `scale: 'device'` |
+
+- **Inferred choices.** Every context pins the light scheme, `en-US` and UTC and keeps the default
+  motion; the rows other than V30 keep `devices['Desktop Chrome']`'s one device pixel per CSS pixel,
+  and the touch rows add `hasTouch` and `isMobile` as the phone specs do. The element pressed for a
+  selection is the fixture's first rectangle, blue and filled, at the scene point (48, 115), which
+  no other element covers, and the text is "sans again" at (85, 142). V03 presses the empty canvas
+  first, so that no focus ring shows, then Ctrl+A. V06's menu holds the focus on Select all with no
+  visible highlight, since a mouse opened it. After Hide in V12 the focus is on the problem chip's
+  button, with no ring, since the press was a mouse's. V23 emulates no on-screen keyboard, so the
+  Done bar sits at `--kb` 0. Touch rows tap the canvas through the DevTools protocol, a lost tap
+  repeated only while nothing is selected, and never hover. `updateSnapshots` is `'none'` on every
+  run, not only in CI as the issue asked, so that no developer machine writes a baseline by
+  accident; the generation run passes `--update-snapshots=all`.
+- **The storage helpers.** V10 to V12, V24 and V29 keep what `showStaleNotice` and
+  `showFailedNotice` leave: the fixture, a 16th element, the helpers' rectangle selected at the
+  canvas's centre, and the keyboard focus on the canvas with its ring, and on desktops the "Canvas
+  focused" chip; the tests assert it. V17 shows no fixture, since storage is refused before any
+  record can be written. No helper changed.
+- **The checks before each capture.** `ready` in `visual.ts` parks the mouse, in mouse contexts, at
+  (1100, 760) and checks that the canvas or a modal dialog's backdrop lies under it; polls for at
+  most 10 s until every face that the visible text uses, by the first family of its font and the
+  weight that the browser picks, and the canvas's three faces where the fixture shows, report
+  `loaded`, naming any other; waits for a scene render where the fixture shows, then two animation
+  frames; runs `settled`; and fails, quoting it, if `#chrome-tip` shows. Nothing that the matrix
+  shows depends on the clock or random values: the element ids are random but never shown.
+- **Generation and adoption.** The CI workflow's dispatch gained a boolean `visual-baselines` input,
+  and GitHub accepted it on the candidate branch, so the fallback through a failure artifact was not
+  needed. Run 43302898991, attempt 1, made the 30 images at the candidate commit `9989e5c` on runner
+  image ubuntu24 20261111.370.1 with an AMD EPYC 7763 64-Core Processor, Playwright 1.64.1 and
+  Chromium 156.0.8078.4, in a 66 s end-to-end job. The adopting commit `ad66164` differs from
+  `9989e5c` only by the 30 images, whose SHA-256 values, names, count, sizes and IHDR dimensions
+  matched the manifest and the matrix: 1,996,891 bytes in all, the largest 171,104 bytes (V08) and
+  V30 148,543 bytes at 2880 × 1800. The candidate branch then carried the two planted CI faults
+  below.
+- **Thresholds and masks.** Playwright's defaults, a per-pixel threshold of 0.2 with no differing
+  pixel allowed, and no mask: there is no exception, so none is listed.
+- **The image review.** Every image was opened. 29 of the 30 are byte for byte those that this
+  development VM's Chromium made from the same tree; V27 differs in 2 pixels, by at most 7 levels of
+  one channel, at a corner of the focused option's ring, well under the threshold. No image shows a
+  product defect, so no issue was opened. Worth knowing: the selection panel covers the fixture's
+  left part at 1440 × 900, as shipped; the drawer's list keeps P0's 12rem height, 7 of its 15
+  options in view on desktops; V03's rotation handle shows between the identity island and the
+  palette.
+- **Tests first.** Before any baseline existed, with `updateSnapshots: 'none'`, all 30 visual tests
+  failed with Playwright's "A snapshot doesn't exist" error at their capture, every assertion before
+  it passing, and `visual-baselines.test.ts` failed 32 of its 35 tests, finding none of the 30
+  files, its three tests of the specs alone passing. `scene-pixels.spec.ts` passed its six tests
+  before and after the loader moved. With the images adopted, the 30 passed against CI's baselines
+  on this VM and the tooling test passed its 35.
+- **Repeatability.** In a copy outside the repository whose baselines were made there from the head,
+  the visual specs passed 90 of 90 with `--repeat-each=3`, and two unmutated controls passed all 30.
+- **Sabotage.** After those controls, 28 mutants of the issue's list ran in that copy, each against
+  all 30 visual tests, and 26 failed their expected baselines, among many others for the shared
+  chrome: P0's overlay blue survived, and so did the failed save's chip in the warning tone. Both
+  changes are of hue at nearly the same luminance: Playwright's YIQ difference is 858.9 for
+  `#6547b4` to `#2a62d0` and 489.2 for the chip's words, `#901e1c` to `#834b14`, under the 1,408.6
+  that a threshold of 0.2 allows, while `--pw-color-primary` set to `#c2410c` measures 3,875.7 and
+  failed 25 baselines. The renderer's unit tests fail the first, one test, and the web unit tests
+  the second, two tests. The others failed as follows: the panel 2 px lower V02 to V04 and six more;
+  an island 17 px from the edge all 15 desktop baselines; the ring 1 px V10, V11, V14, V24 and V29;
+  the chip's words V10, V11 and V14; Inter 500 replaced by 400 all 30; the UI font missing all 30,
+  each stopped by the font check naming Planewright UI 400 before a capture; the padlock 21; a tool
+  hint's words 15; the landscape chip's word V29; two dock tools swapped V18, V19, V21, V24 and V25;
+  the dock kept in a session V23; the Done bar hidden V23; a 280 px drawer V09; the sheet's cap V22;
+  More's order V21; the figures to a tenth ten; Cmd+Enter V05; a shortcut's label V07; an About
+  sentence V08; the empty note hidden V13, V17 and V25; the start-up words V17; tool lock's pressed
+  style V28; an entrance left 4 px off V06; the dash pattern 27; and the ratio-1 backing store V30
+  alone.
+- **Planted faults.** Inter 500 delayed 2 s by `page.route` passed with the font check and also
+  without it, since `toHaveScreenshot` retries until its timeout and the face arrived first; delayed
+  6 s, V01 passed with the check, writing the same image when made again, and failed without it,
+  `toHaveScreenshot` timing out. A 2 s menu entrance failed with both guards, `settled` naming the
+  animation, and passed with `animations: 'disabled'` alone and with neither, Playwright waiting for
+  two equal screenshots, also when the image was made again. A hover left 600 ms on Rectangle with
+  the mouse not parked failed at the tooltip check, quoting the tip, failed the comparison without
+  that check, and passed with the mouse parked.
+- **Faults in CI.** On the candidate branch, with the 30 images added, run 43307762743 dispatched
+  P0's overlay blue: the end-to-end job passed all 481 tests, the 30 visual ones among them, on an
+  Intel Xeon 6975P-C, while the quality job failed on the renderer's unit test. Run 43308268384
+  added the panel 2 px lower: the end-to-end job failed V02, V03, V04, V10, V11, V12, V16, V27 and
+  V29 and 11 position tests of the selection panel and the tool hint, and its
+  `playwright-test-results` artifact held each failing baseline's expected, actual and diff images,
+  named by the baseline, for both attempts, 54 images. Neither fault reached the feature branch.
+- **Cost.** No production code changed: the web app's initial JavaScript is 121,190 bytes and its
+  bundled style sheet 4,955 bytes gzip, `main`'s figures at S12, by the bundle-size guardrail's
+  `gzipSize`; `check:bundle-size` passes, the initial JavaScript at 121.2 KB of its 200 KB, the
+  engine at 30.3 KB and the renderer at 2.5 KB. `perf:browser` did not run, since neither its
+  configuration nor anything that its specs import changed. The 30 images hold 1,996,891 bytes, each
+  under the file-size guardrail's 262,144, which is not raised, and `secrets:scan` passes with them,
+  in 2.7 s on this VM. CI's end-to-end job took 245 s on `main` at `f0afb52` (run 43295644945) and
+  278 s with the 30 visual tests in fault run 43307762743, against its 20-minute timeout, and the
+  generation job 66 s.
+- **Validation.** On the tree committed with this section, `npm run validate` passed, 363 test files
+  and 3,944 tests, 35 of them new, with coverage of 98.16 % of statements, 96.53 % of branches,
+  98.07 % of functions and 98.55 % of lines, and `npm run test:e2e` passed its 481 tests at
+  `94f5d8d`, whose code is the head's, the 451 of `main` and the 30 visual ones compared with CI's
+  baselines on this VM. `npm run guardrails`, `secrets:scan` and `check:bundle-size` passed. The
+  pull request lists the CI runs at its head and their processors.
+- **Known limitations.** Linux and CI's Chromium only; a developer machine may rasterise
+  differently. Changes of colour under the 0.2 threshold, which include a change of hue at nearly
+  the same luminance, are invisible to the baselines and stay the token, style-sheet and renderer
+  tests'. Touch and phones are emulated, with no safe-area inset and no on-screen keyboard. V17
+  shows no fixture. Processor coverage is that of the runs listed in the pull request. A Playwright
+  or Chromium upgrade, and every intended chrome change, makes the affected baselines again through
+  the dispatch.
