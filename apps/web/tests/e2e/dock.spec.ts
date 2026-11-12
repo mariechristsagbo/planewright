@@ -10,8 +10,9 @@ import { readout } from './support.ts';
 // A2, A5, A6 and A8): on a phone in portrait the toolbar "Tools" sits 8 px above the window's
 // bottom, its seven 44 px buttons in one row, history and zoom 8 px above it, the top bar holds
 // identity and Elements alone, the bottom-right island is not shown, the view readout keeps its
-// text unseen, the page never scrolls, and the Text tool works as before. Page code is written as
-// strings, since these files compile without the DOM library.
+// text unseen, the page never scrolls, and the Text tool works as before, the dock and history and
+// zoom hidden while a text is edited and back once it is committed (the v0.2 plan's S9, issue #75's
+// D9). Page code is written as strings, since these files compile without the DOM library.
 
 /** The tool bar's buttons' boxes, as [x, y, width, height]. */
 const BUTTONS = `[...document.querySelector('[role="toolbar"][aria-label="Tools"]').querySelectorAll('button')]
@@ -91,10 +92,12 @@ for (const viewport of [
 test.describe('at 390 × 844 with touch, the Text tool', () => {
   test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
 
-  test('a tap and typing still write a text with the dock present (S9 changes nothing here)', async ({
+  test('D9 A9 a tap and typing write a text, the dock and history and zoom hidden while it is edited and back once a tap commits it', async ({
     page,
   }) => {
     await openPage(page);
+    const dock = page.locator('[data-island="tools"]');
+    const history = page.locator('[data-island="bottom-left"]');
     await expect(async () => {
       await toolButton(page, 'Text').tap();
       await expect(toolButton(page, 'Text')).toHaveAttribute('aria-pressed', 'true', {
@@ -105,10 +108,20 @@ test.describe('at 390 × 844 with touch, the Text tool', () => {
       await touch(page, [60, 300]);
       await expect(textArea(page)).toBeFocused({ timeout: 1000 });
     }).toPass();
+    // Both stay in the page, hidden, so that the tool bar keeps its one stop (S9).
+    await expect(dock).toHaveCount(1);
+    await expect(history).toHaveCount(1);
+    await expect(dock).toBeHidden();
+    await expect(history).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Undo' })).toHaveCount(0);
     await page.keyboard.type('Dock');
     await expect(textArea(page)).toHaveValue('Dock');
     await touch(page, [250, 450]);
     await expect(textArea(page)).toHaveCount(0);
+    await expect(dock).toBeVisible();
+    await expect(history).toBeVisible();
+    await expect(page.getByRole('toolbar', { name: 'Tools' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Undo' })).toBeVisible();
     await openElements(page);
     await expect(elementList(page).getByRole('option')).toHaveCount(1);
     await expect(elementList(page).getByRole('option')).toHaveAccessibleName(/^Text/u);
