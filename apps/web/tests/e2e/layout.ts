@@ -75,7 +75,9 @@ const BOTTOM = `({
  * history and zoom no more than the largest anchor, 16 px, above the dock's top while the phone's
  * dock shows, and above the window's bottom less its safe-area inset otherwise. On a phone in portrait the open drawer, and
  * the Details sheet, are sheets over the dock and the bottom islands, which may meet them, in
- * either order, only while their controls are inert (S5, S6, S8).
+ * either order, only while their controls are inert (S5, S6, S8). While a phone in portrait edits a
+ * text, history and zoom and the dock are hidden, so history and zoom are measured only while they
+ * are laid out, and the Done bar is an island like the others (S9).
  */
 export async function expectPlaced(page: Page, viewport: Viewport, count: number): Promise<void> {
   const boxes = await islands(page);
@@ -91,8 +93,11 @@ export async function expectPlaced(page: Page, viewport: Viewport, count: number
     intersecting: intersecting(boxes).filter((pair) => !covered(pair)),
   }).toEqual({ outside: [], intersecting: [] });
   const history = boxes.find(({ name }) => name === 'bottom-left');
+  if (history === undefined) return;
   const dock = boxes.find(({ name }) => name === 'tools');
   const bottom = await page.evaluate<{ dock: boolean; inset: number }>(BOTTOM);
-  const floor = bottom.dock ? (dock?.y ?? 0) : viewport.height - bottom.inset;
-  expect(floor - (history?.y ?? 0) - (history?.height ?? 0)).toBeLessThanOrEqual(16);
+  // Under the dock's query, history and zoom are laid out only with the dock under them.
+  const floor = bottom.dock ? dock?.y : viewport.height - bottom.inset;
+  expect(floor, 'the dock under history and zoom').toBeDefined();
+  expect((floor ?? 0) - history.y - history.height).toBeLessThanOrEqual(16);
 }

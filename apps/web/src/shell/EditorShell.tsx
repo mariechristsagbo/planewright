@@ -22,9 +22,11 @@ import { AboutDialog } from './dialogs/AboutDialog.tsx';
 import { ShortcutsDialog } from './dialogs/ShortcutsDialog.tsx';
 import { useDrawerFocus } from './drawer-focus.ts';
 import { matchesSheet, useSheet } from './sheet.ts';
+import type { DetailsControls } from './selection/SelectionBar.tsx';
 import { SelectionPanel } from './selection/SelectionPanel.tsx';
 import { useShellState } from './shell-state.ts';
 import type { DialogOpener, Openers, ShellControls, ShellDialog } from './shell-state.ts';
+import { useTextSession } from './text-session.ts';
 import { Tooltip } from './tooltip/Tooltip.tsx';
 
 // The editor's shell (ADR 0012, decision 13): the canvas fills the window, and the controls float
@@ -39,7 +41,9 @@ import { Tooltip } from './tooltip/Tooltip.tsx';
 // not shown, so the menu button takes Keyboard shortcuts' focus when a window turns, and its
 // dialog's when that closes; the open drawer is a sheet, the selection bar takes the panel's place
 // with its Details sheet right after it, one sheet is open at a time, and the dock and the bottom
-// islands are inert while either is.
+// islands are inert while either is. While a phone in portrait edits a text, the dock and history
+// and zoom are hidden, out of the tab order yet mounted, so the text area comes right after the
+// canvas and Elements after it (the v0.2 plan's S9).
 // Where each island sits is the style sheets' (styles/shell.css). The controls' tooltips are
 // delegated to the root.
 
@@ -83,16 +87,18 @@ function IslandControls({
 /**
  * The tool bar's island: the palette or, on a phone in portrait, the dock with More (the v0.2 plan's
  * S8), whose open popover raises the island over the bottom islands through a class, so that no
- * style sheet needs :has().
+ * style sheet needs :has(). It is hidden, yet mounted, while a phone in portrait edits a text (S9).
  */
 function ToolsIsland({
   shell,
   sheet,
   covered,
+  hidden,
 }: {
   readonly shell: ShellControls;
   readonly sheet: boolean;
   readonly covered: boolean;
+  readonly hidden: boolean;
 }) {
   const more = sheet
     ? { open: shell.more, onToggle: shell.toggleMore, onClose: shell.closeMore }
@@ -101,6 +107,7 @@ function ToolsIsland({
     <div
       className={`island tools-island${more?.open === true ? ' more-tools-open' : ''}`}
       data-island="tools"
+      hidden={hidden}
     >
       <IslandControls covered={covered}>
         <Toolbar more={more} />
@@ -110,23 +117,26 @@ function ToolsIsland({
 }
 
 /**
- * History and zoom at the bottom left, and the view and Keyboard shortcuts at the bottom right,
- * whose focus onKeysHidden takes when a window that turns to portrait hides it.
+ * History and zoom at the bottom left, hidden while a phone in portrait edits a text (the v0.2
+ * plan's S9), and the view and Keyboard shortcuts at the bottom right, whose focus onKeysHidden
+ * takes when a window that turns to portrait hides it.
  */
 function BottomIslands({
   covered,
+  hidden,
   keys,
   onShortcuts,
   onKeysHidden,
 }: {
   readonly covered: boolean;
+  readonly hidden: boolean;
   readonly keys: RefObject<HTMLButtonElement | null>;
   readonly onShortcuts: () => void;
   readonly onKeysHidden: () => void;
 }) {
   return (
     <div className="shell-bottom">
-      <div className="island bottom-left-island" data-island="bottom-left">
+      <div className="island bottom-left-island" data-island="bottom-left" hidden={hidden}>
         <IslandControls covered={covered}>
           <HistoryControls />
           <ZoomControls />
@@ -172,6 +182,14 @@ function returnFocus(openers: Openers, opener: DialogOpener | null): void {
   openers[opener === 'keys' && matchesSheet() ? 'menu' : opener].current?.focus();
 }
 
+/** What the selection's phone bar is given of the shell's state: its Details sheet's (S6). */
+const detailsControls = (shell: ShellControls): DetailsControls => ({
+  details: shell.details,
+  drawer: shell.drawer,
+  onToggleDetails: shell.toggleDetails,
+  onCloseDetails: shell.closeDetails,
+});
+
 /**
  * The shell: its root, the islands in their tab order, the open dialog, which gives the focus back
  * to the control that opened it, and the one tooltip, which follows the root's events. It says once
@@ -196,20 +214,16 @@ function Shell() {
   const sheet = useSheet();
   // A phone's sheet, the Elements or the Details sheet, covers the bottom islands and the dock.
   const covered = sheet && (drawer || details);
-  const selection = {
-    details,
-    drawer,
-    onToggleDetails: shell.toggleDetails,
-    onCloseDetails: shell.closeDetails,
-  };
+  // While a phone in portrait edits a text, the dock and history and zoom are hidden (S9).
+  const session = useTextSession(sheet);
   return (
     <ShellRoot root={root}>
       <h1 className="visually-hidden">Planewright</h1>
       <IdentityIsland shell={shell} menuButton={menu} tag={tag} />
-      <ToolsIsland shell={shell} sheet={sheet} covered={covered} />
+      <ToolsIsland shell={shell} sheet={sheet} covered={covered} hidden={session} />
       <CanvasHost />
       <EmptyCanvasNote />
-      <SelectionPanel sheet={sheet} controls={selection} />
+      <SelectionPanel sheet={sheet} controls={detailsControls(shell)} />
       <StorageNotices controls={notices} />
       <div className="island top-right-island" data-island="top-right">
         <StorageProblemChip controls={notices} />
@@ -218,6 +232,7 @@ function Shell() {
       <ElementsDrawer open={drawer} sheet={sheet} onClose={closeDrawer} />
       <BottomIslands
         covered={covered}
+        hidden={session}
         keys={keys}
         onShortcuts={() => {
           openDialog('shortcuts', 'keys');

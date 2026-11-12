@@ -21,6 +21,14 @@
   letter-spacing: var(--pw-type-label-md-tracking);
 }
 
+/*
+ * An island that the shell hides, as the dock and history and zoom while a phone in portrait edits
+ * a text (the v0.2 plan's S9): .island's display would otherwise override the hidden attribute.
+ */
+.island[hidden] {
+  display: none;
+}
+
 /* An island's controls, in a box that adds nothing to its layout, inert while a sheet covers them. */
 .island-controls {
   display: contents;
