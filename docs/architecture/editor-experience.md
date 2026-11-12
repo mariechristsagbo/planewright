@@ -12,8 +12,9 @@ bar and the Details sheet ([what S6 delivered](#what-s6-delivered)), slice S7 (i
 visibility ([what S7 delivered](#what-s7-delivered)), and slice S8 (issue #73) the phone composition
 and the safe areas ([what S8 delivered](#what-s8-delivered)), and slice S9 (issue #75) the
 text-editing chrome ([what S9 delivered](#what-s9-delivered)), and slice S10 (issue #77) the
-canvas's focus ring and chip and the tool hint line ([what S10 delivered](#what-s10-delivered));
-slices S11 to S13 are not implemented.** This plan turns ADR 0012's decisions into thirteen
+canvas's focus ring and chip and the tool hint line ([what S10 delivered](#what-s10-delivered)),
+and slice S11 (issue #79) the overlay's colour ([what S11 delivered](#what-s11-delivered)); slices
+S12 and S13 are not implemented.** This plan turns ADR 0012's decisions into thirteen
 issues for milestone v0.2.0 (Editor Experience): what each slice contains, what must land before
 it, the tests it writes first,
 how it is validated and which documents it updates. The decisions themselves, the tests to migrate
@@ -287,6 +288,7 @@ builds on; the handoff adds only that S7 may land before S2.
   their alpha.
 - **Documents.** `engine/rendering-and-hit-testing.md`'s "The overlay's pixels" bullet, which gives
   `#2a62d0` and `#2a62d01a`.
+- **Delivered** by issue #79 ([what S11 delivered](#what-s11-delivered)).
 
 ### S12: motion (D2)
 
@@ -1670,3 +1672,61 @@ Issue #77 delivered slice S10. Each choice that the plan or the ADR did not make
   `gzipSize`; `responsive.css`, whose rules are inlined in the JavaScript, is counted there. The
   plan gave no estimate for S10.
 - S11 to S13 are not implemented.
+
+## What S11 delivered
+
+Issue #79 delivered slice S11, the one change to `packages/` of the v0.2 slices. ADR 0012 is not
+edited.
+
+- **The colours.** In `packages/render-canvas/src/overlay-layer.ts`, `SELECTION_COLOR`, the pen's
+  stroke for every overlay primitive, so the selection outline, the handles' borders and the
+  marquee's edge, is Construction Violet `#6547b4` instead of P0's `#2a62d0`, 6.74:1 on the white
+  canvas, the `selection` on `canvas` pair [above](#contrast-pairs), and `MARQUEE_FILL` is
+  `#6547b41a` instead of `#2a62d01a`, the same violet at the same alpha, `1a` or 26 of 255, about a
+  tenth of its opacity. They equal the `--pw-color-selection` and `--pw-color-selection-fill` tokens
+  that S1 declared, but the renderer, whose sources import only the engine's entry and one another,
+  keeps its own constants. The comment above `SELECTION_COLOR` names decision D1. Nothing else in
+  the package changed: `HANDLE_FILL` stays `#ffffff`, and the line widths, the snapping to the
+  device grid, the order of the calls, every primitive's geometry, the engine's overlay frame, hit
+  testing, the two layers and what the renderer owns are as they were.
+- **Test first.** `packages/render-canvas/tests/unit/overlay-layer.test.ts`'s colour test, which
+  pinned P0's values, now expects `#6547b4`, `#ffffff` and `#6547b41a` and is named for them. It was
+  changed before the source: with `overlay-layer.ts` as at `8f5d694`, the `render-canvas:unit`
+  project ran 54 tests and that one failed, receiving `#2a62d0` and `#2a62d01a` where it expected
+  the violet, and with the change all 54 passed. The tests of each primitive's calls read the
+  colours through the constants and pass unchanged, as do the renderer's tests, so no assertion was
+  weakened and no test was deleted. No end-to-end test reads the overlay's hue, since `overlayInk`
+  and `chrome` in `apps/web/tests/e2e/drawing.ts` read its alpha, and none was added.
+- **Rendered pixels.** A probe outside the repository built `main` (`8f5d694`) and the head
+  (`577eaa9`) and read, in Chromium at 1280 × 720 and pixel ratios 1 and 2, the overlay canvas of a
+  100 × 100 rectangle made with R and Enter, selected with its outline and handles, and of a marquee
+  held mid-drag. Both builds painted the same pixels, 1,044 at ratio 1 and 4,180 at ratio 2 for the
+  selection and 28,341 and 113,364 for the marquee, with the same hash of the alpha channel; the
+  opaque stroke pixels read (42, 98, 208) on `main` and (101, 71, 180) on the head, the handles'
+  fill white on both, and the marquee's inside alpha 26 on both, read back as (39, 98, 206) and
+  (98, 69, 177).
+- **Sabotage.** After an unmutated control, 54 tests passing, each of ten mutants of
+  `overlay-layer.ts`, in a copy of its own outside the repository, failed the `render-canvas:unit`
+  project: either constant set back to P0's value, the fill made opaque or given the alpha `33`, the
+  outline one step off at `#6547b5`, the pen stroking with the fill, the marquee filled with the
+  outline's colour, the square handles filled violet, the handles' constant set to the violet, and
+  the outline written `#6547B4`, which draws the same pixels but which the test refuses as a
+  string, the documents writing hex in lower case.
+- **Status documents.** `engine/rendering-and-hit-testing.md`'s "The overlay's pixels" bullet gives
+  the new values and keeps P0's as history; the README, `AGENTS.md`, the
+  [engine README](engine/README.md), the [overview](overview.md) and `CHANGELOG.md` describe the
+  violet overlay.
+- **Validation.** At `b5ceec5`, whose code is the head's, `npm run validate` passed, 360 test files
+  and 3,898 tests with coverage of 98.17 % of statements, 96.55 % of branches, 98.06 % of functions
+  and 98.55 % of lines, and `npm run test:e2e` passed its 380 tests.
+- Cost: the renderer's entry is 2,526 bytes gzip against `main`'s 2,524 at `8f5d694`, and the web
+  app's initial JavaScript 121,030 bytes against 121,028, measured by the bundle-size guardrail at
+  gzip level 9; the engine's 30,292 bytes are unchanged, and B11 to B13 stay within their budgets.
+  Performance was not measured: the change gives the same Canvas 2D calls other colour strings at
+  the same alpha, so it cannot move B1 to B3, B9 or B10, and `perf:browser` was not run. The plan
+  gave no estimate for S11.
+- **Known limitations.** The renderer's constants and the tokens are equal by value only; no test
+  ties them. The overlay draws the same violet in both themes, as P0 drew its blue, until a theme
+  issue chooses the dark mapping. The visual-regression baselines that will show the overlay are
+  S13's.
+- S12 and S13 are not implemented.
