@@ -109,8 +109,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   `cubic-bezier(0.2, 0, 0, 1)`, and a menu item's highlight fades in 90 ms; under reduced motion
   `responsive.css` sets the durations to 0 and removes every entrance and fade, the tooltip still
   waiting 500 ms; the camera never animates, and a tip that the keyboard opens in an entering
-  surface is placed again when the entrance ends. S13 is not implemented yet. Work on a slice
-  follows both.
+  surface is placed again when the entrance ends. Slice S13 (issue #83) added the 30
+  visual-regression baselines of the ADR's matrix, V01 to V30: `toHaveScreenshot` captures of the
+  seeded fixture, or of an empty or storage-less page, with animations disabled and the readiness
+  checks of `visual.ts` first, Linux images that CI's Chromium made through the CI workflow's
+  `visual-baselines` dispatch on a candidate branch and compares on every run, at Playwright's
+  default threshold with no mask. Every slice of the plan is delivered. Work on a slice follows
+  both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -193,7 +198,10 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   drawer's, the selection panel's, bar's and sheet's (`selection.css`), the menu's and the tooltip's
   rules, the entrances and the menu item's fade (`motion.css`), and `responsive.css`, the only one
   with media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never
-  makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static
+  makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, among
+  them the visual specs `visual-desktop.spec.ts` and `visual-touch.spec.ts` with their Linux
+  baselines in `visual-*.spec.ts-snapshots/`, the seeded fixture's loader `fixture-page.ts` and the
+  checks before each capture in `visual.ts`, static
   files in `public/`, the bundled fonts with their licences in `public/fonts/` ([ADR
   0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter 500 of [ADR
   0012](docs/adr/0012-v02-editor-chrome.md)).

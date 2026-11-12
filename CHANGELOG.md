@@ -345,3 +345,13 @@ release has been published yet.
   tooltip, the scrim and the chrome that D2 does not name never move, and a tip that the keyboard
   opens inside an entering surface is placed again where its control comes to rest. S13 is not
   implemented.
+- The v0.2 visual-regression baselines (slice S13, issue #83, ADR 0012 decision 17): 30 Playwright
+  `toHaveScreenshot` baselines, V01 to V30, one per state of the ADR's matrix at 1440 × 900, 1024 ×
+  768, 390 × 844 and 844 × 390 with emulated touch, and at 1440 × 900 with two device pixels per CSS
+  pixel, built on the seeded fixture with animations disabled. They are Linux images that CI's
+  Chromium made, through a new `visual-baselines` input of the CI workflow's manual dispatch that
+  uploads them with a manifest, and CI compares them on every run at Playwright's default threshold
+  with no mask; other platforms skip them. A failed comparison's expected, actual and diff images
+  reach a `playwright-test-results` artifact, and every end-to-end run prints its processor. The
+  scene fixture has one loader for every width, and a tooling test checks the 30 images. No product
+  code changes.

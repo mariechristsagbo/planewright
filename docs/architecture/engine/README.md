@@ -32,7 +32,9 @@ keyboard focus, a line under the palette saying what the active tool does, and t
 for pressed, unavailable and focused controls, and, since slice S11 (issue #79), the renderer's
 selection outline, handle borders and marquee in the same violet, and, since slice S12 (issue #81),
 the chrome's surfaces entering by a short fade and slide, none of them under reduced motion, and the
-camera never animated. ENG-15 (issue
+camera never animated, and, since slice S13 (issue #83), 30 visual-regression baselines of that
+chrome on the seeded fixture, Linux images that CI's Chromium made and compares on every run
+([visual baselines](quality.md#visual-baselines)). ENG-15 (issue
 #33) measures every performance budget, in CI with its benchmarks, browser measurements and
 bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets in CI and B2 on a
 slower machine, and they went to issues #34 to #36

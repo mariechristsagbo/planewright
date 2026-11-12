@@ -188,7 +188,9 @@ history hidden meanwhile, and slice S10 (issue #77) added the canvas's focus rin
 focused" chip, the active tool's hint line and the tokens' state colours, and slice S11 (issue #79)
 drew the selection's outline, handle borders and marquee on the canvas in the same violet, changing
 only the renderer's two overlay colours, and slice S12 (issue #81) added the surfaces' entrances,
-the menu item's fade and reduced motion's override; S13 is not implemented yet.
+the menu item's fade and reduced motion's override, and slice S13 (issue #83) added the 30
+visual-regression baselines of the ADR's matrix, Linux images of the seeded fixture that CI's
+Chromium made and compares on every run.
 
 Still open, each for its own issue and ADR:
 
