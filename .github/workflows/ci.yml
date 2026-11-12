@@ -5,6 +5,13 @@ on:
     branches: [main]
   pull_request:
   workflow_dispatch:
+    inputs:
+      visual-baselines:
+        description: >-
+          Make the visual baselines on this ref with CI's Chromium and upload them with their
+          manifest, instead of running the end-to-end tests (docs/architecture/engine/quality.md)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -68,14 +75,62 @@ jobs:
       - run: npm ci
       - name: Install Chromium for Playwright
         run: npx --workspace @planewright/web playwright install --with-deps chromium
+      - name: Runner image and processor
+        run: |
+          echo "Runner image: $ImageOS $ImageVersion"
+          lscpu | grep -E '^(Architecture|CPU\(s\)|Model name):'
       - run: npm run build
       - run: npm run test:e2e
+        if: ${{ !inputs.visual-baselines }}
+      # The visual baselines are made only here, on a dispatched run of a candidate branch, and
+      # never committed by CI: the artifact holds the 30 images and a manifest of the run, the
+      # runner, the versions and each file's SHA-256 and size, for a commit that adopts them.
+      - name: Make the visual baselines
+        if: ${{ inputs.visual-baselines }}
+        working-directory: apps/web
+        run: npx --no -- playwright test --update-snapshots=all --retries=0 visual-
+      - name: Write the visual baselines' manifest
+        if: ${{ inputs.visual-baselines }}
+        working-directory: apps/web
+        run: |
+          {
+            echo "commit: $GITHUB_SHA"
+            echo "run: $GITHUB_RUN_ID attempt $GITHUB_RUN_ATTEMPT"
+            echo "runner image: $ImageOS $ImageVersion"
+            echo "processor: $(lscpu | sed -n 's/^Model name: *//p')"
+            echo "playwright: $(npx --no -- playwright --version)"
+            echo "chromium: $(node --input-type=module -e "import { chromium } from '@playwright/test'; const browser = await chromium.launch(); console.log(browser.version()); await browser.close();")"
+            echo "files:"
+            cd tests/e2e
+            for image in *-snapshots/*.png; do
+              echo "$(sha256sum "$image" | cut -d ' ' -f 1) $(stat -c %s "$image") $image"
+            done
+          } | tee visual-baselines-manifest.txt
+      - name: Upload the visual baselines
+        if: ${{ inputs.visual-baselines }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-baselines
+          path: |
+            apps/web/visual-baselines-manifest.txt
+            apps/web/tests/e2e/*-snapshots/*.png
+          retention-days: 14
+          if-no-files-found: error
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: playwright-report
           path: apps/web/playwright-report/
+          retention-days: 14
+      # A failed screenshot comparison leaves its expected, actual and diff images here, named by
+      # the baseline; the HTML report keeps them only under content hashes.
+      - name: Upload Playwright test results
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-test-results
+          path: apps/web/test-results/
           retention-days: 14
 
   performance:
