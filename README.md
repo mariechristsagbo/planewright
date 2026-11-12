@@ -13,9 +13,11 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 > something is selected, a panel, or a bar on phones, shows its position and size read-only and
 > offers Duplicate, Delete and, for a text, Edit text; the drawing is saved in the browser and
 > restored on reload, with nothing shown while saving works and a "Not saved" chip with a notice
-> when it does not. On a phone in portrait the tools sit in a dock at the bottom, with a More
-> button for Hand, Diamond and Tool lock, every target is at least 44 px on phones, and the
-> controls keep clear of the screen's safe areas. A Pre-release tag opens About this
+> when it does not. On a phone in portrait the tools sit in a dock at the bottom, with a More button
+> for Hand, Diamond and Tool lock, every target is at least 44 px on phones, and the controls keep
+> clear of the screen's safe areas. While a text is edited, a chip under it names the keys that
+> finish it, Esc and Ctrl+Enter (Cmd+Enter on Apple platforms), and on a phone in portrait a Done
+> button above the on-screen keyboard finishes it instead. A Pre-release tag opens About this
 > build, which says what the build contains and what it does not, and a menu at the top left and a
 > button at the bottom right open a list of every command's keyboard shortcuts. There is no text
 > formatting, no style control, no file opening, saving or exporting and no collaboration. This

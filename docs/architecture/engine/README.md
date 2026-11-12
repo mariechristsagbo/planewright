@@ -23,9 +23,10 @@ sheet, that shows the selection's figures read-only and offers Duplicate, Delete
 since slice S6 (issue #69), with each change said in a live
 region, and whose drawing is saved in the browser's IndexedDB storage and restored on reload, with
 nothing shown while saving works and a "Not saved" chip with the storage notices while it needs
-attention since slice S7 (issue #71), and, since slice S8 (issue #73), the tools in a dock with
-More at the bottom of a phone in portrait, 44 px targets on phones and the islands clear of the
-safe areas. ENG-15 (issue
+attention since slice S7 (issue #71), and, since slice S8 (issue #73), the tools in a dock with More
+at the bottom of a phone in portrait, 44 px targets on phones and the islands clear of the safe
+areas, and, since slice S9 (issue #75), a chip under the text area that names the keys that finish a
+text, or on a phone in portrait a Done bar above the on-screen keyboard. ENG-15 (issue
 #33) measures every performance budget, in CI with its benchmarks, browser measurements and
 bundle-size guardrail, and the heap by hand; B1, B6 and B7 missed their budgets in CI and B2 on a
 slower machine, and they went to issues #34 to #36

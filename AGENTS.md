@@ -27,7 +27,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   the keyboard alone, through a list of the elements in a drawer, which an Elements button showing
   their count opens and which is a sheet on phones, and a live region that announces each change;
   nothing shows about saving while it works, and a "Not saved" chip with the storage notices while
-  it needs attention; while something is selected, a selection panel near the upper left, or on
+  it needs attention; while a text is edited, a chip under the text area names Esc and Ctrl+Enter,
+  or Cmd+Enter on Apple platforms, as the ways to finish it, except on a phone in portrait, where a
+  Done bar above the on-screen keyboard finishes it and the dock and history and zoom are hidden;
+  while something is selected, a selection panel near the upper left, or on
   phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
   size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
   Pre-release tag opens About this build, a menu at the top left runs Select all and the zoom
@@ -73,7 +76,13 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   Elements alone and the bottom-right island not shown; in landscape the whole palette sits in the
   top row; the view readout is hidden on phones; `index.html` declares `viewport-fit=cover` and
   every anchor adds its safe-area inset; and targets are at least 44 px on phones and under a coarse
-  pointer. S9 to S13 are not implemented yet. Work on a slice follows both.
+  pointer. Slice S9 (issue #75) added the text-editing chrome: while a text is edited outside a
+  phone in portrait, a caption chip 8 px under the text area names Esc and Ctrl+Enter, or Cmd+Enter
+  on Apple platforms, in key chips and describes the text area; on a phone in portrait a Done bar
+  sits above the on-screen keyboard at its inset, which the visual viewport gives and the bar holds
+  in `--kb`, and Done commits the text as Escape does, while the dock and history and zoom are
+  hidden and an open Elements sheet closes; the caret is not kept above the keyboard and the camera
+  is not moved (D6). S10 to S13 are not implemented yet. Work on a slice follows both.
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
@@ -130,14 +139,17 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the editor's shell in `shell/`
   (`EditorShell`, its state, the identity island with the mark and the Pre-release tag, the Elements
   toggle with its count and the drawer with its focus moves and the phone's sheet query, the
-  empty-canvas note and the Keyboard shortcuts button, the phone dock's More and its popover in
+  empty-canvas note and the Keyboard shortcuts button, the phone's Done bar in `DoneBar.tsx` with
+  the keyboard's inset in `keyboard-inset.ts` and the shell's part of a text session in
+  `text-session.ts`, the phone dock's More and its popover in
   `MoreTools.tsx` with the dock's composition in `more-tools.ts`, the menu's button, the menu and
   its items in `shell/menu/`, the 35 original glyphs in `shell/glyphs.ts` drawn by `Icon` in
   `shell/icons.tsx` and the kinds' glyphs in `shell/kind-glyphs.ts`, the selection panel, the
   phone's selection bar and Details sheet, what they read of the view and the selection's pure
   geometry in `shell/selection/`, the tooltip and its delegated listeners in `shell/tooltip/`, and
   the modal dialog, About this build and Keyboard shortcuts in `shell/dialogs/`), the canvas host,
-  input adapter and editor provider in `editor/`, the text area in `editor/text/`, the element list,
+  input adapter and editor provider in `editor/`, the text area with its hint chip and their rules
+  (`text-area.ts`) in `editor/text/`, the element list,
   the live region with its messages, the sentence after a failed save succeeds again, the figures'
   rounding and the focus's return in `a11y/`, the tool bar shown as the palette or the phone's dock,
   its buttons' data in `tool-items.ts` and its button in `PaletteButton.tsx`, Undo and Redo, the
@@ -147,8 +159,9 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   style sheets in `styles/`: the design tokens, the fonts, the base, the controls', canvas's, list's
   and saving's rules, the shell's layout with the `--shell-safe-*` properties that read the
   safe-area insets, islands and dialogs, the glyph buttons', the phone dock's and More's
-  (`dock.css`), the Elements toggle's and drawer's, the selection panel's, bar's and sheet's
-  (`selection.css`), the menu's and the tooltip's rules, and `responsive.css`, the only one with
+  (`dock.css`), the hint chip's and the Done bar's (`text-session.css`), the Elements toggle's and
+  drawer's, the selection panel's, bar's and sheet's (`selection.css`), the menu's and the tooltip's
+  rules, and `responsive.css`, the only one with
   media queries, which `main.tsx` adds as a style element of its own so that a breakpoint never
   makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, static
   files in `public/`, the bundled fonts with their licences in `public/fonts/` ([ADR

@@ -45,7 +45,10 @@ the order only while its popover is open, after More; Keyboard shortcuts follows
 shows, in landscape, its island not shown in portrait; and when More, its popover or a window that
 turns takes away the focused control, the focus goes to the tool bar's stop, or from Keyboard
 shortcuts to the menu button, as it does when that button's dialog closes in portrait, never to the
-body. P0's order was the tool bar, the canvas, the element list, history and zoom.
+body. Since S9, while a phone in portrait edits a text, the tool bar's stop and history and zoom are
+hidden, and the order is the menu, Pre-release, the canvas, the text area, the Done bar's Done, the
+notices' buttons or the chip's button while storage needs attention, and Elements. P0's order was
+the tool bar, the canvas, the element list, history and zoom.
 
 All interface text comes from message keys; P0 ships English and sets the document language.
 
@@ -160,7 +163,17 @@ the engine, and the element list, the live region, the zoom controls and focus m
   Details, the Escape going no further. Opening the Details or the Elements sheet closes the other,
   the one that opens taking the focus. The sheet closes when the selection empties, the focus going
   to the canvas if it was in the sheet or the bar, when a text session starts and when the window
-  leaves the phone's query; it is closed at every load and stored nowhere.
+  leaves the phone's query; it is closed at every load and stored nowhere. Slice S9 describes the
+  text area by its hint chip outside a phone in portrait, so that a screen reader says the keys that
+  finish the session, the name staying "Text"; the chip takes no focus and is no live region. On a
+  phone in portrait the Done bar's Done follows the text area in the tab order: the focus moves
+  between them without ending the session, Done commits the text and gives the focus to the canvas
+  as Escape does, Done's blur to another control ends the session while its blur to no control keeps
+  it, as the text area's does, and a press on the bar keeps the focus in the text area. When Done
+  leaves the page with the focus while the session stays open, as when the window turns, the text
+  area takes the focus back, never the page's body. The dock and history and zoom are `hidden`
+  during that session, out of the tab order and the accessibility tree, and a session that starts,
+  or a window that turns to portrait during one, closes the Elements sheet without moving the focus.
 - **Targets, colour and motion.** Controls are at least 24 px, the page's link, in About this build
   since S2, is a 24 px inline block, the menu's items, its link among them, are 36 px high since S4,
   and touch handle hit squares stay 24 px; the selection panel's actions are 32 px high, 44 px under
@@ -169,6 +182,8 @@ the engine, and the element list, the live region, the zoom controls and focus m
   pointer (REQ-Y06, the v0.2 plan's responsive rule 6): the islands' buttons, the menu's items, the
   drawer's Close, its keys' summary, the list's options and the Details sheet's Close; desktops keep
   36 px and compact layouts 32 px with a fine pointer, and touch handle hit squares stay 24 px.
+  Since S9 the phone's Done is at least 44 by 44 px, and the hint chip, which takes no press, is no
+  target.
   Measured in Chromium, the shortcut hint in a pressed tool button was 4.19:1 and is now opaque,
   5.59:1, and an unavailable control is dark grey with a dashed border, 7.2:1, instead of half
   transparent, 3.36:1. Each camera command and wheel event sets the camera once, drawn whole in the
