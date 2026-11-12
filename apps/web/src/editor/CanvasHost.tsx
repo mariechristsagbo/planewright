@@ -8,7 +8,8 @@ import { TextEditor } from './text/TextEditor.tsx';
 /**
  * The canvas host: a scene canvas and an overlay canvas stacked in one focusable region, sized
  * from the page, whose input goes to the editor and which draws every frame the editor builds. The
- * text area of a text being edited lies over it, outside the region, so its input stays its own.
+ * text area of a text being edited, with its hint chip, lies over it, outside the region, so its
+ * input stays its own.
  */
 export function CanvasHost() {
   const { editor, platform, createRenderer } = useSurface();

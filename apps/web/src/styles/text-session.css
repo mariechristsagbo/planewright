@@ -1,0 +1,35 @@
+/*
+ * The text-editing chrome (ADR 0012, decisions 3, 13 and 14; the v0.2 plan's S9). The hint chip
+ * lies in the text layer under the text area, at the place that editor/text/text-area.ts works out:
+ * a caption on the islands' surface with a hairline and the first elevation, its keys in key chips
+ * as the Keyboard shortcuts dialog's. It is neither turned nor zoomed with the text, keeps to one
+ * line, and lets every press through to the canvas. No rule here has a media query, a motion or a
+ * blur.
+ */
+.text-hint {
+  position: absolute;
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--pw-spacing-xs) var(--pw-spacing-sm);
+  border: 1px solid var(--pw-color-outline-subtle);
+  border-radius: var(--pw-rounded-sm);
+  color: var(--pw-color-on-surface-variant);
+  background: var(--pw-color-surface);
+  box-shadow: var(--pw-shadow-e1);
+  font: var(--pw-type-caption);
+  letter-spacing: var(--pw-type-caption-tracking);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.text-hint kbd {
+  display: inline-block;
+  margin: 0;
+  padding: 0 var(--pw-spacing-xs);
+  border: 1px solid var(--pw-color-outline);
+  border-radius: var(--pw-rounded-xs);
+  color: var(--pw-color-on-surface);
+  background: var(--pw-color-surface-muted);
+  font: var(--pw-type-kbd);
+  letter-spacing: var(--pw-type-kbd-tracking);
+}
