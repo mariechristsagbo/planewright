@@ -3,8 +3,8 @@
  * S3): square controls that show an original glyph in the text colour, 36 px on desktops (32 px
  * compact, in responsive.css), the palette's tools with their first key in the bottom-right corner
  * in JetBrains Mono and hairlines between their groups. They keep the base's pressed, disabled and
- * focus rules, which S10 coordinates, so no rule here sets a control's pressed, disabled or focus
- * styles.
+ * focus rules, in the tokens' state colours since S10, so no rule here sets a control's pressed,
+ * disabled or focus styles.
  */
 .toolbar {
   align-items: center;

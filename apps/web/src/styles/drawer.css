@@ -1,9 +1,10 @@
 /*
  * The Elements toggle and its drawer (ADR 0012, decisions 2, 8 and 9, and the v0.2 plan's S5). The
  * toggle shows its glyph, its word and the count of the drawn elements, a changing number in
- * Inter's tabular figures. It keeps the base's pressed, disabled and focus rules, which S10
- * coordinates, so no rule here sets a control's pressed, disabled or focus styles. The compact
- * sizes and the phone's sheet are in responsive.css, the only style sheet with media queries.
+ * Inter's tabular figures. It keeps the base's pressed, disabled and focus rules, in the tokens'
+ * state colours since S10, so no rule here sets a control's pressed, disabled or focus styles. The
+ * compact sizes and the phone's sheet are in responsive.css, the only style sheet with media
+ * queries.
  */
 .island .elements-toggle {
   display: inline-flex;

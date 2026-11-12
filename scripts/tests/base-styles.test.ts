@@ -1,5 +1,5 @@
-import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { join, sep } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
@@ -8,9 +8,21 @@ import type { Declaration } from './style-sheets.ts';
 
 // The web app's base styles (ADR 0012, decisions 5 and 8, and the v0.2 plan's S1): base.css gives
 // the root its theme and type, and puts every element rule inside :where(), at no specificity, so
-// that a rule with a single class always wins over it; 500 is the only emphasis weight.
+// that a rule with a single class always wins over it; 500 is the only emphasis weight. Its
+// pressed, unavailable and focus-visible rules, the selected row and the text area take the
+// tokens' state colours (the v0.2 plan's S10, issue #77's D9), and no style sheet keeps P0's.
 
 const SHEETS = readdirSync(join(import.meta.dirname, '..', '..', 'apps', 'web', 'src', 'styles'));
+
+/** Every style sheet under apps/web/src, those beside a component included. */
+const SOURCES = join(import.meta.dirname, '..', '..', 'apps', 'web', 'src');
+const EVERY_SHEET = readdirSync(SOURCES, { recursive: true, encoding: 'utf8' })
+  .filter((path) => path.endsWith('.css'))
+  .map((path) => path.split(sep).join('/'));
+
+/** The declarations of the rule of a style sheet with this exact selector. */
+const ruleOf = (sheet: string, selector: string): Declaration[] =>
+  declarationsOf(rulesOf(styleSheet(sheet)).find((rule) => rule.selector === selector)?.body ?? '');
 
 /** Each declaration of every style sheet, with its sheet and selector. */
 const everyDeclaration = () =>
@@ -68,6 +80,44 @@ describe("the web app's base styles", () => {
       'font-variation-settings',
       '--pw-type-title-md',
     ]);
+  });
+
+  it('A11 D9 give the pressed, unavailable and focus-visible rules the tokens’ state colours alone', () => {
+    expect(ruleOf('base.css', ":where(button[aria-pressed='true'])")).toEqual([
+      { property: 'color', value: 'var(--pw-color-on-primary-container)' },
+      { property: 'background', value: 'var(--pw-color-primary-container)' },
+      { property: 'border-color', value: 'var(--pw-color-primary)' },
+    ]);
+    expect(ruleOf('base.css', ":where(button:disabled, button[aria-disabled='true'])")).toEqual([
+      { property: 'color', value: 'var(--pw-color-disabled-content)' },
+      { property: 'border-style', value: 'dashed' },
+    ]);
+    expect(ruleOf('base.css', ':where(:is(button, a, summary, [tabindex]):focus-visible)')).toEqual(
+      [
+        { property: 'outline', value: '2px solid var(--pw-color-focus-ring)' },
+        { property: 'outline-offset', value: '2px' },
+        { property: 'box-shadow', value: '0 0 0 2px var(--pw-color-focus-halo)' },
+      ],
+    );
+  });
+
+  it('A11 D9 give the selected row the container’s colours and the text area the focus ring’s', () => {
+    expect(ruleOf('element-list.css', ".element-option[aria-selected='true']")).toEqual([
+      { property: 'color', value: 'var(--pw-color-on-primary-container)' },
+      { property: 'background', value: 'var(--pw-color-primary-container)' },
+    ]);
+    expect(ruleOf('canvas.css', '.text-editor')).toContainEqual({
+      property: 'outline',
+      value: '2px solid var(--pw-color-focus-ring)',
+    });
+  });
+
+  it('A11 D9 leave no style sheet under apps/web/src with P0’s blue or grey', () => {
+    expect(EVERY_SHEET).toContain('styles/base.css');
+    const old = EVERY_SHEET.filter((path) =>
+      /#2a62d0|#4b5563/iu.test(readFileSync(join(SOURCES, path), 'utf8')),
+    );
+    expect(old).toEqual([]);
   });
 
   it('keep the text area at 400', () => {

@@ -42,7 +42,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  outline: 2px solid #2a62d0;
+  outline: 2px solid var(--pw-color-focus-ring);
   overflow: hidden;
   resize: none;
   white-space: pre;
