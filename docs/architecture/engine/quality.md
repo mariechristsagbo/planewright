@@ -278,9 +278,10 @@ what the rules above leave open:
   50-element change made untimed before it, from its timer to its result, over the in-memory record
   backend, 300 after 60. B9: the long tasks that overlap each of eight saves, from the frame after a
   50-element nudge until the stored revision rises and the page says it is saved, which since v0.2's
-  slice S7 the shell's root says with `data-save-state="saved"`, since the page shows nothing. B10: the end of
-  the first render that draws all 1,000 elements, from the navigation's start, over twelve loads
-  after one that fills the cache. Every test first checks what it measured, such as the hit test
+  slice S7 the shell's root says with `data-save-state="saved"`, since the page shows nothing. B10:
+  the end of the first render that draws all 1,000 elements, from the navigation's start, over
+  twelve loads after one that fills the cache. Every test first checks what it measured, such as the
+  hit test
   against a scan of every element or the number of elements each frame drew, and fails at once when
   the check does.
 - **Statistics and clocks.** A budget's value is the 95th percentile of its samples, interpolated

@@ -24,9 +24,10 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   also from the keyboard alone, through a list of the elements in a drawer, which an Elements
   button showing their count opens and which is a sheet on phones, and a live region that
   announces each change; nothing shows about saving while it works, and a "Not saved" chip with
-  the storage notices while it needs attention; while something is selected, a selection panel near the upper left, or on
-  phones a bar under the tool bar with a Details sheet, shows its kind or count and its position,
-  size and turn read-only and offers Duplicate, Delete and, for a lone text, Edit text; a
+  the storage notices while it needs attention; while something is selected, a selection panel near
+  the upper left, or on phones a bar under the tool bar with a Details sheet, shows its kind or
+  count and its position, size and turn read-only and offers Duplicate, Delete and, for a lone text,
+  Edit text; a
   Pre-release tag opens About this build, a menu at the top left runs
   Select all and the zoom commands, shows the elements and opens About this build and a Keyboard
   shortcuts dialog that lists every command's keys, which a button at the bottom right opens too,
