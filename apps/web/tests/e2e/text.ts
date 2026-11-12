@@ -99,12 +99,21 @@ const INK_OF = (png: string, origin: readonly [number, number]) => `(async () =>
 
 /**
  * The ink that the page shows in a square around a canvas point, scene and text area alike, from a
- * screenshot in CSS pixels with the caret hidden; in canvas coordinates.
+ * screenshot in CSS pixels with the caret hidden; in canvas coordinates. The text area's hint chip
+ * (the v0.2 plan's S9), whose words lie under the text area, is masked in white, so that only the
+ * text's own glyphs count.
  */
 export async function inkAround(page: Page, [x, y]: readonly [number, number], half: number) {
   const box = await canvasBox(page);
   const clip = { x: box.x + x - half, y: box.y + y - half, width: 2 * half, height: 2 * half };
-  const png = await page.screenshot({ clip, scale: 'css', caret: 'hide', animations: 'disabled' });
+  const png = await page.screenshot({
+    clip,
+    scale: 'css',
+    caret: 'hide',
+    animations: 'disabled',
+    mask: [page.locator('#text-editor-hint')],
+    maskColor: '#ffffff',
+  });
   const ink = await page.evaluate<Ink | null>(INK_OF(png.toString('base64'), [x - half, y - half]));
   if (ink === null) throw new Error(`No ink around (${String(x)}, ${String(y)}).`);
   return ink;
