@@ -42,6 +42,14 @@ the engine, whose tsconfig has the ECMAScript library only, and the triple-slash
 ambient declarations that could add a library or hide a global.
 `scripts/tests/engine-layers.test.ts` fails on an import against the engine's layer order.
 
+The README's screenshots in `docs/assets/readme` are byte-for-byte copies of the visual baselines
+V09 and V19 ([what S13 delivered](../architecture/editor-experience.md#what-s13-delivered)).
+`scripts/tests/readme-screenshots.test.ts` fails when a copy's SHA-256 differs from its baseline's,
+when the README shows another image, opens with a GitHub alert or shows the desktop screenshot after
+its first section, when a screenshot changes its size in pixels, is given a height or a wider width,
+or leaves out Planewright or its viewport in its alternative text, or when one exceeds 131,072 bytes
+or both together 196,608. A baseline adopted again must therefore be copied to the README too.
+
 ## Complexity guardrails
 
 ESLint enforces these limits on all TypeScript and JavaScript:
