@@ -149,7 +149,7 @@ storage, ENG-14 (issue #31) the element list, the live region, focus order and c
 keyboard, and ENG-15 (issue #33) the measurements of the performance budgets, reported in CI, with
 budgets B1, B6 and B7 missed in CI and B2 on a slower machine, named with issues #34 to #36, of
 which issue #34 has since made the scene redraw cheaper, B2 being met in every CI report and B1 in
-most, with B1's misses in some runs followed by issue #49, issue #35 has brought the marquee query
+most, with B1's misses in some runs followed by issue #49, which traces B1's pans in CI, issue #35 has brought the marquee query
 within B6 and issue #36 a change set that moves 1,000 elements within B7, and issue #38 their
 baseline, three runs on `main` on three processors, which gates a run only by runs on its own
 processor and so gates none yet; the rest is not implemented yet:

@@ -668,7 +668,7 @@ B1 measures, no budget, tolerance or pixel, and no processor's gate.
 - **What stays unknown.** The CI reports keep no trace, garbage collection or long task of B1's
   frames and no time of each frame, so what slows a frame on a runner that misses, and whether the
   slow frames recur in time, is not known; a trace of B1 on such a runner would tell, and no CI job
-  records one yet, which issue #49 is to do.
+  recorded one then. Issue #49 has CI record one ([below](#what-issue-49-decided)).
 
 - **What it decides.** B1's misses depend on the run, not on its code or on its processor model
   alone. What B1 measures, its budget, its warm-up of 20 frames and the tolerance stay as they are.
@@ -782,6 +782,65 @@ and s3, without changing what a marquee selects or the order of the result:
   opened neither and changed nothing about the rule.
 - **Not here.** A budget for the first query or a change to what B6 times (an ADR first, as for
   any budget), a cheaper first query after a load, and the rendered outline.
+
+## What issue #49 decided
+
+Issue #49 follows B1's misses after issue #41 ([above](#what-issue-41-decided)). Its first pull
+request makes each CI performance report keep a trace of B1's pans with each frame's start, its
+deliverable D1, and fixes `npm run perf:tail`'s inputs. It changes no code that B1 measures, no
+budget, tolerance, warm-up, sample count, statistic or gate, and no pixel.
+
+- **A traced pass, apart from B1.** Right after B1's test, the browser measurements run B1's pans
+  again on a page of their own, through the one function that both tests call: the same seeded
+  scene, the same 20 warm-up and 100 measured wheel pans of 2 px, in the same job and browser,
+  while Chromium traces the whole browser with the categories `devtools.timeline`, `v8`,
+  `disabled-by-default-v8.gc`, `blink.user_timing` and `toplevel`. B1's own samples stay untraced,
+  since tracing adds work to the frames it records, and the traced frames are no budget's samples.
+  The report gives the traced frames' median and 95th percentile, and B1's value in its own row,
+  so each run shows how far its two passes differ: tracing's cost together with the spread between
+  two passes of one run, which the reports, not one machine, will tell.
+- **What it keeps.** `perf-results/browser/traces/B1.trace.json`, the trace as Chromium writes it,
+  and `B1.frames.json`, the pass's record: the categories, the warm-up and each measured frame's
+  start and duration on the page's clock, in ms, and its start in the trace, in µs of Chromium's
+  monotonic clock, from the frame's `planewright:render-scene` user-timing window. The trace also
+  holds the warm-up's windows and every process's tasks. The folder sits inside the browser
+  measurements' own, so `npm run perf:browser` clears it before it measures and the report never
+  reads a trace as a measurement, and the `performance-report` artifact keeps it with
+  `report.json`.
+- **What is checked.** The pass fails, and writes nothing, unless the trace holds each measured
+  frame's window, in order and each its own: started where the page measured it, up to the
+  number's rounding, as long as the page measured it, within 2 µs, all on one thread, and inside a
+  task that the timeline recorded on that thread, give or take the page's 0.1 ms clock
+  ([what ENG-15 decided](quality.md#what-eng-15-decided)). `npm run perf:report` checks the record
+  and the trace again, the record's id, categories and a trace in its own folder, and each frame's
+  start in the trace, and writes the trace's path, size, SHA-256 and events and the pass's frames
+  to `report.json` and to a Traces section of `report.md`
+  ([how](quality.md#what-issue-49-decided)). Garbage-collection and `toplevel` events are not
+  required, since they come only when the browser has such work; the record's categories are.
+- **Locally.** On the developer machine, a 6-core AMD EPYC and no CI runner, with Chromium
+  156.0.8078.4, the whole performance pipeline ran at this pull request's code, at load averages
+  of 3.05 to 3.82 when it ended. B1 measured 17.65 ms at the median and 82.125 ms at the 95th
+  percentile, and its traced pass 18.3 and 70.695 ms. The trace held 15,135,957 bytes and 59,228
+  events from the renderer, the browser, the GPU process and two services, with all 100 traced
+  frames and eight minor garbage collections and no major one between the first traced frame's
+  start and the last's. In four earlier passes of the same pans and categories taken in turn, two
+  untraced and two traced, the medians were 17.45 and 18.0 ms untraced and 17.9 and 18.3 ms traced,
+  and the 95th percentiles 68.15 and 79.47 ms and 73.2 and 75.75 ms: the two kinds differ less
+  than two passes of one kind do, so that machine says nothing of tracing's cost on a runner. The
+  tests caught 23 of 26 faults planted in a copy of the check, the report's wiring, the traces
+  folder and `perf:tail`, and all 26 once three tests were added for the clock's grain, a start's
+  rounding and the timeline's tasks. The pipeline's trace was refused with its timeline or its
+  user-timing events removed, or cut before its 51st frame, and accepted with its
+  garbage-collection or `toplevel` events removed.
+- **`perf:tail` (the review of pull request #48, its m3).** It names the file of an input that is
+  not JSON, refuses an input that is the same report as an earlier one, being the same file, a
+  report of the same CI run and attempt of one repository or the same content, puts another
+  repository's runs after this repository's, named by their whole address as a local report is,
+  and reads a report's last measurement of an id, as the report's evaluation does.
+- **Not yet.** D2 to D4. No CI report with such a trace has been collected, missing or meeting B1,
+  on any processor model, so neither A1's traces on two models nor a cause is recorded, and what
+  slows B1's frames on a runner stays unknown. `docs/performance/baseline.json` still names issue
+  #49 as B1's follow-up.
 
 ## Export
 

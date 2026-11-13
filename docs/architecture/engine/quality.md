@@ -590,6 +590,23 @@ request, its m2), with no budget:
 - **Not here.** A budget for the first query, or a change to what B6 times, needs an ADR first, as
   raising any budget does.
 
+### What issue #49 decided
+
+Issue #49 has CI trace B1's pans in a pass of their own after B1's
+([why and how](rendering-and-hit-testing.md#what-issue-49-decided)):
+
+- **In the job.** `npm run perf:browser` runs the traced pass right after B1, in the same browser,
+  and keeps the trace and the record of its frames in `perf-results/browser/traces/`, which it
+  clears with the measurements before it measures; the `performance-report` artifact holds them.
+  B1's samples, warm-up, statistic, budget and tolerance and every processor's gate are unchanged,
+  and the traced frames are no budget's samples.
+- **In the report.** `npm run perf:report` checks the trace against its record and writes its path,
+  size, SHA-256 and events and the traced frames' median and 95th percentile under `traces` in
+  `report.json` and in a Traces section of `report.md`. It fails when the record or the trace is
+  missing or the trace does not hold the record's frames, as it does when a budget measured in CI
+  was not measured, and that failure is among the report's failures, so that
+  `npm run perf:baseline` refuses such a run.
+
 ## Security
 
 | Threat                                 | Control                                                                                                   |

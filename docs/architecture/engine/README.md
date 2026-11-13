@@ -42,7 +42,8 @@ slower machine, and they went to issues #34 to #36
 redraw cheaper ([what issue #34 decided](rendering-and-hit-testing.md#what-issue-34-decided)): B2 is
 met in every CI report, as before, and B1 in most; B1's misses vary by run on one processor model
 ([what issue #41 decided](rendering-and-hit-testing.md#what-issue-41-decided)), and issue #49
-follows them. Issue #35 has since brought the marquee query within B6 in CI
+follows them, tracing B1's pans in CI
+([what issue #49 decided](rendering-and-hit-testing.md#what-issue-49-decided)). Issue #35 has since brought the marquee query within B6 in CI
 ([what issue #35 decided](rendering-and-hit-testing.md#what-issue-35-decided)), and issue #36 a
 change set that moves 1,000 elements within B7 in CI
 ([what issue #36 decided](scene-and-viewport.md#what-issue-36-decided)). Issue #43 makes the

@@ -14,7 +14,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   `packages/render-canvas` its Canvas 2D renderer with the bundled fonts' names. Every performance
   budget is measured: Vitest benchmarks, Playwright measurements and a bundle-size guardrail,
   reported in CI, and the heap by hand; B1, the redraw of 5,000 elements in view, misses its budget
-  in some CI runs and is named with issue #49, and B2 misses only on a slower machine. The baseline
+  in some CI runs and is named with issue #49, whose trace of B1's pans, run again after B1's own
+  frames, each CI performance report checks and keeps, and B2 misses only on a slower machine. The baseline
   holds three runs on `main`, one on each of three processors, and a run is gated only by three runs
   on its own processor, so CI does not gate the statistical budgets yet. The web app shows a
   **pre-release** surface: a canvas that fills the window and pans and zooms, with the controls
@@ -233,11 +234,12 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   one another, by `./` paths. Tests run in the `render-canvas:unit` project against a recording fake of the
   2D context.
 - `scripts`: guardrail entry points, the bundle-size guardrail, the performance report and
-  baseline, and B1's tail across CI reports (`npm run perf:tail`); their pure logic lives in
+  baseline with the check of B1's trace, and B1's tail across CI reports (`npm run perf:tail`); their pure logic lives in
   `scripts/lib` and is tested in `scripts/tests`.
 - Performance: `vitest.bench.config.ts` runs the `tests/bench/*.bench.ts` of the engine and the web
   app (`npm run perf:bench`), `apps/web/tests/perf` the Playwright measurements
-  (`npm run perf:browser`), and `npm run perf:report` writes `perf-results/`; the seeded scenes are
+  (`npm run perf:browser`), with B1's traced pass in `trace.ts` and its check in
+  `scripts/lib/perf-trace.ts`, and `npm run perf:report` writes `perf-results/`; the seeded scenes are
   `packages/engine/tests/support/perf-scenes.ts`, and `docs/performance/baseline.json` keeps the
   recorded runs with their machines, which `scripts/lib/perf-baseline.ts` checks
   ([what ENG-15 decided](docs/architecture/engine/quality.md#what-eng-15-decided),
