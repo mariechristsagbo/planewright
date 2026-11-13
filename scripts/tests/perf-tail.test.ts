@@ -197,6 +197,15 @@ describe('tailRows and missRates', () => {
     expect(markdown).toContain('| All | 4 | 1 | 1 |');
   });
 
+  it("puts another repository's CI run after this repository's, named by its whole address", () => {
+    const fork = report(3, EPYC, [[7], [1]]);
+    const url = 'https://github.com/fork/planewright/actions/runs/3/attempts/1';
+    const value = { ...fork, run: { ...fork.run, url } };
+    const rows = tailRows([readTailReport(value, 'fork.json'), ...reports]);
+    expect(rows.map(({ id }) => id)).toEqual([7, 7, 8, 9, Number.POSITIVE_INFINITY]);
+    expect(tailMarkdown(rows)).toContain(`| ${url} | push | main | \`3333333\` | EPYC 7763 |`);
+  });
+
   it("puts a local report after the CI runs, named by its run's address", () => {
     const local = report(1, 'INTEL(R) XEON(R) PLATINUM 8573C', [[7], [1]]);
     const value = { ...local, run: { ...local.run, url: 'local', event: 'local' } };

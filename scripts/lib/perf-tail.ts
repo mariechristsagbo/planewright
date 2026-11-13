@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 
 import { PERF_BUDGETS, percentile, statisticOf } from './perf-budgets.ts';
-import { runAddress } from './perf-baseline.ts';
+import { REPOSITORY, runAddress } from './perf-baseline.ts';
 import type { ReportedRun } from './perf-baseline.ts';
 import { formatValue, readMeasurement } from './perf-report.ts';
 
@@ -156,11 +156,16 @@ const targetOf = (id: string): number => {
   return budget.target;
 };
 
-/** Each report with its B1 and B2, in the order of the CI runs and their attempts. */
+/**
+ * Each report with its B1 and B2, in the order of this repository's CI runs and their attempts,
+ * then any other report, such as a local one or another repository's run, which its row names by
+ * its whole address, since its run id is no place among this repository's.
+ */
 export function tailRows(reports: readonly TailReport[]): TailRow[] {
   return reports
     .map((report) => {
-      const address = runAddress(report.run.url);
+      const found = runAddress(report.run.url);
+      const address = found?.repository === REPOSITORY ? found : null;
       return {
         id: address?.id ?? Number.POSITIVE_INFINITY,
         attempt: address?.attempt ?? 0,
