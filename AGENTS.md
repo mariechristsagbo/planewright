@@ -15,7 +15,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   budget is measured: Vitest benchmarks, Playwright measurements and a bundle-size guardrail,
   reported in CI, and the heap by hand; B1, the redraw of 5,000 elements in view, misses its budget
   in some CI runs and is named with issue #49, whose trace of B1's pans, run again after B1's own
-  frames, each CI performance report checks and keeps, and B2 misses only on a slower machine. The baseline
+  frames and followed by an untraced control, each CI performance report checks against both and
+  keeps, and B2 misses only on a slower machine. The baseline
   holds three runs on `main`, one on each of three processors, and a run is gated only by three runs
   on its own processor, so CI does not gate the statistical budgets yet. The web app shows a
   **pre-release** surface: a canvas that fills the window and pans and zooms, with the controls
@@ -238,10 +239,11 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   `scripts/lib` and is tested in `scripts/tests`.
 - Performance: `vitest.bench.config.ts` runs the `tests/bench/*.bench.ts` of the engine and the web
   app (`npm run perf:bench`), `apps/web/tests/perf` the Playwright measurements
-  (`npm run perf:browser`), with B1's traced pass in `trace.ts` and its check in
-  `scripts/lib/perf-trace.ts`, and `npm run perf:report` writes `perf-results/`; the seeded scenes are
-  `packages/engine/tests/support/perf-scenes.ts`, and `docs/performance/baseline.json` keeps the
-  recorded runs with their machines, which `scripts/lib/perf-baseline.ts` checks
+  (`npm run perf:browser`), with B1's traced pass and its paired control in `trace.ts`, the trace's
+  check in `scripts/lib/perf-trace.ts` and the comparison of B1's three passes in
+  `scripts/lib/perf-passes.ts`, and `npm run perf:report` writes `perf-results/`; the seeded
+  scenes are `packages/engine/tests/support/perf-scenes.ts`, and `docs/performance/baseline.json`
+  keeps the recorded runs with their machines, which `scripts/lib/perf-baseline.ts` checks
   ([what ENG-15 decided](docs/architecture/engine/quality.md#what-eng-15-decided),
   [what issue #38 decided](docs/architecture/engine/quality.md#what-issue-38-decided)).
 - `research/excalidraw`: issue #1 behavioural-research tooling (loopback driver, scenarios,

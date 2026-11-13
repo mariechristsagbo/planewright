@@ -592,19 +592,24 @@ request, its m2), with no budget:
 
 ### What issue #49 decided
 
-Issue #49 has CI trace B1's pans in a pass of their own after B1's
-([why and how](rendering-and-hit-testing.md#what-issue-49-decided)):
+Issue #49 has CI trace B1's pans in a pass of their own after B1's, followed by an untraced
+control ([why and how](rendering-and-hit-testing.md#what-issue-49-decided)):
 
-- **In the job.** `npm run perf:browser` runs the traced pass right after B1, in the same browser,
-  and keeps the trace and the record of its frames in `perf-results/browser/traces/`, which it
-  clears with the measurements before it measures; the `performance-report` artifact holds them.
+- **In the job.** `npm run perf:browser` runs the traced pass right after B1 and its paired control
+  right after that, each on a page of its own in the same browser, and keeps the trace and both
+  passes' records in `perf-results/browser/traces/`, which it clears with the measurements before
+  it measures; the `performance-report` artifact holds them. A trace that the check refuses fails
+  the pass, and is kept there under another name with the reason, which the report never reads.
   B1's samples, warm-up, statistic, budget and tolerance and every processor's gate are unchanged,
-  and the traced frames are no budget's samples.
-- **In the report.** `npm run perf:report` checks the trace against its record and writes its path,
-  size, SHA-256 and events and the traced frames' median and 95th percentile under `traces` in
-  `report.json` and in a Traces section of `report.md`. It fails when the record or the trace is
-  missing or the trace does not hold the record's frames, as it does when a budget measured in CI
-  was not measured, and that failure is among the report's failures, so that
+  and neither pass's frames are a budget's samples.
+- **In the report.** `npm run perf:report` checks that the trace holds exactly the traced pass's
+  warm-up and measured frames, and that B1's own pass, the traced pass and the control have one
+  warm-up, frame count, scene, browser and CPU slowdown. It writes the trace's path, size, SHA-256
+  and events and each pass's median, 95th percentile and frames of 9 ms or more, with their
+  differences, under `traces` in `report.json` and in a "B1's passes and trace" section of
+  `report.md`. It fails when B1's measurement, a record or the trace is missing, the trace does not
+  hold exactly its record's frames or the passes are not paired, as it does when a budget measured
+  in CI was not measured, and that failure is among the report's failures, so that
   `npm run perf:baseline` refuses such a run.
 
 ## Security

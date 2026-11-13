@@ -22,6 +22,21 @@ meaning. A version's date is the day, in UTC, on which the commit that its tag p
   every frame of its record, gives its path, size and SHA-256, and fails when it is missing or does
   not. B1's samples, budget, warm-up, statistic and tolerance and every gate are unchanged; what
   slows B1's frames on a CI runner is still to be found from such traces.
+- B1's paired control in CI (issue #49, its second part): right after the traced pass, the browser
+  measurements run B1's pans once more untraced and keep that pass's frames in
+  `perf-results/browser/traces/B1.control.json`. The performance report sets B1's own pass, the
+  traced pass and the control side by side, each with its median, 95th percentile and frames of
+  9 ms or more, and their differences, and fails unless all three exist and were run alike. B1's
+  value is still its own untraced pass's, and its samples, budget, warm-up, statistic and tolerance
+  and every gate are unchanged.
+
+### Changed
+
+- B1's trace check (issue #49): the trace must hold exactly its pass's warm-up and measured frames,
+  where it held each recorded frame before, and the performance report's `traces` entry gives each
+  of B1's three passes with its tail where it gave the traced pass's median and 95th percentile. A
+  trace that the check refuses still fails the traced pass, and is now kept as
+  `B1.trace.refused.json` with the reason in `B1.refused.json`, which the report never reads.
 
 ### Fixed
 

@@ -1,4 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { REPOSITORY } from '../lib/perf-baseline.ts';
 import { evaluate } from '../lib/perf-report.ts';
@@ -227,6 +233,55 @@ describe('tailRows and missRates', () => {
     expect(rows.map(({ id }) => id)).toEqual([7, 7, 8, 9, Number.POSITIVE_INFINITY]);
     expect(tailMarkdown(rows)).toContain(
       '| local | local | main | `1111111` | Xeon Platinum 8573C | 7 ms | 7 ms | 0 of 1 |',
+    );
+  });
+});
+
+describe('npm run perf:tail', () => {
+  const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+  const folders: string[] = [];
+
+  afterEach(() => {
+    for (const folder of folders.splice(0)) rmSync(folder, { recursive: true, force: true });
+  });
+
+  /** Runs the command on files of a folder of its own, given by name, and gives what it did. */
+  function tail(files: readonly [string, string][]) {
+    const cwd = mkdtempSync(join(tmpdir(), 'planewright-tail-'));
+    folders.push(cwd);
+    for (const [name, text] of files) writeFileSync(join(cwd, name), text);
+    const script = join(root, 'scripts', 'perf-tail.ts');
+    const names = files.map(([name]) => name);
+    const run = spawnSync(process.execPath, [script, ...names], { cwd, encoding: 'utf8' });
+    return { status: run.status, stdout: run.stdout, stderr: run.stderr };
+  }
+
+  const good = JSON.stringify(report(42, EPYC, [[7], [1]]));
+
+  it('prints the tail of the reports it is given', () => {
+    const { status, stdout } = tail([['r42.json', good]]);
+    expect(status).toBe(0);
+    expect(stdout).toContain('| 42 (1) | push | main | `2222222` | EPYC 7763 | 7 ms | 7 ms |');
+  });
+
+  it('fails, naming the file, on an input that is not JSON', () => {
+    const { status, stdout, stderr } = tail([
+      ['r42.json', good],
+      ['broken.json', '{"run":'],
+    ]);
+    expect(status).toBe(1);
+    expect(stdout).toBe('');
+    expect(stderr).toMatch(/Error: broken\.json is not JSON: /u);
+  });
+
+  it('fails on a report given twice', () => {
+    const { status, stderr } = tail([
+      ['r42.json', good],
+      ['copy.json', good],
+    ]);
+    expect(status).toBe(1);
+    expect(stderr).toContain(
+      `copy.json is the same report as r42.json: CI run 42, attempt 1, of ${REPOSITORY}.`,
     );
   });
 });
