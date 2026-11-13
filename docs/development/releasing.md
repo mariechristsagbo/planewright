@@ -181,8 +181,9 @@ MESSAGES=<a folder outside the repository for the tags' messages>
    ```text
    The v0.2 editor chrome of ADR 0012, slices S1 to S13, with the README's
    screenshots and the empty-canvas note's fix, on v0.1.0's engine, at the
-   commit that merged the release records of issue #67. CI run <CI run>
-   and CodeQL run <CodeQL run> succeeded on this commit at their first
+   last commit of the pull request that added the release records of
+   issue #67, as main holds it after the rebase merge. CI run <CI run> and
+   CodeQL run <CodeQL run> succeeded on this commit at their first
    attempt: <n> end-to-end tests and <m> Vitest test files passed. B14 on
    its production build: 17.1 MB after loading, at most 52.2 MB with the
    history full, 58.5 MB in a heap snapshot.
