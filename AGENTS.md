@@ -115,7 +115,9 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   checks of `visual.ts` first, Linux images that CI's Chromium made through the CI workflow's
   `visual-baselines` dispatch on a candidate branch and compares on every run, at Playwright's
   default threshold with no mask. Every slice of the plan is delivered. Work on a slice follows
-  both.
+  both. Issue #67 publishes version 0.1.0, Engine Core, at `1f8188f`, the last commit of P0, and
+  version 0.2.0, Editor Experience, at the commit that merges its release records, as annotated
+  tags and GitHub releases ([the release procedure](docs/development/releasing.md)).
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.

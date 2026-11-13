@@ -4,9 +4,10 @@ An independently engineered open-source infinite canvas for drawing and diagrams
 
 ![Planewright's editor in a 1440 × 900 desktop window at 100 %, showing a flow diagram: Idea leads through Sketch and Refine to a Clear? decision, whose yes branch reaches Ready and whose not yet branch drops to Revise, which loops back to Refine; the tool palette is at the top, the Elements drawer is open at the right listing the diagram's words and shapes with their sizes and positions, and the undo, redo, zoom and view controls run along the bottom](docs/assets/readme/editor-desktop-1440x900.png)
 
-Planewright is a browser editor in its foundation phase, and no version of it has been released
-yet. Its canvas fills the window, pans and zooms, and has its controls floating over it. Today it
-can:
+Planewright is a browser editor in its foundation phase. Its latest release is version 0.2.0,
+Editor Experience, which follows version 0.1.0, Engine Core; both are early 0.x versions, and the
+editor still labels itself a pre-release. Its canvas fills the window, pans and zooms, and has its
+controls floating over it. Today it can:
 
 - draw rectangles, ellipses, diamonds, lines, freehand strokes and texts, then select, move,
   resize, rotate, duplicate, delete and nudge them, edit texts again, and undo and redo each change;
@@ -126,6 +127,18 @@ npm run dev:collab     # http://127.0.0.1:8787/healthz, WebSocket at ws://127.0.
 
 See [docs/development/quality-gates.md](docs/development/quality-gates.md) for thresholds and
 rationale.
+
+## Releases
+
+Each version is an annotated Git tag and a
+[GitHub release](https://github.com/mariechristsagbo/planewright/releases) with its notes, and no
+package is published. The [changelog](CHANGELOG.md) lists each version's changes, and
+[the release procedure](docs/development/releasing.md) says how a version is published.
+
+| Version | Name              | What it holds                                          |
+| ------- | ----------------- | ------------------------------------------------------ |
+| v0.2.0  | Editor Experience | The editor described above, on version 0.1.0's engine  |
+| v0.1.0  | Engine Core       | The P0 engine, renderer and page; a historical release |
 
 ## Contributing
 
