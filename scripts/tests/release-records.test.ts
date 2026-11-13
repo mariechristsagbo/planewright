@@ -3,14 +3,17 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { relativeTargets } from '../lib/markdown-links.ts';
+import { headingAnchors, relativeTargets } from '../lib/markdown-links.ts';
 
 // The records of each release (docs/development/releasing.md): the changelog's sections, newest
 // first under Unreleased, each dated and linked to its tag or its comparison with the one before;
 // the notes in docs/releases, one file per version, published word for word as the GitHub
 // release's body and so linking only to absolute addresses; the release procedure's table of
 // versions, which repeats the changelog's dates and the targets the notes name; and the workspace
-// packages, private at version 0.0.0, since a release publishes none of them.
+// packages, private at version 0.0.0, since a release publishes none of them. A release page keeps
+// each line break of its body, so the notes write each paragraph and list item on one line, and
+// their links into the latest version's tag must reach a file and heading that the tree holds,
+// since the tree becomes that tag. Issue #67's target of v0.1.0 and its two titles are pinned.
 
 const ROOT = join(import.meta.dirname, '..', '..');
 const REPOSITORY = 'https://github.com/mariechristsagbo/planewright';
@@ -18,6 +21,14 @@ const read = (path: string): string => readFileSync(join(ROOT, path), 'utf8');
 
 const CHANGELOG = read('CHANGELOG.md');
 const NOTES = 'docs/releases';
+const PROCEDURE = 'docs/development/releasing.md';
+
+/** The target of v0.1.0 and the release titles that issue #67 authorised. */
+const V010_TARGET = '1f8188fe2177f1d91237168c79d4e7cebbae9ebd';
+const TITLES = new Map([
+  ['v0.1.0', 'Planewright v0.1.0 — Engine Core'],
+  ['v0.2.0', 'Planewright v0.2.0 — Editor Experience'],
+]);
 
 interface Section {
   readonly title: string;
@@ -45,6 +56,40 @@ const isDay = (text: string | undefined): boolean =>
   text !== undefined &&
   /^\d{4}-\d{2}-\d{2}$/u.test(text) &&
   new Date(`${text}T00:00:00Z`).toISOString().startsWith(text);
+
+/** A line that starts a block of its own rather than continuing a paragraph or list item. */
+const BLOCK = /^(?:\s*(?:[-*+]|\d+[.)])\s|#{1,6}\s|\||>)/u;
+
+/** A document's lines outside its fenced code blocks. */
+function proseLines(markdown: string): string[] {
+  let fenced = false;
+  return markdown.split('\n').filter((line) => {
+    const fence = /^(?:```|~~~)/u.test(line);
+    if (fence) fenced = !fenced;
+    return !fence && !fenced;
+  });
+}
+
+const TAGGED = new RegExp(
+  `${REPOSITORY.replaceAll('.', '\\.')}/(?:blob|tree)/([^/\\s)]+)/([^#\\s)]+)(?:#([^\\s)]+))?`,
+  'gu',
+);
+
+/** Why a link into this repository at a ref is wrong: not a version's tag, or nothing there. */
+function taggedLinkProblems(markdown: string): string[] {
+  return [...markdown.matchAll(TAGGED)].flatMap(([link = '', ref = '', path = '', anchor]) => {
+    if (!VERSIONS.some((version) => ref === `v${version}`)) return [`${link}: not a version's tag`];
+    if (ref !== `v${VERSIONS[0] ?? ''}`) return [];
+    let text: string;
+    try {
+      text = read(decodeURIComponent(path));
+    } catch {
+      return [`${link}: no such file`];
+    }
+    const missing = anchor !== undefined && !headingAnchors(text).has(decodeURIComponent(anchor));
+    return missing ? [`${link}: no such heading`] : [];
+  });
+}
 
 describe("the changelog's versions", () => {
   it('opens with Unreleased, then each version newest first, dated, without a pre-release part', () => {
@@ -95,11 +140,29 @@ describe('the release notes', () => {
       expect(relativeTargets(read(`${NOTES}/v${version}.md`))).toEqual([]);
     },
   );
+
+  it.each(VERSIONS)('v%s writes each paragraph and list item on one line', (version) => {
+    const lines = proseLines(read(`${NOTES}/v${version}.md`));
+    const wrapped = lines.filter((line, index) => {
+      const before = lines[index - 1] ?? '';
+      return (
+        line.trim() !== '' && before.trim() !== '' && !BLOCK.test(line) && !before.startsWith('#')
+      );
+    });
+    expect(wrapped).toEqual([]);
+  });
+
+  it.each(VERSIONS)(
+    "v%s links into a version's tag, and into the latest one only at the tree's files and headings",
+    (version) => {
+      expect(taggedLinkProblems(read(`${NOTES}/v${version}.md`))).toEqual([]);
+    },
+  );
 });
 
 /** The rows of the release procedure's table of versions: version, title, target and date. */
 function procedureRows(): string[][] {
-  const lines = read('docs/development/releasing.md').split('\n');
+  const lines = read(PROCEDURE).split('\n');
   const start = lines.findIndex((line) => line.startsWith('| Version | Release title'));
   const rows: string[][] = [];
   for (const line of lines.slice(start + 2)) {
@@ -134,6 +197,24 @@ describe('the release procedure', () => {
     for (const [version, commit] of targets) {
       expect(read(`${NOTES}/${version}.md`)).toContain(commit);
     }
+  });
+
+  it("gives v0.1.0 issue #67's target in its table, the checklist's V010 and its notes", () => {
+    const row = procedureRows().find(([version]) => version === 'v0.1.0') ?? [];
+    expect(row[2]).toContain(`\`${V010_TARGET}\``);
+    expect([...read(PROCEDURE).matchAll(/^V010=(\S*)$/gmu)].map(([, value]) => value)).toEqual([
+      V010_TARGET,
+    ]);
+    expect(read(`${NOTES}/v0.1.0.md`)).toContain(`\`${V010_TARGET}\``);
+  });
+
+  it("titles each release as issue #67 authorised, in the table and in the checklist's commands", () => {
+    const titled = new Map(procedureRows().map(([version = '', title = '']) => [version, title]));
+    for (const [version, title] of TITLES) expect(titled.get(version)).toBe(`\`${title}\``);
+    const commands = [...read(PROCEDURE).matchAll(/gh release create (\S+) .*--title '([^']*)'/gu)];
+    expect(new Map(commands.map(([, tag = '', title = '']) => [tag, `\`${title}\``]))).toEqual(
+      titled,
+    );
   });
 });
 
