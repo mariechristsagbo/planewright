@@ -31,7 +31,9 @@ of 9 ms or more and the misses per processor model of any CI reports, as
 records them; it refuses a report given twice and names a file that is not JSON.
 
 Each `performance-report` artifact also keeps `browser/traces/`: a Chromium trace of B1's pans, run
-again after B1's own frames, and the record of that pass's frames with their starts, whose path,
-size and SHA-256 `report.json` gives under `traces`
+again after B1's own frames, the record of that pass's frames with their starts, and the record of
+its paired control, the same pans once more untraced. `report.json` gives the trace's path, size
+and SHA-256 and each of B1's three passes with its tail under `traces`
 ([what issue #49 decided](../architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided)).
-The report fails when that trace is missing or does not hold its frames.
+Only the first, untraced pass is B1's value. The report fails when any of them is missing, the
+trace does not hold exactly its pass's frames or the passes were not run alike.

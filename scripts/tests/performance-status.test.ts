@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 import { tracesFolder } from '../../apps/web/tests/perf/results.ts';
 import { readBaseline } from '../lib/perf-baseline.ts';
 import { missRates } from '../lib/perf-tail.ts';
-import { TRACE_CATEGORIES } from '../lib/perf-trace.ts';
+import { TRACE_CATEGORIES, traceFiles } from '../lib/perf-trace.ts';
 
 // What the repository says of B1's and B2's misses and their issues
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-41-decided): the status
@@ -122,6 +122,22 @@ describe("the record of B1's trace", () => {
     expect(named.filter((category) => !text.includes(`\`${category}\``))).toEqual([]);
     const folder = tracesFolder(1).split('/').slice(-4).join('/');
     expect(text).toContain(`\`${folder}B1.trace.json\``);
+  });
+
+  it("names the paired control's record beside the trace", () => {
+    const folder = tracesFolder(1).split('/').slice(-4).join('/');
+    expect(text).toContain(`\`${folder}${traceFiles('B1').control}\``);
+  });
+
+  it('keeps every run of the stopped D2 span with its artifact digest', () => {
+    const span = [
+      ['43484948475', '72be54ac0f18b54ddf4a0d958c328494d476393a7bcf764fa0c1df1419ad4bab'],
+      ['43485844959', '6af51ec08df7afe28f681f3978b66ed3e7b0e44ba032b3a47eb0d0aea06a64ee'],
+      ['43486777060', '14235c345b4e982c2da3438cffe1606aa780c225ec9ad587b4e5b410d605da0e'],
+      ['43487661767', 'b2440711413e305f6aa78225a66b666bb5870e71584ecddcddfefc4a91e9a42a'],
+    ];
+    const missing = span.filter(([run, digest]) => !text.includes(run) || !text.includes(digest));
+    expect(missing).toEqual([]);
   });
 
   it("keeps D2 to D4 open while the baseline names the issue as B1's follow-up", () => {
