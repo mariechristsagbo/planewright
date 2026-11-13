@@ -4,9 +4,11 @@ All notable changes to this project are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from version 0.1.0 on. Its
-versions are 0.x versions, so any of them may change what an earlier one did. A version's date is
-the day, in UTC, on which the commit that its tag points to reached `main`: version 0.1.0 was tagged
-later, together with version 0.2.0 (issue #67).
+versions are 0.x versions, so any of them may change what an earlier one did, except the stored
+document's schema, which from version 0.1.0 on changes only as decision 10 of
+[ADR 0005](docs/adr/0005-document-model.md) says, with a migration for a new kind or a changed
+meaning. A version's date is the day, in UTC, on which the commit that its tag points to reached
+`main`: version 0.1.0 was tagged later, together with version 0.2.0 (issue #67).
 [The release procedure](docs/development/releasing.md) says how a version is published.
 
 ## [Unreleased]
