@@ -234,6 +234,9 @@ test('D3 D4 A6 A7 Keyboard shortcuts and About this build open from the menu; ea
   const about = page.getByRole('dialog', { name: 'About this build' });
   const fromTag = await about.innerHTML();
   await page.keyboard.press('Escape');
+  // The dialog leaves the page with its close event, which gives the focus back after Chromium
+  // has; until then it is closed and hidden but still there, so wait for no dialog at all.
+  await expect(page.getByRole('dialog', { includeHidden: true })).toHaveCount(0);
   await expect(button(page, 'Pre-release')).toBeFocused();
   await page.keyboard.press('Shift+Tab');
   for (const [name, steps] of [
