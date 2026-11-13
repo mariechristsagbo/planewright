@@ -16,16 +16,29 @@ export const FIXTURE_DOCUMENT_ID = 'SceneFixtureDocument00';
 /** The number that the Elements toggle shows: the stored elements, drawn in view or not. */
 export const elementCount = (page: Page) => elementsToggle(page).locator('.toggle-count');
 
+/** The records that a first save of a drawing writes, and how many elements it holds. */
+export interface DrawingRecords {
+  readonly record: unknown;
+  readonly elements: readonly unknown[];
+  readonly count: number;
+}
+
 /**
  * Opens the page, stores the fixture through IndexedDB, opens the page again with `?measure`, and
  * waits until the Elements toggle counts the fixture's elements and the scene has been drawn. Part
  * of the fixture lies outside a phone's view, where it is not drawn, so the wait counts the stored
  * elements rather than the drawn ones, and holds at every width. Gives the fixture's element count.
  */
-export async function openFixture(page: Page): Promise<number> {
+export const openFixture = (page: Page): Promise<number> =>
+  openRecords(page, fixtureRecords(FIXTURE_DOCUMENT_ID));
+
+/** Opens a drawing's records as openFixture opens the fixture's, and gives its element count. */
+export async function openRecords(
+  page: Page,
+  { record, elements, count }: DrawingRecords,
+): Promise<number> {
   await page.goto('/');
   await expect(canvas(page)).toBeVisible();
-  const { record, elements, count } = fixtureRecords(FIXTURE_DOCUMENT_ID);
   await page.evaluate(`(async () => {
     const database = await new Promise((resolve, reject) => {
       const request = indexedDB.open('planewright');
