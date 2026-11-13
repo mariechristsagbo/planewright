@@ -2,11 +2,223 @@
 
 All notable changes to this project are documented in this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project will
-adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once releases begin. No
-release has been published yet.
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project
+adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from version 0.1.0 on. Its
+versions are 0.x versions, so any of them may change what an earlier one did. A version's date is
+the day, in UTC, on which the commit that its tag points to reached `main`: version 0.1.0 was tagged
+later, together with version 0.2.0 (issue #67).
 
 ## [Unreleased]
+
+## [0.2.0] - 2026-11-13
+
+**Editor Experience.** The editor chrome that ADR 0012 decided, built in slices S1 to S13 on
+version 0.1.0's engine: the canvas fills the window with its controls floating over it in islands,
+a palette of Planewright's own glyphs with tooltips, a menu, a Keyboard shortcuts dialog, an
+Elements drawer, a read-only selection panel, a "Not saved" chip in place of a save status, phone
+layouts with a dock, 44 px targets and the safe areas kept clear, a hint and a Done bar while a text
+is edited, a focus ring for the canvas, the selection drawn in the chrome's violet, restrained
+motion with a reduced-motion override and 30 visual-regression baselines, with the README's
+screenshots. In `packages/`, only the renderer's two overlay colours changed, so the engine, the
+document schema and the stored records are those of 0.1.0. The editor still labels itself a
+pre-release: it has no text formatting, style controls, arrows, notes, images, files or
+collaboration.
+
+Each entry below describes its change as it reached `main`, in that order within its section, so a
+sentence such as "S5 to S13 are not implemented" says what `main` held then; the paragraph above
+describes the version.
+
+### Added
+
+- The v0.2 chrome's tokens and typeface (slice S1, issue #53, ADR 0012 decision 8):
+  `apps/web/src/styles/tokens.css` holds the v0.2 plan's 114 design tokens as `--pw-*` custom
+  properties, P0's style sheet is split into files under `apps/web/src/styles/` with every element
+  rule inside `:where()`, and the page's text is set in `Planewright UI`, Inter at 400 and 500 behind
+  a metric-matched local fallback. Its 400 face is the canvas's own Inter file, which the browser
+  downloads once, and Inter 500 (24,272 bytes, Fontsource 5.3.0) is the one file added. 500 is the
+  only emphasis weight, so P0's headings, terms and pre-release pill show 500 instead of 700 or 600.
+  Canvas text, its fonts and its measurement are unchanged, and a chrome face that finishes loading
+  no longer has every text measured again. No layout rule changed; the new face only wraps P0's text
+  differently, so that at 390 px wide the canvas starts 24 px higher.
+- The v0.2 full-bleed shell (slice S2, issue #55, ADR 0012 decisions 10 and 13): `EditorShell`
+  replaces P0's page. The canvas fills the window and the page never scrolls; the controls float
+  over the canvas in islands at its edges, never inside it, so no press on them reaches it: the
+  wordmark and a Pre-release tag at the top left, the tool bar at the top centre, an Elements
+  toggle at the top right with the storage notices under it, history and zoom at the bottom left,
+  and the view readout with the save status at the bottom right. The Reset zoom button shows the
+  zoom and is named "Reset zoom, 100%". The element list is in a drawer that the toggle opens,
+  closed at every load. The Pre-release tag opens About this build, a modal dialog that holds what
+  P0's pre-release pill, notes and footer said, and an empty canvas repeats the pre-release
+  sentence. The tab order is Pre-release, the tool bar, the canvas, the notices' buttons while
+  storage needs attention, Elements and the list while the drawer is open, then Undo, Redo and the
+  zoom controls. The shell is the page's main landmark. While storage needs attention, the notices
+  and an open drawer share the height between the top and bottom islands, each scrolling within
+  its share, so that every island stays inside the window at the short sizes tested, down to a
+  phone's 568 × 320 in landscape, and the focus never scrolls the shell. The layout's media
+  queries are in a style sheet of their own, so that a resize across a breakpoint does not make
+  the fonts load again and every text be measured again. The tool bar keeps its words until S3
+  and wraps at narrower widths; S3 to S13 are not implemented.
+- The v0.2 original glyphs and palette (slice S3, issue #62, ADR 0012 decision 3): 35 glyphs drawn
+  for Planewright from geometric primitives on a 20 px grid, 34 interface glyphs and the mark, in
+  one typed record with an `Icon` component that strokes them 1.5 px wide in the text colour. The
+  tool bar is now a palette: each tool shows its glyph with its first key in a corner, hidden from
+  screen readers, hairlines split its groups, and tool lock shows a padlock that is closed while it
+  is on. Undo, Redo, Zoom out, Zoom in and Zoom to fit show glyphs, Reset zoom keeps showing the
+  zoom, Elements keeps its word, and the identity island shows the mark. Every control keeps its
+  name, keys and description. The glyph controls and Reset zoom show a tooltip of their name and
+  keys after 500 ms of hover or at once on keyboard focus, never on touch, closed by Escape, a press
+  or the pointer leaving both the control and the tip, onto which the pointer can move; the Escape
+  that closes a tip does nothing else, so a second one cancels. Glyphs and their controls' borders
+  measure 3:1 or more against their surfaces at desktop and compact widths, where the corner keys
+  keep clear of the glyphs. S4 to S13 are not implemented.
+- The v0.2 menu and Keyboard shortcuts dialog (slice S4, issue #64, ADR 0012 decisions 2, 10 and
+  14): the identity island starts with a menu button, the first tab stop, which opens a menu of
+  Select all, Zoom to fit and Reset zoom, run through the command registry with their keys shown in
+  JetBrains Mono and hidden from screen readers, Show elements, a checkbox item that follows the
+  drawer, Keyboard shortcuts, About this build and Source on GitHub. It opens on a press, Enter,
+  Space or ArrowDown with the focus on its first item; the arrow keys, Home and End move; Enter runs
+  an item; Escape closes it and returns the focus to the button; Tab closes it and goes on;
+  switching to another window closes it with the focus on the button; and the button shows no
+  tooltip over the open menu. A Keyboard shortcuts button at the bottom right, the last tab stop,
+  and the menu open a dialog that lists every command of the registry with its keys, in About this
+  build's modal dialog, and a dialog returns the focus to the control that opened it. Shortcut
+  texts write Escape, Enter, Delete, Backspace and the arrows by name. S5 to S13 are not
+  implemented.
+- The v0.2 Elements drawer and phone sheet (slice S5, issue #66, ADR 0012 decisions 9 and 14): the
+  Elements toggle shows its glyph and the count of the drawn elements in tabular figures, hidden
+  from screen readers so that its name stays "Elements" and a change is announced once, by the
+  live region. The drawer, still closed at every load and stored nowhere, is 300 px wide and 280 px
+  at compact widths; its opening, by the toggle or the menu's Show elements, puts the focus on the
+  list box, and its closing, by them or by its new Close button, on the toggle. The list's keys are
+  folded under a Keys summary and still describe the list box. The list is mounted only while the
+  drawer is open, and its options are memoised, so that a pan step renders none of them. Each row
+  shows its kind's glyph, a label and its size and place in JetBrains Mono, while the option keeps
+  P0's name. On a phone in portrait the drawer is a sheet along the bottom, below any storage
+  notice, whose buttons it never covers, at most 62 % of the height, which makes the tool bar and
+  the bottom islands inert and closes on Escape with the focus on the toggle. The I1 and I2
+  measurements now pan with the drawer closed and open. S6 to S13 are not implemented.
+- The v0.2 selection panel, phone selection bar and Details sheet (slice S6, issue #69, ADR 0012
+  decisions 1, 2, 13 and 14): while something drawn is selected and no text is edited, a panel
+  232 px wide near the upper left, at 16 / 72 on desktops, shows the kind's glyph and name or the
+  count, the position, size and turn read-only in JetBrains Mono, with a line's length, a freehand
+  stroke's points or a text's lines, and a footnote that style controls are not in this build. Its
+  Duplicate and Delete, named, described and tipped from the registry, and Edit text, shown only
+  where Enter on the canvas would edit the lone selected text, run the existing commands, which the
+  live region says as their keys do; Delete leaves the focus on the canvas. The figures come from a
+  pure geometry module whose rounding the element list's names and rows now share. On a phone in
+  portrait a bar under the tool bar, above the storage notices, takes the panel's place, with
+  44 px targets and Details, which opens a Details sheet along the bottom; it and the Elements sheet
+  are never open together, and it closes when the selection empties, a text is edited or the window
+  turns. Neither is stored, and a pan or zoom step renders neither. S7 to S13 are not implemented.
+- The v0.2 saving visibility (slice S7, issue #71, ADR 0012 decisions 12 and 14, D7): nothing
+  shows or is said about saving while it works, so P0's "Saved in this browser" and "Saving…" go.
+  While a save failed, another tab's newer save refused it or storage is unavailable, a "Not saved"
+  chip joins the top-right island before Elements, in the error tone with a triangle for a failed
+  save and the warning tone for the others, the two tabs for a stale save, and on phones as its
+  glyph alone, its name kept. The storage notices keep P0's words, in their tones, and gain Hide,
+  which folds them into the chip, a button that reopens them; a new failure, a failure for another
+  reason or a stale save shows them again, a hidden unreadable-data notice leaves a "Storage
+  notice" button, and the notices show at every load. When a failed save succeeds again, the page
+  says "The drawing is saved again." once in the polite live region. The shell's root carries
+  `data-save-state` for the tests, and B9 now ends each save at it. S8 to S13 are not implemented.
+- The v0.2 phone composition (slice S8, issue #73, ADR 0012 decisions 2, 13 and 14): on a phone in
+  portrait the tool bar is a dock 8 px above the window's bottom, with Selection, Rectangle,
+  Ellipse, Line, Freehand and Text and then More, whose popover holds Hand, Diamond and Tool lock;
+  More shows the hand's or the diamond's glyph, pressed, while that tool is active, opens by a tap,
+  Enter or Space with the focus on Hand, and closes on an item, Escape, the focus leaving it, a
+  press outside it, a sheet, the menu, a dialog or the window turning, and is never stored. History
+  and zoom sit above the dock, the top bar holds identity and Elements alone, and the bottom-right
+  island is not shown. In landscape the whole palette sits in the top row at 44 px. The view
+  readout is hidden on phones, keeping its text. `index.html` declares `viewport-fit=cover`, and
+  every anchor, the sheets' edges and the menu's and More's limits add the safe-area insets. Every
+  target is at least 44 by 44 px on phones and under a coarse pointer. A pan or zoom step renders
+  neither the tool bar, the dock nor More. S9 to S13 are not implemented.
+- The v0.2 text-editing chrome (slice S9, issue #75, ADR 0012 decisions 11, 13 and 14): while a text
+  is edited outside a phone in portrait, a caption chip 8 px under the text area names the keys that
+  finish it, "Finish with Esc or Ctrl+Enter" (Cmd+Enter on Apple platforms), each in a key chip,
+  follows the text area through typing, zooming and panning, describes it and lets a press through
+  to the canvas. On a phone in portrait a Done bar along the window's bottom sits above the
+  on-screen keyboard at its inset, read from the visual viewport, and above the bottom safe-area
+  inset where no keyboard covers it; Done, at least 44 px, commits the text as Escape does and gives
+  the focus to the canvas, during an input method's composition too; a press on the bar keeps the
+  text area's focus; the dock and history and zoom are hidden during the session, and an open
+  Elements sheet closes. The caret is not kept above the keyboard and the camera is not moved (D6).
+  Neither a camera step, a typed value nor a viewport event renders the shell. S10 to S13 are not
+  implemented.
+- The v0.2 canvas focus ring, chip and tool hint (slice S10, issue #77, ADR 0012 decisions 1, 3,
+  13 and 14): keyboard focus on the canvas shows, from CSS alone, 2 px of violet at the window's
+  edge, inset by the safe areas, over a 2 px white halo, drawn by an element of its own after the
+  canvas host, whose opaque canvases covered its own outline, with a "Canvas focused" chip at the
+  bottom centre, level with the bottom islands, hidden from assistive technology and on phones; a
+  press focuses the canvas without them. One caption line under the palette says what the active
+  tool does, in Planewright's own words, centred 8 px under the palette on desktops and in an 18 px
+  row of its own from 600 to 1199 px wide, which moves the selection panel, the notices and the
+  drawer 26 px lower; it is plain text that presses pass through, hidden on phones and absent while
+  a text is edited, and neither a camera step nor a typed value renders it. The pressed, unavailable
+  and focus-visible rules, the selected row and the text area take the tokens' colours: the violet
+  container with a violet edge for pressed controls, the unavailable content colour with a dashed
+  border, and a 2 px violet ring with a white halo on every focusable element. S11 to S13 are not
+  implemented.
+- The v0.2 selection overlay's colour (slice S11, issue #79, ADR 0012 decision D1): the canvas
+  draws the selection outline, the handles' borders and the marquee's edge in Construction Violet,
+  `#6547b4`, instead of P0's blue, `#2a62d0`, and fills the marquee with the same violet at about a
+  tenth of its opacity, `#6547b41a`, instead of `#2a62d01a`, so that the chrome and the canvas
+  show state in one colour. The handles' white fill, the line widths, the overlay's geometry and
+  alpha, hit testing and every other behaviour are unchanged. S12 and S13 are not implemented.
+- The v0.2 motion (slice S12, issue #81, ADR 0012 decision D2): the menu, More's popover, the
+  selection panel and the phone's selection bar, the storage notices and the two dialogs enter by
+  opacity and a 4 px translation in 140 ms, the Elements drawer from 8 px toward its side in 180 ms,
+  and the Elements and Details sheets from 16 px below in 220 ms, eased by
+  `cubic-bezier(0.2, 0, 0, 1)`, once, as they appear; closing stays instant. A menu item's highlight
+  fades in 90 ms. Under `prefers-reduced-motion: reduce` the four durations are 0 and no entrance or
+  fade is created, while the tooltip still waits 500 ms. The camera never animates, the canvas, the
+  tooltip, the scrim and the chrome that D2 does not name never move, and a tip that the keyboard
+  opens inside an entering surface is placed again where its control comes to rest. S13 is not
+  implemented.
+- The v0.2 visual-regression baselines (slice S13, issue #83, ADR 0012 decision 17): 30 Playwright
+  `toHaveScreenshot` baselines, V01 to V30, one per state of the ADR's matrix at 1440 × 900, 1024 ×
+  768, 390 × 844 and 844 × 390 with emulated touch, and at 1440 × 900 with two device pixels per CSS
+  pixel, built on the seeded fixture with animations disabled. They are Linux images that CI's
+  Chromium made, through a new `visual-baselines` input of the CI workflow's manual dispatch that
+  uploads them with a manifest, and CI compares them on every run at Playwright's default threshold
+  with no mask; other platforms skip them. A failed comparison's expected, actual and diff images
+  reach a `playwright-test-results` artifact, and every end-to-end run prints its processor. The
+  scene fixture has one loader for every width, and a tooling test checks the 30 images. No product
+  code changes.
+- The README opens with the editor (issue #52): in place of its pre-release callout, a screenshot of
+  the editor at 1440 × 900 with the Elements drawer open beside a flow diagram at 100 %, a short
+  account of what the editor does and does not do, and the same diagram whole at 75 % on an 844 ×
+  390 phone in landscape, with safe-area insets of 47 px at each side and 21 px at the bottom
+  emulated. The diagram, from Idea through Sketch and Refine to a Clear? decision that leads to
+  Ready or through Revise back to Refine, is a fixture of the end-to-end tests, and a tooling test
+  holds its composition to a readable diagram's rules. A visual spec of its own, outside ADR 0012's
+  matrix, captures it, CI's Chromium made its two images through the visual-baselines dispatch, and
+  `docs/assets/readme` holds byte-for-byte copies of them, 71,260 and 31,967 bytes, which a tooling
+  test keeps equal to their baselines, the only images of the README, with alternative texts that
+  name their viewports and the diagram's nodes. No product code or matrix baseline changes.
+
+### Fixed
+
+- The empty-canvas note while nothing is saved (issue #86, ADR 0012 decisions D5 and D7): without
+  storage, or after a save failed or was refused because another tab saved a newer version, the
+  note over an empty canvas leaves out the pre-release sentence's clause that the drawing is saved
+  in this browser, and says "Pre-release — you can draw shapes, lines, freehand strokes and texts,
+  then select and transform them, but there are no files or collaboration yet."; the storage
+  notices say why nothing is saved. While saving works, it still repeats About this build's
+  sentence. Baseline V17, the phone started without storage, shows the shorter sentence.
+
+## [0.1.0] - 2026-11-10
+
+**Engine Core.** The P0 milestone: the repository's foundation, the behavioural baseline, the
+canvas-engine architecture, the ECMAScript-only engine `@planewright/engine` from its math layer
+to `createEditor`, its Canvas 2D renderer `@planewright/render-canvas`, and the web app's P0 page,
+on which rectangles, ellipses, diamonds, lines, freehand strokes and texts are drawn, selected,
+transformed, undone and redone, from the keyboard too, and saved in the browser's IndexedDB
+storage, with every performance budget measured. Its tag points to `1f8188f`, the last commit of P0
+on `main`, and holds none of version 0.2.0's chrome.
+
+Each entry below describes its change as it reached `main`, in that order, so a sentence such as
+"Nothing uses it yet" says what `main` held then; the paragraph above describes the version.
 
 ### Added
 
@@ -200,169 +412,7 @@ release has been published yet.
   issue #49, which is to trace such frames in CI, as the follow-up of a missed B1 and no issue for
   B2, and the entry of issue #34 above and the rendering design record B1's results by run, not by
   processor model.
-- The v0.2 chrome's tokens and typeface (slice S1, issue #53, ADR 0012 decision 8):
-  `apps/web/src/styles/tokens.css` holds the v0.2 plan's 114 design tokens as `--pw-*` custom
-  properties, P0's style sheet is split into files under `apps/web/src/styles/` with every element
-  rule inside `:where()`, and the page's text is set in `Planewright UI`, Inter at 400 and 500 behind
-  a metric-matched local fallback. Its 400 face is the canvas's own Inter file, which the browser
-  downloads once, and Inter 500 (24,272 bytes, Fontsource 5.3.0) is the one file added. 500 is the
-  only emphasis weight, so P0's headings, terms and pre-release pill show 500 instead of 700 or 600.
-  Canvas text, its fonts and its measurement are unchanged, and a chrome face that finishes loading
-  no longer has every text measured again. No layout rule changed; the new face only wraps P0's text
-  differently, so that at 390 px wide the canvas starts 24 px higher.
-- The v0.2 full-bleed shell (slice S2, issue #55, ADR 0012 decisions 10 and 13): `EditorShell`
-  replaces P0's page. The canvas fills the window and the page never scrolls; the controls float
-  over the canvas in islands at its edges, never inside it, so no press on them reaches it: the
-  wordmark and a Pre-release tag at the top left, the tool bar at the top centre, an Elements
-  toggle at the top right with the storage notices under it, history and zoom at the bottom left,
-  and the view readout with the save status at the bottom right. The Reset zoom button shows the
-  zoom and is named "Reset zoom, 100%". The element list is in a drawer that the toggle opens,
-  closed at every load. The Pre-release tag opens About this build, a modal dialog that holds what
-  P0's pre-release pill, notes and footer said, and an empty canvas repeats the pre-release
-  sentence. The tab order is Pre-release, the tool bar, the canvas, the notices' buttons while
-  storage needs attention, Elements and the list while the drawer is open, then Undo, Redo and the
-  zoom controls. The shell is the page's main landmark. While storage needs attention, the notices
-  and an open drawer share the height between the top and bottom islands, each scrolling within
-  its share, so that every island stays inside the window at the short sizes tested, down to a
-  phone's 568 × 320 in landscape, and the focus never scrolls the shell. The layout's media
-  queries are in a style sheet of their own, so that a resize across a breakpoint does not make
-  the fonts load again and every text be measured again. The tool bar keeps its words until S3
-  and wraps at narrower widths; S3 to S13 are not implemented.
-- The v0.2 original glyphs and palette (slice S3, issue #62, ADR 0012 decision 3): 35 glyphs drawn
-  for Planewright from geometric primitives on a 20 px grid, 34 interface glyphs and the mark, in
-  one typed record with an `Icon` component that strokes them 1.5 px wide in the text colour. The
-  tool bar is now a palette: each tool shows its glyph with its first key in a corner, hidden from
-  screen readers, hairlines split its groups, and tool lock shows a padlock that is closed while it
-  is on. Undo, Redo, Zoom out, Zoom in and Zoom to fit show glyphs, Reset zoom keeps showing the
-  zoom, Elements keeps its word, and the identity island shows the mark. Every control keeps its
-  name, keys and description. The glyph controls and Reset zoom show a tooltip of their name and
-  keys after 500 ms of hover or at once on keyboard focus, never on touch, closed by Escape, a press
-  or the pointer leaving both the control and the tip, onto which the pointer can move; the Escape
-  that closes a tip does nothing else, so a second one cancels. Glyphs and their controls' borders
-  measure 3:1 or more against their surfaces at desktop and compact widths, where the corner keys
-  keep clear of the glyphs. S4 to S13 are not implemented.
-- The v0.2 menu and Keyboard shortcuts dialog (slice S4, issue #64, ADR 0012 decisions 2, 10 and
-  14): the identity island starts with a menu button, the first tab stop, which opens a menu of
-  Select all, Zoom to fit and Reset zoom, run through the command registry with their keys shown in
-  JetBrains Mono and hidden from screen readers, Show elements, a checkbox item that follows the
-  drawer, Keyboard shortcuts, About this build and Source on GitHub. It opens on a press, Enter,
-  Space or ArrowDown with the focus on its first item; the arrow keys, Home and End move; Enter runs
-  an item; Escape closes it and returns the focus to the button; Tab closes it and goes on;
-  switching to another window closes it with the focus on the button; and the button shows no
-  tooltip over the open menu. A Keyboard shortcuts button at the bottom right, the last tab stop,
-  and the menu open a dialog that lists every command of the registry with its keys, in About this
-  build's modal dialog, and a dialog returns the focus to the control that opened it. Shortcut
-  texts write Escape, Enter, Delete, Backspace and the arrows by name. S5 to S13 are not
-  implemented.
-- The v0.2 Elements drawer and phone sheet (slice S5, issue #66, ADR 0012 decisions 9 and 14): the
-  Elements toggle shows its glyph and the count of the drawn elements in tabular figures, hidden
-  from screen readers so that its name stays "Elements" and a change is announced once, by the
-  live region. The drawer, still closed at every load and stored nowhere, is 300 px wide and 280 px
-  at compact widths; its opening, by the toggle or the menu's Show elements, puts the focus on the
-  list box, and its closing, by them or by its new Close button, on the toggle. The list's keys are
-  folded under a Keys summary and still describe the list box. The list is mounted only while the
-  drawer is open, and its options are memoised, so that a pan step renders none of them. Each row
-  shows its kind's glyph, a label and its size and place in JetBrains Mono, while the option keeps
-  P0's name. On a phone in portrait the drawer is a sheet along the bottom, below any storage
-  notice, whose buttons it never covers, at most 62 % of the height, which makes the tool bar and
-  the bottom islands inert and closes on Escape with the focus on the toggle. The I1 and I2
-  measurements now pan with the drawer closed and open. S6 to S13 are not implemented.
-- The v0.2 selection panel, phone selection bar and Details sheet (slice S6, issue #69, ADR 0012
-  decisions 1, 2, 13 and 14): while something drawn is selected and no text is edited, a panel
-  232 px wide near the upper left, at 16 / 72 on desktops, shows the kind's glyph and name or the
-  count, the position, size and turn read-only in JetBrains Mono, with a line's length, a freehand
-  stroke's points or a text's lines, and a footnote that style controls are not in this build. Its
-  Duplicate and Delete, named, described and tipped from the registry, and Edit text, shown only
-  where Enter on the canvas would edit the lone selected text, run the existing commands, which the
-  live region says as their keys do; Delete leaves the focus on the canvas. The figures come from a
-  pure geometry module whose rounding the element list's names and rows now share. On a phone in
-  portrait a bar under the tool bar, above the storage notices, takes the panel's place, with
-  44 px targets and Details, which opens a Details sheet along the bottom; it and the Elements sheet
-  are never open together, and it closes when the selection empties, a text is edited or the window
-  turns. Neither is stored, and a pan or zoom step renders neither. S7 to S13 are not implemented.
-- The v0.2 saving visibility (slice S7, issue #71, ADR 0012 decisions 12 and 14, D7): nothing
-  shows or is said about saving while it works, so P0's "Saved in this browser" and "Saving…" go.
-  While a save failed, another tab's newer save refused it or storage is unavailable, a "Not saved"
-  chip joins the top-right island before Elements, in the error tone with a triangle for a failed
-  save and the warning tone for the others, the two tabs for a stale save, and on phones as its
-  glyph alone, its name kept. The storage notices keep P0's words, in their tones, and gain Hide,
-  which folds them into the chip, a button that reopens them; a new failure, a failure for another
-  reason or a stale save shows them again, a hidden unreadable-data notice leaves a "Storage
-  notice" button, and the notices show at every load. When a failed save succeeds again, the page
-  says "The drawing is saved again." once in the polite live region. The shell's root carries
-  `data-save-state` for the tests, and B9 now ends each save at it. S8 to S13 are not implemented.
-- The v0.2 phone composition (slice S8, issue #73, ADR 0012 decisions 2, 13 and 14): on a phone in
-  portrait the tool bar is a dock 8 px above the window's bottom, with Selection, Rectangle,
-  Ellipse, Line, Freehand and Text and then More, whose popover holds Hand, Diamond and Tool lock;
-  More shows the hand's or the diamond's glyph, pressed, while that tool is active, opens by a tap,
-  Enter or Space with the focus on Hand, and closes on an item, Escape, the focus leaving it, a
-  press outside it, a sheet, the menu, a dialog or the window turning, and is never stored. History
-  and zoom sit above the dock, the top bar holds identity and Elements alone, and the bottom-right
-  island is not shown. In landscape the whole palette sits in the top row at 44 px. The view
-  readout is hidden on phones, keeping its text. `index.html` declares `viewport-fit=cover`, and
-  every anchor, the sheets' edges and the menu's and More's limits add the safe-area insets. Every
-  target is at least 44 by 44 px on phones and under a coarse pointer. A pan or zoom step renders
-  neither the tool bar, the dock nor More. S9 to S13 are not implemented.
-- The v0.2 text-editing chrome (slice S9, issue #75, ADR 0012 decisions 11, 13 and 14): while a text
-  is edited outside a phone in portrait, a caption chip 8 px under the text area names the keys that
-  finish it, "Finish with Esc or Ctrl+Enter" (Cmd+Enter on Apple platforms), each in a key chip,
-  follows the text area through typing, zooming and panning, describes it and lets a press through
-  to the canvas. On a phone in portrait a Done bar along the window's bottom sits above the
-  on-screen keyboard at its inset, read from the visual viewport, and above the bottom safe-area
-  inset where no keyboard covers it; Done, at least 44 px, commits the text as Escape does and gives
-  the focus to the canvas, during an input method's composition too; a press on the bar keeps the
-  text area's focus; the dock and history and zoom are hidden during the session, and an open
-  Elements sheet closes. The caret is not kept above the keyboard and the camera is not moved (D6).
-  Neither a camera step, a typed value nor a viewport event renders the shell. S10 to S13 are not
-  implemented.
-- The v0.2 canvas focus ring, chip and tool hint (slice S10, issue #77, ADR 0012 decisions 1, 3,
-  13 and 14): keyboard focus on the canvas shows, from CSS alone, 2 px of violet at the window's
-  edge, inset by the safe areas, over a 2 px white halo, drawn by an element of its own after the
-  canvas host, whose opaque canvases covered its own outline, with a "Canvas focused" chip at the
-  bottom centre, level with the bottom islands, hidden from assistive technology and on phones; a
-  press focuses the canvas without them. One caption line under the palette says what the active
-  tool does, in Planewright's own words, centred 8 px under the palette on desktops and in an 18 px
-  row of its own from 600 to 1199 px wide, which moves the selection panel, the notices and the
-  drawer 26 px lower; it is plain text that presses pass through, hidden on phones and absent while
-  a text is edited, and neither a camera step nor a typed value renders it. The pressed, unavailable
-  and focus-visible rules, the selected row and the text area take the tokens' colours: the violet
-  container with a violet edge for pressed controls, the unavailable content colour with a dashed
-  border, and a 2 px violet ring with a white halo on every focusable element. S11 to S13 are not
-  implemented.
-- The v0.2 selection overlay's colour (slice S11, issue #79, ADR 0012 decision D1): the canvas
-  draws the selection outline, the handles' borders and the marquee's edge in Construction Violet,
-  `#6547b4`, instead of P0's blue, `#2a62d0`, and fills the marquee with the same violet at about a
-  tenth of its opacity, `#6547b41a`, instead of `#2a62d01a`, so that the chrome and the canvas
-  show state in one colour. The handles' white fill, the line widths, the overlay's geometry and
-  alpha, hit testing and every other behaviour are unchanged. S12 and S13 are not implemented.
-- The v0.2 motion (slice S12, issue #81, ADR 0012 decision D2): the menu, More's popover, the
-  selection panel and the phone's selection bar, the storage notices and the two dialogs enter by
-  opacity and a 4 px translation in 140 ms, the Elements drawer from 8 px toward its side in 180 ms,
-  and the Elements and Details sheets from 16 px below in 220 ms, eased by
-  `cubic-bezier(0.2, 0, 0, 1)`, once, as they appear; closing stays instant. A menu item's highlight
-  fades in 90 ms. Under `prefers-reduced-motion: reduce` the four durations are 0 and no entrance or
-  fade is created, while the tooltip still waits 500 ms. The camera never animates, the canvas, the
-  tooltip, the scrim and the chrome that D2 does not name never move, and a tip that the keyboard
-  opens inside an entering surface is placed again where its control comes to rest. S13 is not
-  implemented.
-- The v0.2 visual-regression baselines (slice S13, issue #83, ADR 0012 decision 17): 30 Playwright
-  `toHaveScreenshot` baselines, V01 to V30, one per state of the ADR's matrix at 1440 × 900, 1024 ×
-  768, 390 × 844 and 844 × 390 with emulated touch, and at 1440 × 900 with two device pixels per CSS
-  pixel, built on the seeded fixture with animations disabled. They are Linux images that CI's
-  Chromium made, through a new `visual-baselines` input of the CI workflow's manual dispatch that
-  uploads them with a manifest, and CI compares them on every run at Playwright's default threshold
-  with no mask; other platforms skip them. A failed comparison's expected, actual and diff images
-  reach a `playwright-test-results` artifact, and every end-to-end run prints its processor. The
-  scene fixture has one loader for every width, and a tooling test checks the 30 images. No product
-  code changes.
-- The README opens with the editor (issue #52): in place of its pre-release callout, a screenshot of
-  the editor at 1440 × 900 with the Elements drawer open beside a flow diagram at 100 %, a short
-  account of what the editor does and does not do, and the same diagram whole at 75 % on an 844 ×
-  390 phone in landscape, with safe-area insets of 47 px at each side and 21 px at the bottom
-  emulated. The diagram, from Idea through Sketch and Refine to a Clear? decision that leads to
-  Ready or through Revise back to Refine, is a fixture of the end-to-end tests, and a tooling test
-  holds its composition to a readable diagram's rules. A visual spec of its own, outside ADR 0012's
-  matrix, captures it, CI's Chromium made its two images through the visual-baselines dispatch, and
-  `docs/assets/readme` holds byte-for-byte copies of them, 71,260 and 31,967 bytes, which a tooling
-  test keeps equal to their baselines, the only images of the README, with alternative texts that
-  name their viewports and the diagram's nodes. No product code or matrix baseline changes.
+
+[unreleased]: https://github.com/mariechristsagbo/planewright/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/mariechristsagbo/planewright/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/mariechristsagbo/planewright/releases/tag/v0.1.0
