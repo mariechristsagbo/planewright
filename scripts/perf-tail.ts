@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 
-import { readTailReport, tailMarkdown, tailRows } from './lib/perf-tail.ts';
+import { parseTailReport, tailMarkdown, tailRows } from './lib/perf-tail.ts';
 
 // B1's tail across CI performance reports
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-41-decided):
@@ -10,5 +10,5 @@ import { readTailReport, tailMarkdown, tailRows } from './lib/perf-tail.ts';
 
 const paths = process.argv.slice(2);
 if (paths.length === 0) throw new Error('Usage: npm run perf:tail -- <report.json>...');
-const reports = paths.map((path) => readTailReport(JSON.parse(readFileSync(path, 'utf8')), path));
+const reports = paths.map((path) => parseTailReport(readFileSync(path, 'utf8'), path));
 console.log(tailMarkdown(tailRows(reports)));

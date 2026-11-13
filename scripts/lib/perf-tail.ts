@@ -82,6 +82,17 @@ export function readTailReport(value: unknown, file: string): TailReport {
   };
 }
 
+/** A report.json's text, read as readTailReport reads it, naming the file when it is not JSON. */
+export function parseTailReport(text: string, file: string): TailReport {
+  let value: unknown;
+  try {
+    value = JSON.parse(text);
+  } catch (error) {
+    throw new Error(`${file} is not JSON: ${String(error)}`, { cause: error });
+  }
+  return readTailReport(value, file);
+}
+
 /** The samples' median, 95th percentile and slow frames, and whether they meet `target`. */
 export function frameTail(samples: readonly number[], target: number): FrameTail {
   const p95 = statisticOf('p95', samples);

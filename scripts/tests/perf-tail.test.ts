@@ -5,6 +5,7 @@ import {
   SLOW_FRAME,
   frameTail,
   missRates,
+  parseTailReport,
   processorName,
   readTailReport,
   tailMarkdown,
@@ -75,6 +76,15 @@ describe('readTailReport', () => {
     for (const value of refused) {
       expect(() => readTailReport(value, 'r7.json')).toThrow(/^r7\.json /u);
     }
+  });
+});
+
+describe('parseTailReport', () => {
+  it("reads a report.json's text, and refuses text that is not JSON, naming the file", () => {
+    const read = parseTailReport(JSON.stringify(report(42, EPYC, [[7], [1]])), 'r1.json');
+    expect([read.processor, read.b1, read.b2]).toEqual([EPYC, [7], [1]]);
+    expect(() => parseTailReport('{"run":', 'r1.json')).toThrow(/^r1\.json is not JSON: /u);
+    expect(() => parseTailReport('[]', 'r2.json')).toThrow(/^r2\.json is not a performance /u);
   });
 });
 
