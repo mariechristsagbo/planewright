@@ -5,10 +5,10 @@ reviewed. By participating you agree to follow the [Code of Conduct](CODE_OF_CON
 
 ## Project phase
 
-Planewright is in its **foundation phase**. The drawing engine has not been implemented, and
-behavioural investigation must precede feature work. Until feature issues are open, the most
-useful contributions are bug reports about the tooling, documentation fixes and well-scoped
-investigation issues.
+Planewright is in its **foundation phase**. Its drawing engine, released as version 0.1.0, and its
+editor chrome, released as version 0.2.0, are implemented, and behavioural investigation must
+precede feature work. Until feature issues are open, the most useful contributions are bug
+reports, documentation fixes and well-scoped investigation issues.
 
 ## Workflow
 

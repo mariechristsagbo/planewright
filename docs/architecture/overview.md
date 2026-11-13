@@ -191,7 +191,9 @@ drew the selection's outline, handle borders and marquee on the canvas in the sa
 only the renderer's two overlay colours, and slice S12 (issue #81) added the surfaces' entrances,
 the menu item's fade and reduced motion's override, and slice S13 (issue #83) added the 30
 visual-regression baselines of the ADR's matrix, Linux images of the seeded fixture that CI's
-Chromium made and compares on every run.
+Chromium made and compares on every run. P0's state is version 0.1.0, Engine Core, and this chrome
+is version 0.2.0, Editor Experience, each an annotated tag and a GitHub release
+([the release procedure](../development/releasing.md)).
 
 Still open, each for its own issue and ADR:
 

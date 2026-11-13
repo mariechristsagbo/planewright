@@ -11,7 +11,8 @@ Report them privately with GitHub's private vulnerability reporting:
 2. Select **Report a vulnerability**, or go directly to
    <https://github.com/mariechristsagbo/planewright/security/advisories/new>.
 3. Describe the issue, the affected component (`apps/web`, `apps/collab`, `packages/protocol`
-   or the tooling), the commit you tested, reproduction steps and the impact you expect.
+   or the tooling), the release or commit you tested, reproduction steps and the impact you
+   expect.
 
 The report is visible only to you and the repository maintainers. It is the only supported
 channel for security reports.
@@ -26,9 +27,14 @@ it public.
 
 ## Supported versions
 
-Planewright has not published a release yet. Only the latest commit on the `main` branch is
-considered for security fixes. This section will list supported release lines once releases
-exist.
+Planewright's releases are 0.x versions, and only the latest commit on the `main` branch is
+considered for security fixes. A fix reaches users in the next release; no earlier release receives
+a fix of its own.
+
+| Version                   | Security fixes                                   |
+| ------------------------- | ------------------------------------------------ |
+| 0.2.0, the latest release | In the next release, from a fix on `main`        |
+| 0.1.0                     | None: it is a historical record of the P0 engine |
 
 ## Scope
 
