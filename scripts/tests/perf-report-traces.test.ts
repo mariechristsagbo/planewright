@@ -133,6 +133,22 @@ describe("the performance report's check of B1's trace", () => {
     ]);
   });
 
+  it('never reads a trace that the traced pass refused, or the record of why', () => {
+    const refused = {
+      'B1.trace.refused.json': TRACE,
+      'B1.refused.json': JSON.stringify({ ...RECORD, refused: 'outside every task' }),
+    };
+    expect(runReport({ ...GOOD, ...refused }).status).toBe(0);
+    const { status, report } = runReport({
+      ...refused,
+      'B1.control.json': GOOD['B1.control.json'],
+    });
+    expect(status).toBe(1);
+    expect(report.evaluation.failures).toEqual([
+      `${FAILED}browser/traces/B1.frames.json is missing.`,
+    ]);
+  });
+
   it('fails, naming the file, when the paired control kept no record', () => {
     const { status, report } = runReport({ ...GOOD, 'B1.control.json': undefined });
     expect(status).toBe(1);

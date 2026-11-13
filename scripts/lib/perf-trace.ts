@@ -198,12 +198,38 @@ export interface TraceRecord {
   readonly details?: Readonly<Record<string, unknown>>;
 }
 
-/** The names of a traced pass's files and of its paired control's record, in their folder. */
+/**
+ * The names of a traced pass's files and of its paired control's record, in their folder, and
+ * those of a trace that the check refused and of the record of why, which the report never reads.
+ */
 export const traceFiles = (id: string) => ({
   trace: `${id}.trace.json`,
   record: `${id}.frames.json`,
   control: `${id}.control.json`,
+  refusedTrace: `${id}.trace.refused.json`,
+  refused: `${id}.refused.json`,
 });
+
+/** What a traced pass keeps beside a trace that the check refused: why, and what it measured. */
+export interface RefusedTrace {
+  readonly id: string;
+  readonly pass: 'traced';
+  readonly refused: string;
+  /** The refused trace's file name, in the record's folder. */
+  readonly trace: string;
+  readonly categories: readonly string[];
+  readonly warmUp: number;
+  readonly frames: readonly MeasuredFrame[];
+}
+
+/** The record of a trace that the check refused with `error`, for the frames that `pass` measured. */
+export function refusedTrace(id: string, pass: PassFrames, error: unknown): RefusedTrace {
+  const refused = error instanceof Error ? error.message : String(error);
+  return {
+    ...{ id, pass: 'traced', refused, trace: traceFiles(id).refusedTrace },
+    ...{ categories: TRACE_CATEGORIES, warmUp: pass.warmUp, frames: pass.frames },
+  };
+}
 
 const isTracedFrame = (value: unknown): value is TracedFrame =>
   isRecord(value) && ['start', 'duration', 'ts'].every((field) => Number.isFinite(value[field]));

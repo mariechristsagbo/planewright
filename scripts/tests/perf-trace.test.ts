@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import {
   TRACE_CATEGORIES,
   readTraceRecord,
+  refusedTrace,
   traceEventsOf,
   traceFiles,
   traceFrames,
@@ -52,6 +53,8 @@ describe('the trace categories and files', () => {
       trace: 'B1.trace.json',
       record: 'B1.frames.json',
       control: 'B1.control.json',
+      refusedTrace: 'B1.trace.refused.json',
+      refused: 'B1.refused.json',
     });
   });
 });
@@ -184,6 +187,19 @@ describe('traceFrames', () => {
   it.each(refusals)('refuses %s, naming the file', (_, found, given, message) => {
     expect(() => traceFrames(found, given, FILE)).toThrow(`${FILE} `);
     expect(() => traceFrames(found, given, FILE)).toThrow(message);
+  });
+});
+
+describe('refusedTrace', () => {
+  it('says why the check refused a trace, beside the frames the pass measured', () => {
+    const error = new Error(
+      'B1.trace.json has frame 5 (measured from 1569.4 ms) outside every task',
+    );
+    expect(refusedTrace('B1', { warmUp: 2, frames: FRAMES }, error)).toEqual({
+      ...{ id: 'B1', pass: 'traced', refused: error.message, trace: 'B1.trace.refused.json' },
+      ...{ categories: TRACE_CATEGORIES, warmUp: 2, frames: FRAMES },
+    });
+    expect(refusedTrace('B1', { warmUp: 2, frames: [F1] }, 'no trace').refused).toBe('no trace');
   });
 });
 

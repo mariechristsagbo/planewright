@@ -4,6 +4,7 @@ import type { Browser } from '@playwright/test';
 
 import {
   TRACE_CATEGORIES,
+  refusedTrace,
   traceEventsOf,
   traceFiles,
   traceFrames,
@@ -22,9 +23,10 @@ import { CPU_SLOWDOWN } from './support.ts';
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided): Chromium traces
 // the whole browser while a pass measures its frames, and the pass keeps the trace beside a record
 // of those frames, each with its start on the page's clock and in the trace, once the trace is
-// checked to hold exactly its warm-up and those frames. The same pass then runs once more
-// untraced, its control, whose record sits beside the trace. Neither pass's frames are a budget's
-// samples, since tracing adds work to the frames it records.
+// checked to hold exactly its warm-up and those frames; a trace that the check refuses is kept
+// under another name with the reason, which the report never reads, and the pass fails. The same
+// pass then runs once more untraced, its control, whose record sits beside the trace. Neither
+// pass's frames are a budget's samples, since tracing adds work to the frames it records.
 
 export interface TracedPass {
   /** The budget whose measurement the pass repeats. */
@@ -53,12 +55,24 @@ export async function traced(
   const trace = await browser.stopTracing();
   const files = traceFiles(pass.id);
   const folder = tracesFolder(CPU_SLOWDOWN);
-  const events = traceEventsOf(JSON.parse(trace.toString('utf8')), files.trace);
-  const frames = traceFrames(
-    events,
-    { warmUp: pass.warmUp, frames: measured.map(({ start, duration }) => ({ start, duration })) },
-    files.trace,
-  );
+  const given = {
+    warmUp: pass.warmUp,
+    frames: measured.map(({ start, duration }) => ({ start, duration })),
+  };
+  let frames: TracedFrame[];
+  try {
+    frames = traceFrames(
+      traceEventsOf(JSON.parse(trace.toString('utf8')), files.trace),
+      given,
+      files.trace,
+    );
+  } catch (error) {
+    const refused = refusedTrace(pass.id, given, error);
+    mkdirSync(folder, { recursive: true });
+    writeFileSync(`${folder}${files.refusedTrace}`, trace);
+    writeFileSync(`${folder}${files.refused}`, `${JSON.stringify(refused, null, 2)}\n`);
+    throw error;
+  }
   const record: TraceRecord = {
     ...{ id: pass.id, pass: 'traced', trace: files.trace, categories: TRACE_CATEGORIES },
     ...{ warmUp: pass.warmUp, frames },
