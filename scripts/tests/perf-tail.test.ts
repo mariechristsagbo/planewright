@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { REPOSITORY } from '../lib/perf-baseline.ts';
+import { evaluate } from '../lib/perf-report.ts';
 import {
   SLOW_FRAME,
   frameTail,
@@ -63,6 +64,19 @@ describe('readTailReport', () => {
     const read = readTailReport(report(42, EPYC, [[7, 8], [1.5]]), 'report.json');
     expect(read.run.url).toBe(`https://github.com/${REPOSITORY}/actions/runs/42/attempts/1`);
     expect([read.processor, read.b1, read.b2]).toEqual([EPYC, [7, 8], [1.5]]);
+  });
+
+  it('reads the last of two measurements with one id, as the performance report does', () => {
+    const measurements = [
+      { id: 'B1', samples: [20, 20] },
+      { id: 'B2', samples: [1] },
+      { id: 'B1', samples: [7, 8] },
+    ];
+    const read = readTailReport({ ...report(42, EPYC, [[], []]), measurements }, 'report.json');
+    expect(read.b1).toEqual([7, 8]);
+    const evaluation = evaluate(measurements, { runs: [], followUps: {} }, EPYC);
+    const b1 = evaluation.results.find(({ budget }) => budget.id === 'B1');
+    expect(frameTail(read.b1, 8).p95).toBe(b1?.value);
   });
 
   it('refuses a report without a run, a processor or the B1 and B2 samples, naming the file', () => {

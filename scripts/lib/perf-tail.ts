@@ -63,8 +63,9 @@ const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
 
 const RUN_FIELDS = ['branch', 'event', 'commit', 'url'] as const;
 
+/** The samples of the report's last measurement of `id`, the one its evaluation kept. */
 function samplesOf(measurements: readonly unknown[], id: string, file: string): number[] {
-  const found = measurements.find((each) => isRecord(each) && each['id'] === id);
+  const found = measurements.findLast((each) => isRecord(each) && each['id'] === id);
   if (found === undefined) throw new Error(`${file} has no ${id} measurement.`);
   return [...readMeasurement(found, file).samples];
 }
