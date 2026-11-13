@@ -837,10 +837,10 @@ budget, tolerance, warm-up, sample count, statistic or gate, and no pixel.
   report of the same CI run and attempt of one repository or the same content, puts another
   repository's runs after this repository's, named by their whole address as a local report is,
   and reads a report's last measurement of an id, as the report's evaluation does.
-- **Not yet.** D2 to D4. No CI report with such a trace has been collected, missing or meeting B1,
-  on any processor model, so neither A1's traces on two models nor a cause is recorded, and what
-  slows B1's frames on a runner stays unknown. `docs/performance/baseline.json` still names issue
-  #49 as B1's follow-up.
+- **Not yet.** D2 to D4. Traces of missing and meeting runs on at least two processor models,
+  taken as every run of a span stated beforehand, are still to be collected and compared, so
+  neither A1's traces on two models nor a cause is recorded, and what slows B1's frames on a runner
+  stays unknown. `docs/performance/baseline.json` still names issue #49 as B1's follow-up.
 
 ## Export
 
