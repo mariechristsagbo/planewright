@@ -172,7 +172,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
 - `apps/web`: React 19 and Vite 8 application. Source in `src/`: the editor's shell in `shell/`
   (`EditorShell`, its state, the identity island with the mark and the Pre-release tag, the Elements
   toggle with its count and the drawer with its focus moves and the phone's sheet query, the
-  empty-canvas note and the Keyboard shortcuts button, the phone's Done bar in `DoneBar.tsx` with
+  empty-canvas note with its words in `empty-canvas-note.ts` and the Keyboard shortcuts button,
+  the phone's Done bar in `DoneBar.tsx` with
   the keyboard's inset in `keyboard-inset.ts` and the shell's part of a text session in
   `text-session.ts`, the canvas's focus ring and chip in `CanvasFocusChip.tsx`, the active tool's
   hint line in `ToolHint.tsx` with its words in `tool-hints.ts`, the phone dock's More and its
