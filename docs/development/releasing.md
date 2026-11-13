@@ -138,9 +138,11 @@ MESSAGES=<a folder outside the repository for the tags' messages>
 
    `T` must be the pull request's last commit as merged: its commits pair with those of
    `refs/pull/<number>/head` in order by `git patch-id --stable`, the two trees are equal, and no
-   commit follows `T` on `main`. The day must be the changelog's date of version 0.2.0; if it is
-   not, a pull request of its own corrects the date in the changelog and this document first, and
-   its commit becomes the target.
+   commit follows `T` on `main`. The day must be the changelog's date of version 0.2.0. If it is
+   not, a pull request of its own first corrects that date everywhere it is written: the
+   changelog's heading, this document's table, the anchor of the link to the changelog's section in
+   `docs/releases/v0.2.0.md` and the date that `scripts/tests/release-records.test.ts` pins. Its
+   last commit then becomes the target.
 
 2. **The gates on `T`.**
    - The CI and CodeQL runs of the push of `T`
@@ -161,7 +163,12 @@ MESSAGES=<a folder outside the repository for the tags' messages>
    gh api "repos/$REPO/releases" --jq length      # 0
    git cat-file -t "$V010"                        # commit
    git merge-base --is-ancestor "$V010" "$T" && echo ancestor
+   gh api "repos/$REPO/issues?milestone=2&state=open" --jq '[.[].number] | sort'   # [67,90]
    ```
+
+   Milestone 2 is v0.2.0. Issue #67 asks that no blocking editor-experience issue be open in it,
+   so an open issue other than #67, this release, and #90, the deployment, stops the session until
+   the maintainer says whether it blocks the release.
 
 4. **The tags.** Write each message to a file outside the repository, with no line starting with
    `#`. The message of v0.1.0 is its release title, a blank line, then this paragraph:
@@ -190,15 +197,22 @@ MESSAGES=<a folder outside the repository for the tags' messages>
    ```
 
    ```sh
+   grep -n '[<>]' "$MESSAGES/v0.1.0.txt" "$MESSAGES/v0.2.0.txt"         # nothing
    git tag -a --no-sign --cleanup=verbatim -F "$MESSAGES/v0.1.0.txt" v0.1.0 "$V010"
    git tag -a --no-sign --cleanup=verbatim -F "$MESSAGES/v0.2.0.txt" v0.2.0 "$T"
    git cat-file -t v0.1.0                         # tag
    git rev-parse 'v0.1.0^{commit}'                # $V010
    git cat-file -p v0.1.0 | head -4               # object $V010, type commit, tag v0.1.0, tagger
-   git push --atomic origin refs/tags/v0.1.0 refs/tags/v0.2.0
+   git cat-file -p v0.1.0 | sed '1,/^$/d' | cmp - "$MESSAGES/v0.1.0.txt"   # nothing
    ```
 
-   The checks of `v0.1.0` are made for `v0.2.0` too, with `T`.
+   The checks of `v0.1.0` are made for `v0.2.0` too, with `T`. Only when every one of them has
+   passed, so that no `<…>` of the template is left and each tag holds its message file exactly,
+   are the tags pushed, since a pushed tag is not changed again:
+
+   ```sh
+   git push --atomic origin refs/tags/v0.1.0 refs/tags/v0.2.0
+   ```
 
 5. **The tags as GitHub holds them.** `git ls-remote origin 'refs/tags/v0.*'` prints four lines:
    `refs/tags/v0.1.0` with the local tag object, `git rev-parse v0.1.0`, then `refs/tags/v0.1.0^{}`
@@ -244,13 +258,16 @@ MESSAGES=<a folder outside the repository for the tags' messages>
 - **Before a tag is pushed,** `git tag -d v0.1.0 v0.2.0` removes the local tags; nothing is public,
   and the session starts again at step 1 once the cause is fixed.
 - **If a check of steps 1 to 3 fails,** no tag is made, and `main` describes releases that do not
-  exist yet. The maintainer decides between a fix in a pull request of its own, whose commit then
-  becomes version 0.2.0's target, with its date and this document's table changed in it, and a
-  revert of this document's pull request in a pull request.
+  exist yet. The maintainer decides between a fix in a pull request of its own, whose last commit
+  then becomes version 0.2.0's target, with the date corrected in it wherever step 1 lists it, and
+  a revert of this document's pull request in a pull request.
 - **A failed push** of the two tags is atomic and pushes neither: `git ls-remote --tags origin`
   shows it, and the push is retried once.
 - **After the tags are pushed,** a wrong tag is reported on issue #67 and is moved or deleted only
   by the maintainer's decision.
+- **If step 6 stops halfway,** `gh api "repos/$REPO/releases" --jq '[.[].tag_name]'` shows which
+  release exists. Only the missing one is created, with its own command of step 6, never one that
+  exists a second time, and step 7 is then made in full, the latest release included.
 - **After the releases are made,** a wrong title or body is corrected by editing the release, which
   leaves its tag alone; a release is deleted only by the maintainer's decision.
 - **The deployment's rollback** belongs to issue #90.
