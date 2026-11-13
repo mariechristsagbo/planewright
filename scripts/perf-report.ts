@@ -7,15 +7,16 @@ import { PERF_BUDGETS, benchMeasurements } from './lib/perf-budgets.ts';
 import type { Measurement } from './lib/perf-budgets.ts';
 import { readBaseline } from './lib/perf-baseline.ts';
 import { evaluate, readMeasurement, reportMarkdown } from './lib/perf-report.ts';
-import { traceMarkdown, traceResult } from './lib/perf-trace.ts';
-import type { TraceResult } from './lib/perf-trace.ts';
+import { passesMarkdown, passesResult } from './lib/perf-passes.ts';
+import type { PassesResult } from './lib/perf-passes.ts';
 
 // The performance report (docs/architecture/engine/quality.md#what-eng-15-decided): it reads what
 // `npm run perf:bench`, `npm run perf:browser` and `npm run check:bundle-size` wrote to
 // perf-results/, compares it with the budgets and the committed baseline, writes report.json and
 // report.md there and to the CI job's summary, and fails when a rule says so. It also checks the
-// trace that the browser measurements keep of B1's pans and gives its digest, failing when the
-// trace is missing or does not hold its frames
+// trace that the browser measurements keep of a pass of B1's pans and that pass's paired control
+// against B1's own measurement, gives the trace's digest and each pass's tail, and fails when any of
+// them is missing, the trace does not hold exactly its pass's frames or the passes are not paired
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided).
 
 const RESULTS = 'perf-results';
@@ -58,13 +59,17 @@ function traceFile(name: string): Buffer | undefined {
   }
 }
 
-/** B1's trace, checked against its record, or why it fails the report. */
-function traces(): { results: TraceResult[]; failures: string[] } {
+/** B1's passes and trace, checked against one another and B1's own measurement, or why they fail. */
+function traces(budget: Measurement | undefined): { results: PassesResult[]; failures: string[] } {
+  const file = 'browser/B1.json';
   try {
-    return { results: [traceResult('B1', TRACES, traceFile)], failures: [] };
+    return {
+      results: [passesResult('B1', TRACES, traceFile, { file, measurement: budget })],
+      failures: [],
+    };
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
-    return { results: [], failures: [`B1's trace failed its check: ${reason}`] };
+    return { results: [], failures: [`B1's passes and trace failed their check: ${reason}`] };
   }
 }
 
@@ -131,7 +136,7 @@ const measurements = [
 const budgets = new Set(PERF_BUDGETS.map(({ id }) => id));
 const run = runOf();
 const machine = machineOf(run, measurements);
-const traced = traces();
+const traced = traces(measurements.findLast(({ id }) => id === 'B1'));
 const evaluated = evaluate(
   measurements.filter(({ id }) => budgets.has(id)),
   readBaseline(readJson(BASELINE)),
@@ -139,7 +144,7 @@ const evaluated = evaluate(
 );
 const evaluation = { ...evaluated, failures: [...evaluated.failures, ...traced.failures] };
 const infos = measurements.filter(({ id }) => !budgets.has(id));
-const sections = traceMarkdown(traced.results);
+const sections = passesMarkdown(traced.results);
 const markdown = reportMarkdown(evaluation, infos, { machine, notes: NOTES, sections });
 const values = Object.fromEntries(
   evaluation.results.flatMap(({ budget, value }) => (value === null ? [] : [[budget.id, value]])),

@@ -8,18 +8,24 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { measured } from './perf-fixtures.ts';
-import { EVENTS, F1, F2, F3, RECORD, traceOf, traced } from './trace-fixtures.ts';
+import { BUDGET, CONTROL, EVENTS, F1, F2, F3, RECORD, traceOf, traced } from './trace-fixtures.ts';
 
-// The performance report and B1's trace
+// The performance report and B1's passes and trace
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided): `npm run
-// perf:report` checks the traced pass's record and trace in perf-results/browser/traces, keeps the
-// trace's size and SHA-256 in report.json and report.md, and fails when the trace is missing or
-// does not hold its frames; the CI job then uploads perf-results/, the traces in it, as the
-// performance-report artifact.
+// perf:report` checks the traced pass's record and trace and its paired control's record in
+// perf-results/browser/traces against B1's own measurement, keeps the trace's size and SHA-256 and
+// each pass's tail in report.json and report.md, and fails when any of them is missing, the trace
+// does not hold exactly its frames or the passes are not paired; the CI job then uploads
+// perf-results/, the traces in it, as the performance-report artifact.
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const TRACE = Buffer.from(JSON.stringify(traceOf(EVENTS)));
-const FAILED = "B1's trace failed its check: ";
+const FAILED = "B1's passes and trace failed their check: ";
+const GOOD = {
+  'B1.frames.json': JSON.stringify(RECORD),
+  'B1.trace.json': TRACE,
+  'B1.control.json': JSON.stringify(CONTROL),
+};
 
 const folders: string[] = [];
 
@@ -34,9 +40,10 @@ interface Report {
 
 /**
  * Runs the report in a folder of its own, every budget measured within its target as a browser
- * measurement, with the trace files given, and gives its exit status, report.json and report.md.
+ * measurement, B1 as its budget pass measured it, with the trace files given, and gives its exit
+ * status, report.json and report.md.
  */
-function runReport(traces: Readonly<Record<string, string | Buffer>>) {
+function runReport(traces: Readonly<Record<string, string | Buffer | undefined>>) {
   const cwd = mkdtempSync(join(tmpdir(), 'planewright-report-'));
   folders.push(cwd);
   mkdirSync(join(cwd, 'docs', 'performance'), { recursive: true });
@@ -44,11 +51,12 @@ function runReport(traces: Readonly<Record<string, string | Buffer>>) {
   copyFileSync(join(ROOT, baseline), join(cwd, baseline));
   const browser = join(cwd, 'perf-results', 'browser');
   mkdirSync(join(browser, 'traces'), { recursive: true });
-  for (const measurement of measured(0.5)) {
-    writeFileSync(join(browser, `${measurement.id}.json`), JSON.stringify(measurement));
+  for (const measurement of measured(0.5, { B1: BUDGET.samples })) {
+    const written = measurement.id === 'B1' ? BUDGET : measurement;
+    writeFileSync(join(browser, `${measurement.id}.json`), JSON.stringify(written));
   }
   for (const [name, content] of Object.entries(traces)) {
-    writeFileSync(join(browser, 'traces', name), content);
+    if (content !== undefined) writeFileSync(join(browser, 'traces', name), content);
   }
   const env = {
     PATH: process.env['PATH'] ?? '',
@@ -67,11 +75,8 @@ function runReport(traces: Readonly<Record<string, string | Buffer>>) {
 }
 
 describe("the performance report's check of B1's trace", () => {
-  it("keeps the trace's path, size, digest and frames in report.json and report.md", () => {
-    const { status, report, markdown } = runReport({
-      'B1.frames.json': JSON.stringify(RECORD),
-      'B1.trace.json': TRACE,
-    });
+  it("keeps the trace's path, size and digest and each pass's tail in report.json and report.md", () => {
+    const { status, report, markdown } = runReport(GOOD);
     const sha256 = createHash('sha256').update(TRACE).digest('hex');
     expect(status).toBe(0);
     expect(report.evaluation.failures).toEqual([]);
@@ -81,16 +86,28 @@ describe("the performance report's check of B1's trace", () => {
         id: 'B1',
         trace: 'browser/traces/B1.trace.json',
         record: 'browser/traces/B1.frames.json',
+        control: 'browser/traces/B1.control.json',
       },
-      ...{ bytes: TRACE.length, sha256, frames: 3, warmUp: 2 },
+      ...{ bytes: TRACE.length, sha256, events: EVENTS.length + 1 },
     });
+    const passes = report.traces[0]?.['passes'] as readonly Readonly<Record<string, unknown>>[];
+    expect(
+      passes.map(({ pass, traced, file, frames, warmUp }) => [pass, traced, file, frames, warmUp]),
+    ).toEqual([
+      ['budget', false, 'browser/B1.json', 3, 2],
+      ['traced', true, 'browser/traces/B1.frames.json', 3, 2],
+      ['control', false, 'browser/traces/B1.control.json', 3, 2],
+    ]);
+    expect(report.traces[0]?.['differences']).toHaveLength(3);
+    expect(markdown).toContain("### B1's passes and trace");
+    expect(markdown).toContain('| Traced pass minus paired control | -0.2 ms | +0.7 ms | 0 |');
     expect(markdown).toContain(
-      `| \`browser/traces/B1.trace.json\` | ${String(TRACE.length)} | \`${sha256}\` |`,
+      `| \`browser/traces/B1.trace.json\` | ${String(TRACE.length)} | ${String(EVENTS.length + 1)} | \`${sha256}\` |`,
     );
   });
 
   it('fails, naming the file, when the traced pass kept no record', () => {
-    const { status, report, markdown } = runReport({ 'B1.trace.json': TRACE });
+    const { status, report, markdown } = runReport({ ...GOOD, 'B1.frames.json': undefined });
     const failure = `${FAILED}browser/traces/B1.frames.json is missing.`;
     expect(status).toBe(1);
     expect(report.evaluation.failures).toEqual([failure]);
@@ -100,10 +117,7 @@ describe("the performance report's check of B1's trace", () => {
 
   it('fails when the trace does not hold the frames of its record', () => {
     const record = { ...RECORD, frames: traced([F1, F2, { start: 290.5, duration: 7 }]) };
-    const { status, report } = runReport({
-      'B1.frames.json': JSON.stringify(record),
-      'B1.trace.json': TRACE,
-    });
+    const { status, report } = runReport({ ...GOOD, 'B1.frames.json': JSON.stringify(record) });
     expect(status).toBe(1);
     expect(report.evaluation.failures).toEqual([
       `${FAILED}browser/traces/B1.trace.json holds no window of frame 3 (measured from 290.5 ms): its scene render 5 starts at 260.4 ms.`,
@@ -112,13 +126,28 @@ describe("the performance report's check of B1's trace", () => {
 
   it('fails when the record leaves out a frame that the trace holds', () => {
     const record = { ...RECORD, frames: traced([F1, F3]) };
-    const { status, report } = runReport({
-      'B1.frames.json': JSON.stringify(record),
-      'B1.trace.json': TRACE,
-    });
+    const { status, report } = runReport({ ...GOOD, 'B1.frames.json': JSON.stringify(record) });
     expect(status).toBe(1);
     expect(report.evaluation.failures).toEqual([
       `${FAILED}browser/traces/B1.trace.json holds 5 scene renders, not the 2 of the warm-up and the 2 measured frames of the pass.`,
+    ]);
+  });
+
+  it('fails, naming the file, when the paired control kept no record', () => {
+    const { status, report } = runReport({ ...GOOD, 'B1.control.json': undefined });
+    expect(status).toBe(1);
+    expect(report.evaluation.failures).toEqual([
+      `${FAILED}browser/traces/B1.control.json is missing.`,
+    ]);
+    expect(report.traces).toEqual([]);
+  });
+
+  it('fails when the paired control is not a pass like the others', () => {
+    const control = JSON.stringify({ ...CONTROL, warmUp: 3 });
+    const { status, report } = runReport({ ...GOOD, 'B1.control.json': control });
+    expect(status).toBe(1);
+    expect(report.evaluation.failures).toEqual([
+      `${FAILED}B1's passes are not paired: their \`warmUp\` differs (budget pass 2, traced pass 2, paired control 3).`,
     ]);
   });
 });

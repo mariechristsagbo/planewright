@@ -1,17 +1,14 @@
 import { createHash } from 'node:crypto';
 
-import { percentile, statisticOf } from './perf-budgets.ts';
-import { formatValue } from './perf-report.ts';
-
 /**
  * B1's trace (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided): after
  * B1's own frames, which no trace slows, the browser measurements pan B1's scene again while
  * Chromium traces the whole browser, and keep the trace beside a record of that pass's frames,
  * each with its start on the page's clock and in the trace. This module checks that the trace
- * holds every frame of the pass: its user-timing window, as long as the page measured it, inside a
- * task that the timeline recorded on the window's thread. The performance report checks the record
- * and the trace again, gives the trace's size and digest, and fails when either is missing or the
- * trace does not hold the record's frames.
+ * holds exactly the pass's frames: its warm-up's scene renders, then each measured frame's
+ * user-timing window, as long as the page measured it, inside a task that the timeline recorded on
+ * the window's thread. The performance report checks the record and the trace again and gives the
+ * trace's size and digest, and perf-passes.ts sets the traced pass beside B1's own and its control.
  */
 
 /** What Chromium traces: the timeline, V8 and its garbage collection, the frames and every task. */
@@ -250,13 +247,19 @@ export interface TraceResult {
   readonly bytes: number;
   readonly sha256: string;
   readonly events: number;
-  readonly frames: number;
-  readonly warmUp: number;
-  readonly median: number;
-  readonly p95: number;
 }
 
-function readJson(read: (name: string) => Buffer | undefined, name: string, path: string) {
+/** A checked trace: what the report keeps of it, and the traced pass's record it holds. */
+export interface CheckedTrace {
+  readonly result: TraceResult;
+  readonly pass: TraceRecord;
+}
+
+/** Reads a file of a pass's folder by name, undefined when it is missing. */
+export type PassReader = (name: string) => Buffer | undefined;
+
+/** A JSON file of the folder, read through `read`, refusing a missing file or other text. */
+export function readJson(read: PassReader, name: string, path: string) {
   const content = read(name);
   if (content === undefined) throw new Error(`${path} is missing.`);
   try {
@@ -281,13 +284,9 @@ function checkRecord(record: TraceRecord, id: string, path: string): void {
 
 /**
  * The traced pass of budget `id` in `folder`, read through `read`: its record and trace checked
- * against each other, with the trace's size, digest and events and the frames' statistics.
+ * against each other, with the trace's size, digest and events.
  */
-export function traceResult(
-  id: string,
-  folder: string,
-  read: (name: string) => Buffer | undefined,
-): TraceResult {
+export function traceResult(id: string, folder: string, read: PassReader): CheckedTrace {
   const names = traceFiles(id);
   const recordPath = `${folder}/${names.record}`;
   const record = readTraceRecord(readJson(read, names.record, recordPath).value, recordPath);
@@ -303,35 +302,11 @@ export function traceResult(
       throw new Error(`${recordPath} gives ${frame}, but its window starts at ${String(ts)}.`);
     }
   });
-  const durations = record.frames.map(({ duration }) => duration);
   return {
-    ...{ id, trace: tracePath, record: recordPath, bytes: content.length },
-    ...{ sha256: createHash('sha256').update(content).digest('hex'), events: events.length },
-    ...{ frames: record.frames.length, warmUp: record.warmUp },
-    ...{ median: percentile(durations, 0.5), p95: statisticOf('p95', durations) },
+    result: {
+      ...{ id, trace: tracePath, record: recordPath, bytes: content.length },
+      ...{ sha256: createHash('sha256').update(content).digest('hex'), events: events.length },
+    },
+    pass: record,
   };
-}
-
-const row = (cells: readonly string[]): string => `| ${cells.join(' | ')} |`;
-const TRACE_HEADER = ['Id', 'Frames', 'Median', '95th percentile', 'Trace', 'Bytes', 'SHA-256'];
-
-/** The report's section on the traces, none when no trace was checked. */
-export function traceMarkdown(results: readonly TraceResult[]): string[] {
-  if (results.length === 0) return [];
-  return [
-    '### Traces',
-    '',
-    "After B1's own frames, which no trace slows, B1's pans ran again while Chromium traced the browser. The record beside each trace gives each traced frame's start on the page's clock and in the trace; these values are that pass's, not B1's.",
-    '',
-    row(TRACE_HEADER),
-    row(TRACE_HEADER.map(() => '---')),
-    ...results.map(({ id, frames, warmUp, median, p95, trace, bytes, sha256 }) =>
-      row([
-        ...[id, `${String(frames)} after ${String(warmUp)}`],
-        ...[`${formatValue(median)} ms`, `${formatValue(p95)} ms`],
-        ...[`\`${trace}\``, String(bytes), `\`${sha256}\``],
-      ]),
-    ),
-    '',
-  ];
 }

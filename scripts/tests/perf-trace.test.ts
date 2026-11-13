@@ -8,7 +8,6 @@ import {
   traceEventsOf,
   traceFiles,
   traceFrames,
-  traceMarkdown,
   traceResult,
 } from '../lib/perf-trace.ts';
 import type { PassFrames, TraceEvent } from '../lib/perf-trace.ts';
@@ -26,6 +25,7 @@ import {
   endOf,
   frameEvents,
   traceOf,
+  filesOf,
   traced,
 } from './trace-fixtures.ts';
 import type { Frame } from './trace-fixtures.ts';
@@ -218,32 +218,21 @@ describe('readTraceRecord', () => {
 const FOLDER = 'browser/traces';
 const TRACE = Buffer.from(JSON.stringify(traceOf(EVENTS)));
 
-/** The files of a traced pass, by name, as the report reads them from their folder. */
-const filesOf =
-  (files: Readonly<Record<string, unknown>>) =>
-  (name: string): Buffer | undefined => {
-    const content = files[name];
-    if (content === undefined || Buffer.isBuffer(content)) return content;
-    return Buffer.from(typeof content === 'string' ? content : JSON.stringify(content));
-  };
-
 const GOOD = { 'B1.frames.json': RECORD, 'B1.trace.json': TRACE };
 
 describe('traceResult', () => {
-  it('checks the trace against its record and gives its size, digest and frames', () => {
-    const { p95, ...result } = traceResult('B1', FOLDER, filesOf(GOOD));
-    expect(result).toEqual({
-      id: 'B1',
-      trace: 'browser/traces/B1.trace.json',
-      record: 'browser/traces/B1.frames.json',
-      bytes: TRACE.length,
-      sha256: createHash('sha256').update(TRACE).digest('hex'),
-      events: EVENTS.length + 1,
-      frames: 3,
-      warmUp: 2,
-      median: 7.2,
+  it('checks the trace against its record and gives its size, digest and events, and the record', () => {
+    expect(traceResult('B1', FOLDER, filesOf(GOOD))).toEqual({
+      result: {
+        id: 'B1',
+        trace: 'browser/traces/B1.trace.json',
+        record: 'browser/traces/B1.frames.json',
+        bytes: TRACE.length,
+        sha256: createHash('sha256').update(TRACE).digest('hex'),
+        events: EVENTS.length + 1,
+      },
+      pass: RECORD,
     });
-    expect(p95).toBeCloseTo(10.08, 9);
   });
 
   const record = (change: Readonly<Record<string, unknown>>) => ({ ...RECORD, ...change });
@@ -300,20 +289,5 @@ describe('traceResult', () => {
 
   it.each(refusals)('refuses %s, naming the file', (_, files, message) => {
     expect(() => traceResult('B1', FOLDER, filesOf(files))).toThrow(message);
-  });
-});
-
-describe('traceMarkdown', () => {
-  it('renders each trace with its frames, their median and 95th percentile, size and digest', () => {
-    const result = traceResult('B1', FOLDER, filesOf(GOOD));
-    const markdown = traceMarkdown([result]).join('\n');
-    expect(markdown).toContain('### Traces');
-    expect(markdown).toContain(
-      '| Id | Frames | Median | 95th percentile | Trace | Bytes | SHA-256 |',
-    );
-    expect(markdown).toContain(
-      `| B1 | 3 after 2 | 7.2 ms | 10.08 ms | \`browser/traces/B1.trace.json\` | ${String(TRACE.length)} | \`${result.sha256}\` |`,
-    );
-    expect(traceMarkdown([])).toEqual([]);
   });
 });

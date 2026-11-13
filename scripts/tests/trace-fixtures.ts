@@ -3,8 +3,8 @@ import type { TraceEvent } from '../lib/perf-trace.ts';
 
 // What the trace tests share: Chromium trace events of measured scene renders, each a user-timing
 // window inside an animation frame's timeline task on the page's main thread, warm-up frames
-// before three measured ones, the record of those three, and the record of a paired control that
-// measured three frames untraced.
+// before three measured ones, the record of those three, the record of a paired control that
+// measured three frames untraced, and the budget pass's three samples.
 
 const MAIN = { pid: 7, tid: 7 };
 /** The page's time origin on the trace's clock, in µs, as Chromium's monotonic clock gives it. */
@@ -70,7 +70,13 @@ export const RECORD = {
   categories: [...TRACE_CATEGORIES],
   warmUp: 2,
   frames: traced(FRAMES),
-  details: { seed: 21, count: 5000, browser: 'Chromium 156.0.8078.4', cpuSlowdown: 1 },
+  details: {
+    seed: 21,
+    count: 5000,
+    inView: 5000,
+    browser: 'Chromium 156.0.8078.4',
+    cpuSlowdown: 1,
+  },
 };
 
 export const CONTROL = {
@@ -82,5 +88,30 @@ export const CONTROL = {
     { start: 150.2, duration: 7.4 },
     { start: 181.7, duration: 9.6 },
   ],
-  details: { seed: 21, count: 5000, browser: 'Chromium 156.0.8078.4', cpuSlowdown: 1 },
+  details: {
+    seed: 21,
+    count: 5000,
+    inView: 5000,
+    browser: 'Chromium 156.0.8078.4',
+    cpuSlowdown: 1,
+  },
 };
+
+/** B1's measurement of the budget pass, as its browser measurement file holds it. */
+export const BUDGET = {
+  id: 'B1',
+  samples: [7.5, 6.8, 7.1],
+  details: {
+    ...{ seed: 21, count: 5000, inView: 5000, warmUp: 2, by: 'wheel pans of 2 px back and forth' },
+    ...{ browser: 'Chromium 156.0.8078.4', cpuSlowdown: 1 },
+  },
+};
+
+/** The files of a traced pass and its control, by name, as the report reads them from their folder. */
+export const filesOf =
+  (files: Readonly<Record<string, unknown>>) =>
+  (name: string): Buffer | undefined => {
+    const content = files[name];
+    if (content === undefined || Buffer.isBuffer(content)) return content;
+    return Buffer.from(typeof content === 'string' ? content : JSON.stringify(content));
+  };
