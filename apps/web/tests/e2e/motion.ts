@@ -62,20 +62,31 @@ export const animations = (page: Page): Promise<Running[]> =>
     return document.getAnimations().map(describe);
   })()`);
 
-/** Waits for the page's animations to end, at most SETTLE_MS, and gives those still running. */
+/**
+ * Waits for the page's animations to end, at most SETTLE_MS, and gives those still running. An
+ * end that a style read sees between frames empties getAnimations() before its animationend or
+ * transitionend is dispatched, which Chromium does by the next animation frame: so each time none
+ * runs, one more frame passes before the check is final.
+ */
 const SETTLE = `(async () => {${DESCRIBE}
   const deadline = performance.now() + ${String(SETTLE_MS)};
   const later = (ms) => new Promise((resolve) => setTimeout(resolve, Math.max(0, ms)));
-  while (document.getAnimations().length > 0 && performance.now() < deadline) {
-    const ends = document.getAnimations().map((animation) => animation.finished.catch(() => undefined));
-    await Promise.race([Promise.all(ends), later(deadline - performance.now())]);
-  }
+  const frame = () => new Promise((resolve) => requestAnimationFrame(resolve));
+  do {
+    while (document.getAnimations().length > 0 && performance.now() < deadline) {
+      const ends = document.getAnimations().map((animation) => animation.finished.catch(() => undefined));
+      await Promise.race([Promise.all(ends), later(deadline - performance.now())]);
+    }
+    await Promise.race([frame(), later(deadline - performance.now())]);
+  } while (document.getAnimations().length > 0 && performance.now() < deadline);
   return document.getAnimations().map(describe);
 })()`;
 
 /**
- * Waits until no animation runs in the page, so that boxes and colours read afterwards are the
- * settled ones, and fails, naming them, if any still runs after SETTLE_MS.
+ * Waits until no animation runs in the page and the end events of those that ran have been
+ * dispatched, so that boxes and colours read afterwards are the settled ones and a motion probe
+ * started afterwards counts none of them, and fails, naming them, if any still runs after
+ * SETTLE_MS.
  */
 export async function settled(page: Page): Promise<void> {
   const running = await page.evaluate<Running[]>(SETTLE);
