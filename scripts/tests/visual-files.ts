@@ -10,6 +10,8 @@ import { expect } from 'vitest';
 export const E2E = join(import.meta.dirname, '..', '..', 'apps', 'web', 'tests', 'e2e');
 export const DESKTOP = 'visual-desktop.spec.ts';
 export const TOUCH = 'visual-touch.spec.ts';
+/** The README's showcase, which is not a state of the matrix (issue #52). */
+export const README_SPEC = 'visual-readme.spec.ts';
 
 /** An image's path in the e2e directory: the spec's snapshot directory and the Linux name. */
 export const imageFile = (spec: string, name: string) =>

@@ -3,13 +3,23 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { DESKTOP, E2E, TOUCH, imageFile, pngSize, shotsIn, testsOf } from './visual-files.ts';
+import {
+  DESKTOP,
+  E2E,
+  README_SPEC,
+  TOUCH,
+  imageFile,
+  pngSize,
+  shotsIn,
+  testsOf,
+} from './visual-files.ts';
 
 // The visual baselines (ADR 0012, decision 17; the v0.2 plan's S13): exactly the 30 states of the
 // ADR's visual-regression matrix, V01 to V30, each one Linux image that CI's Chromium made, used by
 // one toHaveScreenshot call in the test of its V number, at its viewport's size, the pixel-ratio
 // check at twice it, and within the repository's 262,144-byte file limit. The visual specs capture
-// the whole viewport with no mask, clip or loosened comparison.
+// the whole viewport with no mask, clip or loosened comparison. The only other snapshot directory
+// is the README showcase's, whose images readme-screenshots.test.ts checks, under the same rules.
 
 const MAX_BYTES = 262_144;
 
@@ -47,9 +57,12 @@ const STATES: readonly (readonly [string, string, string, number, number])[] = [
   ['V30', DESKTOP, '1440x900-dpr2-rest', 2880, 1800],
 ];
 
-/** Every file in the e2e directory's snapshot directories, as `<directory>/<file>`. */
+/** The e2e directory's snapshot directories. */
+const snapshotDirectories = () => readdirSync(E2E).filter((entry) => entry.endsWith('-snapshots'));
+
+/** Every file in the matrix specs' snapshot directories, as `<directory>/<file>`. */
 function snapshotFiles(): string[] {
-  const directories = readdirSync(E2E).filter((entry) => entry.endsWith('-snapshots'));
+  const directories = [DESKTOP, TOUCH].map((spec) => `${spec}-snapshots`);
   return directories.flatMap((directory) =>
     readdirSync(join(E2E, directory)).map((file) => `${directory}/${file}`),
   );
@@ -61,6 +74,11 @@ describe('the visual baselines', () => {
   it('are exactly the 30 Linux Chromium images of the matrix, in the snapshot directories', () => {
     const expected = STATES.map(([, spec, name]) => imageFile(spec, name));
     expect(snapshotFiles().sort()).toEqual([...expected].sort());
+  });
+
+  it('share the e2e directory with no snapshot directory but the README showcase’s', () => {
+    const directories = [DESKTOP, README_SPEC, TOUCH].map((spec) => `${spec}-snapshots`);
+    expect(snapshotDirectories().sort()).toEqual(directories.sort());
   });
 
   it.each(STATES)('%s is %s’s one capture %s, at %i × %i pixels', (...state) => {
@@ -86,7 +104,8 @@ describe('the visual specs', () => {
   });
 
   it('capture the whole viewport with no mask, style path, clip or loosened comparison', () => {
-    const source = [DESKTOP, TOUCH].map((spec) => readFileSync(join(E2E, spec), 'utf8')).join('');
+    const specs = [DESKTOP, TOUCH, README_SPEC];
+    const source = specs.map((spec) => readFileSync(join(E2E, spec), 'utf8')).join('');
     const options =
       /\b(mask|maskColor|stylePath|clip|fullPage|threshold|maxDiffPixels|maxDiffPixelRatio)\b/gu;
     expect(source.match(options) ?? []).toEqual([]);
