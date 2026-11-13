@@ -8,6 +8,7 @@ import {
   parseTailReport,
   processorName,
   readTailReport,
+  readTailReports,
   tailMarkdown,
   tailRows,
 } from '../lib/perf-tail.ts';
@@ -85,6 +86,42 @@ describe('parseTailReport', () => {
     expect([read.processor, read.b1, read.b2]).toEqual([EPYC, [7], [1]]);
     expect(() => parseTailReport('{"run":', 'r1.json')).toThrow(/^r1\.json is not JSON: /u);
     expect(() => parseTailReport('[]', 'r2.json')).toThrow(/^r2\.json is not a performance /u);
+  });
+});
+
+describe('readTailReports', () => {
+  const ci = JSON.stringify(report(42, EPYC, [[7], [1]]));
+  const local = report(1, EPYC, [[7], [1]]);
+  const atHome = (branch: string) =>
+    JSON.stringify({ ...local, run: { ...local.run, url: 'local', event: 'local', branch } });
+
+  it('reads every input, each once', () => {
+    const inputs = [
+      { file: 'a/r42.json', text: ci },
+      { file: 'r42-2.json', text: JSON.stringify(report(42, EPYC, [[7], [1]], { attempt: 2 })) },
+      { file: 'home-1.json', text: atHome('main') },
+      { file: 'home-2.json', text: atHome('perf/49-x') },
+    ];
+    expect(readTailReports(inputs).map(({ run }) => run.url)).toEqual([
+      `https://github.com/${REPOSITORY}/actions/runs/42/attempts/1`,
+      `https://github.com/${REPOSITORY}/actions/runs/42/attempts/2`,
+      'local',
+      'local',
+    ]);
+  });
+
+  it('refuses a report passed twice: the same file, CI run and attempt, or content', () => {
+    const twice = (first: [string, string], second: [string, string]) => () =>
+      readTailReports([first, second].map(([file, text]) => ({ file, text })));
+    expect(twice(['home-1.json', atHome('main')], ['./home-1.json', atHome('main')])).toThrow(
+      './home-1.json is the same report as home-1.json: the same file.',
+    );
+    expect(twice(['a/r42.json', ci], ['b/r42.json', `${ci}\n`])).toThrow(
+      `b/r42.json is the same report as a/r42.json: CI run 42, attempt 1, of ${REPOSITORY}.`,
+    );
+    expect(twice(['home-1.json', atHome('main')], ['copy.json', atHome('main')])).toThrow(
+      'copy.json is the same report as home-1.json: the same content.',
+    );
   });
 });
 
