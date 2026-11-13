@@ -3,7 +3,8 @@ import type { TraceEvent } from '../lib/perf-trace.ts';
 
 // What the trace tests share: Chromium trace events of measured scene renders, each a user-timing
 // window inside an animation frame's timeline task on the page's main thread, warm-up frames
-// before three measured ones, and the record of those three.
+// before three measured ones, the record of those three, and the record of a paired control that
+// measured three frames untraced.
 
 const MAIN = { pid: 7, tid: 7 };
 /** The page's time origin on the trace's clock, in µs, as Chromium's monotonic clock gives it. */
@@ -64,9 +65,22 @@ export const traced = (frames: readonly Frame[]) =>
 
 export const RECORD = {
   id: 'B1',
+  pass: 'traced',
   trace: 'B1.trace.json',
   categories: [...TRACE_CATEGORIES],
   warmUp: 2,
   frames: traced(FRAMES),
+  details: { seed: 21, count: 5000, browser: 'Chromium 156.0.8078.4', cpuSlowdown: 1 },
+};
+
+export const CONTROL = {
+  id: 'B1',
+  pass: 'control',
+  warmUp: 2,
+  frames: [
+    { start: 120.5, duration: 6.9 },
+    { start: 150.2, duration: 7.4 },
+    { start: 181.7, duration: 9.6 },
+  ],
   details: { seed: 21, count: 5000, browser: 'Chromium 156.0.8078.4', cpuSlowdown: 1 },
 };

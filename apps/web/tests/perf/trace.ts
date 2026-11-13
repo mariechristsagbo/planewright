@@ -8,6 +8,8 @@ import {
   traceFiles,
   traceFrames,
 } from '../../../../scripts/lib/perf-trace.ts';
+import { readControlRecord } from '../../../../scripts/lib/perf-passes.ts';
+import type { ControlRecord } from '../../../../scripts/lib/perf-passes.ts';
 import type {
   MeasuredFrame,
   TraceRecord,
@@ -16,12 +18,13 @@ import type {
 import { tracesFolder } from './results.ts';
 import { CPU_SLOWDOWN } from './support.ts';
 
-// A traced pass of the browser measurements
+// A traced pass of the browser measurements and its paired control
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided): Chromium traces
 // the whole browser while a pass measures its frames, and the pass keeps the trace beside a record
 // of those frames, each with its start on the page's clock and in the trace, once the trace is
-// checked to hold every one of them. A traced pass's frames are never a budget's samples, since
-// tracing adds work to the frames it records.
+// checked to hold exactly its warm-up and those frames. The same pass then runs once more
+// untraced, its control, whose record sits beside the trace. Neither pass's frames are a budget's
+// samples, since tracing adds work to the frames it records.
 
 export interface TracedPass {
   /** The budget whose measurement the pass repeats. */
@@ -57,7 +60,7 @@ export async function traced(
     files.trace,
   );
   const record: TraceRecord = {
-    ...{ id: pass.id, trace: files.trace, categories: TRACE_CATEGORIES },
+    ...{ id: pass.id, pass: 'traced', trace: files.trace, categories: TRACE_CATEGORIES },
     ...{ warmUp: pass.warmUp, frames },
     details: {
       ...pass.details,
@@ -69,4 +72,32 @@ export async function traced(
   writeFileSync(`${folder}${files.trace}`, trace);
   writeFileSync(`${folder}${files.record}`, `${JSON.stringify(record, null, 2)}\n`);
   return frames;
+}
+
+/**
+ * Writes the record of the traced pass's paired control: the same pass run again untraced, its
+ * frames on the page's clock, beside the trace.
+ */
+export function writeControl(
+  browser: Browser,
+  pass: TracedPass,
+  measured: readonly MeasuredFrame[],
+): ControlRecord {
+  const name = traceFiles(pass.id).control;
+  const record = readControlRecord(
+    {
+      ...{ id: pass.id, pass: 'control', warmUp: pass.warmUp },
+      frames: measured.map(({ start, duration }) => ({ start, duration })),
+      details: {
+        ...pass.details,
+        browser: `Chromium ${browser.version()}`,
+        cpuSlowdown: CPU_SLOWDOWN,
+      },
+    },
+    name,
+  );
+  const folder = tracesFolder(CPU_SLOWDOWN);
+  mkdirSync(folder, { recursive: true });
+  writeFileSync(`${folder}${name}`, `${JSON.stringify(record, null, 2)}\n`);
+  return record;
 }

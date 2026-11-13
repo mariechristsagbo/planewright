@@ -48,7 +48,11 @@ describe('the trace categories and files', () => {
       'blink.user_timing',
       'toplevel',
     ]);
-    expect(traceFiles('B1')).toEqual({ trace: 'B1.trace.json', record: 'B1.frames.json' });
+    expect(traceFiles('B1')).toEqual({
+      trace: 'B1.trace.json',
+      record: 'B1.frames.json',
+      control: 'B1.control.json',
+    });
   });
 });
 
@@ -192,6 +196,8 @@ describe('readTraceRecord', () => {
     const refused = [
       null,
       { ...RECORD, id: 1 },
+      { ...RECORD, pass: 'control' },
+      { ...RECORD, pass: undefined },
       { ...RECORD, trace: '../report.json' },
       { ...RECORD, trace: 'B1.trace' },
       { ...RECORD, categories: 'v8' },

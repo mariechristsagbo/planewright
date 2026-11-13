@@ -192,6 +192,7 @@ export function traceFrames(
 export interface TraceRecord {
   /** The budget whose frames were traced again. */
   readonly id: string;
+  readonly pass: 'traced';
   /** The trace's file name, in the record's folder. */
   readonly trace: string;
   readonly categories: readonly string[];
@@ -200,10 +201,11 @@ export interface TraceRecord {
   readonly details?: Readonly<Record<string, unknown>>;
 }
 
-/** The names of a traced pass's files, in their folder. */
+/** The names of a traced pass's files and of its paired control's record, in their folder. */
 export const traceFiles = (id: string) => ({
   trace: `${id}.trace.json`,
   record: `${id}.frames.json`,
+  control: `${id}.control.json`,
 });
 
 const isTracedFrame = (value: unknown): value is TracedFrame =>
@@ -223,9 +225,10 @@ const isFrameList = (value: unknown): boolean =>
 
 /** A traced pass's record, refusing a malformed one or a trace outside the record's folder. */
 export function readTraceRecord(value: unknown, file: string): TraceRecord {
-  const { id, trace, categories, warmUp, frames, details } = isRecord(value) ? value : {};
+  const { id, pass, trace, categories, warmUp, frames, details } = isRecord(value) ? value : {};
   const valid =
     typeof id === 'string' &&
+    pass === 'traced' &&
     isFileName(trace) &&
     isTextList(categories) &&
     isCount(warmUp) &&
@@ -233,7 +236,7 @@ export function readTraceRecord(value: unknown, file: string): TraceRecord {
     (details === undefined || isRecord(details));
   if (!valid) {
     throw new Error(
-      `${file} is not a trace record: it needs an id, a trace, categories and frames.`,
+      `${file} is not a trace record: it needs an id, the traced pass, a trace, categories and frames.`,
     );
   }
   return value as TraceRecord;
