@@ -130,7 +130,7 @@ describe("the record of B1's trace", () => {
   });
 
   it('keeps every run of the stopped D2 span with its artifact digest', () => {
-    const span = [
+    const span: readonly (readonly [string, string])[] = [
       ['43484948475', '72be54ac0f18b54ddf4a0d958c328494d476393a7bcf764fa0c1df1419ad4bab'],
       ['43485844959', '6af51ec08df7afe28f681f3978b66ed3e7b0e44ba032b3a47eb0d0aea06a64ee'],
       ['43486777060', '14235c345b4e982c2da3438cffe1606aa780c225ec9ad587b4e5b410d605da0e'],
