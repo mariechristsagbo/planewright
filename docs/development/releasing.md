@@ -11,7 +11,10 @@ and 0.2.0 (issue #67) and the checklist of their publication.
   ([AGENTS.md](../../AGENTS.md), rule 5).
 - **Versions.** Versions follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html). They
   stay 0.x until the milestone v1.0.0, Stable Reconstruction, so a version may change what an
-  earlier one did.
+  earlier one did, with one exception: from version 0.1.0 on, the stored document's schema follows
+  decision 10 of [ADR 0005](../adr/0005-document-model.md), within 0.x too. A new optional field
+  with a default keeps the schema number, and a new kind or a changed meaning raises it and adds a
+  migration, so that a drawing that a released version stored still opens.
 - **Target.** The tag points to a commit of `main` that holds every change the version releases.
   The CI and CodeQL runs of that commit's push succeeded at their first attempt, and no
   code-scanning or secret-scanning alert is open.
@@ -24,15 +27,19 @@ and 0.2.0 (issue #67) and the checklist of their publication.
   and a manual screen-reader pass is made
   ([testing strategy](../architecture/engine/quality.md#testing-strategy)). Both are recorded in
   this document before the tag is made. Versions 0.1.0 and 0.2.0 are the only exception to the
-  second, by the maintainer's waiver [below](#the-screen-reader-pass-of-v010-and-v020).
+  second, by the maintainer's waiver [below](#the-screen-reader-pass-of-v010-and-v020). "By hand"
+  sets the heap apart from CI, which has no reliable measurement of a full history; for versions
+  0.1.0 and 0.2.0 a script measured it through the DevTools protocol, outside CI, and no person
+  did, as [their record](#b14-on-both-targets) says.
 - **Tags.** A tag is annotated and unsigned, since the repository has no signing key and no rule
   asks for signatures, and its message names its target's CI and CodeQL runs. Tags are pushed by
   name, never with `--tags` or `--force`, and a pushed tag is never moved or deleted without the
   maintainer's decision. No workflow runs on a tag: CI and CodeQL run on pushes to `main`, pull
   requests, a manual dispatch and a weekly schedule.
-- **GitHub releases.** A release is titled `Planewright vX.Y.Z — <milestone name>`, is neither a
-  draft nor a pre-release, has no generated notes and no files, and the newest version is the
-  latest release.
+- **GitHub releases.** A release is titled `Planewright vX.Y.Z — <name>`, where `<name>` is its
+  milestone's name after the version, such as Engine Core for the milestone "v0.1.0 — Engine Core",
+  so that the version is written once. It is neither a draft nor a pre-release, has no generated
+  notes and no files, and the newest version is the latest release.
 - **Packages.** Every `package.json` of the repository is private at version `0.0.0`, and stays so:
   the workspace packages are source-only and never published, nothing reads their version, and a
   release is known by its tag alone. Bumping them would change six files and the lockfile for no
@@ -63,8 +70,9 @@ notes are [`v0.1.0.md`](../releases/v0.1.0.md) and [`v0.2.0.md`](../releases/v0.
 | v0.2.0, `8e768b1` and this document's head | 17.1 MB       | 52.2 MB                    | 58.5 MB       | ≤ 150 MB, met |
 
 Measured on 2026-11-13, on a developer machine, from each commit's production build served by
-`vite preview`, in Chromium 156.0.8078.4 at 1280 × 720, by a script through the DevTools protocol
-rather than by a person in the developer tools, as the first measurement at `54425f4` was. The
+`vite preview`, in Chromium 156.0.8078.4 at 1280 × 720, by a script through the DevTools protocol,
+not by a person in the developer tools; the first measurement, at `54425f4`, also read the heap
+through that protocol, as the quality document records. The
 drawing held the performance scenes' 10,000 elements of seed 14, all in view and stored all
 selected, as the browser tests' `storeScene` stores a scene. Eighty presses of the right arrow key
 on the canvas then nudged them, each press its own undo entry of about 2.27 MB in the history's
