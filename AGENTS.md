@@ -135,7 +135,8 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
 4. **Conventional Commits.** Make atomic commits; commitlint runs in the `commit-msg` hook and
    in CI. Do not bypass hooks with `--no-verify`.
 5. **No releases.** Do not create tags, GitHub releases or published packages unless a
-   maintainer explicitly asks for one.
+   maintainer explicitly asks for one, and then follow
+   [the release procedure](docs/development/releasing.md).
 6. **Report results faithfully.** Record only commands you actually ran and their real output.
    If a check fails or is skipped, say so.
 7. **Secrets.** Never commit secrets or `.env` files, and never print tokens in logs.
