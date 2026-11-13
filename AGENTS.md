@@ -116,8 +116,9 @@ follow the same rules through [CONTRIBUTING.md](CONTRIBUTING.md).
   `visual-baselines` dispatch on a candidate branch and compares on every run, at Playwright's
   default threshold with no mask. Every slice of the plan is delivered. Work on a slice follows
   both. Issue #67 publishes version 0.1.0, Engine Core, at `1f8188f`, the last commit of P0, and
-  version 0.2.0, Editor Experience, at the commit that merges its release records, as annotated
-  tags and GitHub releases ([the release procedure](docs/development/releasing.md)).
+  version 0.2.0, Editor Experience, at the last commit of the pull request that adds its release
+  records, as `main` holds it after the rebase merge, as annotated tags and GitHub releases
+  ([the release procedure](docs/development/releasing.md)).
 - **Behavioural investigation precedes feature implementation.** Do not implement editor
   features until the relevant investigation issue is complete and a feature issue with
   acceptance criteria exists.
