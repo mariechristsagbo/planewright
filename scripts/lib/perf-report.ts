@@ -180,13 +180,17 @@ const gatedMode = ({ processor, processorRuns }: PerfEvaluation): string =>
 const reportOnlyMode = ({ processor, processorRuns, mainRuns }: PerfEvaluation): string =>
   `Report only: ${String(processorRuns)} of ${String(GATE_RUNS)} runs on \`main\` are recorded on this run's processor, ${processor} (${String(mainRuns)} on \`main\` on any processor), so no statistical budget fails CI yet; a measurement that is missing or a bundle over its budget does.`;
 
-/** The report as Markdown: the mode, the budgets, the other measurements, the machine, notes. */
+/**
+ * The report as Markdown: the mode, the budgets, the other measurements, any further sections,
+ * such as the traces, the machine and the notes.
+ */
 export function reportMarkdown(
   evaluation: PerfEvaluation,
   infos: readonly Measurement[],
   context: {
     readonly machine: Readonly<Record<string, string>>;
     readonly notes: readonly string[];
+    readonly sections?: readonly string[];
   },
 ): string {
   const mode = evaluation.gating ? gatedMode(evaluation) : reportOnlyMode(evaluation);
@@ -205,6 +209,7 @@ export function reportMarkdown(
     row(Array.from({ length: 5 }, () => '---')),
     ...infoRows(infos),
     '',
+    ...(context.sections ?? []),
     '### Machine',
     '',
     ...Object.entries(context.machine).map(([key, value]) => `- ${key}: ${value}`),

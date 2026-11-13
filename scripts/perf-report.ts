@@ -7,11 +7,16 @@ import { PERF_BUDGETS, benchMeasurements } from './lib/perf-budgets.ts';
 import type { Measurement } from './lib/perf-budgets.ts';
 import { readBaseline } from './lib/perf-baseline.ts';
 import { evaluate, readMeasurement, reportMarkdown } from './lib/perf-report.ts';
+import { traceMarkdown, traceResult } from './lib/perf-trace.ts';
+import type { TraceResult } from './lib/perf-trace.ts';
 
 // The performance report (docs/architecture/engine/quality.md#what-eng-15-decided): it reads what
 // `npm run perf:bench`, `npm run perf:browser` and `npm run check:bundle-size` wrote to
 // perf-results/, compares it with the budgets and the committed baseline, writes report.json and
-// report.md there and to the CI job's summary, and fails when a rule says so.
+// report.md there and to the CI job's summary, and fails when a rule says so. It also checks the
+// trace that the browser measurements keep of B1's pans and gives its digest, failing when the
+// trace is missing or does not hold its frames
+// (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided).
 
 const RESULTS = 'perf-results';
 const BASELINE = 'docs/performance/baseline.json';
@@ -39,6 +44,28 @@ function browserMeasurements(): Measurement[] {
     const path = join(directory, name);
     return readMeasurement(readJson(path), path);
   });
+}
+
+const TRACES = 'browser/traces';
+
+/** A file of the traces' folder, or undefined when it is missing. */
+function traceFile(name: string): Buffer | undefined {
+  try {
+    return readFileSync(join(RESULTS, TRACES, name));
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return undefined;
+    throw error;
+  }
+}
+
+/** B1's trace, checked against its record, or why it fails the report. */
+function traces(): { results: TraceResult[]; failures: string[] } {
+  try {
+    return { results: [traceResult('B1', TRACES, traceFile)], failures: [] };
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    return { results: [], failures: [`B1's trace failed its check: ${reason}`] };
+  }
 }
 
 function bundleMeasurements(): Measurement[] {
@@ -104,17 +131,23 @@ const measurements = [
 const budgets = new Set(PERF_BUDGETS.map(({ id }) => id));
 const run = runOf();
 const machine = machineOf(run, measurements);
-const evaluation = evaluate(
+const traced = traces();
+const evaluated = evaluate(
   measurements.filter(({ id }) => budgets.has(id)),
   readBaseline(readJson(BASELINE)),
   machine.Processor,
 );
+const evaluation = { ...evaluated, failures: [...evaluated.failures, ...traced.failures] };
 const infos = measurements.filter(({ id }) => !budgets.has(id));
-const markdown = reportMarkdown(evaluation, infos, { machine, notes: NOTES });
+const sections = traceMarkdown(traced.results);
+const markdown = reportMarkdown(evaluation, infos, { machine, notes: NOTES, sections });
 const values = Object.fromEntries(
   evaluation.results.flatMap(({ budget, value }) => (value === null ? [] : [[budget.id, value]])),
 );
-const report = { run, date: new Date().toISOString(), machine, values, evaluation, measurements };
+const report = {
+  ...{ run, date: new Date().toISOString(), machine, values, evaluation, measurements },
+  traces: traced.results,
+};
 
 mkdirSync(RESULTS, { recursive: true });
 writeFileSync(join(RESULTS, 'report.json'), `${JSON.stringify(report, null, 2)}\n`);
