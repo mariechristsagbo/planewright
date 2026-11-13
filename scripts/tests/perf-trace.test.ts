@@ -90,6 +90,13 @@ describe('traceFrames', () => {
     expect(traceFrames(late, [F1], FILE)).toHaveLength(1);
   });
 
+  it("accepts a window whose recorded start differs from the page's by the number's rounding", () => {
+    const printed = frameEvents(F1).map((event) =>
+      event.ph === 'b' ? { ...event, args: { startTime: F1.start + 4e-12 } } : event,
+    );
+    expect(traceFrames(printed, [F1], FILE)).toEqual([{ ...F1, ts: at(F1.start) }]);
+  });
+
   const NO_WINDOW = 'holds no window of frame 2';
   const OUTSIDE = 'has frame 1 (measured from 200.30000001192093 ms) outside every task';
   const refusals: [string, TraceEvent[], Frame[], string][] = [
@@ -116,6 +123,20 @@ describe('traceFrames', () => {
     [
       'timeline tasks on another thread only',
       EVENTS.map((event) => (event.ph === 'X' ? { ...event, tid: 8 } : event)),
+      FRAMES,
+      OUTSIDE,
+    ],
+    [
+      'a window 0.2 ms before its task, more than the clock gives',
+      frameEvents(F1).map((event) =>
+        event.ph === 'X' ? { ...event, ts: event.ts + 240, dur: (event.dur ?? 0) - 240 } : event,
+      ),
+      [F1],
+      OUTSIDE,
+    ],
+    [
+      'tasks of another category only',
+      EVENTS.map((event) => (event.ph === 'X' ? { ...event, cat: 'toplevel' } : event)),
       FRAMES,
       OUTSIDE,
     ],
