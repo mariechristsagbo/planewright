@@ -160,6 +160,9 @@ test.describe('at 1280 × 720', () => {
     await openPage(page);
     await onCanvas(page, ['r', 'Enter'], 'Rectangle created. 1 element selected.');
     await onCanvas(page, ['o', 'Enter'], 'Ellipse created. 1 element selected.');
+    // The ellipse mounted the selection panel again, since choosing its tool emptied the
+    // selection: the panel's entrance ends before the menu opens.
+    await settled(page);
     await menuButton(page).focus();
     await page.keyboard.press('Enter');
     await expect(page.locator(MENU.selector)).toBeVisible();
