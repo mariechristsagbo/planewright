@@ -1944,7 +1944,14 @@ element or the matrix. ADR 0012 is not edited.
   defect that S13 introduced. V17 shows a factual-copy defect that predates S13: the empty-canvas
   note, which says that the drawing is saved in this browser, sits beside the storage-unavailable
   notice, which says that the drawing stays in this tab only. Issue #86 tracks it, and S13 does not
-  fix it. In V27 the landscape side drawer is scrolled to the focused list option, so its Elements
+  fix it. Issue #86 then left the note's saving clause out while nothing is saved, which changed
+  V17's note lines alone, and adopted only V17's image from the dispatched CI run 43363786892,
+  attempt 1, of the candidate commit `bc2524a`, on runner image ubuntu24 20261101.360.1 with an AMD
+  EPYC 7763, Playwright 1.64.1 and Chromium 156.0.8078.4, whose 30 files matched their manifest. 28
+  of them equalled the committed images. The same run's V24 differed from its baseline in 41 pixels,
+  by at most 2 levels of one channel, with no visible change; it was not adopted, since issue #86
+  does not change what V24 shows.
+  In V27 the landscape side drawer is scrolled to the focused list option, so its Elements
   heading and Close button are out of view, as the drawer's scrolling within its share specifies;
   this is an observation, not an S13 defect. Worth knowing: the selection panel covers the fixture's
   left part at 1440 × 900, as shipped; the drawer's list keeps P0's 12rem height, 7 of its 15
