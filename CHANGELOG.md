@@ -7,6 +7,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) from versi
 versions are 0.x versions, so any of them may change what an earlier one did. A version's date is
 the day, in UTC, on which the commit that its tag points to reached `main`: version 0.1.0 was tagged
 later, together with version 0.2.0 (issue #67).
+[The release procedure](docs/development/releasing.md) says how a version is published.
 
 ## [Unreleased]
 

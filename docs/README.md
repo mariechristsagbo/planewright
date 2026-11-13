@@ -9,6 +9,7 @@
 | [Behavioural investigation](investigation/README.md)          | How reference behaviour is studied before features are built |
 | [Reverse-engineering baseline](reverse-engineering/README.md) | Guest-mode behavioural baseline for issue #1                 |
 | [Quality gates](development/quality-gates.md)                 | Every automated check, its threshold and rationale           |
+| [Releases](development/releasing.md)                          | The release rules, the records of v0.1.0 and v0.2.0          |
 | [Performance baseline](performance/README.md)                 | The recorded CI runs of the performance budgets              |
 | [Bootstrap validation](bootstrap-validation.md)               | Recorded results of the one-time repository bootstrap        |
 
