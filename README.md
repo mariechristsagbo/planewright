@@ -22,7 +22,7 @@ controls floating over it. Today it can:
 It has no text formatting, no style controls, no arrows, notes or images, no files to open, save or
 export, and no collaboration, since the collaboration service is only a skeleton. Every performance
 budget is measured, and CI gates only the bundle sizes so far; the redraw of 5,000 elements in view
-misses its budget in some CI runs, which issue #49 follows.
+misses its budget in some CI runs, which issue #49 follows by tracing those frames in CI.
 
 ![Planewright's editor on an 844 × 390 phone in landscape at 75 %, showing the same flow diagram whole, from Idea, Sketch and Refine through Clear? to Ready and Revise; the menu, the tool palette, whose Tool lock wraps to a second line, and Elements form the top row, the undo, redo and zoom controls and the Keyboard shortcuts button sit at the bottom, and every control keeps clear of the emulated safe areas at the sides and the bottom](docs/assets/readme/editor-phone-landscape-844x390.png)
 

@@ -13,6 +13,22 @@ meaning. A version's date is the day, in UTC, on which the commit that its tag p
 
 ## [Unreleased]
 
+### Added
+
+- B1's trace in CI (issue #49, its first part): after B1's own frames, the browser measurements
+  run B1's pans again while Chromium traces the browser, and keep the trace and the record of each
+  traced frame's start on the page's clock and in the trace in `perf-results/browser/traces/`,
+  which the `performance-report` artifact holds. The performance report checks that the trace holds
+  every frame of its record, gives its path, size and SHA-256, and fails when it is missing or does
+  not. B1's samples, budget, warm-up, statistic and tolerance and every gate are unchanged; what
+  slows B1's frames on a CI runner is still to be found from such traces.
+
+### Fixed
+
+- `npm run perf:tail` (issue #49): it names the file of an input that is not JSON, refuses a report
+  given twice, puts another repository's runs after this repository's, named by their whole
+  address, and reads a report's last measurement of an id, as the performance report does.
+
 ## [0.2.0] - 2026-11-13
 
 **Editor Experience.** The editor chrome that ADR 0012 decided, built in slices S1 to S13 on

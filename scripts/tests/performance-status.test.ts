@@ -5,8 +5,10 @@ import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
 
+import { tracesFolder } from '../../apps/web/tests/perf/results.ts';
 import { readBaseline } from '../lib/perf-baseline.ts';
 import { missRates } from '../lib/perf-tail.ts';
+import { TRACE_CATEGORIES } from '../lib/perf-trace.ts';
 
 // What the repository says of B1's and B2's misses and their issues
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-41-decided): the status
@@ -107,5 +109,23 @@ describe('the record of the CI reports since issue #34', () => {
   it('no longer ties B1 to the processor model where the reports show both results', () => {
     expect(rendering).not.toMatch(/depends on the runner's processor|still missed on the EPYC/u);
     expect(read('CHANGELOG.md')).not.toContain('still misses it on an AMD EPYC 7763');
+  });
+});
+
+describe("the record of B1's trace", () => {
+  const rendering = read('docs/architecture/engine/rendering-and-hit-testing.md');
+  const section = rendering.split('\n## What issue #49 decided\n')[1]?.split('\n## ')[0] ?? '';
+  const text = section.replace(/\s+/gu, ' ');
+
+  it('names the categories that the traced pass asks Chromium for, and the folder it keeps', () => {
+    const named = TRACE_CATEGORIES.filter((category) => category !== '-*');
+    expect(named.filter((category) => !text.includes(`\`${category}\``))).toEqual([]);
+    const folder = tracesFolder(1).split('/').slice(-4).join('/');
+    expect(text).toContain(`\`${folder}B1.trace.json\``);
+  });
+
+  it("keeps D2 to D4 open while the baseline names the issue as B1's follow-up", () => {
+    const open = text.includes('**Not yet.** D2 to D4.');
+    expect(BASELINE.followUps['B1'] === '#49' && !open).toBe(false);
   });
 });
