@@ -80,8 +80,9 @@ page is hidden or left, and reads its preferences entry from `localStorage` at s
 Pre-release tag opens About this build, a dialog that says that shapes, lines, freehand strokes and
 texts can be drawn, selected, transformed and undone and that the drawing is saved in this browser,
 and lists the capabilities that are not implemented, text formatting, styles, files and
-collaboration among them; an empty canvas repeats its pre-release sentence. It imports the protocol
-version to prove that workspace linking works.
+collaboration among them; an empty canvas repeats its pre-release sentence, without its saving
+clause while nothing is saved. It imports the protocol version to prove that workspace linking
+works.
 
 ### apps/collab
 
