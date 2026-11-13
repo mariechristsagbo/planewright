@@ -42,13 +42,21 @@ the engine, whose tsconfig has the ECMAScript library only, and the triple-slash
 ambient declarations that could add a library or hide a global.
 `scripts/tests/engine-layers.test.ts` fails on an import against the engine's layer order.
 
-The README's screenshots in `docs/assets/readme` are byte-for-byte copies of the visual baselines
-V09 and V19 ([what S13 delivered](../architecture/editor-experience.md#what-s13-delivered)).
-`scripts/tests/readme-screenshots.test.ts` fails when a copy's SHA-256 differs from its baseline's,
-when the README shows another image, opens with a GitHub alert or shows the desktop screenshot after
-its first section, when a screenshot changes its size in pixels, is given a height or a wider width,
-or leaves out Planewright or its viewport in its alternative text, or when one exceeds 131,072 bytes
-or both together 196,608. A baseline adopted again must therefore be copied to the README too.
+The README's screenshots in `docs/assets/readme` are byte-for-byte copies of the two baselines of
+the README showcase's visual spec, `apps/web/tests/e2e/visual-readme.spec.ts`, which shows a flow
+diagram at 1440 × 900 with the Elements drawer open and whole on an 844 × 390 phone in landscape
+([visual baselines](../architecture/engine/quality.md#visual-baselines)).
+`scripts/tests/readme-showcase.test.ts` finds the diagram's nodes, labels and lines from its
+elements and fails when nodes come closer than 48 units, a label leaves its node, a line crosses
+another node or a word, bends other than straight across or down or misses its nodes' outlines, the
+main row leaves its centre line, a branch's word strays from its line, a role's hue or contrast
+changes, or either capture frames the diagram off balance, outside the free canvas or below a
+12 px word. `scripts/tests/readme-screenshots.test.ts` fails when a copy's SHA-256 differs from its
+baseline's, when the spec captures another image, when the README shows another image, opens with a
+GitHub alert or shows the desktop screenshot after its first section, when a screenshot changes its
+size in pixels, is given a height or a wider width, or leaves out Planewright, its viewport or a node
+of the diagram in its alternative text, or when one exceeds 131,072 bytes or both together 196,608.
+A baseline made again must therefore be copied to the README too.
 
 ## Complexity guardrails
 

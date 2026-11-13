@@ -202,7 +202,8 @@ Run `npm run validate` before proposing a change, plus `npm run test:e2e` for UI
   makes the fonts load again. Unit tests in `tests/unit`, Playwright tests in `tests/e2e`, among
   them the visual specs `visual-desktop.spec.ts` and `visual-touch.spec.ts` with their Linux
   baselines in `visual-*.spec.ts-snapshots/`, the seeded fixture's loader `fixture-page.ts` and the
-  checks before each capture in `visual.ts`, static
+  checks before each capture in `visual.ts`, and the README's screenshots in `visual-readme.spec.ts`
+  with their flow diagram in `showcase-fixture.ts`, static
   files in `public/`, the bundled fonts with their licences in `public/fonts/` ([ADR
   0011](docs/adr/0011-bundled-open-licence-fonts.md), with the chrome's Inter 500 of [ADR
   0012](docs/adr/0012-v02-editor-chrome.md)).

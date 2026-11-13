@@ -356,9 +356,13 @@ release has been published yet.
   scene fixture has one loader for every width, and a tooling test checks the 30 images. No product
   code changes.
 - The README opens with the editor (issue #52): in place of its pre-release callout, a screenshot of
-  the editor at 1440 × 900 with the Elements drawer open and one on a 390 × 844 phone with a
-  rectangle selected, shown 240 px wide, and a short account of what the editor does and does not
-  do. The screenshots are byte-for-byte copies of the visual baselines V09 and V19 in
-  `docs/assets/readme`, 85,369 and 40,679 bytes, and a tooling test keeps them equal to their
-  baselines, the only images of the README, within 131,072 bytes each and with alternative texts
-  that name their viewports. No product code or baseline changes.
+  the editor at 1440 × 900 with the Elements drawer open beside a flow diagram at 100 %, a short
+  account of what the editor does and does not do, and the same diagram whole at 75 % on an 844 ×
+  390 phone in landscape, with safe-area insets of 47 px at each side and 21 px at the bottom
+  emulated. The diagram, from Idea through Sketch and Refine to a Clear? decision that leads to
+  Ready or through Revise back to Refine, is a fixture of the end-to-end tests, and a tooling test
+  holds its composition to a readable diagram's rules. A visual spec of its own, outside ADR 0012's
+  matrix, captures it, CI's Chromium made its two images through the visual-baselines dispatch, and
+  `docs/assets/readme` holds byte-for-byte copies of them, 71,260 and 31,967 bytes, which a tooling
+  test keeps equal to their baselines, the only images of the README, with alternative texts that
+  name their viewports and the diagram's nodes. No product code or matrix baseline changes.

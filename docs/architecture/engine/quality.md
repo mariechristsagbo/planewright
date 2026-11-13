@@ -276,6 +276,17 @@ made and updated, and the policy for thresholds and masks:
   device's two. `scripts/tests/visual-baselines.test.ts` checks the set: exactly the 30 Linux
   images, each used by one capture in the test of its V number, at its viewport's size and within
   the file-size guardrail's 262,144 bytes.
+- **The README's showcase.** Issue #52 added a third visual spec outside the matrix,
+  `visual-readme.spec.ts`, for the README's two screenshots: the flow diagram of
+  `showcase-fixture.ts` at 1440 × 900 at 100 % with the Elements drawer open, and whole at 75 % on
+  an 844 × 390 phone in landscape with the safe-area insets of `safe-areas.spec.ts`, 47 px at each
+  side and 21 px at the bottom. Its images are made by the same dispatch, whose `visual-` filter
+  runs it too, and compared on every run under the same rules, and the README shows byte-for-byte
+  copies of them. Before each capture the spec checks that every word is as wide as the editor
+  measures it and that every element of the diagram lies inside the safe area, 12 px clear of all
+  the chrome. `visual-baselines.test.ts` keeps the matrix's 30 images in their two directories and
+  allows the showcase's as the only other one, `readme-showcase.test.ts` checks the diagram's
+  composition and `readme-screenshots.test.ts` the README's copies.
 - **Where.** Linux only, with the Chromium of CI's end-to-end job, which compares all 30 on every
   pull request and `main` push and writes none (`updateSnapshots: 'none'`). Off Linux the visual
   assertions neither compare nor write (`ignoreSnapshots`). A developer machine on Linux compares
