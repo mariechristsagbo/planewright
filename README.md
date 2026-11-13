@@ -2,42 +2,36 @@
 
 An independently engineered open-source infinite canvas for drawing and diagrams.
 
-> [!IMPORTANT]
-> **Status: pre-release.** Planewright is not a complete drawing editor yet. Its page is a
-> canvas that fills the window, with the controls floating over it, most of them shown as original
-> glyphs with tooltips, and draws rectangles, ellipses, diamonds, lines, freehand strokes and texts,
-> which can be selected, moved, resized, rotated,
-> duplicated, deleted and nudged, with Undo and Redo, and texts edited again, also from the keyboard
-> alone through a list of the elements in a drawer, which an Elements button showing their count
-> opens and which is a sheet on phones, with each change announced to screen readers; while
-> something is selected, a panel, or a bar on phones, shows its position and size read-only and
-> offers Duplicate, Delete and, for a text, Edit text; the drawing is saved in the browser and
-> restored on reload, with nothing shown while saving works and a "Not saved" chip with a notice
-> when it does not. On a phone in portrait the tools sit in a dock at the bottom, with a More button
-> for Hand, Diamond and Tool lock, every target is at least 44 px on phones, and the controls keep
-> clear of the screen's safe areas. While a text is edited, a chip under it names the keys that
-> finish it, Esc and Ctrl+Enter (Cmd+Enter on Apple platforms), and on a phone in portrait a Done
-> button above the on-screen keyboard finishes it instead. Keyboard focus on the canvas shows a
-> violet ring at the window's edge, with a "Canvas focused" chip outside phones, a line under the
-> tools says what the active tool does, and the active tool, focused controls and the selection's
-> outline, handle borders and marquee on the canvas are marked in violet. The menu, More, the
-> selection panel, the notices, the dialogs, the Elements drawer and the sheets enter by a short
-> fade and slide, except when reduced motion is requested, and the camera never animates. A
-> Pre-release tag opens About this build, which says what the build contains and what it does not,
-> and a menu at the top left and a button at the bottom right open a list of every command's
-> keyboard shortcuts. There is no text formatting, no style control, no file opening, saving or
-> exporting and no collaboration. This repository currently contains the workspace structure, that
-> editor surface, a collaboration-service skeleton, the first layers of the engine package (math
-> primitives, platform ports, the document model with its codec, the scene store with its change
-> sets and transactions, the undo and redo history, the camera, the geometry, text layout and hit
-> testing, the transforms, input gestures, the Hand, Selection, creation and text tools, commands,
-> local persistence with autosave and the editor with its render loop, text sessions and
-> announcements), a Canvas 2D renderer package, and the quality gates that future work must pass,
-> among them the measurements of every performance budget, which CI reports and does not gate yet.
-> The marquee query and a change set that moves 1,000 elements have since met their budgets in CI,
-> the redraw while panning meets its budget in CI and misses it only on a slower machine, and the
-> redraw of 5,000 elements in view meets its budget in most CI runs but misses it in some, which
-> issue #49 follows.
+![Planewright's editor in a 1440 × 900 desktop window: the tool palette at the top, a drawing of rectangles, ellipses, a diamond, lines, freehand strokes and texts, the Elements drawer open at the right listing each element's size and position, and the undo, redo, zoom and view controls along the bottom](docs/assets/readme/editor-desktop-1440x900.png)
+
+Planewright is a browser editor in its foundation phase, and no version of it has been released
+yet. Its canvas fills the window, pans and zooms, and has its controls floating over it. Today it
+can:
+
+- draw rectangles, ellipses, diamonds, lines, freehand strokes and texts, then select, move,
+  resize, rotate, duplicate, delete and nudge them, edit texts again, and undo and redo each change;
+- show the selection's kind or count, position, size and angle in a panel, or a bar on phones;
+- list the elements in a drawer, a sheet on phones, through which the keyboard alone reaches each
+  of them, announce every change to screen readers and list every keyboard shortcut in a dialog;
+- save the drawing in the browser's IndexedDB storage and restore it on reload, showing a "Not
+  saved" chip only when the drawing cannot be saved;
+- fit phones: in portrait the tools sit in a dock at the bottom, every target is at least 44 px and
+  the controls keep clear of the screen's safe areas.
+
+It has no text formatting, no style controls, no arrows, notes or images, no files to open, save or
+export, and no collaboration, since the collaboration service is only a skeleton. Every performance
+budget is measured, and CI gates only the bundle sizes so far; the redraw of 5,000 elements in view
+misses its budget in some CI runs, which issue #49 follows.
+
+<p align="center">
+  <img src="docs/assets/readme/editor-phone-390x844.png" width="240" alt="Planewright's editor on a 390 × 844 phone in portrait: a rectangle selected with its handles, the selection bar under the top bar with Duplicate, Delete and Details, and the tool dock along the bottom under the undo, redo and zoom controls">
+</p>
+
+Both screenshots are
+[visual-regression baselines](docs/architecture/editor-experience.md#what-s13-delivered) that CI's
+Linux Chromium made from the end-to-end tests' seeded drawing and compares on every run: V09, with
+the Elements drawer open, and V19, with a rectangle selected on a phone. The drawing's colours,
+strokes and fonts come from that fixture, since the editor has no style controls yet.
 
 ## Goals
 
@@ -75,16 +69,16 @@ Product names are used only to identify these references.
 
 ## Repository layout
 
-| Path                                               | Contents                                                                  |
-| -------------------------------------------------- | ------------------------------------------------------------------------- |
-| [`apps/web`](apps/web)                             | React + Vite browser application: a pre-release editor surface            |
-| [`apps/collab`](apps/collab)                       | Node.js WebSocket collaboration service (health endpoint + hello only)    |
-| [`packages/protocol`](packages/protocol)           | Runtime-agnostic wire protocol definitions shared by clients and services |
-| [`packages/engine`](packages/engine)               | ECMAScript-only canvas engine, from math to the editor façade             |
-| [`packages/render-canvas`](packages/render-canvas) | Canvas 2D renderer of the engine's render frames, on the page's canvas    |
-| [`scripts`](scripts)                               | Guardrails, bundle-size check, performance report and branch-name rule    |
-| [`docs`](docs/README.md)                           | Architecture decisions, investigation process and development guides      |
-| [`.github`](.github)                               | CI, CodeQL, Dependabot, issue forms and the pull request template         |
+| Path                                               | Contents                                                                                       |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| [`apps/web`](apps/web)                             | React + Vite browser application: a pre-release editor surface                                 |
+| [`apps/collab`](apps/collab)                       | Node.js WebSocket collaboration service (health endpoint + hello only)                         |
+| [`packages/protocol`](packages/protocol)           | Runtime-agnostic wire protocol definitions shared by clients and services                      |
+| [`packages/engine`](packages/engine)               | ECMAScript-only canvas engine, from math to the editor façade                                  |
+| [`packages/render-canvas`](packages/render-canvas) | Canvas 2D renderer of the engine's render frames, on the page's canvas                         |
+| [`scripts`](scripts)                               | Guardrails, bundle-size check, performance report and branch-name rule                         |
+| [`docs`](docs/README.md)                           | Architecture decisions, investigation process, development guides and the README's screenshots |
+| [`.github`](.github)                               | CI, CodeQL, Dependabot, issue forms and the pull request template                              |
 
 ## Requirements
 
