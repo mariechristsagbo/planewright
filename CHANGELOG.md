@@ -34,7 +34,9 @@ meaning. A version's date is the day, in UTC, on which the commit that its tag p
 
 - B1's trace check (issue #49): the trace must hold exactly its pass's warm-up and measured frames,
   where it held each recorded frame before, and the performance report's `traces` entry gives each
-  of B1's three passes with its tail where it gave the traced pass's median and 95th percentile.
+  of B1's three passes with its tail where it gave the traced pass's median and 95th percentile. A
+  trace that the check refuses still fails the traced pass, and is now kept as
+  `B1.trace.refused.json` with the reason in `B1.refused.json`, which the report never reads.
 
 ### Fixed
 

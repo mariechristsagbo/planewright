@@ -842,18 +842,22 @@ the tolerance, B1's warm-up, sample count or statistic, a gate or a pixel.
   measurements' own, so `npm run perf:browser` clears it before it measures and the report never
   reads a record as a measurement, and the `performance-report` artifact keeps it with
   `report.json`.
-- **What is checked.** The traced pass fails, and writes nothing, unless the trace holds exactly its
-  scene renders: the warm-up's, then one window per measured frame, in order, each started where the
-  page measured it, up to the number's rounding, as long as the page measured it, within 2 µs, all
-  on one thread, and inside a task that the timeline recorded on that thread, give or take the
-  page's 0.1 ms clock ([what ENG-15 decided](quality.md#what-eng-15-decided)). The first pull
-  request looked for each frame's window anywhere after the one before, so a record that left out a
-  frame, or a trace with a render after the last recorded one, passed. `npm run perf:report` checks
-  the record and the trace again, then the control's record and B1's measurement file, and fails
-  unless all three passes have one warm-up, frame count, seed, element count, elements in view,
-  browser and CPU slowdown ([how](quality.md#what-issue-49-decided)). Garbage-collection and
-  `toplevel` events are not required, since they come only when the browser has such work; the
-  record's categories are.
+- **What is checked.** The traced pass fails, and writes no file that the report reads, unless the
+  trace holds exactly its scene renders: the warm-up's, then one window per measured frame, in
+  order, each started where the page measured it, up to the number's rounding, as long as the page
+  measured it, within 2 µs, all on one thread, and inside a task that the timeline recorded on that
+  thread, give or take the page's 0.1 ms clock ([what ENG-15
+  decided](quality.md#what-eng-15-decided)). The first pull request looked for each frame's window
+  anywhere after the one before, so a record that left out a frame, or a trace with a render after
+  the last recorded one, passed. `npm run perf:report` checks the record and the trace again, then
+  the control's record and B1's measurement file, and fails unless all three passes have one
+  warm-up, frame count, seed, element count, elements in view, browser and CPU slowdown
+  ([how](quality.md#what-issue-49-decided)). Garbage-collection and `toplevel` events are not
+  required, since they come only when the browser has such work; the record's categories are. When
+  the check refuses a trace, the traced pass still fails, and keeps it as
+  `perf-results/browser/traces/B1.trace.refused.json` beside `B1.refused.json`, which gives the
+  check's message, the categories, the warm-up and the frames the pass measured; the report never
+  reads them, and the artifact keeps them.
 - **What the report gives.** Under `traces` in `report.json`, B1's entry gives the trace's path,
   size, SHA-256 and events, the paths of both records, `passes`, each with its file, whether it was
   traced, its warm-up and frames, median, 95th percentile, frames of 9 ms or more and whether its
@@ -863,6 +867,14 @@ the tolerance, B1's warm-up, sample count or statistic, a gate or a pixel.
   effect cannot be told from the spread between two untraced passes, which the last difference
   shows; only many runs can tell them apart, and until they have, no record states what tracing
   costs on a runner.
+- **A refusal in CI.** The second pull request's first CI run, 43500570192 at `d6c2bd4`, on an AMD
+  EPYC 9V45, failed in its performance job: the traced pass refused its trace, frame 5's window
+  lying outside every task that the timeline recorded, while B1 met its budget at 5.605 ms. The
+  requirement is the first pull request's. In the four traces of the stopped span, the windows
+  overran their tightest `FireAnimationFrame` task by at most 80 µs, within the 100 µs allowed. That
+  run kept no trace, so whether its window overran its task by more or its task is missing from the
+  trace is unknown; refused traces have been kept since, and the check stays as it was until one
+  shows which.
 - **Locally, at the first pull request.** On the developer machine, a 6-core AMD EPYC and no CI
   runner, with Chromium 156.0.8078.4, the whole performance pipeline ran at that pull request's
   code, at load averages of 3.05 to 3.82 when it ended. B1 measured 17.65 ms at the median and

@@ -598,9 +598,10 @@ control ([why and how](rendering-and-hit-testing.md#what-issue-49-decided)):
 - **In the job.** `npm run perf:browser` runs the traced pass right after B1 and its paired control
   right after that, each on a page of its own in the same browser, and keeps the trace and both
   passes' records in `perf-results/browser/traces/`, which it clears with the measurements before
-  it measures; the `performance-report` artifact holds them. B1's samples, warm-up, statistic,
-  budget and tolerance and every processor's gate are unchanged, and neither pass's frames are a
-  budget's samples.
+  it measures; the `performance-report` artifact holds them. A trace that the check refuses fails
+  the pass, and is kept there under another name with the reason, which the report never reads.
+  B1's samples, warm-up, statistic, budget and tolerance and every processor's gate are unchanged,
+  and neither pass's frames are a budget's samples.
 - **In the report.** `npm run perf:report` checks that the trace holds exactly the traced pass's
   warm-up and measured frames, and that B1's own pass, the traced pass and the control have one
   warm-up, frame count, scene, browser and CPU slowdown. It writes the trace's path, size, SHA-256
