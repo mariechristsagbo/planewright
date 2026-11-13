@@ -53,7 +53,7 @@ export async function traced(
   const events = traceEventsOf(JSON.parse(trace.toString('utf8')), files.trace);
   const frames = traceFrames(
     events,
-    measured.map(({ start, duration }) => ({ start, duration })),
+    { warmUp: pass.warmUp, frames: measured.map(({ start, duration }) => ({ start, duration })) },
     files.trace,
   );
   const record: TraceRecord = {

@@ -144,34 +144,46 @@ interface FrameContext {
   readonly tasks: readonly TraceEvent[];
 }
 
+/** A pass's frames as the trace must hold them: its warm-up's renders, then each measured one. */
+export interface PassFrames {
+  /** How many scene renders of the pass came before its measured frames. */
+  readonly warmUp: number;
+  readonly frames: readonly MeasuredFrame[];
+}
+
 /**
- * Each measured frame with the start of its window in the trace: the frames in order, each its
- * own window, later than the one before, refusing a frame that the trace does not hold.
+ * Each measured frame with the start of its window in the trace. The trace must hold exactly the
+ * pass's scene renders, the warm-up's and then one window per measured frame, in order, so that
+ * the frames whose tail is read are all the trace holds after the warm-up, refusing any other.
  */
 export function traceFrames(
   events: readonly TraceEvent[],
-  frames: readonly MeasuredFrame[],
+  { warmUp, frames }: PassFrames,
   file: string,
 ): TracedFrame[] {
   if (frames.length === 0) throw new Error(`${file} was given no frame to find.`);
   const windows = sceneWindows(events, file);
+  if (windows.length !== warmUp + frames.length) {
+    const [count, measured] = [String(windows.length), String(frames.length)];
+    throw new Error(
+      `${file} holds ${count} scene renders, not the ${String(warmUp)} of the warm-up and the ${measured} measured frames of the pass.`,
+    );
+  }
   const tasks = events.filter(
     ({ cat, ph }) => ph === 'X' && cat.split(',').includes('devtools.timeline'),
   );
-  let next = 0;
+  const measured = windows.slice(warmUp);
   let first: Window | undefined;
   return frames.map((frame, index) => {
-    const found = windows.findIndex(
-      ({ start }, at) => at >= next && Math.abs(start - frame.start) <= START_TOLERANCE,
-    );
-    const window = windows[found];
-    if (window === undefined) {
-      const name = frameName(index, frame);
-      throw new Error(`${file} holds no window of ${name} after the frame before it.`);
+    const window = measured[index];
+    if (window === undefined || Math.abs(window.start - frame.start) > START_TOLERANCE) {
+      const render = `scene render ${String(warmUp + index + 1)}`;
+      throw new Error(
+        `${file} holds no window of ${frameName(index, frame)}: its ${render} starts at ${String(window?.start)} ms.`,
+      );
     }
     first ??= window;
     checkWindow(window, frame, { file, index, first, tasks });
-    next = found + 1;
     return { start: frame.start, duration: frame.duration, ts: window.begin };
   });
 }
@@ -280,7 +292,7 @@ export function traceResult(
   const tracePath = `${folder}/${record.trace}`;
   const { content, value } = readJson(read, record.trace, tracePath);
   const events = traceEventsOf(value, tracePath);
-  const found = traceFrames(events, record.frames, tracePath);
+  const found = traceFrames(events, record, tracePath);
   found.forEach(({ ts }, index) => {
     const given = record.frames[index]?.ts;
     if (given !== ts) {

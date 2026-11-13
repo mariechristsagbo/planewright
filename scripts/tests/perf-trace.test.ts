@@ -11,7 +11,7 @@ import {
   traceMarkdown,
   traceResult,
 } from '../lib/perf-trace.ts';
-import type { TraceEvent } from '../lib/perf-trace.ts';
+import type { PassFrames, TraceEvent } from '../lib/perf-trace.ts';
 import {
   EVENTS,
   F1,
@@ -77,9 +77,10 @@ describe('traceEventsOf', () => {
 
 describe('traceFrames', () => {
   const events = traceEventsOf(traceOf(EVENTS), FILE);
+  const pass = (frames: readonly Frame[], warmUp = 2) => ({ warmUp, frames });
 
   it("gives each measured frame its window's start in the trace, after the warm-up's", () => {
-    const traced = traceFrames(events, FRAMES, FILE);
+    const traced = traceFrames(events, pass(FRAMES), FILE);
     expect(traced).toEqual(FRAMES.map((frame) => ({ ...frame, ts: at(frame.start) })));
   });
 
@@ -87,43 +88,63 @@ describe('traceFrames', () => {
     const late = frameEvents(F1).map((event) =>
       event.ph === 'X' ? { ...event, ts: event.ts + 140, dur: (event.dur ?? 0) - 240 } : event,
     );
-    expect(traceFrames(late, [F1], FILE)).toHaveLength(1);
+    expect(traceFrames(late, pass([F1], 0), FILE)).toHaveLength(1);
   });
 
   it("accepts a window whose recorded start differs from the page's by the number's rounding", () => {
     const printed = frameEvents(F1).map((event) =>
       event.ph === 'b' ? { ...event, args: { startTime: F1.start + 4e-12 } } : event,
     );
-    expect(traceFrames(printed, [F1], FILE)).toEqual([{ ...F1, ts: at(F1.start) }]);
+    expect(traceFrames(printed, pass([F1], 0), FILE)).toEqual([{ ...F1, ts: at(F1.start) }]);
   });
 
-  const NO_WINDOW = 'holds no window of frame 2';
+  const renders = (count: number, frames: number, warmUp = 2) =>
+    `holds ${String(count)} scene renders, not the ${String(warmUp)} of the warm-up and the ${String(frames)} measured frames of the pass.`;
   const OUTSIDE = 'has frame 1 (measured from 200.30000001192093 ms) outside every task';
-  const refusals: [string, TraceEvent[], Frame[], string][] = [
+  const refusals: [string, TraceEvent[], PassFrames, string][] = [
     [
       'no window of a frame',
       [W1, W2, F1, F3].flatMap((frame) => frameEvents(frame)),
-      FRAMES,
-      `${NO_WINDOW} (measured from 230.1 ms) after the frame before it.`,
+      pass(FRAMES),
+      renders(4, 3),
     ],
-    ['frames out of order', EVENTS, [F2, F1], NO_WINDOW],
-    ['a frame measured twice', EVENTS, [F1, F1], NO_WINDOW],
+    ['a measured render that the pass leaves out', EVENTS, pass([F1, F3]), renders(5, 2)],
+    ['a render after the last measured frame', EVENTS, pass([F1, F2]), renders(5, 2)],
+    ['a warm-up longer than the record says', EVENTS, pass(FRAMES, 1), renders(5, 3, 1)],
+    [
+      'frames out of order',
+      EVENTS,
+      pass([F2, F1, F3]),
+      'holds no window of frame 1 (measured from 230.1 ms): its scene render 3 starts at 200.30000001192093 ms.',
+    ],
+    [
+      'a frame measured twice',
+      EVENTS,
+      pass([F1, F1, F3]),
+      'holds no window of frame 2 (measured from 200.30000001192093 ms): its scene render 4 starts at 230.1 ms.',
+    ],
+    [
+      'a warm-up render given as a measured frame',
+      EVENTS,
+      pass([W2, F1, F2]),
+      'holds no window of frame 1 (measured from 140.3 ms): its scene render 3 starts at',
+    ],
     [
       'a window of another length',
       EVENTS,
-      [{ start: 230.1, duration: 10.403 }],
-      'gives frame 1 (measured from 230.1 ms) a window of another length.',
+      pass([{ start: 260.4, duration: 7.203 }], 4),
+      'gives frame 1 (measured from 260.4 ms) a window of another length.',
     ],
     [
       'a window outside every timeline task',
       EVENTS.map((event) => (event.cat === 'devtools.timeline' ? { ...event, dur: 100 } : event)),
-      FRAMES,
+      pass(FRAMES),
       OUTSIDE,
     ],
     [
       'timeline tasks on another thread only',
       EVENTS.map((event) => (event.ph === 'X' ? { ...event, tid: 8 } : event)),
-      FRAMES,
+      pass(FRAMES),
       OUTSIDE,
     ],
     [
@@ -131,29 +152,34 @@ describe('traceFrames', () => {
       frameEvents(F1).map((event) =>
         event.ph === 'X' ? { ...event, ts: event.ts + 240, dur: (event.dur ?? 0) - 240 } : event,
       ),
-      [F1],
+      pass([F1], 0),
       OUTSIDE,
     ],
     [
       'tasks of another category only',
       EVENTS.map((event) => (event.ph === 'X' ? { ...event, cat: 'toplevel' } : event)),
-      FRAMES,
+      pass(FRAMES),
       OUTSIDE,
     ],
     [
       'windows on two threads',
       [...frameEvents(W1), ...frameEvents(F1, { pid: 7, tid: 9 })],
-      [W1, F1],
+      pass([W1, F1], 0),
       'has frame 2 (measured from 200.30000001192093 ms) on another thread than the first frame.',
     ],
-    ['a window that never ends', EVENTS.slice(0, -1), FRAMES, 'window that never ends.'],
-    ['a window that ends twice', [...EVENTS, endOf(F3)], FRAMES, 'window that is not closed once.'],
-    ['no frame', EVENTS, [], 'was given no frame to find.'],
+    ['a window that never ends', EVENTS.slice(0, -1), pass(FRAMES), 'window that never ends.'],
+    [
+      'a window that ends twice',
+      [...EVENTS, endOf(F3)],
+      pass(FRAMES),
+      'window that is not closed once.',
+    ],
+    ['no frame', EVENTS, pass([]), 'was given no frame to find.'],
   ];
 
-  it.each(refusals)('refuses %s, naming the file', (_, found, frames, message) => {
-    expect(() => traceFrames(found, frames, FILE)).toThrow(`${FILE} `);
-    expect(() => traceFrames(found, frames, FILE)).toThrow(message);
+  it.each(refusals)('refuses %s, naming the file', (_, found, given, message) => {
+    expect(() => traceFrames(found, given, FILE)).toThrow(`${FILE} `);
+    expect(() => traceFrames(found, given, FILE)).toThrow(message);
   });
 });
 
@@ -232,9 +258,19 @@ describe('traceResult', () => {
       "another pass's frames",
       {
         ...GOOD,
-        'B1.frames.json': record({ frames: traced([F1, { start: 290.5, duration: 7 }]) }),
+        'B1.frames.json': record({ frames: traced([F1, F2, { start: 290.5, duration: 7 }]) }),
       },
-      /^browser\/traces\/B1\.trace\.json /u,
+      /^browser\/traces\/B1\.trace\.json holds no window of frame 3 /u,
+    ],
+    [
+      'a record that leaves out a measured frame of the trace',
+      { ...GOOD, 'B1.frames.json': record({ frames: traced([F1, F3]) }) },
+      /^browser\/traces\/B1\.trace\.json holds 5 scene renders, not the 2 of the warm-up and the 2 /u,
+    ],
+    [
+      "a record whose warm-up is not the trace's",
+      { ...GOOD, 'B1.frames.json': record({ warmUp: 3 }) },
+      /^browser\/traces\/B1\.trace\.json holds 5 scene renders, not the 3 of the warm-up /u,
     ],
     [
       'a start in the trace that is not its window',

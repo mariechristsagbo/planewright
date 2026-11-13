@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import { measured } from './perf-fixtures.ts';
-import { EVENTS, F1, RECORD, traceOf, traced } from './trace-fixtures.ts';
+import { EVENTS, F1, F2, F3, RECORD, traceOf, traced } from './trace-fixtures.ts';
 
 // The performance report and B1's trace
 // (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided): `npm run
@@ -99,14 +99,26 @@ describe("the performance report's check of B1's trace", () => {
   });
 
   it('fails when the trace does not hold the frames of its record', () => {
-    const record = { ...RECORD, frames: traced([F1, { start: 290.5, duration: 7 }]) };
+    const record = { ...RECORD, frames: traced([F1, F2, { start: 290.5, duration: 7 }]) };
     const { status, report } = runReport({
       'B1.frames.json': JSON.stringify(record),
       'B1.trace.json': TRACE,
     });
     expect(status).toBe(1);
     expect(report.evaluation.failures).toEqual([
-      `${FAILED}browser/traces/B1.trace.json holds no window of frame 2 (measured from 290.5 ms) after the frame before it.`,
+      `${FAILED}browser/traces/B1.trace.json holds no window of frame 3 (measured from 290.5 ms): its scene render 5 starts at 260.4 ms.`,
+    ]);
+  });
+
+  it('fails when the record leaves out a frame that the trace holds', () => {
+    const record = { ...RECORD, frames: traced([F1, F3]) };
+    const { status, report } = runReport({
+      'B1.frames.json': JSON.stringify(record),
+      'B1.trace.json': TRACE,
+    });
+    expect(status).toBe(1);
+    expect(report.evaluation.failures).toEqual([
+      `${FAILED}browser/traces/B1.trace.json holds 5 scene renders, not the 2 of the warm-up and the 2 measured frames of the pass.`,
     ]);
   });
 });
