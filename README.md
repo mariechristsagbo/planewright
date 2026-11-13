@@ -2,7 +2,7 @@
 
 An independently engineered open-source infinite canvas for drawing and diagrams.
 
-![Planewright's editor in a 1440 × 900 desktop window: the tool palette at the top, a drawing of rectangles, ellipses, a diamond, lines, freehand strokes and texts, the Elements drawer open at the right listing each element's size and position, and the undo, redo, zoom and view controls along the bottom](docs/assets/readme/editor-desktop-1440x900.png)
+![Planewright's editor in a 1440 × 900 desktop window at 100 %, showing a flow diagram: Idea leads through Sketch and Refine to a Clear? decision, whose yes branch reaches Ready and whose not yet branch drops to Revise, which loops back to Refine; the tool palette is at the top, the Elements drawer is open at the right listing the diagram's words and shapes with their sizes and positions, and the undo, redo, zoom and view controls run along the bottom](docs/assets/readme/editor-desktop-1440x900.png)
 
 Planewright is a browser editor in its foundation phase, and no version of it has been released
 yet. Its canvas fills the window, pans and zooms, and has its controls floating over it. Today it
@@ -23,15 +23,15 @@ export, and no collaboration, since the collaboration service is only a skeleton
 budget is measured, and CI gates only the bundle sizes so far; the redraw of 5,000 elements in view
 misses its budget in some CI runs, which issue #49 follows.
 
-<p align="center">
-  <img src="docs/assets/readme/editor-phone-390x844.png" width="240" alt="Planewright's editor on a 390 × 844 phone in portrait: a rectangle selected with its handles, the selection bar under the top bar with Duplicate, Delete and Details, and the tool dock along the bottom under the undo, redo and zoom controls">
-</p>
+![Planewright's editor on an 844 × 390 phone in landscape at 75 %, showing the same flow diagram whole, from Idea, Sketch and Refine through Clear? to Ready and Revise; the menu, the tool palette, whose Tool lock wraps to a second line, and Elements form the top row, the undo, redo and zoom controls and the Keyboard shortcuts button sit at the bottom, and every control keeps clear of the emulated safe areas at the sides and the bottom](docs/assets/readme/editor-phone-landscape-844x390.png)
 
-Both screenshots are
-[visual-regression baselines](docs/architecture/editor-experience.md#what-s13-delivered) that CI's
-Linux Chromium made from the end-to-end tests' seeded drawing and compares on every run: V09, with
-the Elements drawer open, and V19, with a rectangle selected on a phone. The drawing's colours,
-strokes and fonts come from that fixture, since the editor has no style controls yet.
+Both screenshots show one small flow diagram drawn with the editor's own shapes, lines and texts.
+CI's Linux Chromium makes them from a fixture of the end-to-end tests and compares them on every
+run, as it does the
+[visual-regression baselines](docs/architecture/engine/quality.md#visual-baselines). On the phone,
+safe-area insets of 47 px at each side and 21 px at the bottom are emulated. The diagram's colours,
+its words' sizes and their places come from that fixture, since the editor has no style controls
+yet.
 
 ## Goals
 

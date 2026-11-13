@@ -4,14 +4,16 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
-import { DESKTOP, E2E, TOUCH, imageFile, pngSize, shotsIn, testsOf } from './visual-files.ts';
+import { NODES } from '../../apps/web/tests/e2e/showcase-fixture.ts';
+import { E2E, README_SPEC, imageFile, pngSize, shotsIn } from './visual-files.ts';
 
 // The README's screenshots (issue #52): the README opens with the editor, not with a callout, and
 // shows the two screenshots below and no other image, the desktop one before its first section.
-// Each is a byte-for-byte copy of a visual baseline of S13, which CI's Chromium made from the
-// seeded fixture, so a baseline adopted again fails here until the README's copy follows it. Each
-// keeps its size in pixels and its aspect, names Planewright and its viewport in its alternative
-// text, and stays within the README's image budget.
+// Each is a byte-for-byte copy of a baseline of the README showcase's visual spec, which CI's
+// Chromium made from the showcase's flow diagram and compares on every run, so a baseline made
+// again fails here until the README's copy follows it. Each keeps its size in pixels and its aspect,
+// names Planewright, its viewport and every node of the diagram in its alternative text, and stays
+// within the README's image budget.
 
 const ROOT = join(import.meta.dirname, '..', '..');
 const ASSETS = 'docs/assets/readme';
@@ -22,8 +24,6 @@ const MAX_TOTAL_BYTES = 196_608;
 /** A README screenshot: its file, the baseline it copies and how wide the README may show it. */
 interface Screenshot {
   readonly file: string;
-  readonly state: string;
-  readonly spec: string;
   readonly name: string;
   readonly size: readonly [number, number];
   readonly viewport: string;
@@ -32,26 +32,22 @@ interface Screenshot {
 
 const DESKTOP_SHOT: Screenshot = {
   file: 'editor-desktop-1440x900.png',
-  state: 'V09',
-  spec: DESKTOP,
-  name: '1440x900-drawer-open',
+  name: 'readme-desktop-1440x900',
   size: [1440, 900],
   viewport: '1440 × 900',
   maxShownWidth: 1440,
 };
 
-const PHONE_SHOT: Screenshot = {
-  file: 'editor-phone-390x844.png',
-  state: 'V19',
-  spec: TOUCH,
-  name: '390x844-touch-selection-bar',
-  size: [390, 844],
-  viewport: '390 × 844',
-  maxShownWidth: 320,
+const LANDSCAPE_SHOT: Screenshot = {
+  file: 'editor-phone-landscape-844x390.png',
+  name: 'readme-landscape-844x390',
+  size: [844, 390],
+  viewport: '844 × 390',
+  maxShownWidth: 844,
 };
 
 /** The README's screenshots, in the order that it shows them. */
-const SCREENSHOTS = [DESKTOP_SHOT, PHONE_SHOT];
+const SCREENSHOTS = [DESKTOP_SHOT, LANDSCAPE_SHOT];
 
 /** An image of a Markdown document, as `![alt](src)` or `<img>`, with its attributes and offset. */
 interface Image {
@@ -110,14 +106,24 @@ describe('the README', () => {
     expect(sizes.filter((bytes) => bytes > MAX_BYTES)).toEqual([]);
     expect(sizes.reduce((total, bytes) => total + bytes, 0)).toBeLessThanOrEqual(MAX_TOTAL_BYTES);
   });
+
+  it(`copies the baselines that ${README_SPEC} captures, one each, and only those`, () => {
+    const source = readFileSync(join(E2E, README_SPEC), 'utf8');
+    expect(shotsIn(source)).toEqual(SCREENSHOTS.map((shot) => shot.name));
+    const directory = `${README_SPEC}-snapshots`;
+    const images = SCREENSHOTS.map((shot) =>
+      imageFile(README_SPEC, shot.name).slice(directory.length + 1),
+    );
+    expect(readdirSync(join(E2E, directory)).sort()).toEqual(images.sort());
+  });
 });
 
 describe.each(SCREENSHOTS)('the README screenshot $file', (shot) => {
-  it("is a byte-for-byte copy of its visual baseline, its V number's one capture", () => {
-    expect(shotsIn(testsOf(shot.spec).get(shot.state) ?? '')).toEqual([shot.name]);
-    const baseline = join(E2E, imageFile(shot.spec, shot.name));
-    expect(sha256(join(ROOT, pathOf(shot)))).toBe(sha256(baseline));
-    expect(README).toContain(shot.state);
+  it('is a byte-for-byte copy of its README showcase baseline', () => {
+    const baseline = join(E2E, imageFile(README_SPEC, shot.name));
+    expect(sha256(join(ROOT, pathOf(shot))), `${pathOf(shot)} copies ${baseline}`).toBe(
+      sha256(baseline),
+    );
   });
 
   it('keeps its size in pixels and its aspect, shown no wider than its own width', () => {
@@ -129,9 +135,10 @@ describe.each(SCREENSHOTS)('the README screenshot $file', (shot) => {
     expect(Number(shown)).toBeLessThanOrEqual(Math.min(shot.size[0], shot.maxShownWidth));
   });
 
-  it('names Planewright and its viewport in its alternative text', () => {
+  it('names Planewright, its viewport and every node of the diagram in its alternative text', () => {
     const alt = imageOf(shot)?.alt ?? '';
     expect(alt).toContain('Planewright');
     expect(alt).toContain(shot.viewport);
+    expect(NODES.map((node) => node.label).filter((label) => !alt.includes(label))).toEqual([]);
   });
 });
