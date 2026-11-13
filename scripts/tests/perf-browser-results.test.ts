@@ -5,12 +5,13 @@ import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 
 import config from '../../apps/web/playwright.perf.config.ts';
-import { clearResults, resultsFolder } from '../../apps/web/tests/perf/results.ts';
+import { clearResults, resultsFolder, tracesFolder } from '../../apps/web/tests/perf/results.ts';
 
 // The browser measurements' files (docs/architecture/engine/quality.md#what-issue-38-decided):
 // `npm run perf:browser` removes the files of an earlier run before it measures, so that the
 // report never reads a measurement that a failing test did not write again (the ENG-15 review's
-// s3).
+// s3), and its traces with them
+// (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided).
 
 const folders: string[] = [];
 
@@ -25,12 +26,18 @@ describe('the browser measurements folder', () => {
     expect(resultsFolder(1).startsWith('/')).toBe(true);
   });
 
-  it('loses every earlier measurement when cleared, and clearing a missing one is no error', () => {
+  it('keeps the traces in a folder of its own inside it, which the report never reads as a measurement', () => {
+    expect(tracesFolder(1)).toBe(`${resultsFolder(1)}traces/`);
+    expect(tracesFolder(4)).toBe(`${resultsFolder(4)}traces/`);
+  });
+
+  it('loses every earlier measurement and trace when cleared, and clearing a missing one is no error', () => {
     const root = mkdtempSync(join(tmpdir(), 'planewright-perf-'));
     folders.push(root);
     const folder = join(root, 'browser');
-    mkdirSync(folder);
+    mkdirSync(join(folder, 'traces'), { recursive: true });
     writeFileSync(join(folder, 'B1.json'), '{"id":"B1","samples":[1]}\n');
+    writeFileSync(join(folder, 'traces', 'B1.trace.json'), '{"traceEvents":[]}\n');
     clearResults(folder);
     expect(existsSync(folder)).toBe(false);
     expect(() => {

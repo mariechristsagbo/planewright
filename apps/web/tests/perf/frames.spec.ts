@@ -16,11 +16,14 @@ import {
   writeMeasurement,
 } from './support.ts';
 import type { Measure } from './support.ts';
+import { traced } from './trace.ts';
 
 // Budgets B1, B3 and B4 (docs/architecture/engine/quality.md#performance-budgets, REQ-F01 and
 // REQ-F02) on a seeded drawing of 5,000 elements, all of them in view: the scene layer redrawn by
 // small pans, the overlay layer redrawn by a marquee, and the frame that shows each pointer move
-// of the marquee and of a Hand tool drag. Warm-up frames are dropped before the samples.
+// of the marquee and of a Hand tool drag. Warm-up frames are dropped before the samples. After B1,
+// its pans run again on a page of their own while Chromium traces the browser, so that B1's own
+// frames stay untraced (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided).
 
 const SCENE = { seed: 21, count: 5_000 };
 const WARM_UP = 20;
@@ -43,7 +46,12 @@ async function canvasPoint(page: Page, x: number, y: number): Promise<[number, n
 const durations = (found: readonly Measure[], layer: string): number[] =>
   found.filter(({ name }) => name === layer).map(({ duration }) => duration);
 
-test('B1 REQ-F01 the scene layer redrawn with 5,000 elements in view', async ({ page }) => {
+/**
+ * B1's pans: wheel pans of 2 px back and forth, each waiting for its scene render, with the
+ * measures cleared after the warm-up; gives the scene renders measured since, checked to be at
+ * least 100, each of every element.
+ */
+async function panBackAndForth(page: Page): Promise<Measure[]> {
   for (let step = 0; step < WARM_UP + 100; step += 1) {
     if (step === WARM_UP) await clearMeasures(page);
     const done = await rendered(page, 'scene');
@@ -53,6 +61,11 @@ test('B1 REQ-F01 the scene layer redrawn with 5,000 elements in view', async ({ 
   const found = (await measures(page)).filter(({ name }) => name === 'scene');
   expect(found.length).toBeGreaterThanOrEqual(100);
   expect(found.every(({ elements }) => elements === SCENE.count)).toBe(true);
+  return found;
+}
+
+test('B1 REQ-F01 the scene layer redrawn with 5,000 elements in view', async ({ page }) => {
+  const found = await panBackAndForth(page);
   writeMeasurement(page, {
     id: 'B1',
     samples: durations(found, 'scene'),
@@ -63,6 +76,14 @@ test('B1 REQ-F01 the scene layer redrawn with 5,000 elements in view', async ({ 
       by: 'wheel pans of 2 px back and forth',
     },
   });
+});
+
+test("B1's pans again, after B1, while Chromium traces the browser", async ({ page, browser }) => {
+  const details = { ...SCENE, inView: SCENE.count, by: "B1's pans, traced after B1's own" };
+  const frames = await traced(browser, { id: 'B1', warmUp: WARM_UP, details }, () =>
+    panBackAndForth(page),
+  );
+  expect(frames.length).toBeGreaterThanOrEqual(100);
 });
 
 /**
