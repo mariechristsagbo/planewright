@@ -355,3 +355,10 @@ release has been published yet.
   reach a `playwright-test-results` artifact, and every end-to-end run prints its processor. The
   scene fixture has one loader for every width, and a tooling test checks the 30 images. No product
   code changes.
+- The README opens with the editor (issue #52): in place of its pre-release callout, a screenshot of
+  the editor at 1440 × 900 with the Elements drawer open and one on a 390 × 844 phone with a
+  rectangle selected, shown 240 px wide, and a short account of what the editor does and does not
+  do. The screenshots are byte-for-byte copies of the visual baselines V09 and V19 in
+  `docs/assets/readme`, 85,369 and 40,679 bytes, and a tooling test keeps them equal to their
+  baselines, the only images of the README, within 131,072 bytes each and with alternative texts
+  that name their viewports. No product code or baseline changes.
