@@ -12,6 +12,13 @@ export function resultsFolder(slowdown: number): string {
   return fileURLToPath(new URL(`../../../../perf-results/${name}/`, import.meta.url));
 }
 
+/**
+ * The folder of the traces that the browser measurements keep, inside theirs, so that clearing
+ * that removes them too and the report, which reads only its JSON files, never takes one for a
+ * measurement (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided).
+ */
+export const tracesFolder = (slowdown: number): string => `${resultsFolder(slowdown)}traces/`;
+
 /** Removes the folder with every measurement in it; a missing folder is no error. */
 export function clearResults(folder: string): void {
   rmSync(folder, { recursive: true, force: true });
