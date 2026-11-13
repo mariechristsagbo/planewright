@@ -127,8 +127,11 @@ test('A4 A6 A7 a failed save shows the error chip and its notice, Hide folds the
   await expect(saveStatus(page)).toHaveCount(0);
   await expect(polite(page)).toHaveText('The drawing is saved again.');
   await expect(canvas(page)).toBeFocused();
+  // The nudge's save can be pending and done before the first read: look for its pending state
+  // among those recorded since the press, not for the last one.
+  const before = (await recorded(page)).states.length;
   await page.keyboard.press('ArrowLeft');
-  await expect.poll(async () => (await recorded(page)).states.at(-1)).toBe('pending');
+  await expect.poll(async () => (await recorded(page)).states.slice(before)).toContain('pending');
   await expectSaved(page);
   expect((await recorded(page)).live.filter((message) => message === RECOVERY)).toHaveLength(1);
 
