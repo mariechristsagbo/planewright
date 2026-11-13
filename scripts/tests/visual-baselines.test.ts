@@ -3,15 +3,14 @@ import { join } from 'node:path';
 
 import { describe, expect, it } from 'vitest';
 
+import { DESKTOP, E2E, TOUCH, imageFile, pngSize, shotsIn, testsOf } from './visual-files.ts';
+
 // The visual baselines (ADR 0012, decision 17; the v0.2 plan's S13): exactly the 30 states of the
 // ADR's visual-regression matrix, V01 to V30, each one Linux image that CI's Chromium made, used by
 // one toHaveScreenshot call in the test of its V number, at its viewport's size, the pixel-ratio
 // check at twice it, and within the repository's 262,144-byte file limit. The visual specs capture
 // the whole viewport with no mask, clip or loosened comparison.
 
-const E2E = join(import.meta.dirname, '..', '..', 'apps', 'web', 'tests', 'e2e');
-const DESKTOP = 'visual-desktop.spec.ts';
-const TOUCH = 'visual-touch.spec.ts';
 const MAX_BYTES = 262_144;
 
 /** The matrix's states: V number, spec, image name and the image's size in pixels. */
@@ -48,8 +47,6 @@ const STATES: readonly (readonly [string, string, string, number, number])[] = [
   ['V30', DESKTOP, '1440x900-dpr2-rest', 2880, 1800],
 ];
 
-const imageFile = (spec: string, name: string) => `${spec}-snapshots/${name}-chromium-linux.png`;
-
 /** Every file in the e2e directory's snapshot directories, as `<directory>/<file>`. */
 function snapshotFiles(): string[] {
   const directories = readdirSync(E2E).filter((entry) => entry.endsWith('-snapshots'));
@@ -58,33 +55,7 @@ function snapshotFiles(): string[] {
   );
 }
 
-/** A spec's tests, by V number: the source from its title to the next test's. */
-function testsOf(spec: string): Map<string, string> {
-  const source = readFileSync(join(E2E, spec), 'utf8');
-  const starts = [...source.matchAll(/\btest\(\s*'(?<id>V\d{2}) /gu)];
-  return new Map(
-    starts.map((start, index) => [
-      start.groups?.['id'] ?? '',
-      source.slice(start.index, starts[index + 1]?.index ?? source.length),
-    ]),
-  );
-}
-
 const SPECS = new Map([DESKTOP, TOUCH].map((spec) => [spec, testsOf(spec)]));
-
-/** The image names of a test's toHaveScreenshot calls. */
-const shotsIn = (test: string) =>
-  [...test.matchAll(/toHaveScreenshot\('(?<name>[^']+)\.png'/gu)].map(
-    (call) => call.groups?.['name'],
-  );
-
-/** A PNG's width and height from its IHDR chunk, after checking its signature. */
-function pngSize(path: string): [number, number] {
-  const head = readFileSync(path).subarray(0, 24);
-  expect(head.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a');
-  expect(head.subarray(12, 16).toString('latin1')).toBe('IHDR');
-  return [head.readUInt32BE(16), head.readUInt32BE(20)];
-}
 
 describe('the visual baselines', () => {
   it('are exactly the 30 Linux Chromium images of the matrix, in the snapshot directories', () => {
