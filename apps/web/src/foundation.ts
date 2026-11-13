@@ -7,8 +7,9 @@ export interface FoundationItem {
 }
 
 /**
- * The one-line state of this build, which About this build and the empty-canvas note say; keep it
- * in sync with the README.
+ * The one-line state of this build, which About this build and, while saving works, the
+ * empty-canvas note say; keep it in sync with the README and with the note's sentence without its
+ * saving clause (shell/empty-canvas-note.ts).
  */
 export const BUILD_STATUS =
   'Pre-release — you can draw shapes, lines, freehand strokes and texts, then select and transform them; the drawing is saved in this browser, but there are no files or collaboration yet.';
