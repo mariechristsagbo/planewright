@@ -1,3 +1,6 @@
+import { createHash } from 'node:crypto';
+import { resolve } from 'node:path';
+
 import { PERF_BUDGETS, percentile, statisticOf } from './perf-budgets.ts';
 import { runAddress } from './perf-baseline.ts';
 import type { ReportedRun } from './perf-baseline.ts';
@@ -91,6 +94,48 @@ export function parseTailReport(text: string, file: string): TailReport {
     throw new Error(`${file} is not JSON: ${String(error)}`, { cause: error });
   }
   return readTailReport(value, file);
+}
+
+/** A report.json given to the tool: its path as given and its text. */
+export interface TailInput {
+  readonly file: string;
+  readonly text: string;
+}
+
+/** What makes two inputs one report, each with the words that say so. */
+function identities({ file, text }: TailInput, report: TailReport): [string, string][] {
+  const keys: [string, string][] = [[`file ${resolve(file)}`, 'the same file']];
+  const address = runAddress(report.run.url);
+  if (address !== null) {
+    const { repository } = address;
+    const [id, attempt] = [String(address.id), String(address.attempt)] as const;
+    keys.push([
+      `run ${repository} ${id} ${attempt}`,
+      `CI run ${id}, attempt ${attempt}, of ${repository}`,
+    ]);
+  }
+  keys.push([`content ${createHash('sha256').update(text).digest('hex')}`, 'the same content']);
+  return keys;
+}
+
+/**
+ * Every input's report, refusing one passed twice: the same file, a report of the same CI run and
+ * attempt, or the same content, so that no report counts twice.
+ */
+export function readTailReports(inputs: readonly TailInput[]): TailReport[] {
+  const seen = new Map<string, string>();
+  return inputs.map((input) => {
+    const report = parseTailReport(input.text, input.file);
+    const keys = identities(input, report);
+    for (const [key, reason] of keys) {
+      const earlier = seen.get(key);
+      if (earlier !== undefined) {
+        throw new Error(`${input.file} is the same report as ${earlier}: ${reason}.`);
+      }
+    }
+    for (const [key] of keys) seen.set(key, input.file);
+    return report;
+  });
 }
 
 /** The samples' median, 95th percentile and slow frames, and whether they meet `target`. */
