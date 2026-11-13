@@ -209,7 +209,10 @@ the engine, and the element list, the live region, the zoom controls and focus m
 - **No rule engine.** No automated rule engine, such as axe-core, is added: it would be a new
   dependency, and the checks P0 needs, focus order and indicators, contrast measured from computed
   colours, target sizes and roles, run in Playwright and Vitest without one. A manual screen-reader
-  pass stays a task before each release; no human accessibility audit has been made.
+  pass stays a task before each release; no human accessibility audit has been made. Versions 0.1.0
+  and 0.2.0 alone were published without the pass, by the maintainer's waiver, and it follows
+  version 0.2.0's production deployment
+  ([the screen-reader pass of v0.1.0 and v0.2.0](../../development/releasing.md#the-screen-reader-pass-of-v010-and-v020)).
 - **Not here.** Menus other than slice S4's (P1), the dark theme (P2), forced colours, other
   languages, a type-ahead in the list and the list's performance measurements (ENG-15).
 
@@ -252,7 +255,8 @@ its tests.
   added.
 - **Accessibility checks.** Role and name assertions run in unit and end-to-end tests. Whether an
   automated rule engine is added is decided, with a dependency review, in the accessibility issue.
-  A manual screen-reader pass is recorded before each release.
+  A manual screen-reader pass is recorded before each release, in
+  [the release procedure](../../development/releasing.md), which records the one waiver of it.
 - **Comparison with the baseline.** The later behavioural comparison phase measures Planewright
   against the baseline's committed numbers. It never contacts the reference application without a
   new investigation issue.
@@ -465,7 +469,10 @@ what the rules above leave open:
   and read the JavaScript heap from a heap snapshot in the developer tools. Measured once that way
   at 54425f4, through the DevTools protocol's garbage collection and heap usage rather than a
   snapshot, it was 16.8 MB after loading and at most 57 MB with the history full after 60 nudges,
-  within its 150 MB.
+  within its 150 MB. Before versions 0.1.0 and 0.2.0 it was measured on their production builds
+  through the protocol and a heap snapshot, at most 51.1 and 52.2 MB with the history full and
+  56.9 and 58.5 MB in the snapshot
+  ([B14 on both targets](../../development/releasing.md#b14-on-both-targets)).
 - **Light only.** P0 ships the light theme only, so the page declares `color-scheme: light` and has
   no `prefers-color-scheme` rule (the ENG-14 review's m1): a dark preference of the operating
   system changes nothing, and an end-to-end test with that preference measures the interface text
