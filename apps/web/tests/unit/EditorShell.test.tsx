@@ -42,7 +42,8 @@ const islandOf = (element: Element): string | undefined =>
 
 describe('EditorShell', () => {
   it('AC states what the build draws and writes, that it saves in this browser and that it has no files or collaboration', () => {
-    mount();
+    // Over working storage, since the empty-canvas note leaves out the saving clause without it.
+    render(<EditorShell surface={saveHarness({ type: 'saved' }).surface} />);
     expect(screen.getByRole('heading', { level: 1, name: 'Planewright' })).toBeInTheDocument();
     expect(screen.queryByRole('status')).toBeNull();
     // On the page, the sentence shows only in the empty-canvas note, which is no status.
