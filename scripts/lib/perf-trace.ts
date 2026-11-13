@@ -1,10 +1,17 @@
+import { createHash } from 'node:crypto';
+
+import { percentile, statisticOf } from './perf-budgets.ts';
+import { formatValue } from './perf-report.ts';
+
 /**
  * B1's trace (docs/architecture/engine/rendering-and-hit-testing.md#what-issue-49-decided): after
  * B1's own frames, which no trace slows, the browser measurements pan B1's scene again while
  * Chromium traces the whole browser, and keep the trace beside a record of that pass's frames,
  * each with its start on the page's clock and in the trace. This module checks that the trace
  * holds every frame of the pass: its user-timing window, as long as the page measured it, inside a
- * task that the timeline recorded on the window's thread.
+ * task that the timeline recorded on the window's thread. The performance report checks the record
+ * and the trace again, gives the trace's size and digest, and fails when either is missing or the
+ * trace does not hold the record's frames.
  */
 
 /** What Chromium traces: the timeline, V8 and its garbage collection, the frames and every task. */
@@ -186,3 +193,130 @@ export const traceFiles = (id: string) => ({
   trace: `${id}.trace.json`,
   record: `${id}.frames.json`,
 });
+
+const isTracedFrame = (value: unknown): value is TracedFrame =>
+  isRecord(value) && ['start', 'duration', 'ts'].every((field) => Number.isFinite(value[field]));
+
+/** A bare file name, so that a record can name no file outside its own folder. */
+const isFileName = (value: unknown): value is string =>
+  typeof value === 'string' && /^[\w-]+(?:\.[\w-]+)*\.json$/u.test(value);
+
+const isTextList = (value: unknown): boolean =>
+  Array.isArray(value) && value.every((each) => typeof each === 'string');
+
+const isCount = (value: unknown): boolean => Number.isInteger(value) && Number(value) >= 0;
+
+const isFrameList = (value: unknown): boolean =>
+  Array.isArray(value) && value.length > 0 && value.every(isTracedFrame);
+
+/** A traced pass's record, refusing a malformed one or a trace outside the record's folder. */
+export function readTraceRecord(value: unknown, file: string): TraceRecord {
+  const { id, trace, categories, warmUp, frames, details } = isRecord(value) ? value : {};
+  const valid =
+    typeof id === 'string' &&
+    isFileName(trace) &&
+    isTextList(categories) &&
+    isCount(warmUp) &&
+    isFrameList(frames) &&
+    (details === undefined || isRecord(details));
+  if (!valid) {
+    throw new Error(
+      `${file} is not a trace record: it needs an id, a trace, categories and frames.`,
+    );
+  }
+  return value as TraceRecord;
+}
+
+/** What the performance report keeps of a checked trace, its paths relative to perf-results/. */
+export interface TraceResult {
+  readonly id: string;
+  readonly trace: string;
+  readonly record: string;
+  readonly bytes: number;
+  readonly sha256: string;
+  readonly events: number;
+  readonly frames: number;
+  readonly warmUp: number;
+  readonly median: number;
+  readonly p95: number;
+}
+
+function readJson(read: (name: string) => Buffer | undefined, name: string, path: string) {
+  const content = read(name);
+  if (content === undefined) throw new Error(`${path} is missing.`);
+  try {
+    return { content, value: JSON.parse(content.toString('utf8')) as unknown };
+  } catch (error) {
+    throw new Error(`${path} is not JSON: ${String(error)}`, { cause: error });
+  }
+}
+
+/** Refuses a record that another trace's frames or another pass's categories would make. */
+function checkRecord(record: TraceRecord, id: string, path: string): void {
+  if (record.id !== id) {
+    throw new Error(`${path} is the record of ${record.id}, not of ${id}.`);
+  }
+  const same =
+    record.categories.length === TRACE_CATEGORIES.length &&
+    record.categories.every((category, index) => category === TRACE_CATEGORIES[index]);
+  if (!same) {
+    throw new Error(`${path} was traced with other categories: ${record.categories.join(',')}.`);
+  }
+}
+
+/**
+ * The traced pass of budget `id` in `folder`, read through `read`: its record and trace checked
+ * against each other, with the trace's size, digest and events and the frames' statistics.
+ */
+export function traceResult(
+  id: string,
+  folder: string,
+  read: (name: string) => Buffer | undefined,
+): TraceResult {
+  const names = traceFiles(id);
+  const recordPath = `${folder}/${names.record}`;
+  const record = readTraceRecord(readJson(read, names.record, recordPath).value, recordPath);
+  checkRecord(record, id, recordPath);
+  const tracePath = `${folder}/${record.trace}`;
+  const { content, value } = readJson(read, record.trace, tracePath);
+  const events = traceEventsOf(value, tracePath);
+  const found = traceFrames(events, record.frames, tracePath);
+  found.forEach(({ ts }, index) => {
+    const given = record.frames[index]?.ts;
+    if (given !== ts) {
+      const frame = `frame ${String(index + 1)} the start ${String(given)} in the trace`;
+      throw new Error(`${recordPath} gives ${frame}, but its window starts at ${String(ts)}.`);
+    }
+  });
+  const durations = record.frames.map(({ duration }) => duration);
+  return {
+    ...{ id, trace: tracePath, record: recordPath, bytes: content.length },
+    ...{ sha256: createHash('sha256').update(content).digest('hex'), events: events.length },
+    ...{ frames: record.frames.length, warmUp: record.warmUp },
+    ...{ median: percentile(durations, 0.5), p95: statisticOf('p95', durations) },
+  };
+}
+
+const row = (cells: readonly string[]): string => `| ${cells.join(' | ')} |`;
+const TRACE_HEADER = ['Id', 'Frames', 'Median', '95th percentile', 'Trace', 'Bytes', 'SHA-256'];
+
+/** The report's section on the traces, none when no trace was checked. */
+export function traceMarkdown(results: readonly TraceResult[]): string[] {
+  if (results.length === 0) return [];
+  return [
+    '### Traces',
+    '',
+    "After B1's own frames, which no trace slows, B1's pans ran again while Chromium traced the browser. The record beside each trace gives each traced frame's start on the page's clock and in the trace; these values are that pass's, not B1's.",
+    '',
+    row(TRACE_HEADER),
+    row(TRACE_HEADER.map(() => '---')),
+    ...results.map(({ id, frames, warmUp, median, p95, trace, bytes, sha256 }) =>
+      row([
+        ...[id, `${String(frames)} after ${String(warmUp)}`],
+        ...[`${formatValue(median)} ms`, `${formatValue(p95)} ms`],
+        ...[`\`${trace}\``, String(bytes), `\`${sha256}\``],
+      ]),
+    ),
+    '',
+  ];
+}

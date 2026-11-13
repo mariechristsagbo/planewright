@@ -95,6 +95,19 @@ describe('reportMarkdown', () => {
     expect(markdown).toContain('- Processor: Test CPU');
     expect(markdown).toContain('- The element list renders at most 101 options.');
   });
+
+  it('puts the sections it is given, such as the traces, after the other measurements', () => {
+    const evaluation = evaluate(measured(0.5), NONE, PROCESSOR);
+    const markdown = reportMarkdown(evaluation, [], {
+      machine: { Processor: 'Test CPU' },
+      notes: [],
+      sections: ['### Traces', '', 'One trace.', ''],
+    });
+    const where = (text: string) => markdown.indexOf(text);
+    expect(where('### Traces')).toBeGreaterThan(where('### Other measurements, no budget'));
+    expect(where('One trace.')).toBeGreaterThan(where('### Traces'));
+    expect(where('### Machine')).toBeGreaterThan(where('One trace.'));
+  });
 });
 
 describe('reportMarkdown with the committed baseline', () => {

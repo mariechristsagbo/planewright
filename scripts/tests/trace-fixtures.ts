@@ -1,9 +1,9 @@
-import { SCENE_RENDER } from '../lib/perf-trace.ts';
+import { SCENE_RENDER, TRACE_CATEGORIES } from '../lib/perf-trace.ts';
 import type { TraceEvent } from '../lib/perf-trace.ts';
 
 // What the trace tests share: Chromium trace events of measured scene renders, each a user-timing
-// window inside an animation frame's timeline task on the page's main thread, and warm-up frames
-// before three measured ones.
+// window inside an animation frame's timeline task on the page's main thread, warm-up frames
+// before three measured ones, and the record of those three.
 
 const MAIN = { pid: 7, tid: 7 };
 /** The page's time origin on the trace's clock, in µs, as Chromium's monotonic clock gives it. */
@@ -59,3 +59,14 @@ export const traceOf = (events: readonly TraceEvent[]) => ({
 });
 
 export const EVENTS = [...WARM_UP, ...FRAMES].flatMap((frame) => frameEvents(frame));
+export const traced = (frames: readonly Frame[]) =>
+  frames.map((frame) => ({ ...frame, ts: at(frame.start) }));
+
+export const RECORD = {
+  id: 'B1',
+  trace: 'B1.trace.json',
+  categories: [...TRACE_CATEGORIES],
+  warmUp: 2,
+  frames: traced(FRAMES),
+  details: { seed: 21, count: 5000, browser: 'Chromium 156.0.8078.4', cpuSlowdown: 1 },
+};
